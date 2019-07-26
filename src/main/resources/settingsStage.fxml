@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.*?>
+<AnchorPane fx:id="settingsPane" prefHeight="343.0" prefWidth="282.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Button fx:id="startButton" layoutX="20.0" layoutY="9.0" mnemonicParsing="false" text="Start">
+            <font>
+                <Font size="10.0" />
+            </font>
+        </Button>
+        <Button fx:id="movieModeButton" layoutX="197.0" layoutY="8.0" mnemonicParsing="false" text="MovieMode">
+            <font>
+                <Font size="10.0" />
+            </font></Button>
+        <TextField fx:id="timeField" layoutX="105.0" layoutY="129.0" prefHeight="22.0" prefWidth="89.0" promptText="hh:mm:ss">
+            <font>
+                <Font size="11.0" />
+            </font>
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+        </TextField>
+        <Button fx:id="stopButton" layoutX="69.0" layoutY="9.0" mnemonicParsing="false" text="Stop">
+            <font>
+                <Font size="10.0" />
+            </font>
+        </Button>
+        <Text fx:id="wrongFormatText" fill="#ff0c0c" layoutX="135.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wrong format!" visible="false" wrappingWidth="39.0">
+            <font>
+                <Font size="8.0" />
+            </font>
+            <effect>
+                <DropShadow />
+            </effect>
+        </Text>
+        <Text fx:id="timestampJumpHintText" layoutX="105.0" layoutY="163.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Press enter to jump">
+            <font>
+                <Font size="9.0" />
+            </font>
+        </Text>
+        <Text fx:id="currentTimeStampText" layoutX="119.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00:00" />
+        <TextFlow id="settingsTextFlow" fx:id="settingsTextFlow" layoutX="14.0" layoutY="33.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="76.0" prefWidth="258.0" textAlignment="CENTER" />
+        <ImageView fx:id="settingsClickWarning" fitHeight="40.0" fitWidth="39.0" layoutX="33.0" layoutY="128.0" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="optionsButton" layoutX="118.0" layoutY="7.0" mnemonicParsing="false" prefHeight="22.0" prefWidth="71.0" text="Options">
+         <font>
+            <Font size="11.0" />
+         </font>
+      </Button>
+      <Button fx:id="fastForwardButton" layoutX="190.0" layoutY="184.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="&gt;&gt;">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Button>
+      <Button fx:id="fastBackwardButton" layoutX="79.0" layoutY="184.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="&lt;&lt;">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Button>
+      <HBox fx:id="imageHBox" alignment="CENTER" layoutX="206.0" layoutY="109.0" prefHeight="50.0" prefWidth="58.0" />
+    </children>
+</AnchorPane>

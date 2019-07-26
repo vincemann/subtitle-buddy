@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ColorPicker fx:id="colorChooser" layoutX="111.0" layoutY="34.0" />
+      <Text fx:id="fontColorText" layoutX="33.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="FontColor" />
+      <Text fx:id="fontTypeText" layoutX="31.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="FontType" />
+      <Text fx:id="previewText" layoutX="110.0" layoutY="162.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Preview">
+         <font>
+            <Font size="31.0" />
+         </font></Text>
+      <ChoiceBox fx:id="fontChoiceBox" layoutX="111.0" layoutY="75.0" prefWidth="150.0" />
+      <CheckBox fx:id="startStopCheckBox" layoutX="292.0" layoutY="37.0" mnemonicParsing="false" text="StartStopHotKey" />
+      <CheckBox fx:id="nextClickCheckBox" layoutX="293.0" layoutY="79.0" mnemonicParsing="false" selected="true" text="NextClickHotKey" />
+   </children>
+</AnchorPane>
