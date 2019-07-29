@@ -27,7 +27,7 @@ shadowJar {
 jar {
     manifest {
         attributes(
-                'Main-Class': 'com.youneedsoftware.subtitleBuddy.main.Main'
+                'Main-Class': 'io.github.vincemann.subtitleBuddy.main.Main'
         )
     }
 }
@@ -36,20 +36,20 @@ jar {
 apply plugin: 'javafx-gradle-plugin'
 
 test {
-    // damit ich per cli argument den bool headless reingeben kann
+    // this is here so i can pass in cli argument, in order to run tests in headless mode 
     systemProperty 'headless', System.getProperty('headless')
 }
 
 jfx {
     // minimal requirement for jfxJar-task
-    mainClass = 'com.youneedsoftware.subtitleBuddy.main.Main'
+    mainClass = 'io.github.vincemann.subtitleBuddy.main.Main'
 
     // minimal requirement for jfxNative-task
-    vendor = 'youNeedSoftware'
+    vendor = 'io.github.vincemann'
 }
 
-group = 'youNeedSoftware'
-version = '1.0-SNAPSHOT'
+group = 'io.github.vincemann'
+version = '1.0.0'
 sourceCompatibility = 1.8
 
 repositories {
@@ -59,7 +59,6 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
-    //guice
     // https://mvnrepository.com/artifact/com.google.inject/guice
     compile group: 'com.google.inject', name: 'guice', version: '4.0'
     // https://mvnrepository.com/artifact/com.google.inject.extensions/guice-assistedinject
@@ -67,9 +66,11 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.inject.extensions/guice-multibindings
     compile group: 'com.google.inject.extensions', name: 'guice-multibindings', version: '4.2.1'
 
+
     //lombok
     // https://mvnrepository.com/artifact/log4j/log4j
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    compileOnly 'org.projectlombok:lombok:1.18.8'
 
 
     //validation

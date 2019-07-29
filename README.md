@@ -1,1 +1,1 @@
-SubtitleDisplayer
+SubtitleBuddy
