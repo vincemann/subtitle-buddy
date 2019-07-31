@@ -8,7 +8,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitleBuddy.config.propertiesFile.PropertyFileKeys;
 import io.github.vincemann.subtitleBuddy.config.uiStringsFile.UIStringsFileKeys;
-import io.github.vincemann.subtitleBuddy.classpathFileFinder.ClassPathFileFinder;
+import io.github.vincemann.subtitleBuddy.classpathFileFinder.ReadOnlyClassPathFileFinder;
 import io.github.vincemann.subtitleBuddy.events.SrtFontColorChangeEvent;
 import io.github.vincemann.subtitleBuddy.events.SrtFontChangeEvent;
 import io.github.vincemann.subtitleBuddy.events.ToggleHotKeyEvent;
@@ -71,7 +71,7 @@ public class OptionsStageController extends AbstractStageController implements O
 
     private SrtFontManager srtFontManager;
 
-    private ClassPathFileFinder classPathFileFinder;
+    private ReadOnlyClassPathFileFinder readOnlyClassPathFileFinder;
 
 
     private String userFontsPath;
@@ -89,13 +89,13 @@ public class OptionsStageController extends AbstractStageController implements O
                                   @Named(PropertyFileKeys.OPTIONS_WINDOW_SIZE_KEY) Vector2D size,
                                   @Named(PropertyFileKeys.NEXT_CLICK_HOT_KEY_TOGGLED_KEY) boolean nextClickCountsToggled,
                                   @Named(PropertyFileKeys.START_STOP_HOT_KEY_TOGGLED_KEY) boolean startStopHotKeyToggled,
-                                  ClassPathFileFinder classPathFileFinder,
+                                  ReadOnlyClassPathFileFinder readOnlyClassPathFileFinder,
                                   FontsLocationManager fontsLocationManager)
             throws IOException {
-        super(classPathFileFinder.findFileOnClassPath(OPTIONS_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(), title, size);
+        super(readOnlyClassPathFileFinder.findFileOnClassPath(OPTIONS_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(), title, size);
         createStage(this);
         this.fontsLocationManager = fontsLocationManager;
-        this.classPathFileFinder = classPathFileFinder;
+        this.readOnlyClassPathFileFinder = readOnlyClassPathFileFinder;
         this.eventBus = eventBus;
         this.srtFontManager = srtFontManager;
         //geht nicht anders weil  apache constants nur List<Object> getList() supported..

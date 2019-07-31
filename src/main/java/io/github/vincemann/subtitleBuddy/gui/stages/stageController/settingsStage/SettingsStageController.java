@@ -7,7 +7,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitleBuddy.classpathFileFinder.ClassPathFileFinder;
+import io.github.vincemann.subtitleBuddy.classpathFileFinder.ReadOnlyClassPathFileFinder;
 import io.github.vincemann.subtitleBuddy.config.propertiesFile.PropertyFileKeys;
 import io.github.vincemann.subtitleBuddy.config.uiStringsFile.UIStringsFileKeys;
 import io.github.vincemann.subtitleBuddy.events.RequestSrtParserUpdateEvent;
@@ -130,7 +130,7 @@ public class SettingsStageController extends AbstractStageController implements 
                                    @Named(PropertyFileKeys.SETTINGS_FONT_SIZE_KEY) int settingsFontSize,
                                    @Named(PropertyFileKeys.FAST_FORWARD_DELTA_KEY) int fastForwardDelta,
                                    EventBus eventBus,
-                                   ClassPathFileFinder classPathFileFinder,
+                                   ReadOnlyClassPathFileFinder readOnlyClassPathFileFinder,
                                    @Named(PropertyFileKeys.CLICK_WARNING_IMAGE_PATH_KEY) String clickWarningImagePath,
                                    @Named(UIStringsFileKeys.START_BUTTON_TEXT_KEY) String startButtonText,
                                    @Named(UIStringsFileKeys.STOP_BUTTON_TEXT_KEY) String stopButtonText,
@@ -140,10 +140,10 @@ public class SettingsStageController extends AbstractStageController implements 
                                    @Named(UIStringsFileKeys.TIMESTAMP_JUMP_HINT_TEXT_KEY) String timestampJumpHintTextString
     )
             throws IOException {
-        super(classPathFileFinder.findFileOnClassPath(SETTINGS_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(),windowTitle,
+        super(readOnlyClassPathFileFinder.findFileOnClassPath(SETTINGS_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(),windowTitle,
                 minSize);
         createStage(this,mainStage);
-        this.settingsClickWarning = createImageView(imageHBox, classPathFileFinder.findFileOnClassPath(clickWarningImagePath).getFile(),new Vector2D(SETTINGS_CLICK_WARNING_SIZE,SETTINGS_CLICK_WARNING_SIZE));
+        this.settingsClickWarning = createImageView(imageHBox, readOnlyClassPathFileFinder.findFileOnClassPath(clickWarningImagePath).getFile(),new Vector2D(SETTINGS_CLICK_WARNING_SIZE,SETTINGS_CLICK_WARNING_SIZE));
         this.settingsFontSize=settingsFontSize;
         this.srtParser = srtParser;
         this.eventBus=eventBus;
@@ -176,13 +176,12 @@ public class SettingsStageController extends AbstractStageController implements 
     private void constructorInit(){
         setUIStrings();
         lastTimeStamp = Timestamp.ZERO();
-        lastSubtitleText = new SubtitleText(Collections.singletonList(Collections.emptyList()));
+        lastSubtitleText = srtParser.getCurrentSubtitleText();
         this.currentFont= srtFontManager.loadDefaultFont(settingsFontSize);
         if(timeStampWarningDuration<MIN_TIME_STAMP_WARNING_DURATION){
             timeStampWarningDuration=MIN_TIME_STAMP_WARNING_DURATION;
         }
         this.settingsClickWarning.setVisible(false);
-
     }
 
     private void setUIStrings(){
@@ -377,7 +376,7 @@ public class SettingsStageController extends AbstractStageController implements 
     @Override
     @FXML
     public void displaySubtitle(@NonNull SubtitleText subtitleText) {
-        log.trace("asking javafx to display new subtitle on SettingsStageController : " + subtitleText);
+        log.trace("asking javafx to display new subtitle in "+this.getClass().getSimpleName()+" : " + subtitleText);
         lastSubtitleText =subtitleText;
 
         Platform.runLater(() -> {
@@ -396,6 +395,7 @@ public class SettingsStageController extends AbstractStageController implements 
                     text.setFill(SettingsSrtDisplayer.DEFAULT_FONT_COLOR);
                     adjustTextSize(text,settingsFontSize);
 
+                    log.trace("displaying text: " + text + " in "+this.getClass().getSimpleName());
                     settingsTextFlow.getChildren().add(text);
                     settingsTextFlow.getChildren().add(new Text(System.lineSeparator()));
                 }
@@ -412,6 +412,11 @@ public class SettingsStageController extends AbstractStageController implements 
                 lastTimeStamp=new Timestamp(time);
             }
         });
+    }
+
+    @Override
+    protected void onShowStage() {
+        super.onShowStage();
     }
 
     @Override

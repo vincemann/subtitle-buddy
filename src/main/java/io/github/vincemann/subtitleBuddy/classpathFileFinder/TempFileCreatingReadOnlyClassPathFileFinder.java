@@ -13,7 +13,7 @@ import java.nio.file.Files;
 import java.util.*;
 
 @Singleton
-public class SpringClassPathFileFinder implements ClassPathFileFinder {
+public class TempFileCreatingReadOnlyClassPathFileFinder implements ReadOnlyClassPathFileFinder {
 
     @Override
     public LoadedClassPathFile findFileOnClassPath(String relPath) throws IOException {

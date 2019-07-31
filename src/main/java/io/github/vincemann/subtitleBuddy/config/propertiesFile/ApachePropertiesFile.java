@@ -4,6 +4,7 @@ import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 
 import java.io.File;
 

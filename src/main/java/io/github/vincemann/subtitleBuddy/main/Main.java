@@ -5,13 +5,17 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitleBuddy.classpathFileFinder.ClassPathFileFinder;
-import io.github.vincemann.subtitleBuddy.classpathFileFinder.SpringClassPathFileFinder;
+import io.github.vincemann.subtitleBuddy.classpathFileFinder.ReadOnlyClassPathFileFinder;
+import io.github.vincemann.subtitleBuddy.classpathFileFinder.TempFileCreatingReadOnlyClassPathFileFinder;
+import io.github.vincemann.subtitleBuddy.config.configFileManager.ConfigFileManager;
+import io.github.vincemann.subtitleBuddy.config.configFileManager.ExtractingConfigFileManager;
 import io.github.vincemann.subtitleBuddy.config.propertiesFile.ApachePropertiesFile;
 import io.github.vincemann.subtitleBuddy.config.propertiesFile.PropertiesFile;
 import io.github.vincemann.subtitleBuddy.config.uiStringsFile.ApacheUIStringsFile;
 import io.github.vincemann.subtitleBuddy.config.uiStringsFile.UIStringsFile;
+import io.github.vincemann.subtitleBuddy.events.RequestSrtParserUpdateEvent;
 import io.github.vincemann.subtitleBuddy.gui.stages.stageController.settingsStage.SettingsStageController;
+import io.github.vincemann.subtitleBuddy.runningExecutableFinder.RunningJarFinder;
 import io.github.vincemann.subtitleBuddy.service.EventHandlerService;
 import io.github.vincemann.subtitleBuddy.service.SrtService;
 import io.github.vincemann.subtitleBuddy.module.*;
@@ -29,7 +33,7 @@ import java.util.List;
 @Singleton
 public class Main extends Application {
 
-    public static final String CONFIG_FILE_PATH = "/application.properties";
+    public static final String CONFIG_FILE_NAME = "application.properties";
     public static final String UI_STRINGS_CONFIG_FILE_PATH = "/application.string.properties";
 
     private SrtService srtService;
@@ -39,10 +43,11 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         LoggingUtils.disableUtilLogger();
-        ClassPathFileFinder classPathFileFinder = new SpringClassPathFileFinder();
-        PropertiesFile propertiesManager = new ApachePropertiesFile(classPathFileFinder.findFileOnClassPath(CONFIG_FILE_PATH).getFile());
-        UIStringsFile stringConfiguration = new ApacheUIStringsFile(classPathFileFinder.findFileOnClassPath(UI_STRINGS_CONFIG_FILE_PATH).getFile());
-        injector = createInjector(propertiesManager,stringConfiguration,primaryStage, classPathFileFinder);
+        ReadOnlyClassPathFileFinder readOnlyClassPathFileFinder = new TempFileCreatingReadOnlyClassPathFileFinder();
+        ConfigFileManager configFileManager =  new ExtractingConfigFileManager(new RunningJarFinder(),readOnlyClassPathFileFinder);
+        PropertiesFile propertiesManager = new ApachePropertiesFile(configFileManager.findConfigFile(CONFIG_FILE_NAME));
+        UIStringsFile stringConfiguration = new ApacheUIStringsFile(readOnlyClassPathFileFinder.findFileOnClassPath(UI_STRINGS_CONFIG_FILE_PATH).getFile());
+        injector = createInjector(propertiesManager,stringConfiguration,primaryStage, readOnlyClassPathFileFinder);
         EventBus eventBus = injector.getInstance(EventBus.class);
         srtService= injector.getInstance(SrtService.class);
         eventHandlerService = injector.getInstance(EventHandlerService.class);
@@ -54,11 +59,11 @@ public class Main extends Application {
         start();
     }
 
-    private static Injector createInjector(PropertiesFile propertiesManager, UIStringsFile stringConfiguration, Stage primaryStage, ClassPathFileFinder classPathFileFinder){
+    private static Injector createInjector(PropertiesFile propertiesManager, UIStringsFile stringConfiguration, Stage primaryStage, ReadOnlyClassPathFileFinder readOnlyClassPathFileFinder){
         if(injector==null) {
             //use default modules
             List<Module> moduleList = Arrays.asList(
-                    new ClassPathFileFinderModule(classPathFileFinder),
+                    new ClassPathFileFinderModule(readOnlyClassPathFileFinder),
                     new ConfigFileModule(propertiesManager, stringConfiguration),
                     new FileChooserModule(stringConfiguration, propertiesManager) ,
                     new ParserModule(stringConfiguration, propertiesManager) ,

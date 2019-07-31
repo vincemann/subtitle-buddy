@@ -69,7 +69,7 @@ public class SrtParserUpdaterImpl extends SrtParserUpdater implements Runnable{
         }
 
         try {
-            //log.trace( "updater updating current Subtitle");
+            log.trace( "updater updating current Subtitle");
             srtParser.updateCurrentSubtitle();
             SubtitleText currSubtitleText = srtParser.getCurrentSubtitleText();
 
@@ -77,10 +77,10 @@ public class SrtParserUpdaterImpl extends SrtParserUpdater implements Runnable{
                 if(lastSubtitleText !=null) {
                     if (!lastSubtitleText.equals(currSubtitleText)) {
                         //update neccessary
-                        //log.trace("displaying subtitle ");
+                        log.trace("displaying subtitle "+currSubtitleText);
                         srtDisplayer.displaySubtitle(currSubtitleText);
                     }else {
-                        //log.trace("subtitle is identical to last subtitle, no update neccassary");
+                        log.trace("subtitle is identical to last subtitle, no update neccassary");
                     }
                 }else {
                     log.trace("no last subtitle found -> displaying subtitle "+ currSubtitleText);

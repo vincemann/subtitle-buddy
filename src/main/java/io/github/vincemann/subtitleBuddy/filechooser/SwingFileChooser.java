@@ -14,6 +14,9 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.validation.constraints.NotNull;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 
 @Log4j
 @Singleton
@@ -36,21 +39,26 @@ public class SwingFileChooser implements FileChooser {
     public File letUserChooseFile() throws UserQuitException {
         log.debug( "Filechooser swing check ");
         JFileChooser chooser = null;
-
-
         try {
             String startingDir = lastPathHandler.getSavedPath();
             log.debug( "Saved Path: " + startingDir + " was found, starting from there");
-            chooser = new JFileChooser(startingDir);
+            if(Files.exists(Paths.get(startingDir))) {
+                chooser = new JFileChooser(startingDir);
+            }else {
+                log.debug("Saved Path was invalid, starting from root directory");
+                chooser = new JFileChooser();
+            }
         } catch (PropertyNotFoundException e) {
             log.warn( "No saved Path was found, starting at root directory");
+            chooser = new JFileChooser();
+        }catch (InvalidPathException e){
+            log.debug("Saved Path was invalid, starting from root directory");
             chooser = new JFileChooser();
         }
 
         chooser.setDialogTitle(dialogTitle);
 
 
-        //todo checken ob hier immernoch eine current modification exception fliegt
         FileNameExtensionFilter filter = new FileNameExtensionFilter(description, fileTypes);
         chooser.setFileFilter(filter);
 

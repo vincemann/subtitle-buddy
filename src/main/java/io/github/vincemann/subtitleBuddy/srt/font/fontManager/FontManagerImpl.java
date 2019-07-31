@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitleBuddy.config.propertiesFile.PropertyFileKeys;
-import io.github.vincemann.subtitleBuddy.classpathFileFinder.ClassPathFileFinder;
+import io.github.vincemann.subtitleBuddy.classpathFileFinder.ReadOnlyClassPathFileFinder;
 import io.github.vincemann.subtitleBuddy.srt.SrtFont;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -30,14 +30,14 @@ public class FontManagerImpl implements SrtFontManager {
     @Getter
     private Color userFontColor;
 
-    private ClassPathFileFinder classPathFileFinder;
+    private ReadOnlyClassPathFileFinder readOnlyClassPathFileFinder;
 
     @Inject
-    public FontManagerImpl(@Named(PropertyFileKeys.USER_DEFAULT_FONT_PATH) String userFontPath, @Named(PropertyFileKeys.USER_FONT_SIZE_KEY) Double userFontSize, @Named(PropertyFileKeys.USER_FONT_COLOR_KEY) String userFontColorString, ClassPathFileFinder classPathFileFinder) {
+    public FontManagerImpl(@Named(PropertyFileKeys.USER_DEFAULT_FONT_PATH) String userFontPath, @Named(PropertyFileKeys.USER_FONT_SIZE_KEY) Double userFontSize, @Named(PropertyFileKeys.USER_FONT_COLOR_KEY) String userFontColorString, ReadOnlyClassPathFileFinder readOnlyClassPathFileFinder) {
         this.userFontPath = userFontPath;
         this.userFontSize = userFontSize;
         this.userFontColor = setUserFontColor(userFontColorString);
-        this.classPathFileFinder = classPathFileFinder;
+        this.readOnlyClassPathFileFinder = readOnlyClassPathFileFinder;
     }
 
     private Color setUserFontColor(String userColorString){
@@ -87,7 +87,7 @@ public class FontManagerImpl implements SrtFontManager {
             if(Paths.get(fontPath).isAbsolute()){
                 fontFile = new File(fontPath);
             }else {
-                fontFile= classPathFileFinder.findFileOnClassPath(fontPath).getFile();
+                fontFile= readOnlyClassPathFileFinder.findFileOnClassPath(fontPath).getFile();
             }
             Font regularFont = Font.loadFont(new FileInputStream(fontFile),fontSize);
             checkNotNull(regularFont);
@@ -97,7 +97,7 @@ public class FontManagerImpl implements SrtFontManager {
             if(Paths.get(fontPath).isAbsolute()){
                 italicFontFile = new File(italicFontPath);
             }else {
-                italicFontFile = classPathFileFinder.findFileOnClassPath(italicFontPath).getFile();
+                italicFontFile = readOnlyClassPathFileFinder.findFileOnClassPath(italicFontPath).getFile();
             }
             if(!italicFontFile.exists()){
                 throw new SrtFontLoadingException("Font with name: " + italicFontPath + " not found");

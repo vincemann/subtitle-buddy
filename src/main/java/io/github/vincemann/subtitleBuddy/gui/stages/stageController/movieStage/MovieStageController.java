@@ -8,7 +8,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitleBuddy.config.propertiesFile.PropertyFileKeys;
 import io.github.vincemann.subtitleBuddy.config.uiStringsFile.UIStringsFileKeys;
-import io.github.vincemann.subtitleBuddy.classpathFileFinder.ClassPathFileFinder;
+import io.github.vincemann.subtitleBuddy.classpathFileFinder.ReadOnlyClassPathFileFinder;
 import io.github.vincemann.subtitleBuddy.events.MovieTextPositionChangedEvent;
 import io.github.vincemann.subtitleBuddy.events.SwitchSrtDisplayerEvent;
 import io.github.vincemann.subtitleBuddy.gui.srtDisplayer.MovieSrtDisplayer;
@@ -105,16 +105,16 @@ public class MovieStageController extends AbstractStageController implements Mov
     public MovieStageController(@Named(UIStringsFileKeys.MOVIE_STAGE_TITLE_KEY) String title,
                                 SrtFontManager srtFontManager, EventBus eventBus,
                                 @Named(PropertyFileKeys.USER_MOVIE_TEXT_POSITION_KEY) String movieVBoxPosString,
-                                ClassPathFileFinder classPathFileFinder,
+                                ReadOnlyClassPathFileFinder readOnlyClassPathFileFinder,
                                 @Named(PropertyFileKeys.CLICK_WARNING_IMAGE_PATH_KEY) String clickWarningImagePath)
             throws IOException {
-        super(classPathFileFinder.findFileOnClassPath(MOVIE_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(), title, getScreenBoundsVector());
+        super(readOnlyClassPathFileFinder.findFileOnClassPath(MOVIE_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(), title, getScreenBoundsVector());
         this.srtFontManager = srtFontManager;
         this.eventBus= eventBus;
         this.movieVBoxPos = loadMovieVBoxStartPos(movieVBoxPosString,getSize());
         this.updateSubtitleExecutionLimiter = new ExecutionLimiter(SUBTITLE_UPDATE_SLEEP_DURATION,this::updateSubtitle);
         createStage(this);
-        this.clickWarning = createImageView(movieVBox, classPathFileFinder.findFileOnClassPath(clickWarningImagePath).getFile(),new Vector2D(MOVIE_CLICK_WARNING_SIZE,MOVIE_CLICK_WARNING_SIZE));
+        this.clickWarning = createImageView(movieVBox, readOnlyClassPathFileFinder.findFileOnClassPath(clickWarningImagePath).getFile(),new Vector2D(MOVIE_CLICK_WARNING_SIZE,MOVIE_CLICK_WARNING_SIZE));
         constructorInit();
     }
 

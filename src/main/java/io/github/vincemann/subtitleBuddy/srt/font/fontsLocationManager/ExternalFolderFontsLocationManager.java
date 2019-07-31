@@ -2,7 +2,7 @@ package io.github.vincemann.subtitleBuddy.srt.font.fontsLocationManager;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitleBuddy.classpathFileFinder.ClassPathFileFinder;
+import io.github.vincemann.subtitleBuddy.classpathFileFinder.ReadOnlyClassPathFileFinder;
 import io.github.vincemann.subtitleBuddy.classpathFileFinder.LoadedClassPathFile;
 import io.github.vincemann.subtitleBuddy.runningExecutableFinder.RunningExecutableFinder;
 import io.github.vincemann.subtitleBuddy.runningExecutableFinder.RunningExecutableNotFoundException;
@@ -23,12 +23,12 @@ public class ExternalFolderFontsLocationManager implements FontsLocationManager 
     private static final String DEFAULT_FONT_PATH_RELATIVE_TO_CLASS_PATH_PATTERN = "/fonts/*";
 
     private RunningExecutableFinder runningExecutableFinder;
-    private ClassPathFileFinder classPathFileFinder;
+    private ReadOnlyClassPathFileFinder readOnlyClassPathFileFinder;
 
     @Inject
-    public ExternalFolderFontsLocationManager(RunningExecutableFinder runningExecutableFinder, ClassPathFileFinder classPathFileFinder) {
+    public ExternalFolderFontsLocationManager(RunningExecutableFinder runningExecutableFinder, ReadOnlyClassPathFileFinder readOnlyClassPathFileFinder) {
         this.runningExecutableFinder = runningExecutableFinder;
-        this.classPathFileFinder = classPathFileFinder;
+        this.readOnlyClassPathFileFinder = readOnlyClassPathFileFinder;
     }
 
     /**
@@ -69,7 +69,7 @@ public class ExternalFolderFontsLocationManager implements FontsLocationManager 
                 }
 
                 log.debug( "adding default fonts now if neccessary");
-                createFontsInDirIfNeccessary(absFontPath);
+                createFontsInDirIfNecessary(absFontPath);
             }else {
                 log.debug("user font dir exists!");
             }
@@ -83,11 +83,11 @@ public class ExternalFolderFontsLocationManager implements FontsLocationManager 
     }
 
 
-    private void createFontsInDirIfNeccessary(Path absDirPath) throws IOException {
+    private void createFontsInDirIfNecessary(Path absDirPath) throws IOException {
         //hole nun die font files aus der jar und kopier sie in absDirPath Verzeichnis
-        List<LoadedClassPathFile> loadedClassPathFiles = classPathFileFinder.findFilesOnClassPathDir(DEFAULT_FONT_PATH_RELATIVE_TO_CLASS_PATH_PATTERN);
+        List<LoadedClassPathFile> loadedClassPathFiles = readOnlyClassPathFileFinder.findFilesOnClassPathDir(DEFAULT_FONT_PATH_RELATIVE_TO_CLASS_PATH_PATTERN);
         for (LoadedClassPathFile loadedClassPathFile : loadedClassPathFiles) {
-            //jeden file
+            //every file
             File dest = absDirPath.resolve(loadedClassPathFile.getOriginalFileName()).toFile();
             if (dest.exists()) {
                 log.warn("file: " + dest.getAbsolutePath() + " already exists, skipping");

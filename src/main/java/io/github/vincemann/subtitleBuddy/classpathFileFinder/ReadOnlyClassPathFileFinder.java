@@ -7,7 +7,7 @@ import java.util.List;
  *  creates a tempfile and copies content from classpath Resource stream into it
  *
  */
-public interface ClassPathFileFinder {
+public interface ReadOnlyClassPathFileFinder {
 
     /**
      *

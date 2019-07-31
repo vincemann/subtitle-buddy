@@ -2,7 +2,7 @@ package io.github.vincemann.subtitleBuddy.gui;
 
 import com.google.inject.Key;
 import io.github.vincemann.subtitleBuddy.TestFiles;
-import io.github.vincemann.subtitleBuddy.classpathFileFinder.SpringClassPathFileFinder;
+import io.github.vincemann.subtitleBuddy.classpathFileFinder.TempFileCreatingReadOnlyClassPathFileFinder;
 import io.github.vincemann.subtitleBuddy.config.propertiesFile.ApachePropertiesFile;
 import io.github.vincemann.subtitleBuddy.config.propertiesFile.PropertiesFile;
 import io.github.vincemann.subtitleBuddy.config.uiStringsFile.ApacheUIStringsFile;
@@ -135,7 +135,7 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
         UIStringsFile testStringsFile = new ApacheUIStringsFile(new File(Main.UI_STRINGS_CONFIG_FILE_PATH));
         //set all modules for integration test, mock those that need to be mocked
         Main.createInjector(
-                new ClassPathFileFinderModule(new SpringClassPathFileFinder()),
+                new ClassPathFileFinderModule(new TempFileCreatingReadOnlyClassPathFileFinder()),
                 new ConfigFileModule(testPropertiesFile, testStringsFile),
                 new MockFileChooserModule(testStringsFile,testPropertiesFile),
                 new ParserModule(testStringsFile, testPropertiesFile) ,

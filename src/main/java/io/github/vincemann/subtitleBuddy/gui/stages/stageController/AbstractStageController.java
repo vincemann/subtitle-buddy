@@ -250,7 +250,7 @@ public abstract class AbstractStageController {
      */
     protected void onStageCreate(Stage stage){ }
 
-    protected void onShowStage(){}
+    protected void onShowStage(){ }
 
     protected Vector2D getSize() {
         return size;
