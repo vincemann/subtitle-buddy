@@ -19,6 +19,11 @@ Snychronizing the subtitles with the movie is as easy as shown here:
 ## Download  
 You can download the latest release (.jar) from [here](https://github.com/vincemann/Subtitle-Buddy/releases).  
   
+## Installation  
+No Installation required. Just place the [jar](https://github.com/vincemann/Subtitle-Buddy/releases) wherever you want  
+and double-click to run it.  
+Alternatively run java -jar *downloadedSubtitleBuddy.jar* in your terminal.
+  
 ## Synchronisation  
 There are two convient ways to synchronize the loaded subtitles (.srt) with the movie.   
 The gif shows the **"next-click-counts"**- feature in action.   
