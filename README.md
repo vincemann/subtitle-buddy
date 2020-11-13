@@ -63,6 +63,7 @@ It depends on your OS, whether the subtitles stay on top, when switching to full
   
   
 ## Building from sources  
+Only Works with JDK8 installed and active.
 Simply download sources, navigate into the downlaoded folder and run the gradle wrapper from terminal with:  
 ./gradlew shadowJar  
 or for windows users  
