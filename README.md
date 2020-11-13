@@ -49,7 +49,7 @@ Supported font-types are .otf and .ttf.
   
   
 ## Requirements  
-Should run on every gui based OS, that has minimum JRE 1.8 installed.  
+Should run on every gui based OS, that has JRE 1.8 installed.  
 Tested on Windows 7, Windows 10, Ubuntu 16.04, Ubunutu 18.04.  
 This program makes use of this [library ](https://github.com/kwhat/jnativehook)  for capturing hotkeys and mouse clicks.  
 See its "Software and Hardware Requirements" for additional details.  
