@@ -49,7 +49,7 @@ Supported font-types are .otf and .ttf.
   
   
 ## Requirements  
-Should run on every gui based OS, that has JDK 1.8 installed.  
+Should run on every gui based OS, that has JRE 1.8 installed.  
 Tested on Windows 7, Windows 10, Ubuntu 16.04, Ubunutu 18.04.  
 This program makes use of this [library ](https://github.com/kwhat/jnativehook)  for capturing hotkeys and mouse clicks.  
 See its "Software and Hardware Requirements" for additional details.  
@@ -63,7 +63,7 @@ It depends on your OS, whether the subtitles stay on top, when switching to full
   
   
 ## Building from sources  
-Only Works with JDK8 installed and active.  
+Only Works with JRE8 installed and active.  
 Simply download sources, navigate into the downlaoded folder and run the gradle wrapper from terminal with:  
 ./gradlew shadowJar  
 or for windows users  
