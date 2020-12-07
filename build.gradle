@@ -59,6 +59,8 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
+    //compile 'javafx:javafx.controls:11.0.0'
+
     // https://mvnrepository.com/artifact/com.google.inject/guice
     compile group: 'com.google.inject', name: 'guice', version: '4.0'
     // https://mvnrepository.com/artifact/com.google.inject.extensions/guice-assistedinject
