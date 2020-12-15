@@ -17,12 +17,11 @@ Snychronizing the subtitles with the movie is as easy as shown here:
   
   
 ## Download  
-You can download the latest release (.jar) from [here](https://github.com/vincemann/Subtitle-Buddy/releases).  
+You can download the latest release from [here](https://github.com/vincemann/Subtitle-Buddy/releases).  
   
 ## Installation  
-No Installation required. Just place the [jar](https://github.com/vincemann/Subtitle-Buddy/releases) wherever you want  
-and double-click to run it.  
-Alternatively run java -jar *downloadedSubtitleBuddy.jar* in your terminal.
+No Installation required. Just unpack the [zip](https://github.com/vincemann/Subtitle-Buddy/releases) wherever you want  
+and run the start script.    
   
 ## Synchronisation  
 There are two convient ways to synchronize the loaded subtitles (.srt) with the movie.   
@@ -49,8 +48,8 @@ Supported font-types are .otf and .ttf.
   
   
 ## Requirements  
-Should run on every gui based OS, that has JRE 1.8 installed.  
-Tested on Windows 7, Windows 10, Ubuntu 16.04, Ubunutu 18.04.  
+Should run on every gui based OS, that has min JRE 1.8 installed.  
+Tested on Windows 7, Windows 10, Ubuntu 16.04, Ubunutu 18.04. Debian 9.  
 This program makes use of this [library ](https://github.com/kwhat/jnativehook)  for capturing hotkeys and mouse clicks.  
 See its "Software and Hardware Requirements" for additional details.  
   
@@ -63,13 +62,13 @@ It depends on your OS, whether the subtitles stay on top, when switching to full
   
   
 ## Building from sources  
-Only Works with JRE8 installed and active.  
+Only Works with JDK8 installed and active.  
 Simply download sources, navigate into the downlaoded folder and run the gradle wrapper from terminal with:  
 ./gradlew shadowJar  
 or for windows users  
 gradlew.bat shadowJar  
-  
-The compiled jar will be in ./build/libs/\<name\>-\<version\>-all.jar  
+Then see the requirements in build-zip.sh, fulfill these and run build-zip.sh.  
+The platform dependent zip files are in ./build/libs/  
    
 
   
