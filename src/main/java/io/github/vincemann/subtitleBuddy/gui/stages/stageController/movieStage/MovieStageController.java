@@ -67,6 +67,12 @@ public class MovieStageController extends AbstractStageController implements Mov
 
     private static final String BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE = "-fx-background-color: rgba(0, 100, 100, 0.51); -fx-background-radius: 10;";
     private static final String TRANSPARENT_BACKGROUND_STYLE = "-fx-background-color: transparent;";
+    public static final String OUTLINED_TEXT_STYLE = /*"color: #ff0;"+*/
+//            "text-shadow: 3px 0 0 #000, 0 -3px 0 #000, 0 3px 0 #000, -3px 0 0 #000;";
+//        "-fx-fill: lightseagreen;\n"+
+        "-fx-stroke: black;\n"+
+        "-fx-stroke-width: 2px;\n";
+
 
     @FXML
     private VBox movieVBox;
@@ -203,6 +209,7 @@ public class MovieStageController extends AbstractStageController implements Mov
 
                     log.trace("setting fontcolor: "+ srtFontManager.getFontColor());
                     text.setFill(srtFontManager.getFontColor());
+                    text.setStyle(OUTLINED_TEXT_STYLE);
                     movieTextFlow.getChildren().add(text);
                     movieTextFlow.getChildren().add(new Text(System.lineSeparator()));
                 }
