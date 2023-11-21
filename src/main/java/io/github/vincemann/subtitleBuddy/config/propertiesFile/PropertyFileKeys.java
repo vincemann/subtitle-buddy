@@ -4,6 +4,7 @@ public class PropertyFileKeys {
 
     public static final String LAST_PATH_KEY = "lastPath";
     public static final String USER_DEFAULT_FONT_PATH = "userDefaultFontPath";
+    public static final String ENCODING = "encoding";
     public static final String USER_FONT_SIZE_KEY = "userFontSize";
     public static final String UPDATER_DELAY_KEY = "updaterDelay";
     public static final String TIME_STAMP_WARNING_DURATION_KEY = "timeStampWarningDuration";

@@ -37,6 +37,7 @@ public class ParserModule extends PropertyFilesModule {
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.UPDATER_DELAY_KEY)).to(getPropertiesFile().getLong(PropertyFileKeys.UPDATER_DELAY_KEY));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.USER_DEFAULT_FONT_PATH)).to(getPropertiesFile().getString(PropertyFileKeys.USER_DEFAULT_FONT_PATH));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.USER_FONT_SIZE_KEY)).to(getPropertiesFile().getString(PropertyFileKeys.USER_FONT_SIZE_KEY));
+        bindConstant().annotatedWith(Names.named(PropertyFileKeys.ENCODING)).to(getPropertiesFile().getString(PropertyFileKeys.ENCODING));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.USER_FONT_COLOR_KEY)).to(getPropertiesFile().getString(PropertyFileKeys.USER_FONT_COLOR_KEY));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.DEFAULT_SUBTITLE_KEY)).to(getPropertiesFile().getString(PropertyFileKeys.DEFAULT_SUBTITLE_KEY));
     }

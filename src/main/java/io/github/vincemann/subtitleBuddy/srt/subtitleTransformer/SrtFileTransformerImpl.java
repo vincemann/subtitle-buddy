@@ -1,13 +1,20 @@
 package io.github.vincemann.subtitleBuddy.srt.subtitleTransformer;
 
 import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import io.github.vincemann.subtitleBuddy.config.propertiesFile.PropertyFileKeys;
+import io.github.vincemann.subtitleBuddy.gui.dialog.alertDialog.AlertDialog;
 import io.github.vincemann.subtitleBuddy.srt.*;
 import lombok.NonNull;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -20,65 +27,84 @@ public class SrtFileTransformerImpl implements SrtFileTransformer {
     private static final String ITALIC_END_DELIMITER = "</i>";
     private static final String NEW_LINE_DELIMITER = "<n>";
 
+    private Charset encoding = StandardCharsets.UTF_8;
 
 
-	@Override
-	public List<Subtitle> transformFileToSubtitles(File srtFile) throws CorruptedSrtFileException, FileNotFoundException {
-		List<Subtitle> subtitles = new ArrayList<>();
+    @Inject
+    public SrtFileTransformerImpl(@Named(PropertyFileKeys.ENCODING) String encoding, AlertDialog alertDialog) {
+        initUserDefinedEncoding(encoding,alertDialog);
+    }
 
-		FileInputStream in = new FileInputStream(srtFile);
-		//todo aktuell verlasse ich mich noch auf default encoding
-		Scanner scanner = new Scanner(in);
-		int linesRead= 0;
+    public SrtFileTransformerImpl() {
+    }
 
-		if(!scanner.hasNextLine()){
-			throw new CorruptedSrtFileException("Empty file",0,subtitles);
-		}
-		try {
-			while (scanner.hasNextLine()) {
-				StringBuilder subtitleString=new StringBuilder();
-				/* We assign our own ID's, ignore the ID given in the file. */
-				scanner.nextLine();
-				linesRead++;
+    private void initUserDefinedEncoding(String encodingFromConfigFile, AlertDialog alertDialog){
+        try {
+            if (encodingFromConfigFile != null){
+                this.encoding = Charset.forName(encodingFromConfigFile);
+            }
+        }catch (UnsupportedCharsetException e){
+            alertDialog.tellUser("Invalid encoding: " + encodingFromConfigFile +
+                    "\n Please change in applications.properties file - which is located in the folder of the executable (jar)."+
+                    "\n example: encoding=UTF-8 \n Using default encoding."
+                    );
+        }
+    }
 
+    @Override
+        public List<Subtitle> transformFileToSubtitles(File srtFile) throws CorruptedSrtFileException, FileNotFoundException {
+            List<Subtitle> subtitles = new ArrayList<>();
 
-				//todo failt aktuell noch wenn ich nach dem timestamp eine zeile frei hab und dann den text und dann als ende wieder normal eine zeile frei -> fix
-				/* Read the Timestamps from the file. */
-				String[] timestamps = scanner.nextLine().split(" --> ");
-				linesRead++;
-				if (timestamps.length != 2) throw new InvalidTimestampFormatException("line: " + linesRead + " was invalid");
+            FileInputStream in = new FileInputStream(srtFile);
+            //todo aktuell verlasse ich mich noch auf default encoding
+            Scanner scanner = new Scanner(in, this.encoding.name());
+            int linesRead= 0;
 
-				Timestamp startTime = new Timestamp(timestamps[0]);
-				Timestamp endTime = new Timestamp(timestamps[1]);
-
-
-				String line = scanner.nextLine();
-				linesRead++;
-				while (!line.equals("")) {
-					subtitleString.append(line);
-					subtitleString.append(NEW_LINE_DELIMITER);
-					line = scanner.nextLine();
-					linesRead++;
-				}
-
-				List<List<SubtitleSegment>> subtitleSegments = createSubtitleSegments(subtitleString.toString());
-				subtitles.add(new Subtitle(startTime,endTime,new SubtitleText(subtitleSegments)));
-			}
-
-		}catch (NoSuchElementException| InvalidTimestampFormatException| InvalidDelimiterException e) {
-				throw new CorruptedSrtFileException(linesRead,subtitles,e);
-		}finally
-		{
-			scanner.close();
-		}
-		return subtitles;
-	}
+            if(!scanner.hasNextLine()){
+                throw new CorruptedSrtFileException("Empty file",0,subtitles);
+            }
+            try {
+                while (scanner.hasNextLine()) {
+                    StringBuilder subtitleString=new StringBuilder();
+                    /* We assign our own ID's, ignore the ID given in the file. */
+                    scanner.nextLine();
+                    linesRead++;
 
 
+                    //todo failt aktuell noch wenn ich nach dem timestamp eine zeile frei hab und dann den text und dann als ende wieder normal eine zeile frei -> fix
+                    /* Read the Timestamps from the file. */
+                    String[] timestamps = scanner.nextLine().split(" --> ");
+                    linesRead++;
+                    if (timestamps.length != 2) throw new InvalidTimestampFormatException("line: " + linesRead + " was invalid");
+
+                    Timestamp startTime = new Timestamp(timestamps[0]);
+                    Timestamp endTime = new Timestamp(timestamps[1]);
 
 
+                    String line = scanner.nextLine();
+                    linesRead++;
+                    while (!line.equals("")) {
+                        subtitleString.append(line);
+                        subtitleString.append(NEW_LINE_DELIMITER);
+                        line = scanner.nextLine();
+                        linesRead++;
+                    }
 
-	public static List<List<SubtitleSegment>>   createSubtitleSegments(@NonNull String subtitleString) throws InvalidDelimiterException{
+                    List<List<SubtitleSegment>> subtitleSegments = createSubtitleSegments(subtitleString.toString());
+                    subtitles.add(new Subtitle(startTime,endTime,new SubtitleText(subtitleSegments)));
+                }
+
+            }catch (NoSuchElementException| InvalidTimestampFormatException| InvalidDelimiterException e) {
+                throw new CorruptedSrtFileException(linesRead,subtitles,e);
+            }
+            finally {
+                scanner.close();
+            }
+            return subtitles;
+        }
+
+
+        public static List<List<SubtitleSegment>>   createSubtitleSegments(@NonNull String subtitleString) throws InvalidDelimiterException{
         List<List<SubtitleSegment>> result = new ArrayList<>();
         List<SubtitleSegment> currentLine = new ArrayList<>();
         StringBuilder currentText = new StringBuilder();
