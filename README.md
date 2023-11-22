@@ -44,7 +44,7 @@ The program will generate a folder named "fonts" in the directory, the jar is lo
 You can add your own fonts to this folder.  
 It is expected that there is always a font pair present, with the follwing syntax:  
 \<fontname\>.\<filetype\> and \<fontname\>.italic.\<filetype\>.  
-Supported font-types are .otf and .ttf.  
+Supported file-types are .otf and .ttf.  
   
   
 ## requirements  
