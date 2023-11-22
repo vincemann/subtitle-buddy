@@ -60,7 +60,7 @@ It depends on your OS, whether the subtitles stay on top, when switching to full
 - There are no overlay issues detected on Windows yet.    
 - On Ubuntu, after enableing fullscreen on your browsers video player, you have to press strg+tab, until the focus is back on the subtitle-buddy program.  
 
-# encoding issues  
+## encoding issues  
 if you experience encoding isses ( some characters are not displayed properly),   
 you should transform your srt file to utf-8 [here](https://subtitletools.com/convert-text-files-to-utf8-online).  
 if you want a different encoding, you can set it in application.properties file -  
