@@ -6,7 +6,7 @@ import io.github.vincemann.subtitlebuddy.Main;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Integrationtests should implement this interface in order to get the application injector
+ * Integration tests should implement this interface in order to get the application injector
  */
 public interface IntegrationTest {
 

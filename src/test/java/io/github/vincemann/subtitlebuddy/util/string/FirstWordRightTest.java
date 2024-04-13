@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.util.stringUtils;
+package io.github.vincemann.subtitlebuddy.util.string;
 
 import io.github.vincemann.subtitlebuddy.util.StringUtils;
 import org.junit.Assert;
@@ -10,20 +10,19 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class LastWordRightTest {
+public class FirstWordRightTest {
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                {"    Hallo ich bin ein Satz","Satz"},
-                {"Hallo wie gehts?","gehts?"},
-                {"__I bims 1 word", "word"},
-                {"langesSoloWort", "langesSoloWort"},
-                {"eyo was geht bar               ","bar"}
+                {"    Hallo ich bin ein Satz","Hallo"},
+                {"Hallo wie gehts?","Hallo"},
+                {"__I bims 1 word", "__I"},
+                {"langesSoloWort", "langesSoloWort"}
         });
     }
 
-    public LastWordRightTest(String inputSequence, String outputFirstWord) {
+    public FirstWordRightTest(String inputSequence, String outputFirstWord) {
         this.inputSequence = inputSequence;
         this.outputFirstWord = outputFirstWord;
     }
@@ -33,6 +32,6 @@ public class LastWordRightTest {
 
     @Test()
     public void testRightSequences(){
-        Assert.assertEquals(outputFirstWord,StringUtils.findLastWord(inputSequence));
+        Assert.assertEquals(outputFirstWord,StringUtils.findFirstWord(inputSequence));
     }
 }

@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.util.stringUtils;
+package io.github.vincemann.subtitlebuddy.util.string;
 
 import io.github.vincemann.subtitlebuddy.util.StringUtils;
 import org.junit.Test;

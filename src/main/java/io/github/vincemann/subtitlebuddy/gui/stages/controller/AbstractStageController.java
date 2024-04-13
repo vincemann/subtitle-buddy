@@ -30,7 +30,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 @Log4j
 @NoArgsConstructor
-abstract class AbstractStageController {
+public abstract class AbstractStageController {
 
     private StageState stageState = StageState.UNINITIALIZED;
     private Stage stage;

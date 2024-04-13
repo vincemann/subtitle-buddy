@@ -51,7 +51,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 @io.github.vincemann.subtitlebuddy.gui.stages.OptionsStageController
 public class OptionsStageController extends AbstractStageController implements OptionsWindow {
-    private static final String OPTIONS_STAGE_FXML_FILE_PATH = "/optionsStage.fxml";
+    private static final String OPTIONS_STAGE_FXML_FILE_PATH = "/options-stage.fxml";
 
     @FXML
     private ColorPicker colorChooser;

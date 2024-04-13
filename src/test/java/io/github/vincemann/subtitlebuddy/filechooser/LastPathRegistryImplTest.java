@@ -1,11 +1,11 @@
-package io.github.vincemann.subtitlebuddy.fileChooser;
+package io.github.vincemann.subtitlebuddy.filechooser;
 
 import io.github.vincemann.subtitlebuddy.config.properties.AbstractApacheConfigFileTest;
 import io.github.vincemann.subtitlebuddy.config.properties.PropertyAccessException;
-import io.github.vincemann.subtitlebuddy.filechooser.lathpath.InvalidParentDirectoryException;
-import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.PropertiesFileLastPathRegistry;
 import io.github.vincemann.subtitlebuddy.config.properties.PropertyNotFoundException;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.LastPathRegistry;
+import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.PropertiesFileLastPathRegistry;
+import io.github.vincemann.subtitlebuddy.util.FileUtils;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.After;
 import org.junit.Assert;
@@ -39,8 +39,8 @@ public class LastPathRegistryImplTest extends AbstractApacheConfigFileTest {
         this.lastPathRegistry.getSavedPath();
     }
     @Test
-    public void testSaveAndGetPath() throws InvalidParentDirectoryException, PropertyAccessException {
-        this.lastPathRegistry.savePath(testFile);
+    public void testSaveAndGetPath() throws PropertyAccessException {
+        this.lastPathRegistry.savePath(FileUtils.getParentDir(testFile));
         String lastPath = this.lastPathRegistry.getSavedPath();
         Assert.assertEquals(TEST_LAST_PATH_FILE__PARENT,lastPath);
     }

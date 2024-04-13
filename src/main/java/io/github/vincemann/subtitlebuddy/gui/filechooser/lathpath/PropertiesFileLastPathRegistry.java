@@ -40,7 +40,7 @@ public class PropertiesFileLastPathRegistry implements LastPathRegistry {
     @Override
     public void savePath(File file) throws PropertyAccessException {
         log.trace("saving path: " + file);
-        String path = file.getAbsolutePath();
+        String path = file.getPath();
         configuration.saveProperty(PropertyFileKeys.LAST_PATH, path);
         log.debug("Successfully saved path: " + path);
 

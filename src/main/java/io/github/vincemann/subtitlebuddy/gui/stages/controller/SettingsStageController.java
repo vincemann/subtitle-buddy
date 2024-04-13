@@ -52,7 +52,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController
 @Singleton
 public class SettingsStageController extends AbstractStageController implements SettingsSrtDisplayer {
-    private static final String SETTINGS_STAGE_FXML_FILE_PATH = "/settingsStage.fxml";
+    private static final String SETTINGS_STAGE_FXML_FILE_PATH = "/settings-stage.fxml";
     private static final int SETTINGS_CLICK_WARNING_SIZE = 40;
     //millis
     private static final int MIN_TIME_STAMP_WARNING_DURATION = 1000;

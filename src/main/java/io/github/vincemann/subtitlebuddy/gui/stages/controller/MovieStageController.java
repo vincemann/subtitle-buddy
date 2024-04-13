@@ -62,7 +62,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @io.github.vincemann.subtitlebuddy.gui.stages.MovieStageController
 public class MovieStageController extends AbstractStageController implements MovieSrtDisplayer {
 
-    private static final String MOVIE_STAGE_FXML_FILE_PATH = "/movieStage.fxml";
+    private static final String MOVIE_STAGE_FXML_FILE_PATH = "/movie-stage.fxml";
     private static final int MOVIE_CLICK_WARNING_SIZE = 60;
     //200 millis in nano
     private static final long SUBTITLE_UPDATE_SLEEP_DURATION = 200000000L;

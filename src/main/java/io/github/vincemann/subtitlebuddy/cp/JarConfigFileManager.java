@@ -38,9 +38,6 @@ public class JarConfigFileManager implements ConfigFileManager {
         try {
             // first check if config file is already extracted into jar folder
             Path jarFolder = executableLocator.findPath().getParent();
-            if (jarFolder == null){
-                throw new ConfigFileException("Could not find running executable.");
-            }
             File configFile = FileUtils.findInDir(jarFolder, fileName);
             if (configFile != null){
                 return configFile;

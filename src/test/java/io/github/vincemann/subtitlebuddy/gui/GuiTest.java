@@ -11,7 +11,7 @@ import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.stages.StageState;
 import io.github.vincemann.subtitlebuddy.gui.stages.controller.AbstractStageController;
 import io.github.vincemann.subtitlebuddy.guice.IntegrationTest;
-import io.github.vincemann.subtitlebuddy.guice.modules.mockModules.MockFileChooserModule;
+import io.github.vincemann.subtitlebuddy.guice.MockFileChooserModule;
 import io.github.vincemann.subtitlebuddy.Main;
 import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.util.LoggingUtils;
@@ -140,9 +140,7 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
                 new MockFileChooserModule(testStringsFile,testPropertiesFile),
                 new ParserModule(testStringsFile, testPropertiesFile) ,
                 new GuiModule(testStringsFile, testPropertiesFile,stage),
-                new UserInputHandlerModule() ,
-                new SystemCommandModule() ,
-                new OsModule()
+                new UserInputHandlerModule()
         );
         stage.show();
     }

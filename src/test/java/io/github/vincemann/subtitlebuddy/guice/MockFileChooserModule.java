@@ -1,11 +1,11 @@
-package io.github.vincemann.subtitlebuddy.guice.modules.mockModules;
+package io.github.vincemann.subtitlebuddy.guice;
 
 import io.github.vincemann.subtitlebuddy.config.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.FileChooser;
 import io.github.vincemann.subtitlebuddy.gui.dialog.AlertDialog;
 import io.github.vincemann.subtitlebuddy.gui.dialog.ContinueDialog;
-import io.github.vincemann.subtitlebuddy.guice.mockedProviders.MockedFileChooserProvider;
+import io.github.vincemann.subtitlebuddy.guice.providers.MockedFileChooserProvider;
 import io.github.vincemann.subtitlebuddy.module.FileChooserModule;
 
 

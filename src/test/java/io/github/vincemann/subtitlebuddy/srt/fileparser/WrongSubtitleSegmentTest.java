@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.srt.subtitleTransformer;
+package io.github.vincemann.subtitlebuddy.srt.fileparser;
 
 import io.github.vincemann.subtitlebuddy.srt.SubtitleSegment;
 import io.github.vincemann.subtitlebuddy.srt.parser.InvalidDelimiterException;

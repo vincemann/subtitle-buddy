@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.guice.mockedProviders;
+package io.github.vincemann.subtitlebuddy.guice.providers;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
