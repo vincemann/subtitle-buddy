@@ -64,9 +64,7 @@ public class OptionsTest extends GuiTest {
         findSrtDisplayer(MovieSrtDisplayer.class).setFontColor(Color.WHITE);
         refreshGui();
         focusStage(OptionsStageController.class);
-        Thread.sleep(2000);
         Color selectedColor = optionsPage.selectRandomColor(Color.WHITE);
-        Thread.sleep(2000);
         Assert.assertNotEquals(Color.WHITE, selectedColor);
         refreshGui();
         Assert.assertEquals(selectedColor, findSrtDisplayer(MovieSrtDisplayer.class).getFontColor());
