@@ -56,16 +56,18 @@ public class OptionsTest extends GuiTest {
     }
 
     @Test
-    public void testChangeColorOnMovieMode() throws TimeoutException {
+    public void testChangeColorOnMovieMode() throws TimeoutException, InterruptedException {
         focusStage(SettingsStageController.class);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(SettingsStageController.class);
         settingsPage.switchToMovieMode();
-        findSrtDisplayer(MovieSrtDisplayer.class).setFontColor(Color.RED);
+        findSrtDisplayer(MovieSrtDisplayer.class).setFontColor(Color.WHITE);
         refreshGui();
         focusStage(OptionsStageController.class);
-        Color selectedColor = optionsPage.selectRandomColor(Color.RED);
-        Assert.assertNotEquals(Color.RED, selectedColor);
+        Thread.sleep(2000);
+        Color selectedColor = optionsPage.selectRandomColor(Color.WHITE);
+        Thread.sleep(2000);
+        Assert.assertNotEquals(Color.WHITE, selectedColor);
         refreshGui();
         Assert.assertEquals(selectedColor, findSrtDisplayer(MovieSrtDisplayer.class).getFontColor());
     }

@@ -1,118 +1,114 @@
-
-buildscript {
-    dependencies {
-        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
-        //fat jar
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
-    }
-    repositories {
-        mavenCentral()
-    }
-}
-
 plugins {
     id 'java'
-    //integrate lombok into gradle
-    id 'io.franzbecker.gradle-lombok' version '2.0'
-    //fat jar
-    id 'com.github.johnrengelman.shadow' version '4.0.4'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'java'
+application {
+    mainClassName = 'io.github.vincemann.subtitlebuddy.Main'
+}
+
 
 shadowJar {
-
+    archiveClassifier.set('')
+    mergeServiceFiles()
+    manifest {
+        attributes 'Main-Class': 'io.github.vincemann.subtitlebuddy.Main'
+    }
 }
+
 jar {
     manifest {
         attributes(
-                'Main-Class': 'io.github.vincemann.subtitleBuddy.main.Main'
+                'Main-Class': 'io.github.vincemann.subtitlebuddy.Main'
         )
     }
 }
 
-
-apply plugin: 'javafx-gradle-plugin'
-
 test {
     // this is here so i can pass in cli argument, in order to run tests in headless mode 
     systemProperty 'headless', System.getProperty('headless')
+
+    doFirst {
+        jvmArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'javafx.controls,javafx.fxml',
+                '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+                '--add-opens', 'javafx.graphics/com.sun.javafx.application=ALL-UNNAMED'
+        ]
+    }
 }
 
-jfx {
-    // minimal requirement for jfxJar-task
-    mainClass = 'io.github.vincemann.subtitleBuddy.main.Main'
+javafx {
+    version = "17"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
 
-    // minimal requirement for jfxNative-task
-    vendor = 'io.github.vincemann'
+run {
+    doFirst {
+        jvmArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'javafx.controls,javafx.fxml',
+                '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+                '--add-opens', 'javafx.graphics/com.sun.javafx.application=ALL-UNNAMED'
+        ]
+    }
 }
 
 group = 'io.github.vincemann'
 version = '1.0.3'
-sourceCompatibility = 1.8
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
 }
 
+
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
 
-    //compile 'javafx:javafx.controls:11.0.0'
-
-    // https://mvnrepository.com/artifact/com.google.inject/guice
-    compile group: 'com.google.inject', name: 'guice', version: '4.0'
-    // https://mvnrepository.com/artifact/com.google.inject.extensions/guice-assistedinject
-    compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '3.0'
-    // https://mvnrepository.com/artifact/com.google.inject.extensions/guice-multibindings
-    compile group: 'com.google.inject.extensions', name: 'guice-multibindings', version: '4.2.1'
+    implementation group: 'com.google.inject', name: 'guice', version: '4.0'
+    implementation group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '3.0'
+    implementation group: 'com.google.inject.extensions', name: 'guice-multibindings', version: '4.2.1'
 
 
-    //lombok
-    // https://mvnrepository.com/artifact/log4j/log4j
-    compile group: 'log4j', name: 'log4j', version: '1.2.17'
-    compileOnly 'org.projectlombok:lombok:1.18.8'
-
+    // lombok
+    implementation group: 'log4j', name: 'log4j', version: '1.2.17'
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
 
     //validation
-    // https://mvnrepository.com/artifact/javax.validation/validation-api
-    compile group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
+    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 
     //guava (event handling)
-    // https://mvnrepository.com/artifact/com.google.guava/guava
-    compile group: 'com.google.guava', name: 'guava', version: '11.0.2'
+    implementation group: 'com.google.guava', name: 'guava', version: '33.0.0-jre'
 
-    //apache COMMONS
-    // https://mvnrepository.com/artifact/commons-configuration/commons-configuration
-    compile group: 'commons-configuration', name: 'commons-configuration', version: '1.10'
+    // testfx
+    testImplementation group: 'org.testfx', name: 'testfx-core', version: '4.0.18'
+    testImplementation group: 'org.testfx', name: 'testfx-junit', version: '4.0.18'
+    testImplementation group: 'org.loadui', name: 'testFx', version: '3.1.2'
+    testImplementation "junit:junit:4.13-beta-3"
 
+    // utils
+    implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.10'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+    implementation group: 'org.springframework', name: 'spring-core', version: '5.3.14'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 
-    //TESTFX
-    // https://mvnrepository.com/artifact/org.testfx/testfx-core
-    testCompile group: 'org.testfx', name: 'testfx-core', version: '4.0.15-alpha'
-    // https://mvnrepository.com/artifact/org.testfx/testfx-junit
-    testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.15-alpha'
-    // https://mvnrepository.com/artifact/org.testfx/openjfx-monocle
-    testCompile group: 'org.testfx', name: 'openjfx-monocle', version: '1.8.0_20'
-    // https://mvnrepository.com/artifact/org.loadui/testFx
-    testCompile group: 'org.loadui', name: 'testFx', version: '3.1.2'
-    
-
-
-    //utils
-    //OS detection & more
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
-    // https://mvnrepository.com/artifact/org.springframework/spring-core
-    compile group: 'org.springframework', name: 'spring-core', version: '5.1.5.RELEASE'
-    // https://mvnrepository.com/artifact/commons-io/commons-io
-    compile group: 'commons-io', name: 'commons-io', version: '2.6'
-
-
-
-    //jnative hook
+    // jnative hook
     // https://mvnrepository.com/artifact/com.1stleg/jnativehook
-    compile group: 'com.1stleg', name: 'jnativehook', version: '2.0.2'
+    implementation group: 'com.1stleg', name: 'jnativehook', version: '2.0.2'
 }
 
+compileJava {
+    options.compilerArgs += [
+            '--add-opens', 'jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
+            '--add-opens', 'jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+            '--add-opens', 'jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
+            '--add-opens', 'jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+            '--add-opens', 'jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
+            '--add-opens', 'jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED'
+    ]
+}

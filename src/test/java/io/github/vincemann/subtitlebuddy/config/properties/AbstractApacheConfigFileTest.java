@@ -1,7 +1,6 @@
 package io.github.vincemann.subtitlebuddy.config.properties;
 
 import io.github.vincemann.subtitlebuddy.TestFiles;
-import lombok.Getter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.junit.After;
 import org.junit.Assert;
@@ -11,7 +10,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-@Getter
 public abstract class AbstractApacheConfigFileTest {
 
     private PropertiesFile emptyTestPropertiesFile;
@@ -50,5 +48,9 @@ public abstract class AbstractApacheConfigFileTest {
         }
         scanner.close();
         return false;
+    }
+
+    public PropertiesFile getEmptyTestPropertiesFile() {
+        return emptyTestPropertiesFile;
     }
 }

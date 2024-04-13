@@ -20,8 +20,6 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
-import lombok.Getter;
-import lombok.Setter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,10 +39,17 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
 
     private static final long GUI_TEST_TIME_OUT = 3000;
 
-    @Getter
-    @Setter
+
     private static class Result{
         private boolean done = false;
+
+        public boolean isDone() {
+            return done;
+        }
+
+        public void setDone(boolean done) {
+            this.done = done;
+        }
     }
 
     @BeforeClass
