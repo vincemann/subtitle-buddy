@@ -69,8 +69,6 @@ public class GuiModule extends PropertyFilesModule {
                 .to(getPropertiesFile().getInt(PropertyFileKeys.FAST_FORWARD_DELTA));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.CLICK_WARNING_IMAGE_PATH))
                 .to(getPropertiesFile().getString(PropertyFileKeys.CLICK_WARNING_IMAGE_PATH));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.FONTS_PATH))
-                .to(getPropertiesFile().getString(PropertyFileKeys.FONTS_PATH));
         List<String> settingsWindowSizeList = (List<String>)(Object) getPropertiesFile().getList(PropertyFileKeys.SETTINGS_WINDOW_SIZE);
         bind(Vector2D.class).annotatedWith(Names.named(PropertyFileKeys.SETTINGS_WINDOW_SIZE))
                 .toInstance(new Vector2D(Integer.valueOf(settingsWindowSizeList.get(0)),Integer.valueOf(settingsWindowSizeList.get(1))));

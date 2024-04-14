@@ -25,9 +25,9 @@ public interface SrtFontManager {
 
     SrtFonts loadDefaultFont();
 
-    SrtFonts loadDefaultFont(double fontSize);
-
     Color getFontColor();
+
+    SrtFonts loadDefaultFont(double fontSize);
 
     void setFontColor(Color color);
 

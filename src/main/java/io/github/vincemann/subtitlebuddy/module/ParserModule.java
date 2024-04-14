@@ -10,8 +10,8 @@ import io.github.vincemann.subtitlebuddy.srt.parser.SrtParserEventHandler;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtParserEventHandlerImpl;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.LastPathRegistry;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.PropertiesFileLastPathRegistry;
-import io.github.vincemann.subtitlebuddy.srt.font.FontsDirectoryManager;
-import io.github.vincemann.subtitlebuddy.srt.font.FontsDirectoryManagerImpl;
+import io.github.vincemann.subtitlebuddy.srt.font.FontsDirectory;
+import io.github.vincemann.subtitlebuddy.srt.font.FontsDirectoryImpl;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFileProvider;
 import io.github.vincemann.subtitlebuddy.srt.font.SrtFontManager;
 import io.github.vincemann.subtitlebuddy.srt.font.SrtFontManagerImpl;
@@ -36,8 +36,8 @@ public class ParserModule extends PropertyFilesModule {
     protected void initPropertyBindings() {
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.UPDATER_DELAY))
                 .to(getPropertiesFile().getLong(PropertyFileKeys.UPDATER_DELAY));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.USER_DEFAULT_FONT_PATH))
-                .to(getPropertiesFile().getString(PropertyFileKeys.USER_DEFAULT_FONT_PATH));
+        bindConstant().annotatedWith(Names.named(PropertyFileKeys.USER_DEFAULT_FONT))
+                .to(getPropertiesFile().getString(PropertyFileKeys.USER_DEFAULT_FONT));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.USER_FONT_SIZE))
                 .to(getPropertiesFile().getString(PropertyFileKeys.USER_FONT_SIZE));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.ENCODING))
@@ -58,7 +58,7 @@ public class ParserModule extends PropertyFilesModule {
         bind(EventBus.class).to(EventBusImpl.class);
         bind(SrtParserEngine.class).to(SrtParserEngineImpl.class);
         bind(SrtFontManager.class).to(SrtFontManagerImpl.class);
-        bind(FontsDirectoryManager.class).to(FontsDirectoryManagerImpl.class);
+        bind(FontsDirectory.class).to(FontsDirectoryImpl.class);
         bind(SrtParserEventHandler.class).to(SrtParserEventHandlerImpl.class);
     }
 }

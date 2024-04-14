@@ -13,7 +13,7 @@ import io.github.vincemann.subtitlebuddy.events.SrtFontColorChangeEvent;
 import io.github.vincemann.subtitlebuddy.events.SrtFontChangeEvent;
 import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
 import io.github.vincemann.subtitlebuddy.srt.font.SrtFontLoadingException;
-import io.github.vincemann.subtitlebuddy.srt.font.FontsDirectoryManager;
+import io.github.vincemann.subtitlebuddy.srt.font.FontsDirectory;
 import io.github.vincemann.subtitlebuddy.gui.stages.StageState;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKey;
 import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
@@ -71,8 +71,7 @@ public class OptionsStageController extends AbstractStageController implements O
     private SrtFontManager srtFontManager;
 
 
-    private String userFontsPath;
-    private FontsDirectoryManager fontsLocator;
+    private FontsDirectory fontsLocator;
 
     private ChangeListener<SrtFonts> fontChoiceBoxChangeListener;
     private ChangeListener<Boolean> nextClickChangeListener;
@@ -80,14 +79,14 @@ public class OptionsStageController extends AbstractStageController implements O
 
 
     @Inject
-    public OptionsStageController(EventBus eventBus, @Named(PropertyFileKeys.FONTS_PATH) String userFontsPath,
+    public OptionsStageController(EventBus eventBus,
                                   SrtFontManager srtFontManager,
                                   @Named(UIStringsKeys.OPTIONS_WINDOW_TITLE) String title,
                                   @Named(PropertyFileKeys.OPTIONS_WINDOW_SIZE) Vector2D size,
                                   @Named(PropertyFileKeys.NEXT_CLICK_HOT_KEY_TOGGLED) boolean nextClickCountsToggled,
                                   @Named(PropertyFileKeys.START_STOP_HOT_KEY_TOGGLED) boolean startStopHotKeyToggled,
                                   ClassPathFileLocator classPathFileLocator,
-                                  FontsDirectoryManager fontsLocator)
+                                  FontsDirectory fontsLocator)
             throws IOException {
         super(classPathFileLocator.findOnClassPath(OPTIONS_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(), title, size);
         createStage(this);
@@ -96,9 +95,8 @@ public class OptionsStageController extends AbstractStageController implements O
         this.srtFontManager = srtFontManager;
         // apache constants only supports List<Object> getList()
         this.fontPathMap = new HashMap<>();
-        this.userFontsPath = userFontsPath;
         updateCheckBoxes(nextClickCountsToggled, startStopHotKeyToggled);
-        populateFontChoiceBox(srtFontManager.getUserFontSize(), userFontsPath);
+        populateFontChoiceBox(srtFontManager.getUserFontSize());
     }
 
     private void updateCheckBoxes(boolean nextClickToggled, boolean startStopToggled) {
@@ -185,25 +183,26 @@ public class OptionsStageController extends AbstractStageController implements O
     }
 
 
-    private void populateFontChoiceBox(double userFontSize, String fontPath) throws IOException {
-        log.trace("populating font choice box from fonts path: " + fontPath);
+    private void populateFontChoiceBox(double userFontSize) throws IOException {
+        log.trace("populating font choice box from fonts dir");
 
         try {
-            Path absFontPath = fontsLocator.findOrCreateFontDirectory(Paths.get(fontPath));
-            log.debug("using font path: " + absFontPath.toString());
-            try (Stream<Path> paths = Files.walk(absFontPath)) {
+            Path fontsDirPath = fontsLocator.findOrCreate();
+            log.debug("using font path: " + fontsDirPath.toString());
+            try (Stream<Path> paths = Files.walk(fontsDirPath)) {
                 paths
                         .filter(Files::isRegularFile)
                         .forEach(path -> {
-                            String fontFileAbsPathString = path.toAbsolutePath().toString();
+                            // path is relative to fonts dir (config/fonts)
+                            String fontFileRelPath = path.toAbsolutePath().toString();
                             //dont load italic fonts, font manger already loads regular and italic fonts, if u give him the regular font path
-                            if (!Paths.get(fontFileAbsPathString).getFileName().toString().contains("italic")) {
+                            if (!Paths.get(fontFileRelPath).getFileName().toString().contains("italic")) {
                                 try {
-                                    SrtFonts srtFonts = srtFontManager.loadFont(fontFileAbsPathString, userFontSize);
+                                    SrtFonts srtFonts = srtFontManager.loadFont(fontFileRelPath, userFontSize);
                                     fontChoiceBox.getItems().add(srtFonts);
-                                    fontPathMap.put(srtFonts, fontFileAbsPathString);
+                                    fontPathMap.put(srtFonts, fontFileRelPath);
                                 } catch (SrtFontLoadingException | MalformedURLException e) {
-                                    log.error("could not load font (or respective italic font) with fontpath: " + fontFileAbsPathString + ", caused by: ", e);
+                                    log.error("could not load font (or respective italic font) with fontpath: " + fontFileRelPath + ", caused by: ", e);
                                 }
                             }
                         });

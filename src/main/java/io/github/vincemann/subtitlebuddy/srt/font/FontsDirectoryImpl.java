@@ -24,9 +24,9 @@ import java.util.List;
  */
 @Log4j
 @Singleton
-public class FontsDirectoryManagerImpl implements FontsDirectoryManager {
+public class FontsDirectoryImpl implements FontsDirectory {
 
-    // relative to jar
+    // relative to config dir
     private static final String DEFAULT_FONT_PATH = "fonts";
     private static final String DEFAULT_FONT_FILES_PATTERN = "/fonts/*";
 
@@ -34,45 +34,29 @@ public class FontsDirectoryManagerImpl implements FontsDirectoryManager {
     private ClassPathFileLocator classPathFileLocator;
 
     @Inject
-    public FontsDirectoryManagerImpl(ConfigDirectory configDirectory, ClassPathFileLocator classPathFileLocator) {
+    public FontsDirectoryImpl(ConfigDirectory configDirectory, ClassPathFileLocator classPathFileLocator) {
         this.configDirectory = configDirectory;
         this.classPathFileLocator = classPathFileLocator;
     }
 
     @Override
-    public Path findOrCreateFontDirectory(Path userFontPath) throws FontsLocationNotFoundException {
+    public Path findOrCreate() throws FontsLocationNotFoundException {
         try {
-            Path absFontPath = userFontPath.toAbsolutePath();
-            if (!absFontPath.toFile().exists()) {
-                log.warn("user font directory" + absFontPath + " does not exist");
+            Path configDir = configDirectory.findOrCreate();
+            Path fontsDir = configDir.resolve(DEFAULT_FONT_PATH).toAbsolutePath();
+            if (!fontsDir.toFile().exists()) {
+                log.warn("font directory" + fontsDir + " does not exist");
                 log.debug("creating it for user");
-                try {
-                    Files.createDirectory(userFontPath);
-                    log.debug("user font dir successfully created");
-                    absFontPath=userFontPath;
-                }catch (Exception e){
-                    log.warn("could not create dir at user font dir path",e);
-                    Path executablePath = configDirectory.findOrCreate();
-                    Path defaultFontsDirPath = executablePath.resolve(DEFAULT_FONT_PATH).toAbsolutePath();
-                    log.warn("using default font directory instead: " + defaultFontsDirPath.toString());
-                    if (defaultFontsDirPath.toFile().exists() && defaultFontsDirPath.toFile().isDirectory()) {
-                        log.debug("default font directory already exists");
-                        absFontPath = defaultFontsDirPath;
-                    } else {
-                        log.debug("default font directory does not exist, creating now");
-                        Files.createDirectory(defaultFontsDirPath);
-                        absFontPath = defaultFontsDirPath;
-                    }
-                }
-
+                Files.createDirectory(fontsDir);
+                log.debug("font dir successfully created");
                 log.debug( "adding default fonts now if necessary");
-                populateWithDefaultFontsIfNeeded(absFontPath);
+                populateWithDefaultFontsIfNeeded(fontsDir);
             }else {
-                log.debug("user font dir exists!");
+                log.debug("font dir already existing");
             }
 
-            log.debug("selected fonts path: " + absFontPath.toString());
-            return absFontPath;
+            log.debug("selected fonts path: " + fontsDir.toString());
+            return fontsDir;
         } catch (IOException | ConfigFileException e) {
             throw new FontsLocationNotFoundException(e);
         }

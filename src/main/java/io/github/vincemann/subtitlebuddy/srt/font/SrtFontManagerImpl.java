@@ -16,14 +16,16 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.google.common.base.Preconditions.*;
 
 /**
  * Component for loading srt fonts.
- * Loads font files from classpath.
+ * Loads font files from fonts dir (config/fonts).
  * Supports ttf and otf files.
  * For every normal font file it is expected to also find a italic font file with the same name but with the suffix "italic" before the file extension.
  */
@@ -32,22 +34,22 @@ import static com.google.common.base.Preconditions.*;
 public class SrtFontManagerImpl implements SrtFontManager {
     private static final String ITALIC_FILE_SUFFIX = "italic";
 
-    private String userFontPath;
+    private String defaultFontFilename;
     @Getter
     private double userFontSize;
     @Getter
     private Color userFontColor;
-    private ClassPathFileLocator classPathFileLocator;
+    private FontsDirectory fontsDirectory;
 
     @Inject
-    public SrtFontManagerImpl(@Named(PropertyFileKeys.USER_DEFAULT_FONT_PATH) String userFontPath,
+    public SrtFontManagerImpl(@Named(PropertyFileKeys.USER_DEFAULT_FONT) String defaultFontFilename,
                               @Named(PropertyFileKeys.USER_FONT_SIZE) Double userFontSize,
                               @Named(PropertyFileKeys.USER_FONT_COLOR) String userFontColorString,
-                              ClassPathFileLocator classPathFileLocator) {
-        this.userFontPath = userFontPath;
+                              FontsDirectory fontsDirectory) {
+        this.defaultFontFilename = defaultFontFilename;
         this.userFontSize = userFontSize;
         this.userFontColor = FontUtils.toColor(userFontColorString);
-        this.classPathFileLocator = classPathFileLocator;
+        this.fontsDirectory = fontsDirectory;
     }
 
 
@@ -62,9 +64,9 @@ public class SrtFontManagerImpl implements SrtFontManager {
     @Override
     public SrtFonts loadDefaultFont(double fontSize) {
         try {
-            checkNotNull(userFontPath);
+            checkNotNull(defaultFontFilename);
             checkState(fontSize>0);
-            return loadFont(userFontPath,fontSize);
+            return loadFont(defaultFontFilename,fontSize);
         } catch (Exception e) {
             log.error("Could not load applications default font, using System default Font instead ", e);
             return new SrtFonts(Font.getDefault(),Font.getDefault());
@@ -83,13 +85,14 @@ public class SrtFontManagerImpl implements SrtFontManager {
 
     /**
      * Find srt fonts with given path and size.
+     * @param fontFilename name of font file (must be within config/fonts dir)
      */
     @Override
-    public SrtFonts loadFont(String fontPath, double fontSize) throws SrtFontLoadingException {
+    public SrtFonts loadFont(String fontFilename, double fontSize) throws SrtFontLoadingException {
         try {
-            Font regularFont = findRegularFont(fontPath, fontSize);
+            Font regularFont = findRegularFont(fontFilename, fontSize);
             checkNotNull(regularFont);
-            Font italicFont = findItalicFont(fontPath, fontSize);
+            Font italicFont = findItalicFont(fontFilename, fontSize);
             checkNotNull(italicFont);
             return new SrtFonts(regularFont,italicFont);
         }catch (Exception e){
@@ -97,35 +100,39 @@ public class SrtFontManagerImpl implements SrtFontManager {
         }
     }
 
-    private Font findItalicFont(String fontPath, double fontSize) throws IOException, SrtFontLoadingException {
+    /**
+     * finds italic font for given regular font file.
+     * Give foo.otf and it will get foo.italic.otf
+     */
+    private Font findItalicFont(String fontPath, double fontSize) throws IOException, SrtFontLoadingException, FontsLocationNotFoundException {
         String fileType = FilenameUtils.getExtension(fontPath);
-        String italicFontPath = fontPath.substring(0,fontPath.length()-3)+ITALIC_FILE_SUFFIX+"."+fileType;
-        log.trace("italicFontName = " + italicFontPath);
-        File italicFontFile;
-        if(Paths.get(fontPath).isAbsolute()){
-            italicFontFile = new File(italicFontPath);
-        }else {
-            italicFontFile = classPathFileLocator.findOnClassPath(italicFontPath).getFile();
-        }
-        if(!italicFontFile.exists()){
-            throw new SrtFontLoadingException("Font with name: " + italicFontPath + " not found");
-        }
-        Font italicFont = Font.loadFont(new FileInputStream(italicFontFile),fontSize);
-        return italicFont;
+        String italicFontFilename = fontPath.substring(0,fontPath.length()-3)+ITALIC_FILE_SUFFIX+"."+fileType;
+        log.trace("italic font filename = " + italicFontFilename);
+        return resolveFont(italicFontFilename,fontSize);
     }
 
-    private Font findRegularFont(String fontPath, double fontSize) throws IOException {
-        String fileType = FilenameUtils.getExtension(fontPath);
-        log.trace("fileType : " + fileType + " of filepath: " + fontPath);
+    /**
+     * Find regular font with given name in fonts dir or as backup in classpath.
+     */
+    private Font findRegularFont(String fontFilename, double fontSize) throws IOException, FontsLocationNotFoundException, SrtFontLoadingException {
+        return resolveFont(fontFilename,fontSize);
+    }
+
+    private Font resolveFont(String fontFilename, double fontSize) throws FontsLocationNotFoundException, FileNotFoundException, SrtFontLoadingException {
+        String fileType = FilenameUtils.getExtension(fontFilename);
+        log.debug("loading font with file name: " + fontFilename);
         checkArgument(fileType.equals("ttf") || fileType.equals("otf"));
-        File fontFile;
-        if(Paths.get(fontPath).isAbsolute()){
-            fontFile = new File(fontPath);
-        }else {
-            fontFile= classPathFileLocator.findOnClassPath(fontPath).getFile();
+        Path fontsDir = fontsDirectory.findOrCreate();
+        log.debug("fonts directory: " + fontsDir.toString());
+        Path fontPath = fontsDir.resolve(fontFilename).toAbsolutePath();
+        log.debug("font path: " + fontPath.toString());
+        File fontFile = fontPath.toFile();
+        if(!fontFile.exists()){
+            throw new SrtFontLoadingException("Font with name: " + fontFile + " not found");
         }
-        Font regularFont = Font.loadFont(new FileInputStream(fontFile),fontSize);
-        return regularFont;
+        Font font = Font.loadFont(new FileInputStream(fontFile), fontSize);
+        log.debug("font loaded");
+        return font;
     }
 
 }

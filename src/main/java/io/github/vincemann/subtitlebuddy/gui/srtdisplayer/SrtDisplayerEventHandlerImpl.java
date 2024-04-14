@@ -51,7 +51,7 @@ public class SrtDisplayerEventHandlerImpl implements SrtDisplayerEventHandler {
         srtDisplayerProvider.get(SettingsSrtDisplayer.class).setCurrentFont(e.getSrtFonts());
         srtDisplayerProvider.get().displaySubtitle(srtDisplayerProvider.get().getLastSubtitleText());
         try {
-            properties.saveProperty(PropertyFileKeys.USER_DEFAULT_FONT_PATH,e.getFontPath());
+            properties.saveProperty(PropertyFileKeys.USER_DEFAULT_FONT,e.getFontPath());
         }
         catch (PropertyAccessException e1) {
             log.error("could not save path modification, "+ e1.getMessage());

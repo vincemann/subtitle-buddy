@@ -1,6 +1,7 @@
 
 out/
-
+releases/
+release.sh
 build/
 .gradle/
 \.idea/

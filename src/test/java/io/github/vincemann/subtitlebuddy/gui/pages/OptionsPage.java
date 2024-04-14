@@ -34,8 +34,8 @@ public class OptionsPage extends AbstractPage {
         return pickColor(colorChooser, defaultColor);
     }
 
-    private Color pickColor(ColorPicker colorPicker, Color defaultColor) throws TimeoutException {
-        int random = new Random().nextInt(12) + 1; // Random number between 1 and 12
+    private Color pickColor(ColorPicker colorPicker, Color defaultColor) {
+        int random = new Random().nextInt(6) + 1; // Random number between 1 and 6
         for (int i = 0; i < random; i++) {
             getDriver().type(KeyCode.DOWN);
         }
