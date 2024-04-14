@@ -1,12 +1,13 @@
 package io.github.vincemann.subtitlebuddy.module;
 
 import com.google.inject.AbstractModule;
+import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
+import io.github.vincemann.subtitlebuddy.config.ConfigDirectoryImpl;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileManager;
-import io.github.vincemann.subtitlebuddy.cp.JarConfigFileManager;
 import io.github.vincemann.subtitlebuddy.config.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
-import io.github.vincemann.subtitlebuddy.config.ExecutableLocator;
-import io.github.vincemann.subtitlebuddy.cp.JarLocator;
+import io.github.vincemann.subtitlebuddy.cp.JarConfigFileManager;
+
 
 public class ConfigFileModule extends AbstractModule {
 
@@ -21,7 +22,7 @@ public class ConfigFileModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(ExecutableLocator.class).to(JarLocator.class);
+        bind(ConfigDirectory.class).to(ConfigDirectoryImpl.class);
         bind(PropertiesFile.class).toInstance(propertiesManager);
         bind(UIStringsFile.class).toInstance(stringConfiguration);
         bind(ConfigFileManager.class).to(JarConfigFileManager.class);

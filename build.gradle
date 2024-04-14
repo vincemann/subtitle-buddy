@@ -29,10 +29,17 @@ jar {
 test {
     // this is here so i can pass in cli argument, in order to run tests in headless mode 
     systemProperty 'headless', System.getProperty('headless')
+
+    doFirst {
+        jvmArgs = [
+                '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+                '--add-opens', 'javafx.graphics/com.sun.javafx.application=ALL-UNNAMED'
+        ]
+    }
 }
 
 javafx {
-    version = "11"
+    version = "17"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 

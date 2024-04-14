@@ -2,7 +2,8 @@ package io.github.vincemann.subtitlebuddy.srt.font;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.config.ExecutableLocator;
+import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
+import io.github.vincemann.subtitlebuddy.config.ConfigFileException;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFile;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileLocator;
 import lombok.extern.log4j.Log4j;
@@ -29,12 +30,12 @@ public class FontsDirectoryManagerImpl implements FontsDirectoryManager {
     private static final String DEFAULT_FONT_PATH = "fonts";
     private static final String DEFAULT_FONT_FILES_PATTERN = "/fonts/*";
 
-    private ExecutableLocator executableLocator;
+    private ConfigDirectory configDirectory;
     private ClassPathFileLocator classPathFileLocator;
 
     @Inject
-    public FontsDirectoryManagerImpl(ExecutableLocator executableLocator, ClassPathFileLocator classPathFileLocator) {
-        this.executableLocator = executableLocator;
+    public FontsDirectoryManagerImpl(ConfigDirectory configDirectory, ClassPathFileLocator classPathFileLocator) {
+        this.configDirectory = configDirectory;
         this.classPathFileLocator = classPathFileLocator;
     }
 
@@ -51,7 +52,7 @@ public class FontsDirectoryManagerImpl implements FontsDirectoryManager {
                     absFontPath=userFontPath;
                 }catch (Exception e){
                     log.warn("could not create dir at user font dir path",e);
-                    Path executablePath = executableLocator.findPath();
+                    Path executablePath = configDirectory.findOrCreate();
                     Path defaultFontsDirPath = executablePath.resolve(DEFAULT_FONT_PATH).toAbsolutePath();
                     log.warn("using default font directory instead: " + defaultFontsDirPath.toString());
                     if (defaultFontsDirPath.toFile().exists() && defaultFontsDirPath.toFile().isDirectory()) {
@@ -72,7 +73,7 @@ public class FontsDirectoryManagerImpl implements FontsDirectoryManager {
 
             log.debug("selected fonts path: " + absFontPath.toString());
             return absFontPath;
-        } catch (IOException e) {
+        } catch (IOException | ConfigFileException e) {
             throw new FontsLocationNotFoundException(e);
         }
     }
