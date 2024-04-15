@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDisplayName</key>
+    <string>Subtitle Buddy</string>
+    <key>CFBundleExecutable</key>
+    <string>startup-script</string>
+    <key>CFBundleIdentifier</key>
+    <string>io.github.vincemann</string>
+    <key>CFBundleName</key>
+    <string>SubtitleBuddy</string>
+    <key>CFBundleIconFile</key>
+    <string>appicon.icns</string>
+    <key>CFBundleVersion</key>
+    <string>1.1.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.1</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.12.0</string> <!-- Minimum macOS version required -->
+    <key>NSHighResolutionCapable</key>
+    <true/>
+</dict>
+</plist>

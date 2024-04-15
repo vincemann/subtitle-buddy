@@ -7,10 +7,10 @@ platform="mac"
 # read version from generated jar file
 jarfile=`readlink -f build/libs/*$platform*.jar | cut -d '/' -f 9`
 echo "jar file: $jarfile"
-version="${jarfile#Subtitle-Buddy-}"  # Remove the part before the version
-version="${version%.jar}"             # Remove the .jar at the end
+version=$(echo $jarfile | sed -E 's/SubtitleBuddy-([0-9]+\.[0-9]+\.[0-9]+)-[a-z]+\.jar/\1/')
 jar_path= "build/libs/$jarfile"
 echo "version: $version"
+echo "jar path $jar_path"
 # deploy jars
 cp "$jar_path" releases/jar/
 echo "deployed jar file"

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=SubtitleBuddy
+Exec=AppRun
+Icon=icon
+Comment=Subtitle Buddy
+Categories=Utility;
+Terminal=false
