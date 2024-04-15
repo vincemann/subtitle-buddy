@@ -3,7 +3,7 @@ out/
 *.dmg
 *.exe
 *.AppImage
-!./releases/linux/appimagetool-x86_64.AppImage
+!releases/linux/appimagetool-x86_64.AppImage
 *.zip
 releases/linux/x64/SubtitleBuddy.AppDir/usr/lib/jre
 releases/macos/x64/SubtitleBuddy.app/Contents/Java/jre

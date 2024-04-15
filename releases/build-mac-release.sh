@@ -1,4 +1,7 @@
 #!/bin/bash
+# build fat jar with javafx files for mac
+# build dmg file for x64 (using genisoimage)
+# create zip of binary 
 
 ./gradlew shadowJar -PtargetPlatform=mac
 builddir=`pwd`
@@ -24,6 +27,7 @@ zipname="subtitle-buddy-$version-macos-x64.zip"
 echo "building dmg image"
 cd releases/macos/x64
 genisoimage -D -V "SubtitleBuddy" -no-pad -r -apple -o "$mac_image_name" SubtitleBuddy.app/
+rm "$zipname"
 zip -r "$zipname" "$mac_image_name"
 cd "$builddir"
 echo "done with macox x64"

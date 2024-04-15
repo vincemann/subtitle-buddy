@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# build fat jar with javafx files for linux
+# build linux AppImage binary x64
+# create zip of binary 
+# correct jdk17 files must be copied into the following dirs:
+# releases/linux/x64/SubtitleBuddy.AppDir/usr/lib/jre
+
 ./gradlew shadowJar -PtargetPlatform=linux
 builddir=`pwd`
 
@@ -27,6 +33,7 @@ linux_image_name="subtitle-buddy-$version-linux-x64.AppImage"
 zipname="subtitle-buddy-$version-linux-x64.zip"
 cd releases/linux/x64
 export ARCH=x86_64; ../appimagetool-x86_64.AppImage SubtitleBuddy.AppDir "$linux_image_name"
+rm "$zipname"
 zip -r "$zipname" "$linux_image_name"
 cd "$builddir"
 echo "done with linux x64"

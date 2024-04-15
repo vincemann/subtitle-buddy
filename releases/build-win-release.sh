@@ -1,4 +1,9 @@
 #!/bin/bash
+# build fat jar with javafx files for windows
+# build windows installer exe binary for x64 (using inno installer within wine docker image)
+# create zip of binary 
+# correct jdk17 files must be copied into the following dirs:
+# releases/windows/x64/inno/jre
 
 ./gradlew shadowJar -PtargetPlatform=win
 builddir=`pwd`
@@ -24,6 +29,7 @@ zipname="subtitle-buddy-$version-windows-x64.zip"
 echo "building installer"
 cd releases/windows/x64/inno
 docker run --rm -i -v "$PWD:/work" amake/innosetup subtitle-buddy.iss
+rm "$zipname"
 zip -r "$zipname" "$windows_image_name"
 cd "$builddir"
 echo "done with windows x64"
