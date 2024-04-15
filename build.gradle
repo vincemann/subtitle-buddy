@@ -66,10 +66,6 @@ repositories {
 
 dependencies {
 
-//    // Select JavaFX dependency based on target platform
-//    implementation "org.openjfx:javafx-controls:$javafxVersion:$targetPlatform"
-//    implementation "org.openjfx:javafx-fxml:$javafxVersion:$targetPlatform"
-
     // DI
     implementation group: 'com.google.inject', name: 'guice', version: '5.0.1'
     implementation group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '5.0.1'
