@@ -5,17 +5,29 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
+group = 'io.github.vincemann'
+version = '1.1.0'
+
 application {
     mainClassName = 'io.github.vincemann.subtitlebuddy.Main'
 }
 
+ext {
+    javafxVersion = '17.0.1'
+    // Default to linux platform if not provided [linux, mac, win]
+    targetPlatform = project.hasProperty('targetPlatform') ? project.targetPlatform : 'linux'
+}
 
 shadowJar {
-    archiveClassifier.set('')
+    doFirst {
+        archiveClassifier.set('')
+        archiveFileName = "SubtitleBuddy-${version}-${targetPlatform}.jar"
+    }
     mergeServiceFiles()
     manifest {
         attributes 'Main-Class': 'io.github.vincemann.subtitlebuddy.Main'
     }
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
 }
 
 jar {
@@ -41,10 +53,9 @@ test {
 javafx {
     version = "17"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
+    platform = targetPlatform
 }
 
-group = 'io.github.vincemann'
-version = '1.0.3'
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -53,9 +64,13 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
 
+//    // Select JavaFX dependency based on target platform
+//    implementation "org.openjfx:javafx-controls:$javafxVersion:$targetPlatform"
+//    implementation "org.openjfx:javafx-fxml:$javafxVersion:$targetPlatform"
+
+    // DI
     implementation group: 'com.google.inject', name: 'guice', version: '5.0.1'
     implementation group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '5.0.1'
     implementation group: 'com.google.inject.extensions', name: 'guice-multibindings', version: '4.2.3'
@@ -66,10 +81,10 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
 
-    //validation
+    // validation
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 
-    //guava (event handling)
+    // event handling
     implementation group: 'com.google.guava', name: 'guava', version: '33.0.0-jre'
 
     // testfx
@@ -85,6 +100,5 @@ dependencies {
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 
     // jnative hook
-    // https://mvnrepository.com/artifact/com.1stleg/jnativehook
     implementation group: 'com.1stleg', name: 'jnativehook', version: '2.0.2'
 }
