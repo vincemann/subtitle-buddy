@@ -1,10 +1,10 @@
 package io.github.vincemann.subtitlebuddy.srt.parser;
 
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
+import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.Timestamp;
-import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 
 import java.util.Optional;
 

@@ -1,8 +1,9 @@
-package io.github.vincemann.subtitlebuddy.config.properties;
+package io.github.vincemann.subtitlebuddy.properties;
 
 import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.io.FileHandler;
 
@@ -19,6 +20,7 @@ public class ApachePropertiesFile extends PropertiesConfiguration implements Pro
     public ApachePropertiesFile(File file) throws ConfigurationException {
         this.file = file;
         this.setThrowExceptionOnMissing(true);
+        this.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
 
         // Initialize FileHandler to manage file loading and saving
         fileHandler = new FileHandler(this);

@@ -4,8 +4,7 @@ package io.github.vincemann.subtitlebuddy.srt.font;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.config.properties.PropertyFileKeys;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFileLocator;
+import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
 import io.github.vincemann.subtitlebuddy.util.fx.FontUtils;
 import javafx.scene.paint.Color;
@@ -19,7 +18,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static com.google.common.base.Preconditions.*;
 

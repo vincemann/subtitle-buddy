@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.config.properties;
+package io.github.vincemann.subtitlebuddy.properties;
 
 import java.io.File;
 import java.util.List;

@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
 import io.github.vincemann.subtitlebuddy.config.ConfigDirectoryImpl;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileManager;
-import io.github.vincemann.subtitlebuddy.config.properties.PropertiesFile;
+import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.cp.JarConfigFileManager;
 

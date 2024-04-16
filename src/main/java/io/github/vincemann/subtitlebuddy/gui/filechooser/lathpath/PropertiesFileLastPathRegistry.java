@@ -2,10 +2,10 @@ package io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.config.properties.PropertyFileKeys;
-import io.github.vincemann.subtitlebuddy.config.properties.PropertiesFile;
-import io.github.vincemann.subtitlebuddy.config.properties.PropertyAccessException;
-import io.github.vincemann.subtitlebuddy.config.properties.PropertyNotFoundException;
+import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
+import io.github.vincemann.subtitlebuddy.properties.PropertyAccessException;
+import io.github.vincemann.subtitlebuddy.properties.PropertyNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;

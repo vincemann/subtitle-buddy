@@ -45,7 +45,11 @@ test {
     doFirst {
         jvmArgs = [
                 '--module-path', classpath.asPath,
-                '--add-modules', 'hellomodule,javafx.controls,javafx.fxml',
+                '--module-path', classpath.asPath+"/lib",
+                '--add-modules', 'jnativehook,io.github.vincemann.subtitlebuddy.test,javafx.controls,javafx.fxml',
+                '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
+                '--add-opens', 'io.github.vincemann/io.github.vincemann=ALL-UNNAMED',
+                '--add-opens', 'javafx.graphics/com.sun.javafx.application=org.testfx',
                 '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
                 '--add-opens', 'javafx.graphics/com.sun.javafx.application=ALL-UNNAMED',
                 '--add-opens', 'javafx.graphics/com.sun.glass.ui=ALL-UNNAMED',
@@ -53,12 +57,17 @@ test {
         ]
     }
 }
+java {
+    modularity.inferModulePath = true
+}
+
 
 run {
     doFirst {
         jvmArgs = [
                 '--module-path', classpath.asPath,
-                '--add-modules', 'hellomodule,javafx.controls,javafx.fxml'
+                '--module-path', classpath.asPath+"/lib",
+                '--add-modules', 'jnativehook,io.github.vincemann.subtitlebuddy,javafx.controls,javafx.fxml'
         ]
     }
 }
@@ -79,6 +88,8 @@ repositories {
 
 dependencies {
 
+    implementation files('lib/jnativehook-2.1.0.jar')
+
     // Spring Core already includes spring-jcl which is a replacement for commons-logging
     implementation('org.springframework:spring-core:5.3.27'){
         exclude group: 'org.springframework', module: 'spring-jcl'
@@ -98,9 +109,7 @@ dependencies {
     implementation('commons-io:commons-io:2.11.0') {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
-    implementation('com.github.kwhat:jnativehook:2.2.2') {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
+    implementation 'com.1stleg:jnativehook:2.1.0'
 
 
     // lombok
@@ -112,8 +121,8 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.1'  // SLF4J binding for Log4j2
 
     // Log4j2 core libraries
-    implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
 
     implementation 'commons-logging:commons-logging:1.3.1'
 
@@ -132,14 +141,10 @@ dependencies {
         exclude module: 'hamcrest-all' // This might not be necessary if testfx-core does not depend on hamcrest-all directly.
     }
     testImplementation('org.testfx:testfx-junit:4.0.18') {
-        exclude module: 'hamcrest-all'
+        exclude module: 'hamcrest-core'
     }
-    testImplementation('org.loadui:testFx:3.1.2') {
-        exclude module: 'hamcrest-all'  // Exclude hamcrest-all specifically
-    }
-
-    // for headless stuff
-//    testImplementation group: 'org.testfx', name: 'openjfx-monocle', version: '17.0.10'
+    testImplementation('org.loadui:testFx:3.1.2')
+    testImplementation 'org.hamcrest:hamcrest-all:1.3'
     testImplementation "junit:junit:4.13-beta-3"
 
     // utils
@@ -149,5 +154,7 @@ dependencies {
     implementation('org.apache.commons:commons-lang3:3.12.0'){
         exclude group: 'commons-logging', module: 'commons-logging'
     }
+
+    implementation 'commons-beanutils:commons-beanutils:1.9.4'
 
 }

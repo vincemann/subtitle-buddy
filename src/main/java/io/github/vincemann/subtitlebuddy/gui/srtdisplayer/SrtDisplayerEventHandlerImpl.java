@@ -3,14 +3,14 @@ package io.github.vincemann.subtitlebuddy.gui.srtdisplayer;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.config.properties.PropertiesFile;
-import io.github.vincemann.subtitlebuddy.config.properties.PropertyAccessException;
-import io.github.vincemann.subtitlebuddy.config.properties.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
+import io.github.vincemann.subtitlebuddy.properties.PropertyAccessException;
+import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.events.MovieTextPositionChangedEvent;
 import io.github.vincemann.subtitlebuddy.events.SrtFontChangeEvent;
 import io.github.vincemann.subtitlebuddy.events.SrtFontColorChangeEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
-import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import lombok.extern.slf4j.Slf4j;
 
 

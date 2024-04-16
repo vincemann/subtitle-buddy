@@ -3,8 +3,6 @@ package io.github.vincemann.subtitlebuddy.srt.stopwatch;
 
 import com.google.inject.Singleton;
 
-import static io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState.*;
-
 @Singleton
 public class StopWatchImpl implements StopWatch {
 
@@ -15,7 +13,7 @@ public class StopWatchImpl implements StopWatch {
     /**
      * The current running state of the StopWatch.
      */
-    private RunningState runningState = STATE_UNSTARTED;
+    private RunningState runningState = RunningState.STATE_UNSTARTED;
 
     /**
      * The start time.
@@ -57,16 +55,16 @@ public class StopWatchImpl implements StopWatch {
      * @throws IllegalStateException if the StopWatch is already running.
      */
     public void start() {
-        if (this.runningState == STATE_STOPPED) {
+        if (this.runningState == RunningState.STATE_STOPPED) {
             throw new IllegalStateException("Stopwatch must be reset before being restarted. ");
         }
-        if (this.runningState != STATE_UNSTARTED) {
+        if (this.runningState != RunningState.STATE_UNSTARTED) {
             throw new IllegalStateException("Stopwatch already started. ");
         }
         this.timeAdding=0;
         this.startTime = System.nanoTime();
         this.startTimeMillis = System.nanoTime()/NANO_2_MILLIS;
-        this.runningState = STATE_RUNNING;
+        this.runningState = RunningState.STATE_RUNNING;
     }
 
     /**
@@ -81,16 +79,16 @@ public class StopWatchImpl implements StopWatch {
      * @throws IllegalStateException if the StopWatch is already running.
      */
     public void start(long startTime) {
-        if (this.runningState == STATE_STOPPED) {
+        if (this.runningState == RunningState.STATE_STOPPED) {
             throw new IllegalStateException("Stopwatch must be reset before being restarted. ");
         }
-        if (this.runningState != STATE_UNSTARTED) {
+        if (this.runningState != RunningState.STATE_UNSTARTED) {
             throw new IllegalStateException("Stopwatch already started. ");
         }
         this.timeAdding=startTime;
         this.startTime = System.nanoTime();
         this.startTimeMillis = System.nanoTime() / NANO_2_MILLIS;
-        this.runningState = STATE_RUNNING;
+        this.runningState = RunningState.STATE_RUNNING;
     }
 
 
@@ -106,13 +104,13 @@ public class StopWatchImpl implements StopWatch {
      * @throws IllegalStateException if the StopWatch is not running.
      */
     public void stop() {
-        if (this.runningState != STATE_RUNNING && this.runningState != STATE_SUSPENDED) {
+        if (this.runningState != RunningState.STATE_RUNNING && this.runningState != RunningState.STATE_SUSPENDED) {
             throw new IllegalStateException("Stopwatch is not running. ");
         }
-        if (this.runningState == STATE_RUNNING) {
+        if (this.runningState == RunningState.STATE_RUNNING) {
             this.stopTime = System.nanoTime();
         }
-        this.runningState = STATE_STOPPED;
+        this.runningState = RunningState.STATE_STOPPED;
     }
 
     /**
@@ -125,7 +123,7 @@ public class StopWatchImpl implements StopWatch {
      * </p>
      */
     public void reset() {
-        this.runningState = STATE_UNSTARTED;
+        this.runningState = RunningState.STATE_UNSTARTED;
     }
 
 
@@ -142,11 +140,11 @@ public class StopWatchImpl implements StopWatch {
      * @throws IllegalStateException if the StopWatch is not currently running.
      */
     public void suspend() {
-        if (this.runningState != STATE_RUNNING) {
+        if (this.runningState != RunningState.STATE_RUNNING) {
             throw new IllegalStateException("Stopwatch must be running to suspend. ");
         }
         this.stopTime = System.nanoTime();
-        this.runningState = STATE_SUSPENDED;
+        this.runningState = RunningState.STATE_SUSPENDED;
     }
 
     /**
@@ -162,11 +160,11 @@ public class StopWatchImpl implements StopWatch {
      * @throws IllegalStateException if the StopWatch has not been suspended.
      */
     public void resume() {
-        if (this.runningState != STATE_SUSPENDED) {
+        if (this.runningState != RunningState.STATE_SUSPENDED) {
             throw new IllegalStateException("Stopwatch must be suspended to resume. ");
         }
         this.startTime += (System.nanoTime() - this.stopTime);
-        this.runningState = STATE_RUNNING;
+        this.runningState = RunningState.STATE_RUNNING;
     }
 
     /**
@@ -199,11 +197,11 @@ public class StopWatchImpl implements StopWatch {
      * @since 3.0
      */
     public long getNanoTime() {
-        if (this.runningState == STATE_STOPPED || this.runningState == STATE_SUSPENDED) {
+        if (this.runningState == RunningState.STATE_STOPPED || this.runningState == RunningState.STATE_SUSPENDED) {
             return (this.stopTime+timeAdding) - this.startTime;
-        } else if (this.runningState == STATE_UNSTARTED) {
+        } else if (this.runningState == RunningState.STATE_UNSTARTED) {
             return 0;
-        } else if (this.runningState == STATE_RUNNING) {
+        } else if (this.runningState == RunningState.STATE_RUNNING) {
             return (System.nanoTime()+timeAdding) - this.startTime;
         }
         throw new RuntimeException("Illegal running state has occured. ");
@@ -218,7 +216,7 @@ public class StopWatchImpl implements StopWatch {
      * @since 2.4
      */
     public long getStartTime() {
-        if (this.runningState == STATE_UNSTARTED) {
+        if (this.runningState == RunningState.STATE_UNSTARTED) {
             throw new IllegalStateException("Stopwatch has not been started");
         }
         // System.nanoTime is for elapsed time

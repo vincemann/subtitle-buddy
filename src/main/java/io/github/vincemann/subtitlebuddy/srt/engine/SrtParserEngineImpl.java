@@ -5,13 +5,13 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.config.properties.PropertyFileKeys;
-import io.github.vincemann.subtitlebuddy.events.DoneParsingEvent;
+import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
+import io.github.vincemann.subtitlebuddy.events.DoneParsingEvent;
 import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
-import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
 import lombok.extern.slf4j.Slf4j;
 
 /**

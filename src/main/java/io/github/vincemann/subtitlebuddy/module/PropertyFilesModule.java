@@ -1,7 +1,7 @@
 package io.github.vincemann.subtitlebuddy.module;
 
 import com.google.inject.AbstractModule;
-import io.github.vincemann.subtitlebuddy.config.properties.PropertiesFile;
+import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

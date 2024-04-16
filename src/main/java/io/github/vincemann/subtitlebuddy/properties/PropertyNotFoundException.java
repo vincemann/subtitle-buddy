@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.config.properties;
+package io.github.vincemann.subtitlebuddy.properties;
 
 public class PropertyNotFoundException extends RuntimeException {
 

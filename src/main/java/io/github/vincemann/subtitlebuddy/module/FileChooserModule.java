@@ -2,7 +2,7 @@ package io.github.vincemann.subtitlebuddy.module;
 
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
-import io.github.vincemann.subtitlebuddy.config.properties.PropertiesFile;
+import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.FileChooser;

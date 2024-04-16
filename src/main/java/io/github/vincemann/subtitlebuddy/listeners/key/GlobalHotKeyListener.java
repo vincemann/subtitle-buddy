@@ -1,13 +1,13 @@
 package io.github.vincemann.subtitlebuddy.listeners.key;
 
 
-import com.github.kwhat.jnativehook.GlobalScreen;
-import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.keyboard.NativeKeyEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.HotKeyPressedEvent;
-import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
+import org.jnativehook.keyboard.NativeKeyListener;
 import lombok.extern.slf4j.Slf4j;
 
 /**

@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.config.properties;
+package io.github.vincemann.subtitlebuddy.properties;
 
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
