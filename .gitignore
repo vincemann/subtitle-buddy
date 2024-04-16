@@ -3,6 +3,7 @@ out/
 *.dmg
 *.exe
 *.AppImage
+test/
 !releases/linux/appimagetool-x86_64.AppImage
 *.zip
 releases/linux/x64/SubtitleBuddy.AppDir/usr/lib/jre

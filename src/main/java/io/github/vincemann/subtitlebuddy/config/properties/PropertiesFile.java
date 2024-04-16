@@ -11,10 +11,10 @@ public interface PropertiesFile {
     boolean getBoolean(String key);
     long getLong(String key);
     List getList(String key);
-    void refresh() throws PropertyAccessException;
+    void refresh();
     void clear();
     boolean isEmpty();
-    void save() throws PropertyAccessException;
+    void save();
     File getFile();
     void saveProperty(String key, Object value) throws PropertyAccessException;
 

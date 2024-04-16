@@ -1,6 +1,8 @@
 package io.github.vincemann.subtitlebuddy.gui.srtdisplayer;
 
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.config.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.config.properties.PropertyAccessException;
 import io.github.vincemann.subtitlebuddy.config.properties.PropertyFileKeys;
@@ -9,13 +11,12 @@ import io.github.vincemann.subtitlebuddy.events.SrtFontChangeEvent;
 import io.github.vincemann.subtitlebuddy.events.SrtFontColorChangeEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+
 import javax.validation.Valid;
 
-@Log4j
+@Slf4j
 @Singleton
 public class SrtDisplayerEventHandlerImpl implements SrtDisplayerEventHandler {
 

@@ -54,15 +54,15 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
 
     @BeforeClass
     public static void setupSpec() throws Exception {
-        //muss als cli arg reingepasst werden, dann wird headless getestet (klappt nicht bei linux)
-        if (Boolean.getBoolean("headless")) {
-            System.out.println("running test in headless mode");
-            System.setProperty("testfx.robot", "glass");
-            System.setProperty("testfx.headless", "true");
-            System.setProperty("prism.order", "sw");
-            System.setProperty("prism.text", "t2k");
-            System.setProperty("java.awt.headless", "true");
-        }
+//        // cli arg
+//        if (Boolean.getBoolean("headless")) {
+//            System.out.println("running test in headless mode");
+//            System.setProperty("testfx.robot", "glass");
+//            System.setProperty("testfx.headless", "true");
+//            System.setProperty("prism.order", "sw");
+//            System.setProperty("prism.text", "t2k");
+//            System.setProperty("java.awt.headless", "true");
+//        }
         registerPrimaryStage();
     }
 

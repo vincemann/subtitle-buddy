@@ -1,51 +1,75 @@
 package io.github.vincemann.subtitlebuddy.config.properties;
 
 import com.google.inject.Singleton;
-import lombok.extern.log4j.Log4j;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.io.FileHandler;
 
 import java.io.File;
+import java.util.NoSuchElementException;
 
-@Log4j
+@Slf4j
 @Singleton
 public class ApachePropertiesFile extends PropertiesConfiguration implements PropertiesFile {
 
+    private File file;
+    private FileHandler fileHandler;
 
     public ApachePropertiesFile(File file) throws ConfigurationException {
-        super(file);
+        this.file = file;
         this.setThrowExceptionOnMissing(true);
-    }
 
-    public ApachePropertiesFile(String fileName) throws ConfigurationException {
-        super(fileName);
-        this.setThrowExceptionOnMissing(true);
-    }
-
-    @Override
-    public void save() throws PropertyAccessException {
+        // Initialize FileHandler to manage file loading and saving
+        fileHandler = new FileHandler(this);
+        fileHandler.setFile(file);
         try {
-            super.save();
+            // Load the properties file
+            fileHandler.load();
         } catch (ConfigurationException e) {
-            throw new PropertyAccessException(e);
+            log.error("Failed to load properties file: " + file, e);
+            throw e;
         }
     }
 
     @Override
-    public void refresh() throws PropertyAccessException {
+    public File getFile() {
+        return file;
+    }
+
+    @Override
+    public void refresh() {
         try {
-            super.refresh();
+            // Reload the properties from the file
+            fileHandler.load();
+            log.info("Configuration refreshed from file.");
         } catch (ConfigurationException e) {
-            throw new PropertyAccessException(e);
+            log.error("Failed to refresh properties file: " + file, e);
         }
     }
 
+    @Override
+    public void save() {
+        try {
+            // Save the properties to the file
+            fileHandler.save();
+            log.info("Configuration saved to file.");
+        } catch (ConfigurationException e) {
+            log.error("Failed to save properties file: " + file, e);
+        }
+    }
 
     @Override
     public void saveProperty(String key, Object value) throws PropertyAccessException {
-        setProperty(key, value);
-        save();
-    }
+        try {
+            // Set property and save immediately
+            setProperty(key, value);
+            save();
+        }catch (NoSuchElementException e){
+            log.error("Failed to save property: " + key, e);
+            throw new PropertyAccessException(e);
+        }
 
+    }
 
 }

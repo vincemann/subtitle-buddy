@@ -7,7 +7,7 @@ import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.LastPathRegistry;
 import io.github.vincemann.subtitlebuddy.config.properties.PropertyNotFoundException;
 import io.github.vincemann.subtitlebuddy.util.FileUtils;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -21,7 +21,7 @@ import java.nio.file.Paths;
  * Opens a swing file chooser dialog, where the user can choose a file.
  * Utilizes {@link LastPathRegistry} to remember the last path the user navigated to.
  */
-@Log4j
+@Slf4j
 @Singleton
 public class SwingFileChooser implements FileChooser {
     private String[] fileTypes;

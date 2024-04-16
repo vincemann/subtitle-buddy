@@ -40,14 +40,14 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Log4j
+@Slf4j
 @NoArgsConstructor
 @io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController
 @Singleton

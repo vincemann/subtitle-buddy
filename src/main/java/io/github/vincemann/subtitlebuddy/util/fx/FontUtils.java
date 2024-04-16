@@ -2,11 +2,11 @@ package io.github.vincemann.subtitlebuddy.util.fx;
 
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-@Log4j
+@Slf4j
 public class FontUtils {
 
     public static final String FONT_SIZE_STRING_PREFIX = "-fx-font-size: ";

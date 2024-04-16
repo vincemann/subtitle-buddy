@@ -40,12 +40,25 @@ jar {
 
 test {
     // this is here so i can pass in cli argument, in order to run tests in headless mode 
-    systemProperty 'headless', System.getProperty('headless')
+//    systemProperty 'headless', System.getProperty('headless')
 
     doFirst {
         jvmArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'hellomodule,javafx.controls,javafx.fxml',
                 '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-                '--add-opens', 'javafx.graphics/com.sun.javafx.application=ALL-UNNAMED'
+                '--add-opens', 'javafx.graphics/com.sun.javafx.application=ALL-UNNAMED',
+                '--add-opens', 'javafx.graphics/com.sun.glass.ui=ALL-UNNAMED',
+                '--add-opens', 'javafx.graphics/com.sun.javafx.util=ALL-UNNAMED'
+        ]
+    }
+}
+
+run {
+    doFirst {
+        jvmArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'hellomodule,javafx.controls,javafx.fxml'
         ]
     }
 }
@@ -66,35 +79,75 @@ repositories {
 
 dependencies {
 
-    // DI
-    implementation group: 'com.google.inject', name: 'guice', version: '5.0.1'
-    implementation group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '5.0.1'
-    implementation group: 'com.google.inject.extensions', name: 'guice-multibindings', version: '4.2.3'
+    // Spring Core already includes spring-jcl which is a replacement for commons-logging
+    implementation('org.springframework:spring-core:5.3.27'){
+        exclude group: 'org.springframework', module: 'spring-jcl'
+    }
+
+
+    // Exclude commons-logging from all other dependencies that might include it
+    implementation('com.google.inject:guice:7.0.0') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    implementation('com.google.inject.extensions:guice-assistedinject:7.0.0') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    implementation('com.google.inject.extensions:guice-multibindings:4.2.3') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    implementation('commons-io:commons-io:2.11.0') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    implementation('com.github.kwhat:jnativehook:2.2.2') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
 
 
     // lombok
-    implementation group: 'log4j', name: 'log4j', version: '1.2.17'
+//    implementation group: 'log4j', name: 'log4j', version: '1.2.17'
     compileOnly 'org.projectlombok:lombok:1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
 
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.1'  // SLF4J binding for Log4j2
+
+    // Log4j2 core libraries
+    implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
+
+    implementation 'commons-logging:commons-logging:1.3.1'
+
     // validation
-    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+    implementation('javax.validation:validation-api:2.0.1.Final'){
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
 
     // event handling
-    implementation group: 'com.google.guava', name: 'guava', version: '33.0.0-jre'
+    implementation('com.google.guava:guava:33.0.0-jre'){
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
 
     // testfx
-    testImplementation group: 'org.testfx', name: 'testfx-core', version: '4.0.18'
-    testImplementation group: 'org.testfx', name: 'testfx-junit', version: '4.0.18'
-    testImplementation group: 'org.loadui', name: 'testFx', version: '3.1.2'
+    testImplementation('org.testfx:testfx-core:4.0.18') {
+        exclude module: 'hamcrest-all' // This might not be necessary if testfx-core does not depend on hamcrest-all directly.
+    }
+    testImplementation('org.testfx:testfx-junit:4.0.18') {
+        exclude module: 'hamcrest-all'
+    }
+    testImplementation('org.loadui:testFx:3.1.2') {
+        exclude module: 'hamcrest-all'  // Exclude hamcrest-all specifically
+    }
+
+    // for headless stuff
+//    testImplementation group: 'org.testfx', name: 'openjfx-monocle', version: '17.0.10'
     testImplementation "junit:junit:4.13-beta-3"
 
     // utils
-    implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.10'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-    implementation group: 'org.springframework', name: 'spring-core', version: '5.3.14'
-    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+    implementation('org.apache.commons:commons-configuration2:2.10.1'){
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    implementation('org.apache.commons:commons-lang3:3.12.0'){
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
 
-    // jnative hook
-    implementation group: 'com.1stleg', name: 'jnativehook', version: '2.0.2'
 }

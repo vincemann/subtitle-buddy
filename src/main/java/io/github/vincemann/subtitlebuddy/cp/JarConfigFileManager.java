@@ -4,10 +4,10 @@ import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileManager;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileException;
 import io.github.vincemann.subtitlebuddy.util.FileUtils;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,7 +21,7 @@ import java.nio.file.StandardCopyOption;
  * If config file is already in folder of jar, it is returned.
  */
 @Singleton
-@Log4j
+@Slf4j
 public class JarConfigFileManager implements ConfigFileManager {
 
     private ConfigDirectory configDirectory;

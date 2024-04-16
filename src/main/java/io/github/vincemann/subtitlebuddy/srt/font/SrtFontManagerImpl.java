@@ -11,7 +11,7 @@ import io.github.vincemann.subtitlebuddy.util.fx.FontUtils;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import lombok.Getter;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.*;
  * Supports ttf and otf files.
  * For every normal font file it is expected to also find a italic font file with the same name but with the suffix "italic" before the file extension.
  */
-@Log4j
+@Slf4j
 @Singleton
 public class SrtFontManagerImpl implements SrtFontManager {
     private static final String ITALIC_FILE_SUFFIX = "italic";

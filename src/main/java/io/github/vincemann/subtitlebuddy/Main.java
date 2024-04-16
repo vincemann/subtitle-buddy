@@ -22,12 +22,12 @@ import io.github.vincemann.subtitlebuddy.util.LoggingUtils;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.List;
 
-@Log4j
+@Slf4j
 @NoArgsConstructor
 @Singleton
 public class Main extends Application {

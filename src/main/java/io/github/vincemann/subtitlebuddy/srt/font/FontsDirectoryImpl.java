@@ -6,7 +6,7 @@ import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileException;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFile;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileLocator;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -22,7 +22,7 @@ import java.util.List;
  * If that fails, create /path/to/jar/fonts and fill it with default fonts.
  * Default fonts are loaded from file inside jar.
  */
-@Log4j
+@Slf4j
 @Singleton
 public class FontsDirectoryImpl implements FontsDirectory {
 

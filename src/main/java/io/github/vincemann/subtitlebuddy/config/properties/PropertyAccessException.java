@@ -1,8 +1,9 @@
 package io.github.vincemann.subtitlebuddy.config.properties;
 
-import org.apache.commons.configuration.ConfigurationException;
 
-public class PropertyAccessException extends ConfigurationException {
+import org.apache.commons.configuration2.ex.ConfigurationException;
+
+public class    PropertyAccessException extends ConfigurationException {
 
     public PropertyAccessException() {
     }

@@ -3,13 +3,13 @@ import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 import io.github.vincemann.subtitlebuddy.srt.Timestamp;
 import lombok.Getter;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
-@Log4j
+@Slf4j
 @Singleton
 public class SubtitleFileImpl implements SubtitleFile{
 

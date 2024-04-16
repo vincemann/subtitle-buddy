@@ -3,7 +3,7 @@ package io.github.vincemann.subtitlebuddy.gui.srtdisplayer;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -13,7 +13,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Holds the class object of currently displayed SrtDisplayer as internal state.
  */
 @Singleton
-@Log4j
+@Slf4j
 public class SrtDisplayerProvider implements Provider<SrtDisplayer> {
 
 

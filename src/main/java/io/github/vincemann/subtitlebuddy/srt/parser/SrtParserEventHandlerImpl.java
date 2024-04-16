@@ -4,12 +4,12 @@ import com.google.common.eventbus.Subscribe;
 import io.github.vincemann.subtitlebuddy.events.DoneParsingEvent;
 import io.github.vincemann.subtitlebuddy.events.RequestSrtParserUpdateEvent;
 import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngine;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
-@Log4j
+@Slf4j
 @Singleton
 public class SrtParserEventHandlerImpl implements SrtParserEventHandler {
 

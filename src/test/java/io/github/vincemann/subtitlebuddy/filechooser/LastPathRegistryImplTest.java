@@ -6,7 +6,7 @@ import io.github.vincemann.subtitlebuddy.config.properties.PropertyNotFoundExcep
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.LastPathRegistry;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.PropertiesFileLastPathRegistry;
 import io.github.vincemann.subtitlebuddy.util.FileUtils;
-import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

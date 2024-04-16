@@ -5,16 +5,16 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.MouseClickedEvent;
-import lombok.extern.log4j.Log4j;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.mouse.NativeMouseEvent;
-import org.jnativehook.mouse.NativeMouseInputListener;
+import lombok.extern.slf4j.Slf4j;
+import com.github.kwhat.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.mouse.NativeMouseEvent;
+import com.github.kwhat.jnativehook.mouse.NativeMouseInputListener;
 
 /**
  * Listens for global mouse clicks and translates to respective events.
  * Events are handled by {@link io.github.vincemann.subtitlebuddy.listeners.UserInputEventHandler}.
  */
-@Log4j
+@Slf4j
 @Singleton
 public class GlobalMouseListener implements NativeMouseInputListener, MouseListener {
 

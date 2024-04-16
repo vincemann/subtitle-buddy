@@ -33,7 +33,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -46,7 +46,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Log4j
+@Slf4j
 @NoArgsConstructor
 @Singleton
 @io.github.vincemann.subtitlebuddy.gui.stages.OptionsStageController

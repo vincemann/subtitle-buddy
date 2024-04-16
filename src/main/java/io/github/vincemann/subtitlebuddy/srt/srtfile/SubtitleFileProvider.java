@@ -12,14 +12,14 @@ import io.github.vincemann.subtitlebuddy.gui.dialog.AlertDialog;
 import io.github.vincemann.subtitlebuddy.gui.dialog.ContinueDialog;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtFileParser;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
 
-@Log4j
+@Slf4j
 @Singleton
 public class SubtitleFileProvider implements Provider<SubtitleFile> {
     //todo in stringConfig auslagern
