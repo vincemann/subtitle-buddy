@@ -1,10 +1,9 @@
-module io.github.vincemann.subtitlebuddy {
+open module io.github.vincemann.subtitlebuddy {
     requires static lombok;
 
     requires javafx.controls;
     requires javafx.fxml;
     requires com.google.guice;
-    requires jnativehook;
     requires com.google.common;
     requires org.apache.commons.io;
     requires org.apache.commons.lang3;
@@ -12,6 +11,7 @@ module io.github.vincemann.subtitlebuddy {
     requires java.validation;
     requires org.apache.commons.configuration2;
     requires spring.core;
+    requires com.github.kwhat.jnativehook;
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.core;
     requires org.apache.logging.log4j.slf4j;
@@ -19,9 +19,9 @@ module io.github.vincemann.subtitlebuddy {
     requires jakarta.inject;
 
 
-    opens io.github.vincemann.subtitlebuddy to javafx.fxml;
-    opens io.github.vincemann.subtitlebuddy.gui.srtdisplayer to com.google.guice;
-    opens io.github.vincemann.subtitlebuddy.gui.stages.controller to com.google.guice;
+//    opens io.github.vincemann.subtitlebuddy to javafx.fxml;
+//    opens io.github.vincemann.subtitlebuddy.gui.srtdisplayer to com.google.guice;
+//    opens io.github.vincemann.subtitlebuddy.gui.stages.controller to com.google.guice;
 
 
     exports io.github.vincemann.subtitlebuddy;
@@ -31,8 +31,6 @@ module io.github.vincemann.subtitlebuddy {
     exports io.github.vincemann.subtitlebuddy.srt.parser;
     exports io.github.vincemann.subtitlebuddy.srt.srtfile;
     exports io.github.vincemann.subtitlebuddy.srt.stopwatch;
-
-
 
     exports io.github.vincemann.subtitlebuddy.gui.dialog;
     exports io.github.vincemann.subtitlebuddy.gui.filechooser;

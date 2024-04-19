@@ -9,8 +9,8 @@ import io.github.vincemann.subtitlebuddy.listeners.key.GlobalHotKeyListener;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.MouseListener;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.GlobalMouseListener;
 import lombok.extern.slf4j.Slf4j;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
+import com.github.kwhat.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.NativeHookException;
 
 
 @Slf4j

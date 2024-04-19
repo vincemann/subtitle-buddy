@@ -2,13 +2,13 @@ plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 group = 'io.github.vincemann'
 version = '1.1.0'
 
 application {
+    mainModule = 'io.github.vincemann.subtitlebuddy'
     mainClassName = 'io.github.vincemann.subtitlebuddy.Main'
 }
 
@@ -18,19 +18,11 @@ ext {
     targetPlatform = project.hasProperty('targetPlatform') ? project.targetPlatform : 'linux'
 }
 
-shadowJar {
+jar {
     doFirst {
         archiveClassifier.set('')
         archiveFileName = "SubtitleBuddy-${version}-${targetPlatform}.jar"
     }
-    mergeServiceFiles()
-    manifest {
-        attributes 'Main-Class': 'io.github.vincemann.subtitlebuddy.Main'
-    }
-    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
-}
-
-jar {
     manifest {
         attributes(
                 'Main-Class': 'io.github.vincemann.subtitlebuddy.Main'
@@ -39,35 +31,46 @@ jar {
 }
 
 test {
-    // this is here so i can pass in cli argument, in order to run tests in headless mode 
-//    systemProperty 'headless', System.getProperty('headless')
 
     doFirst {
         jvmArgs = [
-                '--module-path', classpath.asPath,
-                '--module-path', classpath.asPath+"/lib",
-                '--add-modules', 'jnativehook,io.github.vincemann.subtitlebuddy.test,javafx.controls,javafx.fxml',
+                "--module-path", classpath.asPath+":build/classes/java/main",
+                '--add-modules', 'javafx.controls,javafx.fxml',
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
-                '--add-opens', 'io.github.vincemann/io.github.vincemann=ALL-UNNAMED',
-                '--add-opens', 'javafx.graphics/com.sun.javafx.application=org.testfx',
-                '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-                '--add-opens', 'javafx.graphics/com.sun.javafx.application=ALL-UNNAMED',
-                '--add-opens', 'javafx.graphics/com.sun.glass.ui=ALL-UNNAMED',
-                '--add-opens', 'javafx.graphics/com.sun.javafx.util=ALL-UNNAMED'
         ]
     }
 }
+
+task createRuntimeImage(type: Exec) {
+    dependsOn 'jar'
+    doFirst {
+        mkdir 'build/image'
+    }
+//    add native jmods to module path depending on target platform
+    // add own classes to module path (is like adding own modularized jar to it)
+    commandLine 'jlink', '--module-path', "./lib/javafx/${targetPlatform}/:$buildDir/classes/java/main",
+            '--add-modules', 'io.github.vincemann.subtitlebuddy,javafx.controls,javafx.fxml',
+            '--output', 'build/image',
+            '--strip-debug',
+            '--compress', '2',
+            '--no-header-files',
+            '--no-man-pages'
+}
+
 java {
-    modularity.inferModulePath = true
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+    modularity.inferModulePath.set(true)
 }
 
 
 run {
     doFirst {
         jvmArgs = [
-                '--module-path', classpath.asPath,
-                '--module-path', classpath.asPath+"/lib",
-                '--add-modules', 'jnativehook,io.github.vincemann.subtitlebuddy,javafx.controls,javafx.fxml'
+                "--module-path", classpath.asPath+":build/classes/java/main",
+                "--add-modules", "javafx.controls,javafx.fxml",
+                '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
         ]
     }
 }
@@ -79,22 +82,19 @@ javafx {
 }
 
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
-
 repositories {
     mavenCentral()
 }
 
+
 dependencies {
 
-    implementation files('lib/jnativehook-2.1.0.jar')
+    implementation('com.github.kwhat:jnativehook:2.2.2')
 
-    // Spring Core already includes spring-jcl which is a replacement for commons-logging
+
     implementation('org.springframework:spring-core:5.3.27'){
         exclude group: 'org.springframework', module: 'spring-jcl'
     }
-
 
     // Exclude commons-logging from all other dependencies that might include it
     implementation('com.google.inject:guice:7.0.0') {
@@ -109,7 +109,6 @@ dependencies {
     implementation('commons-io:commons-io:2.11.0') {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
-    implementation 'com.1stleg:jnativehook:2.1.0'
 
 
     // lombok
