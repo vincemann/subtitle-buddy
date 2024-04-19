@@ -4,7 +4,6 @@ out/
 *.exe
 *.AppImage
 test/
-lib/
 !releases/linux/appimagetool-x86_64.AppImage
 *.zip
 releases/linux/x64/SubtitleBuddy.AppDir/usr/lib/jre

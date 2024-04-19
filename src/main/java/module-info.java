@@ -11,7 +11,8 @@ open module io.github.vincemann.subtitlebuddy {
     requires java.validation;
     requires org.apache.commons.configuration2;
     requires spring.core;
-    requires com.github.kwhat.jnativehook;
+    // self modularized
+    requires org.jnativehook;
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.core;
     requires org.apache.logging.log4j.slf4j;
