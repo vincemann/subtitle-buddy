@@ -1,5 +1,9 @@
 package io.github.vincemann.subtitlebuddy;
 
+import com.github.kwhat.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.NativeHookException;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -56,7 +60,30 @@ public class Main extends Application {
         SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
         settingsStageController.open();
         start();
+
+        // ugly workaround for bug in jnativehook - keep it like that
+        new Thread(()->{
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            registerHook();
+        }).start();
+
     }
+
+    private void registerHook(){
+        try {
+            com.github.kwhat.jnativehook.GlobalScreen.registerNativeHook();
+        } catch (NativeHookException ex) {
+            System.err.println("There was a problem registering the native hook.");
+            System.err.println(ex.getMessage());
+
+            System.exit(1);
+        }
+    }
+
 
     private static Injector createInjector(PropertiesFile propertiesManager,
                                            UIStringsFile stringConfiguration,

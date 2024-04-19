@@ -1,5 +1,7 @@
 package io.github.vincemann.subtitlebuddy.module;
 
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import com.google.inject.AbstractModule;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKeyEventHandler;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.MouseClickedEventHandler;
@@ -18,23 +20,9 @@ public class UserInputHandlerModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        registerHook();
         bind(HotKeyEventHandler.class).to(UserInputEventHandler.class);
         bind(MouseClickedEventHandler.class).to(UserInputEventHandler.class);
         bind(KeyListener.class).to(GlobalHotKeyListener.class);
         bind(MouseListener.class).to(GlobalMouseListener.class);
     }
-
-
-    private void registerHook(){
-        try {
-            GlobalScreen.registerNativeHook();
-        }
-        catch (NativeHookException ex) {
-            log.error("could not register Native Hook, caused by: ",ex);
-        }
-    }
-
-
-
 }

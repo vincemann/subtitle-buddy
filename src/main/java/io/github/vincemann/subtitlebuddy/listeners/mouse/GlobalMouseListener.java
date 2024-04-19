@@ -23,12 +23,25 @@ public class GlobalMouseListener implements NativeMouseInputListener, MouseListe
     @Inject
     public GlobalMouseListener(EventBus eventBus) {
         this.eventBus = eventBus;
-        GlobalScreen.addNativeMouseListener(this);
+        // ugly workaround for bug in jnativehook - keep it like that
+        registerListener();
+    }
+
+    private void registerListener(){
+        new Thread(()->{
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            GlobalScreen.addNativeMouseListener(this);
+        }).start();
     }
 
     public synchronized void nativeMouseClicked(NativeMouseEvent e) {
     }
 
+    @Override
     public void nativeMousePressed(NativeMouseEvent e) {
         switch (e.getButton()) {
             case NativeMouseEvent.BUTTON1:
@@ -37,12 +50,15 @@ public class GlobalMouseListener implements NativeMouseInputListener, MouseListe
         }
     }
 
+    @Override
     public void nativeMouseReleased(NativeMouseEvent e) {
     }
 
+    @Override
     public void nativeMouseMoved(NativeMouseEvent e) {
     }
 
+    @Override
     public void nativeMouseDragged(NativeMouseEvent e) {
     }
 }

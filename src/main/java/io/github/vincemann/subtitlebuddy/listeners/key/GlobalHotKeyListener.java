@@ -25,9 +25,22 @@ public class GlobalHotKeyListener implements NativeKeyListener , KeyListener{
     @Inject
     public GlobalHotKeyListener(EventBus eventBus) {
         this.eventBus = eventBus;
-        GlobalScreen.addNativeKeyListener(this);
+        // ugly workaround for bug in jnativehook - keep it like that
+        registerListener();
     }
 
+    private void registerListener(){
+        new Thread(()->{
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            GlobalScreen.addNativeKeyListener(this);
+        }).start();
+    }
+
+    @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
         //todo let user change hotkeys
             //space
@@ -51,6 +64,7 @@ public class GlobalHotKeyListener implements NativeKeyListener , KeyListener{
             }
     }
 
+    @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
         if (e.getKeyCode() == NativeKeyEvent.ALT_L_MASK || e.getKeyCode() == NativeKeyEvent.ALT_R_MASK){
             this.alt=false;
