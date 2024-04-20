@@ -18,11 +18,11 @@ import io.github.vincemann.subtitlebuddy.properties.ApachePropertiesFile;
 import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.service.EventHandlerRegistrar;
 import io.github.vincemann.subtitlebuddy.service.SrtService;
-import io.github.vincemann.subtitlebuddy.util.LoggingUtils;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jnativehook.GlobalScreen;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +41,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        LoggingUtils.disableUtilLogger();
+        // disable jnativehook logging
+        java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
+        logger.setLevel(java.util.logging.Level.OFF);
         ClassPathFileLocator classPathFileLocator = new TempFileCreatingClassPathFileLocator();
         ConfigFileManager configFileManager =  new JarConfigFileManager(new ConfigDirectoryImpl(), classPathFileLocator);
         PropertiesFile propertiesManager = new ApachePropertiesFile(configFileManager.findOrCreateConfigFile(CONFIG_FILE_NAME));

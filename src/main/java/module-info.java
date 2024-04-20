@@ -14,8 +14,6 @@ open module io.github.vincemann.subtitlebuddy {
     // self modularized
     requires org.jnativehook;
     requires org.apache.logging.log4j;
-    requires org.apache.logging.log4j.core;
-    requires org.apache.logging.log4j.slf4j;
     requires org.slf4j;
     requires jakarta.inject;
 

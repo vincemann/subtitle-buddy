@@ -22,7 +22,6 @@ import java.util.List;
 @Slf4j
 @Singleton
 public class SubtitleFileProvider implements Provider<SubtitleFile> {
-    //todo in stringConfig auslagern
 
     private FileChooser fileChooser;
     private SrtFileParser srtFileParser;
@@ -69,7 +68,7 @@ public class SubtitleFileProvider implements Provider<SubtitleFile> {
                 if (e.getLinesRead() > 0) {
                     boolean goOn = continueDialog.askUserToContinue(corruptedFileMessage);
                     if (!goOn) {
-                        log.debug("user does not want to conitune with a broken file");
+                        log.debug("user does not want to continue with a broken file");
                         return get();
                     } else {
                         log.debug("user chose to continue anyways");
@@ -77,13 +76,13 @@ public class SubtitleFileProvider implements Provider<SubtitleFile> {
                         return this.chosenFile;
                     }
                 } else {
-                    log.debug("corrupted file, couldnt even read a single line, telling user to choose a different file");
+                    log.debug("corrupted file, could not even read a single line, telling user to choose a different file");
                     alertDialog.tellUser(invalidFileFormatMessage+ " Details" + e.getMessage());
                     return get();
                 }
             }catch (UserQuitException e){
                 log.debug("user didnt want to choose a file and quit the program");
-                //todo nicht so geil hier gelöst
+                // todo solve better
                 System.exit(0);
                 return null;
             }

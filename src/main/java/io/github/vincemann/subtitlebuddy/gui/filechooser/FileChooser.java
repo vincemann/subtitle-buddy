@@ -7,6 +7,6 @@ import java.io.File;
  */
 public interface FileChooser {
 
-    public File letUserChooseFile() throws UserQuitException;
+    File letUserChooseFile() throws UserQuitException;
 
 }

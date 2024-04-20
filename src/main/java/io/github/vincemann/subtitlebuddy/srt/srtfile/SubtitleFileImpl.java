@@ -26,7 +26,7 @@ public class SubtitleFileImpl implements SubtitleFile{
         this.subtitles = subtitles;
         this.firstSubtitle = subtitles.get(0);
         if(firstSubtitle==null){
-            throw new EmptySubtitleListException("Emtpy subtitlelist");
+            throw new EmptySubtitleListException("Emtpy subtitle list");
         }
         log.debug("first subtitle StartingTime : " + firstSubtitle.getStartTime());
         this.lastSubtitle = subtitles.get(subtitles.size()-1);
@@ -53,7 +53,7 @@ public class SubtitleFileImpl implements SubtitleFile{
                 return Optional.of(subtitle);
             }
         }
-        //wir befinden uns in einer Lücke
+        // we are at a gap between subtitles
         return Optional.empty();
     }
 }

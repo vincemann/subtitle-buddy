@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface SubtitleFile {
 
-    public Optional<SubtitleParagraph> getSubtitleAtTimeStamp(Timestamp timestamp) throws TimeStampOutOfBoundsException;
+    Optional<SubtitleParagraph> getSubtitleAtTimeStamp(Timestamp timestamp) throws TimeStampOutOfBoundsException;
 
-    public List<SubtitleParagraph> getSubtitles();
+    List<SubtitleParagraph> getSubtitles();
 
 }
