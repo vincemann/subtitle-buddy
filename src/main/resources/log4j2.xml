@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="debug">
+<Configuration status="warn">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/>
@@ -7,12 +7,12 @@
     </Appenders>
     <Loggers>
         <!-- Logger for your main package -->
-        <Logger name="io.github.vincemann.subtitlebuddy" level="DEBUG" additivity="false">
+        <Logger name="io.github.vincemann.subtitlebuddy" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
 
         <!-- Root logger configuration -->
-        <Root level="debug">
+        <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>

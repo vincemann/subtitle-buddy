@@ -48,14 +48,14 @@ public class GlobalHotKeyListener implements NativeKeyListener , KeyListener{
                     log.debug("end movie mode hotkey pressed");
                     eventBus.post(new HotKeyPressedEvent(HotKey.END_MOVIE_MODE));
                 }
-            }else if (e.getKeyCode() == NativeKeyEvent.ALT_L_MASK || e.getKeyCode() == NativeKeyEvent.ALT_R_MASK){
+            }else if (e.getKeyCode() == NativeKeyEvent.VC_ALT_L || e.getKeyCode() == NativeKeyEvent.VC_ALT_R){
                 alt=true;
             }
     }
 
     @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
-        if (e.getKeyCode() == NativeKeyEvent.ALT_L_MASK || e.getKeyCode() == NativeKeyEvent.ALT_R_MASK){
+        if (e.getKeyCode() == NativeKeyEvent.VC_ALT_L || e.getKeyCode() == NativeKeyEvent.VC_ALT_R){
             this.alt=false;
         }
     }
