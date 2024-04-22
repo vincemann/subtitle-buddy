@@ -1,3 +1,4 @@
+
 plugins {
     id 'java'
     id 'application'
@@ -11,12 +12,13 @@ version = '1.1.0'
 // provides main module and class - analog to:
 // --module io.github.vincemann.subtitlebuddy/io.github.vincemann.subtitlebuddy.Main
 application {
-    mainModule = 'io.github.vincemann.subtitlebuddy'
-    mainClassName = 'io.github.vincemann.subtitlebuddy.Main'
+    setMainModule('io.github.vincemann.subtitlebuddy')
+    setMainClass('io.github.vincemann.subtitlebuddy.Main')
 }
 
+
 ext {
-    javafxVersion = '17.0.1'
+    javafxVersion = '17'
     // Default to linux platform if not provided [linux, mac, win]
     targetPlatform = project.hasProperty('targetPlatform') ? project.targetPlatform : 'linux'
 }
@@ -24,11 +26,11 @@ ext {
 jar {
     doFirst {
         archiveClassifier.set('')
-        archiveFileName = "SubtitleBuddy-${version}-${targetPlatform}.jar"
+        archiveFileName = "SubtitleBuddy-${project.version}-${targetPlatform}.jar"
     }
     manifest {
         attributes(
-                'Main-Class': 'io.github.vincemann.subtitlebuddy.Main'
+                'Main-Class': application.getMainClass().get()
         )
     }
 }
@@ -37,8 +39,8 @@ test {
 
     doFirst {
         jvmArgs = [
-                "--module-path", classpath.asPath+":build/classes/",
-                '--add-modules', 'javafx.controls,javafx.fxml',
+                "--module-path", classpath.asPath,
+                '--add-modules', javafx.getModules().join(','),
 //                resolve some issues with javafx and testfx
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.application=org.testfx',
@@ -49,7 +51,7 @@ test {
 
 // create minimal runtime image, only containing the modules needed for the application
 // also ships jdk modules needed -> standalone executable
-task createRuntimeImage(type: Exec) {
+tasks.register("createRuntimeImage", Exec){
     dependsOn 'jar'
     doFirst {
         mkdir 'build/image'
@@ -58,11 +60,18 @@ task createRuntimeImage(type: Exec) {
         // Print the module path for debugging
         println("Module path: $modulePath")
 
+        def modules = javafx.getModules()
+        modules.add(application.mainModule.get())
+
+        println("Modules: $modules")
+
+        def modulesString = modules.join(',')
+
 //        javafx plugin already puts the correct platform dependent native libraries on the module path
 //        my application jar or build/classes is also on the module path by default
         commandLine 'jlink',
                 '--module-path', modulePath,
-                '--add-modules', 'io.github.vincemann.subtitlebuddy,javafx.controls,javafx.fxml',
+                '--add-modules', modulesString,
                 '--output', 'build/image',
                 '--strip-debug',
                 '--compress', '2',
@@ -82,12 +91,10 @@ java {
 
 run {
     doFirst {
-        // Print the module path for debugging purposes
-        println "Module path: ${classpath.asPath}"
         jvmArgs = [
                 "--module-path", classpath.asPath,
 //                modules are not part of sdk anymore - need to add them manually to module graph
-                "--add-modules", "javafx.controls,javafx.fxml",
+                "--add-modules", javafx.getModules().join(","),
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
         ]
     }
@@ -107,8 +114,6 @@ repositories {
 
 dependencies {
 
-
-
     // need to use old version bc of segfaults on linux + keyboard strokes not working
     // needed to self modularize the jar in order to include for whatever reason + this way I can build a custom jlink image
     // bc cant use automatic modules in jlink
@@ -118,7 +123,7 @@ dependencies {
     implementation('com.google.inject:guice:7.0.0')
     implementation('com.google.inject.extensions:guice-assistedinject:7.0.0')
     implementation('com.google.inject.extensions:guice-multibindings:4.2.3')
-    implementation('commons-io:commons-io:2.11.0')
+    implementation('commons-io:commons-io:2.16.1')
 
     // logging
     implementation platform('org.apache.logging.log4j:log4j-bom:2.23.1')
@@ -137,10 +142,6 @@ dependencies {
     // only needed for compilation - not at runtime
     compileOnly 'org.projectlombok:lombok:1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
-    // only here for resolving classpath files - exclude spring-jcl because I use own logging system
-    implementation('org.springframework:spring-core:5.3.27'){
-        exclude group: 'org.springframework', module: 'spring-jcl'
-    }
     implementation('org.apache.commons:commons-configuration2:2.10.1')
     implementation('org.apache.commons:commons-lang3:3.12.0')
     // some other dep depends on this

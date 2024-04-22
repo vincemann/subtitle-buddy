@@ -7,7 +7,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFileLocator;
+import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.events.RequestSrtParserUpdateEvent;
@@ -52,7 +52,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController
 @Singleton
 public class SettingsStageController extends AbstractStageController implements SettingsSrtDisplayer {
-    private static final String SETTINGS_STAGE_FXML_FILE_PATH = "/settings-stage.fxml";
+    private static final String SETTINGS_STAGE_FXML_FILE_PATH = "settings-stage.fxml";
     private static final int SETTINGS_CLICK_WARNING_SIZE = 40;
     //millis
     private static final int MIN_TIME_STAMP_WARNING_DURATION = 1000;
@@ -128,7 +128,7 @@ public class SettingsStageController extends AbstractStageController implements 
                                    @Named(PropertyFileKeys.SETTINGS_FONT_SIZE) int settingsFontSize,
                                    @Named(PropertyFileKeys.FAST_FORWARD_DELTA) int fastForwardDelta,
                                    EventBus eventBus,
-                                   ClassPathFileLocator classPathFileLocator,
+                                   ClassPathFileExtractor classPathFileExtractor,
                                    @Named(PropertyFileKeys.CLICK_WARNING_IMAGE_PATH) String clickWarningImagePath,
                                    @Named(UIStringsKeys.START_BUTTON_TEXT) String startButtonText,
                                    @Named(UIStringsKeys.STOP_BUTTON_TEXT) String stopButtonText,
@@ -138,10 +138,12 @@ public class SettingsStageController extends AbstractStageController implements 
                                    @Named(UIStringsKeys.TIMESTAMP_JUMP_HINT_TEXT) String timestampJumpHintTextString
     )
             throws IOException {
-        super(classPathFileLocator.findOnClassPath(SETTINGS_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(),windowTitle,
+        super(classPathFileExtractor.findOnClassPath(SETTINGS_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(),windowTitle,
                 minSize);
         createStage(this,mainStage);
-        this.settingsClickWarning = createImageView(imageHBox, classPathFileLocator.findOnClassPath(clickWarningImagePath).getFile(),new Vector2D(SETTINGS_CLICK_WARNING_SIZE,SETTINGS_CLICK_WARNING_SIZE));
+        this.settingsClickWarning = createImageView(imageHBox,
+                classPathFileExtractor.findOnClassPath(clickWarningImagePath).getFile(),
+                new Vector2D(SETTINGS_CLICK_WARNING_SIZE,SETTINGS_CLICK_WARNING_SIZE));
         this.settingsFontSize=settingsFontSize;
         this.srtParser = srtParser;
         this.eventBus=eventBus;

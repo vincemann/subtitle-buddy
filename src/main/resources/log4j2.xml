@@ -6,12 +6,10 @@
         </Console>
     </Appenders>
     <Loggers>
-        <!-- Logger for your main package -->
         <Logger name="io.github.vincemann.subtitlebuddy" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
 
-        <!-- Root logger configuration -->
         <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>

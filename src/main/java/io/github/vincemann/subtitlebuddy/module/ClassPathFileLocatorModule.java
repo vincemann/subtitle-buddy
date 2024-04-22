@@ -1,18 +1,18 @@
 package io.github.vincemann.subtitlebuddy.module;
 
 import com.google.inject.AbstractModule;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFileLocator;
+import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 
 public class ClassPathFileLocatorModule extends AbstractModule {
 
-    private ClassPathFileLocator classPathFileLocator;
+    private ClassPathFileExtractor classPathFileExtractor;
 
-    public ClassPathFileLocatorModule(ClassPathFileLocator classPathFileLocator) {
-        this.classPathFileLocator = classPathFileLocator;
+    public ClassPathFileLocatorModule(ClassPathFileExtractor classPathFileExtractor) {
+        this.classPathFileExtractor = classPathFileExtractor;
     }
 
     @Override
     protected void configure() {
-        bind(ClassPathFileLocator.class).toInstance(classPathFileLocator);
+        bind(ClassPathFileExtractor.class).toInstance(classPathFileExtractor);
     }
 }

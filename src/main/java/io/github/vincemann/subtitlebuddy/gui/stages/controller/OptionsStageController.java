@@ -8,7 +8,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFileLocator;
+import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.events.SrtFontColorChangeEvent;
 import io.github.vincemann.subtitlebuddy.events.SrtFontChangeEvent;
 import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
@@ -51,7 +51,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 @io.github.vincemann.subtitlebuddy.gui.stages.OptionsStageController
 public class OptionsStageController extends AbstractStageController implements OptionsWindow {
-    private static final String OPTIONS_STAGE_FXML_FILE_PATH = "/options-stage.fxml";
+    private static final String OPTIONS_STAGE_FXML_FILE_PATH = "options-stage.fxml";
 
     @FXML
     private ColorPicker colorChooser;
@@ -85,10 +85,10 @@ public class OptionsStageController extends AbstractStageController implements O
                                   @Named(PropertyFileKeys.OPTIONS_WINDOW_SIZE) Vector2D size,
                                   @Named(PropertyFileKeys.NEXT_CLICK_HOT_KEY_TOGGLED) boolean nextClickCountsToggled,
                                   @Named(PropertyFileKeys.START_STOP_HOT_KEY_TOGGLED) boolean startStopHotKeyToggled,
-                                  ClassPathFileLocator classPathFileLocator,
+                                  ClassPathFileExtractor classPathFileExtractor,
                                   FontsDirectory fontsLocator)
             throws IOException {
-        super(classPathFileLocator.findOnClassPath(OPTIONS_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(), title, size);
+        super(classPathFileExtractor.findOnClassPath(OPTIONS_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(), title, size);
         createStage(this);
         this.fontsLocator = fontsLocator;
         this.eventBus = eventBus;

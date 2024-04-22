@@ -17,20 +17,21 @@ import java.nio.file.StandardCopyOption;
 
 /**
  * Component for creating/finding config file.
- * Original config file is within jar. This class copies it to folder of jar, so the user can easily edit it.
- * If config file is already in folder of jar, it is returned.
+ * Original config file is within jar (on classpath).
+ * This class extracts it to {@link ConfigDirectory#findOrCreate()} location, so the user can easily edit it.
+ * If config file is already in config target folder, it is just returned.
  */
 @Singleton
 @Slf4j
-public class JarConfigFileManager implements ConfigFileManager {
+public class ConfigFileManagerImpl implements ConfigFileManager {
 
     private ConfigDirectory configDirectory;
-    private ClassPathFileLocator classPathFileLocator;
+    private ClassPathFileExtractor classPathFileExtractor;
 
     @Inject
-    public JarConfigFileManager(ConfigDirectory configDirectory, ClassPathFileLocator classPathFileLocator) {
+    public ConfigFileManagerImpl(ConfigDirectory configDirectory, ClassPathFileExtractor classPathFileExtractor) {
         this.configDirectory = configDirectory;
-        this.classPathFileLocator = classPathFileLocator;
+        this.classPathFileExtractor = classPathFileExtractor;
     }
 
     @Override
@@ -43,11 +44,10 @@ public class JarConfigFileManager implements ConfigFileManager {
                 return configFile;
             }
             // file is not in folder, create it by extracting from within the jar into the jars folder
-            ClassPathFile configFileInJar = classPathFileLocator.findOnClassPath(fileName);
+            CopiedClassPathFile configFileInJar = classPathFileExtractor.findOnClassPath(fileName);
             Path targetPath = configFolder.resolve(fileName);
             Files.copy(Paths.get(configFileInJar.getFile().toURI()),targetPath, StandardCopyOption.COPY_ATTRIBUTES);
             return targetPath.toFile();
-
         }catch (IOException e) {
             throw new ConfigFileException("Could not find/create config file: " + fileName,e);
         }

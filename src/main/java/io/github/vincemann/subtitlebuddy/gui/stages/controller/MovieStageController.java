@@ -8,7 +8,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFileLocator;
+import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.events.MovieTextPositionChangedEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.MovieSrtDisplayer;
@@ -62,7 +62,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @io.github.vincemann.subtitlebuddy.gui.stages.MovieStageController
 public class MovieStageController extends AbstractStageController implements MovieSrtDisplayer {
 
-    private static final String MOVIE_STAGE_FXML_FILE_PATH = "/movie-stage.fxml";
+    private static final String MOVIE_STAGE_FXML_FILE_PATH = "movie-stage.fxml";
     private static final int MOVIE_CLICK_WARNING_SIZE = 60;
     //200 millis in nano
     private static final long SUBTITLE_UPDATE_SLEEP_DURATION = 200000000L;
@@ -111,16 +111,18 @@ public class MovieStageController extends AbstractStageController implements Mov
     public MovieStageController(@Named(UIStringsKeys.MOVIE_STAGE_TITLE) String title,
                                 SrtFontManager srtFontManager, EventBus eventBus,
                                 @Named(PropertyFileKeys.USER_MOVIE_TEXT_POSITION) String movieVBoxPosString,
-                                ClassPathFileLocator classPathFileLocator,
+                                ClassPathFileExtractor classPathFileExtractor,
                                 @Named(PropertyFileKeys.CLICK_WARNING_IMAGE_PATH) String clickWarningImagePath)
             throws IOException {
-        super(classPathFileLocator.findOnClassPath(MOVIE_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(), title, getScreenBoundsVector());
+        super(classPathFileExtractor.findOnClassPath(MOVIE_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(), title, getScreenBoundsVector());
         this.srtFontManager = srtFontManager;
         this.eventBus= eventBus;
         this.movieVBoxPos = loadMovieVBoxStartPos(movieVBoxPosString,getSize());
         this.updateSubtitleExecutionLimiter = new ExecutionLimiter(SUBTITLE_UPDATE_SLEEP_DURATION,this::updateSubtitle);
         createStage(this);
-        this.clickWarning = createImageView(movieVBox, classPathFileLocator.findOnClassPath(clickWarningImagePath).getFile(),new Vector2D(MOVIE_CLICK_WARNING_SIZE,MOVIE_CLICK_WARNING_SIZE));
+        this.clickWarning = createImageView(movieVBox,
+                classPathFileExtractor.findOnClassPath(clickWarningImagePath).getFile(),
+                new Vector2D(MOVIE_CLICK_WARNING_SIZE,MOVIE_CLICK_WARNING_SIZE));
         constructorInit();
     }
 
@@ -190,7 +192,7 @@ public class MovieStageController extends AbstractStageController implements Mov
     @Override
     public void displaySubtitle(SubtitleText subtitleText) {
         log.debug("asking javafx to display new subtitle on MovieStageController : " + subtitleText);
-        lastSubtitleText =subtitleText;
+        lastSubtitleText = subtitleText;
 
 
         Platform.runLater(() -> {

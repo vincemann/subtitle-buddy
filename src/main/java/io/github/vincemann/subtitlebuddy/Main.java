@@ -9,9 +9,9 @@ import io.github.vincemann.subtitlebuddy.config.ConfigDirectoryImpl;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileManager;
 import io.github.vincemann.subtitlebuddy.config.strings.ApacheUIStringsFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFileLocator;
-import io.github.vincemann.subtitlebuddy.cp.JarConfigFileManager;
-import io.github.vincemann.subtitlebuddy.cp.TempFileCreatingClassPathFileLocator;
+import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
+import io.github.vincemann.subtitlebuddy.cp.ConfigFileManagerImpl;
+import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.gui.stages.controller.SettingsStageController;
 import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.properties.ApachePropertiesFile;
@@ -33,7 +33,7 @@ import java.util.List;
 public class Main extends Application {
 
     public static final String CONFIG_FILE_NAME = "application.properties";
-    public static final String UI_STRINGS_CONFIG_FILE_PATH = "/application.string.properties";
+    public static final String UI_STRINGS_CONFIG_FILE_PATH = "application.string.properties";
 
     private SrtService srtService;
     private EventHandlerRegistrar eventHandlerRegistrar;
@@ -44,11 +44,11 @@ public class Main extends Application {
         // disable jnativehook logging
         java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(java.util.logging.Level.OFF);
-        ClassPathFileLocator classPathFileLocator = new TempFileCreatingClassPathFileLocator();
-        ConfigFileManager configFileManager =  new JarConfigFileManager(new ConfigDirectoryImpl(), classPathFileLocator);
+        ClassPathFileExtractor classPathFileExtractor = new ClassPathFileExtractorImpl();
+        ConfigFileManager configFileManager =  new ConfigFileManagerImpl(new ConfigDirectoryImpl(), classPathFileExtractor);
         PropertiesFile propertiesManager = new ApachePropertiesFile(configFileManager.findOrCreateConfigFile(CONFIG_FILE_NAME));
-        UIStringsFile stringConfiguration = new ApacheUIStringsFile(classPathFileLocator.findOnClassPath(UI_STRINGS_CONFIG_FILE_PATH).getFile());
-        injector = createInjector(propertiesManager,stringConfiguration,primaryStage, classPathFileLocator);
+        UIStringsFile stringConfiguration = new ApacheUIStringsFile(classPathFileExtractor.findOnClassPath(UI_STRINGS_CONFIG_FILE_PATH).getFile());
+        injector = createInjector(propertiesManager,stringConfiguration,primaryStage, classPathFileExtractor);
         EventBus eventBus = injector.getInstance(EventBus.class);
         srtService= injector.getInstance(SrtService.class);
         eventHandlerRegistrar = injector.getInstance(EventHandlerRegistrar.class);
@@ -63,11 +63,11 @@ public class Main extends Application {
     private static Injector createInjector(PropertiesFile propertiesManager,
                                            UIStringsFile stringConfiguration,
                                            Stage primaryStage,
-                                           ClassPathFileLocator classPathFileLocator){
+                                           ClassPathFileExtractor classPathFileExtractor){
         if(injector==null) {
             //use default modules
             List<Module> moduleList = Arrays.asList(
-                    new ClassPathFileLocatorModule(classPathFileLocator),
+                    new ClassPathFileLocatorModule(classPathFileExtractor),
                     new ConfigFileModule(propertiesManager, stringConfiguration),
                     new FileChooserModule(stringConfiguration, propertiesManager) ,
                     new ParserModule(stringConfiguration, propertiesManager) ,

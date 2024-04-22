@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileException;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFile;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFileLocator;
+import io.github.vincemann.subtitlebuddy.cp.CopiedClassPathFile;
+import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
@@ -31,12 +31,12 @@ public class FontsDirectoryImpl implements FontsDirectory {
     private static final String DEFAULT_FONT_FILES_PATTERN = "/fonts/*";
 
     private ConfigDirectory configDirectory;
-    private ClassPathFileLocator classPathFileLocator;
+    private ClassPathFileExtractor classPathFileExtractor;
 
     @Inject
-    public FontsDirectoryImpl(ConfigDirectory configDirectory, ClassPathFileLocator classPathFileLocator) {
+    public FontsDirectoryImpl(ConfigDirectory configDirectory, ClassPathFileExtractor classPathFileExtractor) {
         this.configDirectory = configDirectory;
-        this.classPathFileLocator = classPathFileLocator;
+        this.classPathFileExtractor = classPathFileExtractor;
     }
 
     @Override
@@ -68,8 +68,8 @@ public class FontsDirectoryImpl implements FontsDirectory {
      */
     private void populateWithDefaultFontsIfNeeded(Path targetPath) throws IOException {
         // get font files from jar
-        List<ClassPathFile> fontFiles = classPathFileLocator.findAllInDir(DEFAULT_FONT_FILES_PATTERN);
-        for (ClassPathFile tmpFontFile : fontFiles) {
+        List<CopiedClassPathFile> fontFiles = classPathFileExtractor.findAllInDir(DEFAULT_FONT_FILES_PATTERN);
+        for (CopiedClassPathFile tmpFontFile : fontFiles) {
             //every file
             File targetFontFile = targetPath.resolve(tmpFontFile.getFileName()).toFile();
             if (targetFontFile.exists()) {

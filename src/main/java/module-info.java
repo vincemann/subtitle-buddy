@@ -3,19 +3,18 @@ open module io.github.vincemann.subtitlebuddy {
 
     requires javafx.controls;
     requires javafx.fxml;
-    requires com.google.guice;
-    requires com.google.common;
-    requires org.apache.commons.io;
     requires org.apache.commons.lang3;
     requires org.apache.commons.logging;
     requires java.validation;
     requires org.apache.commons.configuration2;
-    requires spring.core;
-    // self modularized
-    requires org.jnativehook;
+    requires org.jnativehook;  // self modularized
     requires org.apache.logging.log4j;
     requires org.slf4j;
     requires jakarta.inject;
+    requires org.apache.commons.io;
+    // not modularized
+    requires com.google.guice;
+    requires com.google.common;
 
 
 //    opens io.github.vincemann.subtitlebuddy to javafx.fxml;

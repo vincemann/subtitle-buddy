@@ -6,13 +6,12 @@ import lombok.Getter;
 import java.io.File;
 
 /**
- * Represents a file found on the classpath.
- * Contains the file and its name.
- * Files inside the running jar are only accessible as a Stream, so they are copied to a temp file.
+ * Represents a file extracted from classpath into temp file.
+ * Contains the copied temp file and its original name.
  */
 @AllArgsConstructor
 @Getter
-public class ClassPathFile {
+public class CopiedClassPathFile {
     private File file;
     private String fileName;
 }

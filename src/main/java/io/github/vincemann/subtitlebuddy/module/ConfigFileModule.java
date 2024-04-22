@@ -6,7 +6,7 @@ import io.github.vincemann.subtitlebuddy.config.ConfigDirectoryImpl;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileManager;
 import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
-import io.github.vincemann.subtitlebuddy.cp.JarConfigFileManager;
+import io.github.vincemann.subtitlebuddy.cp.ConfigFileManagerImpl;
 
 
 public class ConfigFileModule extends AbstractModule {
@@ -25,6 +25,6 @@ public class ConfigFileModule extends AbstractModule {
         bind(ConfigDirectory.class).to(ConfigDirectoryImpl.class);
         bind(PropertiesFile.class).toInstance(propertiesManager);
         bind(UIStringsFile.class).toInstance(stringConfiguration);
-        bind(ConfigFileManager.class).to(JarConfigFileManager.class);
+        bind(ConfigFileManager.class).to(ConfigFileManagerImpl.class);
     }
 }
