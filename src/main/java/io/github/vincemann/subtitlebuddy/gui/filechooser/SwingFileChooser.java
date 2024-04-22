@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.validation.constraints.NotNull;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -31,10 +31,10 @@ public class SwingFileChooser implements FileChooser {
 
 
     @Inject
-    private SwingFileChooser(@NotNull @Named(UIStringsKeys.SRT_FILE_TYPES) String[] fileTypes,
+    private SwingFileChooser(@Named(UIStringsKeys.SRT_FILE_TYPES) String[] fileTypes,
                              @Named(UIStringsKeys.SELECT_FILE_DESC) String description,
-                             @NotNull @Named(UIStringsKeys.SELECT_FILE_WINDOW_TITLE) String dialogTitle,
-                             @NotNull LastPathRegistry lastPathRegistry
+                             @Named(UIStringsKeys.SELECT_FILE_WINDOW_TITLE) String dialogTitle,
+                             LastPathRegistry lastPathRegistry
     ) {
         this.fileTypes = fileTypes;
         this.description = description;

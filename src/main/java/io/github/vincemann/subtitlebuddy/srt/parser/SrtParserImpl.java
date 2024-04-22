@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.constraints.NotNull;
+
 import java.util.Collections;
 import java.util.Optional;
 
@@ -32,7 +32,7 @@ public class SrtParserImpl implements SrtParser {
     private Optional<SubtitleParagraph> currentSubtitle= Optional.empty();
 
     @Inject
-    public SrtParserImpl(@NotNull SubtitleFile subtitleFile, @NotNull StopWatch stopWatch, final @Named(PropertyFileKeys.DEFAULT_SUBTITLE) @NonNull String defaultSubtitleText) {
+    public SrtParserImpl(SubtitleFile subtitleFile, StopWatch stopWatch, final @Named(PropertyFileKeys.DEFAULT_SUBTITLE) @NonNull String defaultSubtitleText) {
         this.subtitleFile = subtitleFile;
         this.stopWatch = stopWatch;
         checkArgument(!defaultSubtitleText.isEmpty());

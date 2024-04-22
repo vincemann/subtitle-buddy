@@ -132,9 +132,6 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-api'
     runtimeOnly 'org.apache.logging.log4j:log4j-core'
 
-    // validation
-    implementation('javax.validation:validation-api:2.0.1.Final')
-
     // event handling
     implementation('com.google.guava:guava:33.0.0-jre')
 

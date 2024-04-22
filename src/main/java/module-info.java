@@ -5,7 +5,6 @@ open module io.github.vincemann.subtitlebuddy {
     requires javafx.fxml;
     requires org.apache.commons.lang3;
     requires org.apache.commons.logging;
-    requires java.validation;
     requires org.apache.commons.configuration2;
     requires org.jnativehook;  // self modularized
     requires org.apache.logging.log4j;

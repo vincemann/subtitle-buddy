@@ -5,7 +5,7 @@ import io.github.vincemann.subtitlebuddy.srt.Timestamp;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.constraints.NotNull;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +22,7 @@ public class SubtitleFileImpl implements SubtitleFile{
      * geordnete Liste an Subtitles
      * @param subtitles
      */
-    public SubtitleFileImpl(@NotNull List<SubtitleParagraph> subtitles) throws EmptySubtitleListException {
+    public SubtitleFileImpl(List<SubtitleParagraph> subtitles) throws EmptySubtitleListException {
         this.subtitles = subtitles;
         this.firstSubtitle = subtitles.get(0);
         if(firstSubtitle==null){

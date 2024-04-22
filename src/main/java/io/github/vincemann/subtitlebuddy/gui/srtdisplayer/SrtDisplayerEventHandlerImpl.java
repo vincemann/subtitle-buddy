@@ -14,7 +14,6 @@ import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 import lombok.extern.slf4j.Slf4j;
 
 
-import javax.validation.Valid;
 
 @Slf4j
 @Singleton
@@ -31,7 +30,7 @@ public class SrtDisplayerEventHandlerImpl implements SrtDisplayerEventHandler {
 
     @Override
     @Subscribe
-    public void handleFontColorChangedEvent(@Valid SrtFontColorChangeEvent e) {
+    public void handleFontColorChangedEvent(SrtFontColorChangeEvent e) {
         log.info("ColorChangedEvent arrived ");
         srtDisplayerProvider.get(MovieSrtDisplayer.class).setFontColor(e.getColor());
         log.debug("changing color to: " + e.getColor().toString());
