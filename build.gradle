@@ -106,9 +106,11 @@ javafx {
     platform = targetPlatform
 }
 
-
 repositories {
     mavenCentral()
+    maven {
+        url "https://jpms.pkg.st/repository"
+    }
 }
 
 
@@ -133,7 +135,7 @@ dependencies {
     runtimeOnly 'org.apache.logging.log4j:log4j-core'
 
     // event handling
-    implementation('com.google.guava:guava:33.0.0-jre')
+    implementation('com.google.guava:guava:33.0.0-jre-jpms')
 
     // utils
     // only needed for compilation - not at runtime
