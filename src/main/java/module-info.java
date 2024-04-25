@@ -11,9 +11,9 @@ open module io.github.vincemann.subtitlebuddy {
     requires org.slf4j;
     requires jakarta.inject;
     requires org.apache.commons.io;
-    // not modularized
-    requires com.google.guice;
     requires com.google.common;
+    requires com.google.guice;
+
 
 
 //    opens io.github.vincemann.subtitlebuddy to javafx.fxml;

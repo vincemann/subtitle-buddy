@@ -1,3 +1,5 @@
+import java.nio.file.Paths
+import java.util.zip.ZipFile
 
 plugins {
     id 'java'
@@ -16,11 +18,59 @@ application {
     setMainClass('io.github.vincemann.subtitlebuddy.Main')
 }
 
+compileJava {
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', project.ext.compileModulePath.call() + "",
+                '--add-modules', project.ext.rootModules.call().join(",")
+        ]
+    }
+}
+
+
+compileTestJava {
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', project.ext.compileTestModulePath.call(),
+                '--add-modules', project.ext.testRootModules.call().join(",")
+//                '--patch-module', 'com.google.guice=${sourceSets.test.java.srcDirs.first()}'
+        ]
+    }
+}
+
 
 ext {
-    javafxVersion = '17'
     // Default to linux platform if not provided [linux, mac, win]
     targetPlatform = project.hasProperty('targetPlatform') ? project.targetPlatform : 'linux'
+
+    // module dependencies for modules I modularized myself are in the jmods folder (automatic or named modules)
+    runtimeModulePath = {
+        return sourceSets.main.runtimeClasspath.asPath
+    }
+    compileModulePath = {
+        return sourceSets.main.compileClasspath.asPath
+    }
+
+    runtimeTestModulePath = {
+        return sourceSets.test.runtimeClasspath.asPath
+    }
+    compileTestModulePath = {
+        return sourceSets.test.compileClasspath.asPath
+    }
+
+    rootModules = {
+        def modules = new ArrayList()
+        modules.addAll(javafx.getModules())
+        modules.add(application.mainModule.get())
+        return modules
+    }
+
+    testRootModules = {
+        def modules = new ArrayList()
+        modules.addAll(javafx.getModules())
+        modules.add('io.github.vincemann.subtitlebuddy.test')
+        return modules
+    }
 }
 
 jar {
@@ -36,11 +86,10 @@ jar {
 }
 
 test {
-
     doFirst {
         jvmArgs = [
-                "--module-path", classpath.asPath,
-                '--add-modules', javafx.getModules().join(','),
+                "--module-path", project.ext.runtimeTestModulePath.call(),
+                '--add-modules', project.ext.testRootModules.call().join(','),
 //                resolve some issues with javafx and testfx
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.application=org.testfx',
@@ -49,29 +98,48 @@ test {
     }
 }
 
-// create minimal runtime image, only containing the modules needed for the application
-// also ships jdk modules needed -> standalone executable
-tasks.register("createRuntimeImage", Exec){
+// Task to run 'jdeps' and capture its output
+tasks.register("generateModuleInfo", Exec) {
     dependsOn 'jar'
     doFirst {
-        mkdir 'build/image'
+        // Ensure the directory is created before running the command
+        mkdir 'build/tmp'
+        // Determine the jar file path just before running the command
+        def jarfilePath = jar.getArchiveFile().get().getAsFile().toPath().toAbsolutePath().toString()
+        println("JAR File Path: " + jarfilePath)
 
-        def modulePath = sourceSets.main.runtimeClasspath.asPath
-        // Print the module path for debugging
-        println("Module path: $modulePath")
+        def rootModules = project.ext.rootModules.call().join(",")
+        println("root modules: " + rootModules)
 
-        def modules = javafx.getModules()
-        modules.add(application.mainModule.get())
+        // Configure the commandLine here to use the up-to-date jar file path
+        commandLine 'jdeps',
+                '--module-path', project.ext.runtimeModulePath.call(),
+                '--add-modules', rootModules,
+                '--multi-release', '9',
+                '--print-module-deps',
+                jarfilePath
+    }
+    standardOutput = new ByteArrayOutputStream()
 
-        println("Modules: $modules")
+    doLast {
+        // Save the output to a file for later use
+        def outputFile = file('build/tmp/deps.txt')
+        outputFile.text = standardOutput.toString()
+        println("Saved jdeps output to: ${outputFile.path}")
+    }
+}
 
-        def modulesString = modules.join(',')
+// create minimal runtime image, only containing the modules needed for the application
+// also ships jdk modules needed -> standalone executable
+tasks.register("createRuntimeImage", Exec) {
+    dependsOn 'generateModuleInfo'
+    doFirst {
+        def deps = file('build/tmp/deps.txt').text.trim()
+        println("Modules to include: " + deps)
 
-//        javafx plugin already puts the correct platform dependent native libraries on the module path
-//        my application jar or build/classes is also on the module path by default
         commandLine 'jlink',
-                '--module-path', modulePath,
-                '--add-modules', modulesString,
+                '--module-path', project.ext.runtimeModulePath.call(),
+                '--add-modules', deps,
                 '--output', 'build/image',
                 '--strip-debug',
                 '--compress', '2',
@@ -80,9 +148,69 @@ tasks.register("createRuntimeImage", Exec){
     }
 }
 
+task listAutomaticModules {
+    doLast {
+        // Define a closure to check if a JAR file contains module-info.class
+        def containsModuleInfo = { File jar ->
+            try {
+                ZipFile zipFile = new ZipFile(jar)
+                def hasModuleInfo = zipFile.entries().asIterator().any { entry ->
+                    entry.name.endsWith("module-info.class")
+                }
+                zipFile.close()
+                return hasModuleInfo
+            } catch (IOException e) {
+                println("Error reading file: ${jar}")
+                return false
+            }
+        }
+
+        // List to hold the names of automatic modules
+        def automaticModules = []
+        def automaticModulesPaths = []
+
+        // Check all files in the runtime classpath
+        configurations.runtimeClasspath.files.each { File file ->
+            if (file.name.endsWith('.jar') && !containsModuleInfo(file)) {
+                // Assuming the jar is an automatic module if it does not contain module-info.class
+                String moduleName = file.name.take(file.name.lastIndexOf('.')).replaceAll(/[-\.]/, '_')
+                String path = file.toPath().toAbsolutePath().toString()
+                automaticModules.add(moduleName)
+                automaticModulesPaths.add(path)
+            }
+        }
+
+        // Print out all detected automatic modules
+        if (automaticModules.isEmpty()) {
+            println("No automatic modules found.")
+        } else {
+            println("Found automatic modules:")
+            automaticModules.each { println(it) }
+            automaticModulesPaths.each { println(it) }
+        }
+    }
+}
+
+tasks.register('writeModulePath') {
+    doLast {
+        // Create a file object for the module path file
+        def modulePathFile = file('modulepath')
+
+        // Get the module path from the runtime classpath
+        def modulePath = project.sourceSets.main.runtimeClasspath.asPath
+
+        // Write the module path to the file
+        modulePathFile.text = modulePath
+
+        // Optional: Print the module path to the console for verification
+        println("Module path written to file: ${modulePathFile.path}")
+        println("Module Path: \n$modulePath")
+    }
+}
+
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
 //    makes sure module path is correctly set up
     modularity.inferModulePath.set(true)
@@ -91,18 +219,19 @@ java {
 
 run {
     doFirst {
+        println "Module path: " + project.ext.runtimeModulePath.call()+""
         jvmArgs = [
-                "--module-path", classpath.asPath,
-//                modules are not part of sdk anymore - need to add them manually to module graph
-                "--add-modules", javafx.getModules().join(","),
+                "--module-path", project.ext.runtimeModulePath.call(),
+                // modules are not part of sdk anymore - need to add them manually to module graph
+                "--add-modules", project.ext.rootModules.call().join(","),
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
         ]
     }
 }
 
 javafx {
-    version = "17"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
+    version = "11"
+    modules = ['javafx.controls', 'javafx.fxml']
     platform = targetPlatform
 }
 
@@ -113,6 +242,9 @@ repositories {
     }
 }
 
+//tasks.withType(AbstractCopyTask) {
+//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//}
 
 dependencies {
 
@@ -120,9 +252,21 @@ dependencies {
     // needed to self modularize the jar in order to include for whatever reason + this way I can build a custom jlink image
     // bc cant use automatic modules in jlink
     implementation files('lib/jnativehook-2.0.2-patched.jar')
+//    implementation files('lib/guice-7.0.0.jar')
+    // deps of guice
+    implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
+//    implementation 'com.google.guava:guava:23.6-jre'
+//    implementation 'com.google.j2objc:j2objc-annotations:1.1'
+//    implementation 'aopalliance:aopalliance:1.0'
+//    implementation 'com.google.errorprone:error_prone_annotations:2.26.1'
+//    implementation 'org.ow2.asm:asm:6.0'
+//    implementation 'com.google.code.findbugs:jsr305:3.0.1'
+
 
     // dependency injection
-    implementation('com.google.inject:guice:7.0.0')
+    implementation('com.google.inject:guice:7.0.0'){
+        exclude module: 'guava'
+    }
     implementation('com.google.inject.extensions:guice-assistedinject:7.0.0')
     implementation('com.google.inject.extensions:guice-multibindings:4.2.3')
     implementation('commons-io:commons-io:2.16.1')
@@ -134,12 +278,12 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-api'
     runtimeOnly 'org.apache.logging.log4j:log4j-core'
 
-    // event handling
+    // mostly needed as a transitive dep of guice and eventhandling
     implementation('com.google.guava:guava:33.0.0-jre-jpms')
 
     // utils
     // only needed for compilation - not at runtime
-    compileOnly 'org.projectlombok:lombok:1.18.28'
+    implementation 'org.projectlombok:lombok:1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
     implementation('org.apache.commons:commons-configuration2:2.10.1')
     implementation('org.apache.commons:commons-lang3:3.12.0')
@@ -154,7 +298,14 @@ dependencies {
     testImplementation('org.testfx:testfx-junit:4.0.18') {
         exclude module: 'hamcrest-core'
     }
-    testImplementation('org.loadui:testFx:3.1.2')
-    testImplementation 'org.hamcrest:hamcrest-all:1.3'
-    testImplementation "junit:junit:4.13.2"
+    testImplementation('org.loadui:testFx:3.1.2') {
+        exclude module: 'hamcrest-all'
+    }
+    testImplementation('org.hamcrest:hamcrest-core:1.3')
+
+    testImplementation('junit:junit:4.13.2') {
+        exclude group: 'org.hamcrest'
+    }
+
+
 }
