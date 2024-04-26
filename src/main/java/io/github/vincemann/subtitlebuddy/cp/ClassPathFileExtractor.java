@@ -9,17 +9,6 @@ import java.util.List;
  */
 public interface ClassPathFileExtractor {
 
-
-
     CopiedClassPathFile findOnClassPath(String relPath) throws IOException;
-
-    /**
-     * give me the rel path of a dir in the classpath and i'll return you all files in that directory
-     * @param relDirPath
-     * @throws IOException
-     */
-    List<CopiedClassPathFile> findAllInDir(String relDirPath) throws IOException;
-
-
 
 }

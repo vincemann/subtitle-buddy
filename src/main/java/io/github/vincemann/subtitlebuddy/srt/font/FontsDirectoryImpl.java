@@ -1,5 +1,6 @@
 package io.github.vincemann.subtitlebuddy.srt.font;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,8 +30,12 @@ public class FontsDirectoryImpl implements FontsDirectory {
 
     // relative to config dir
     private static final String DEFAULT_FONT_PATH = "fonts";
-    private static final String DEFAULT_FONT_FILES_PATTERN = "/fonts/*";
-
+    private static final List<String> DEFAULT_FONT_FILES = Arrays.asList(
+            "fonts/Aileron-Black.italic.otf",
+            "fonts/Aileron-Black.otf",
+            "fonts/Amaranth.ttf",
+            "fonts/Amaranth.italic.ttf"
+    );
     private ConfigDirectory configDirectory;
     private ClassPathFileExtractor classPathFileExtractor;
 
@@ -49,10 +55,15 @@ public class FontsDirectoryImpl implements FontsDirectory {
                 log.debug("creating it for user");
                 Files.createDirectory(fontsDir);
                 log.debug("font dir successfully created");
-                log.debug( "adding default fonts now if necessary");
-                populateWithDefaultFontsIfNeeded(fontsDir);
             }else {
                 log.debug("font dir already existing");
+            }
+            if (io.github.vincemann.subtitlebuddy.util.FileUtils.isDirectoryEmpty(fontsDir)) {
+                log.debug("font dir is empty");
+                log.debug( "adding default fonts now");
+                populateWithDefaultFontsIfNeeded(fontsDir);
+            }else{
+                log.debug("font dir is not empty");
             }
 
             log.debug("selected fonts path: " + fontsDir.toString());
@@ -68,7 +79,7 @@ public class FontsDirectoryImpl implements FontsDirectory {
      */
     private void populateWithDefaultFontsIfNeeded(Path targetPath) throws IOException {
         // get font files from jar
-        List<CopiedClassPathFile> fontFiles = classPathFileExtractor.findAllInDir(DEFAULT_FONT_FILES_PATTERN);
+        List<CopiedClassPathFile> fontFiles = extractDefaultFonts();
         for (CopiedClassPathFile tmpFontFile : fontFiles) {
             //every file
             File targetFontFile = targetPath.resolve(tmpFontFile.getFileName()).toFile();
@@ -78,5 +89,13 @@ public class FontsDirectoryImpl implements FontsDirectory {
             }
             FileUtils.copyFile(tmpFontFile.getFile(), targetFontFile);
         }
+    }
+
+    private List<CopiedClassPathFile> extractDefaultFonts() throws IOException {
+        List<CopiedClassPathFile> defaultFonts = Lists.newArrayList();
+        for (String defaultFontFile : DEFAULT_FONT_FILES) {
+            defaultFonts.add(classPathFileExtractor.findOnClassPath(defaultFontFile));
+        }
+        return defaultFonts;
     }
 }

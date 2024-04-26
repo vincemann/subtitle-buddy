@@ -1,5 +1,5 @@
 #!/bin/bash
-# script for building release files for win,linux,mac - windows installer,appimage,dmg
+# script for building release files for win,linux,mac - windows installer,app-image,dmg
 # usage 'bash ./releases/build-all-releases.sh'
 # only works on linux machines
 # must be executed from project root dir

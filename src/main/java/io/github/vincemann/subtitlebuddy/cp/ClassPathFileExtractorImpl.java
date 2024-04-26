@@ -28,31 +28,28 @@ public class ClassPathFileExtractorImpl implements ClassPathFileExtractor {
         return copyToTempFile(resourceUrl);
     }
 
-    public List<CopiedClassPathFile> findAllInDir(String relDirPath) throws IOException {
-        Enumeration<URL> resourceUrls = getClass().getClassLoader().getResources(relDirPath);
-        List<CopiedClassPathFile> files = new ArrayList<>();
-        while (resourceUrls.hasMoreElements()) {
-            URL url = resourceUrls.nextElement();
-            files.add(copyToTempFile(url));
-        }
-        return files;
-    }
-
 
     private CopiedClassPathFile copyToTempFile(URL resourceUrl) throws IOException {
-        InputStream resourceStream = resourceUrl.openStream();
-        if (resourceStream == null) {
-            throw new IOException("Could not open stream for resource at " + resourceUrl);
-        }
-        Path tempFile = Files.createTempFile("SubtitleBuddyTempFile", ".tmp");
-        Files.copy(resourceStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
-        return new CopiedClassPathFile(tempFile.toFile(),getFileName(resourceUrl));
+        // Open the resource stream
+        try (InputStream resourceStream = resourceUrl.openStream()) {
+            if (resourceStream == null) {
+                throw new IOException("Could not open stream for resource at " + resourceUrl);
+            }
+            // Create a temporary file
+            Path tempFile = Files.createTempFile("SubtitleBuddyTempFile", ".tmp");
+            // Copy the stream to the temporary file
+            Files.copy(resourceStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            return new CopiedClassPathFile(tempFile.toFile(), getFileName(resourceUrl));
+        } // Using try-with-resources to ensure the stream is closed properly
     }
 
     private String getFileName(URL url) {
-        // Extracts the path part of the URL
         String path = url.getPath();
-        // Uses Paths.get to handle the path correctly and get the file name
+        // Handle JAR URL specifically to extract the real file name
+        if (path.contains("!")) {
+            path = path.substring(path.indexOf('!') + 2); // Skip the "!/" part
+        }
         return Paths.get(path).getFileName().toString();
     }
+
 }
