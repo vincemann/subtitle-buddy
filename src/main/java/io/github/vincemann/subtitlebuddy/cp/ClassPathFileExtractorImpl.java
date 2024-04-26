@@ -1,6 +1,7 @@
 package io.github.vincemann.subtitlebuddy.cp;
 
 import com.google.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,10 +19,12 @@ import java.util.List;
  * Files inside the running jar are only accessible as a Stream, so they are copied to a temp file.
  */
 @Singleton
+@Slf4j
 public class ClassPathFileExtractorImpl implements ClassPathFileExtractor {
 
     public CopiedClassPathFile findOnClassPath(String relPath) throws IOException {
         URL resourceUrl = getClass().getClassLoader().getResource(relPath);
+        log.debug("classpath resource to load: " + resourceUrl);
         if (resourceUrl == null) {
             throw new IOException("Resource not found on classpath: " + relPath);
         }

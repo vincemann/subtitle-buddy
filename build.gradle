@@ -1,3 +1,5 @@
+import java.util.zip.ZipFile
+
 plugins {
     id 'java'
     id 'application'
@@ -14,6 +16,100 @@ application {
     setMainClass('io.github.vincemann.subtitlebuddy.Main')
 }
 
+// Task to run 'jdeps' and capture its output
+tasks.register("generateModuleInfo", Exec) {
+    dependsOn 'jar'
+    doFirst {
+        // Ensure the directory is created before running the command
+        mkdir 'build/tmp'
+        // Determine the jar file path just before running the command
+        def jarfilePath = jar.getArchiveFile().get().getAsFile().toPath().toAbsolutePath().toString()
+        println("JAR File Path: " + jarfilePath)
+
+        def rootModules = new ArrayList()
+        rootModules.addAll(javafx.modules)
+        rootModules.add(application.mainModule.get())
+        println("root modules: " + rootModules)
+
+        // Configure the commandLine here to use the up-to-date jar file path
+        commandLine 'jdeps',
+                '--module-path', project.sourceSets.main.runtimeClasspath,
+                '--add-modules', rootModules,
+                '--multi-release', '9',
+                '--print-module-deps',
+                jarfilePath
+    }
+    standardOutput = new ByteArrayOutputStream()
+
+    doLast {
+        // Save the output to a file for later use
+        def outputFile = file('build/tmp/deps.txt')
+        outputFile.text = standardOutput.toString()
+        println("Saved jdeps output to: ${outputFile.path}")
+    }
+}
+
+// create minimal runtime image, only containing the modules needed for the application
+// also ships jdk modules needed -> standalone executable
+tasks.register("createRuntimeImage", Exec) {
+    dependsOn 'generateModuleInfo'
+    doFirst {
+        def deps = file('build/tmp/deps.txt').text.trim()
+        println("Modules to include: " + deps)
+
+        commandLine 'jlink',
+                '--module-path', project.sourceSets.main.runtimeClasspath,
+                '--add-modules', deps,
+                '--output', 'build/image',
+                '--strip-debug',
+                '--compress', '2',
+                '--no-header-files',
+                '--no-man-pages'
+    }
+}
+
+tasks.register('listAutomaticModules') {
+    doLast {
+        // Define a closure to check if a JAR file contains module-info.class
+        def containsModuleInfo = { File jar ->
+            try {
+                ZipFile zipFile = new ZipFile(jar)
+                def hasModuleInfo = zipFile.entries().asIterator().any { entry ->
+                    entry.name.endsWith("module-info.class")
+                }
+                zipFile.close()
+                return hasModuleInfo
+            } catch (IOException e) {
+                println("Error reading file: ${jar}")
+                return false
+            }
+        }
+
+        // List to hold the names of automatic modules
+        def automaticModules = []
+        def automaticModulesPaths = []
+
+        // Check all files in the runtime classpath
+        configurations.runtimeClasspath.files.each { File file ->
+            if (file.name.endsWith('.jar') && !containsModuleInfo(file)) {
+                // Assuming the jar is an automatic module if it does not contain module-info.class
+                String moduleName = file.name.take(file.name.lastIndexOf('.')).replaceAll(/[-\.]/, '_')
+                String path = file.toPath().toAbsolutePath().toString()
+                automaticModules.add(moduleName)
+                automaticModulesPaths.add(path)
+            }
+        }
+
+        // Print out all detected automatic modules
+        if (automaticModules.isEmpty()) {
+            println("No automatic modules found.")
+        } else {
+            println("Found automatic modules:")
+            automaticModules.each { println(it) }
+            automaticModulesPaths.each { println(it) }
+        }
+    }
+}
 
 ext {
     // Default to linux platform if not provided [linux, mac, win]
@@ -35,7 +131,7 @@ jar {
 test {
     doFirst {
         jvmArgs = [
-                '--add-modules', javafx.modules.join(",")+"",
+                '--add-modules', javafx.modules.join(","),
 //                resolve some issues with javafx and testfx
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.application=org.testfx',
