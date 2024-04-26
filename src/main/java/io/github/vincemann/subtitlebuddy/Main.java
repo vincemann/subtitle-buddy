@@ -22,6 +22,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jnativehook.DefaultLibraryLocator;
 import org.jnativehook.GlobalScreen;
 
 import java.util.Arrays;
@@ -31,6 +32,12 @@ import java.util.List;
 @NoArgsConstructor
 @Singleton
 public class Main extends Application {
+
+    // somehow manually setting the locator fixes something in jnativehook
+    // otherwise the lib cant be found at runtime when running jar
+    static {
+        System.setProperty("jnativehook.lib.locator", DefaultLibraryLocator.class.getName());
+    }
 
     public static final String CONFIG_FILE_NAME = "application.properties";
     public static final String UI_STRINGS_CONFIG_FILE_PATH = "application.string.properties";

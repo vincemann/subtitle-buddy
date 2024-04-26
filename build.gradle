@@ -1,10 +1,9 @@
-import java.util.zip.ZipFile
-
 plugins {
     id 'java'
     id 'application'
 //    pulls the correct platform dependent native libraries on the module path
     id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'io.github.vincemann'
@@ -12,103 +11,7 @@ version = '1.1.0'
 
 
 application {
-    setMainModule('io.github.vincemann.subtitlebuddy')
     setMainClass('io.github.vincemann.subtitlebuddy.Main')
-}
-
-// Task to run 'jdeps' and capture its output
-tasks.register("generateModuleInfo", Exec) {
-    dependsOn 'jar'
-    doFirst {
-        // Ensure the directory is created before running the command
-        mkdir 'build/tmp'
-        // Determine the jar file path just before running the command
-        def jarfilePath = jar.getArchiveFile().get().getAsFile().toPath().toAbsolutePath().toString()
-        println("JAR File Path: " + jarfilePath)
-
-        def rootModules = new ArrayList()
-        rootModules.addAll(javafx.modules)
-        rootModules.add(application.mainModule.get())
-        println("root modules: " + rootModules)
-
-        // Configure the commandLine here to use the up-to-date jar file path
-        commandLine 'jdeps',
-                '--module-path', project.sourceSets.main.runtimeClasspath,
-                '--add-modules', rootModules,
-                '--multi-release', '9',
-                '--print-module-deps',
-                jarfilePath
-    }
-    standardOutput = new ByteArrayOutputStream()
-
-    doLast {
-        // Save the output to a file for later use
-        def outputFile = file('build/tmp/deps.txt')
-        outputFile.text = standardOutput.toString()
-        println("Saved jdeps output to: ${outputFile.path}")
-    }
-}
-
-// create minimal runtime image, only containing the modules needed for the application
-// also ships jdk modules needed -> standalone executable
-tasks.register("createRuntimeImage", Exec) {
-    dependsOn 'generateModuleInfo'
-    doFirst {
-        def deps = file('build/tmp/deps.txt').text.trim()
-        println("Modules to include: " + deps)
-
-        commandLine 'jlink',
-                '--module-path', project.sourceSets.main.runtimeClasspath,
-                '--add-modules', deps,
-                '--output', 'build/image',
-                '--strip-debug',
-                '--compress', '2',
-                '--no-header-files',
-                '--no-man-pages'
-    }
-}
-
-tasks.register('listAutomaticModules') {
-    doLast {
-        // Define a closure to check if a JAR file contains module-info.class
-        def containsModuleInfo = { File jar ->
-            try {
-                ZipFile zipFile = new ZipFile(jar)
-                def hasModuleInfo = zipFile.entries().asIterator().any { entry ->
-                    entry.name.endsWith("module-info.class")
-                }
-                zipFile.close()
-                return hasModuleInfo
-            } catch (IOException e) {
-                println("Error reading file: ${jar}")
-                return false
-            }
-        }
-
-        // List to hold the names of automatic modules
-        def automaticModules = []
-        def automaticModulesPaths = []
-
-        // Check all files in the runtime classpath
-        configurations.runtimeClasspath.files.each { File file ->
-            if (file.name.endsWith('.jar') && !containsModuleInfo(file)) {
-                // Assuming the jar is an automatic module if it does not contain module-info.class
-                String moduleName = file.name.take(file.name.lastIndexOf('.')).replaceAll(/[-\.]/, '_')
-                String path = file.toPath().toAbsolutePath().toString()
-                automaticModules.add(moduleName)
-                automaticModulesPaths.add(path)
-            }
-        }
-
-        // Print out all detected automatic modules
-        if (automaticModules.isEmpty()) {
-            println("No automatic modules found.")
-        } else {
-            println("Found automatic modules:")
-            automaticModules.each { println(it) }
-            automaticModulesPaths.each { println(it) }
-        }
-    }
 }
 
 ext {
@@ -116,17 +19,6 @@ ext {
     targetPlatform = project.hasProperty('targetPlatform') ? project.targetPlatform : 'linux'
 }
 
-jar {
-    doFirst {
-        archiveClassifier.set('')
-        archiveFileName = "SubtitleBuddy-${project.version}-${targetPlatform}.jar"
-    }
-    manifest {
-        attributes(
-                'Main-Class': application.getMainClass().get()
-        )
-    }
-}
 
 test {
     doFirst {
@@ -144,38 +36,26 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
-//    makes sure module path is correctly set up
-    modularity.inferModulePath.set(true)
 }
 
-// writes module path to file 'modulepath' in project root
-// can be used to run program with java cli
-tasks.register('writeModulePath') {
-    doLast {
-        // Create a file object for the module path file
-        def modulePathFile = file('modulepath')
-
-        // Get the module path from the runtime classpath
-        def modulePath = project.sourceSets.main.runtimeClasspath.asPath
-
-        // Write the module path to the file
-        modulePathFile.text = modulePath
-
-        // Optional: Print the module path to the console for verification
-        println("Module path written to file: ${modulePathFile.path}")
-        println("Module Path: \n$modulePath")
+shadowJar {
+    archiveClassifier.set('')
+    archiveFileName = "SubtitleBuddy-${project.version}-${targetPlatform}.jar"
+    manifest {
+        attributes 'Main-Class': application.getMainClass().get()
     }
+    mergeServiceFiles {
+        include 'META-INF/services/com.example.MyService'
+    }
+    minimize()  // Optional: minimize the jar to remove unused classes
 }
 
-
-// same as: java -p @modulepath --add-modules javafx.controls,javafx.fxml -m io.github.vincemann.subtitlebuddy/io.github.vincemann.subtitlebuddy.Main
-// modulepath can be printed with writeModulePath task
+// same as: java --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 run {
     doFirst {
         jvmArgs = [
                 // modules are not part of sdk anymore - need to add them manually to module graph
-                "--add-modules", javafx.modules.join(","),
-                '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
+                "--add-modules", javafx.modules.join(",")
         ]
     }
 }
@@ -195,10 +75,10 @@ repositories {
 
 dependencies {
 
+    // capture mouse and keyboard events
+    implementation 'com.1stleg:jnativehook:2.0.2'
+//    implementation files('lib/jnativehook-2.0.2-patched.jar')
 
-    // need to use old version bc of segfaults on linux + keyboard strokes not working
-    // also need to self modularize bc something fails when used as an automatic module
-    implementation files('lib/jnativehook-2.0.2-patched.jar')
 
     // dependency injection
     implementation('com.google.inject:guice:7.0.0')
@@ -213,32 +93,30 @@ dependencies {
     implementation 'org.slf4j:slf4j-api'
     implementation 'org.apache.logging.log4j:log4j-slf4j2-impl'
     implementation 'org.apache.logging.log4j:log4j-api'
-    runtimeOnly 'org.apache.logging.log4j:log4j-core'
+    implementation 'org.apache.logging.log4j:log4j-core'
+    // route apache commons logging to slf4j (commons configuration has transitive dep on that)
+    implementation 'org.slf4j:jcl-over-slf4j:2.0.13'
+
 
     // event handling
-    implementation('com.google.guava:guava:33.0.0-jre-jpms')
+    implementation('com.google.guava:guava:33.0.0-jre')
 
     // utils
     compileOnly 'org.projectlombok:lombok:1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
-    implementation('org.apache.commons:commons-configuration2:2.10.1')
+    implementation('org.apache.commons:commons-configuration2:2.10.1'){
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
     implementation('org.apache.commons:commons-lang3:3.12.0')
     // some other dep depends on this
-    implementation 'commons-beanutils:commons-beanutils:1.9.4'
+    implementation('commons-beanutils:commons-beanutils:1.9.4'){
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
 
     // testing
-    testImplementation('org.testfx:testfx-core:4.0.18') {
-        exclude module: 'hamcrest-all'
-    }
-    testImplementation('org.testfx:testfx-junit:4.0.18') {
-        exclude module: 'hamcrest-core'
-    }
-    testImplementation('org.loadui:testFx:3.1.2') {
-        exclude module: 'hamcrest-all'
-    }
+    testImplementation('org.testfx:testfx-core:4.0.18')
+    testImplementation('org.testfx:testfx-junit:4.0.18')
+    testImplementation('org.loadui:testFx:3.1.2')
     testImplementation('org.hamcrest:hamcrest-core:1.3')
-
-    testImplementation('junit:junit:4.13.2') {
-        exclude group: 'org.hamcrest'
-    }
+    testImplementation('junit:junit:4.13.2')
 }
