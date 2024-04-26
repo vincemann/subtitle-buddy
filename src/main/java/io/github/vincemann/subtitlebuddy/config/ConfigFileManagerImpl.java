@@ -1,8 +1,10 @@
-package io.github.vincemann.subtitlebuddy.cp;
+package io.github.vincemann.subtitlebuddy.config;
 
 import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileManager;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileException;
+import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
+import io.github.vincemann.subtitlebuddy.cp.CopiedClassPathFile;
 import io.github.vincemann.subtitlebuddy.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 

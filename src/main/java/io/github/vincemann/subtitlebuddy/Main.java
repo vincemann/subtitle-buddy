@@ -10,7 +10,7 @@ import io.github.vincemann.subtitlebuddy.config.ConfigFileManager;
 import io.github.vincemann.subtitlebuddy.config.strings.ApacheUIStringsFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
-import io.github.vincemann.subtitlebuddy.cp.ConfigFileManagerImpl;
+import io.github.vincemann.subtitlebuddy.config.ConfigFileManagerImpl;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.gui.stages.controller.SettingsStageController;
 import io.github.vincemann.subtitlebuddy.module.*;

@@ -1,1 +1,0 @@
-jdeps --module-path `cat modulepath` --add-modules io.github.vincemann.subtitlebuddy,javafx.controls,javafx.fxml --multi-release 9 --list-deps build/libs/SubtitleBuddy-1.1.0-linux.jar

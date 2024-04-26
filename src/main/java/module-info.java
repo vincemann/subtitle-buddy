@@ -15,12 +15,6 @@ open module io.github.vincemann.subtitlebuddy {
     requires com.google.guice;
 
 
-
-//    opens io.github.vincemann.subtitlebuddy to javafx.fxml;
-//    opens io.github.vincemann.subtitlebuddy.gui.srtdisplayer to com.google.guice;
-//    opens io.github.vincemann.subtitlebuddy.gui.stages.controller to com.google.guice;
-
-
     exports io.github.vincemann.subtitlebuddy;
     exports io.github.vincemann.subtitlebuddy.srt;
     exports io.github.vincemann.subtitlebuddy.srt.engine;

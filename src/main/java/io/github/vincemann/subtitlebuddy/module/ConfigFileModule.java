@@ -6,7 +6,7 @@ import io.github.vincemann.subtitlebuddy.config.ConfigDirectoryImpl;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileManager;
 import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
-import io.github.vincemann.subtitlebuddy.cp.ConfigFileManagerImpl;
+import io.github.vincemann.subtitlebuddy.config.ConfigFileManagerImpl;
 
 
 public class ConfigFileModule extends AbstractModule {
