@@ -19,6 +19,12 @@ ext {
     targetPlatform = project.hasProperty('targetPlatform') ? project.targetPlatform : 'linux'
 }
 
+javafx {
+    version = "17"
+    modules = ['javafx.controls', 'javafx.fxml']
+    platform = targetPlatform
+}
+
 
 test {
     doFirst {
@@ -32,13 +38,10 @@ test {
     }
 }
 
+// execute with -PtargetPlatform=win
 tasks.register('buildLinuxAppImage') {
     dependsOn('shadowJar')
     doLast {
-        // Define necessary variables
-        def buildDir = project.buildDir
-        def platform = "linux"
-
         // Read version from generated jar file
         def jar = shadowJar.getArchiveFile().get().asFile
         def jarName = jar.name
@@ -72,6 +75,42 @@ tasks.register('buildLinuxAppImage') {
     }
 }
 
+
+// execute with -PtargetPlatform=linux
+tasks.register('buildWindowsInstaller') {
+    dependsOn('shadowJar')
+    doLast {
+        def jar = shadowJar.getArchiveFile().get().asFile
+        def version = project.version
+        def jarPath = jar.absolutePath
+        def installerPath = "${projectDir}/releases/windows/x64/inno"
+
+        println "Jar file: ${jar.name}"
+        println "Version: $version"
+        println "Jar path: $jarPath"
+
+        // Ensure target directories exist
+        file(installerPath).mkdirs()
+
+        // Deploy the jar to the installer directory
+        delete "$installerPath/application.jar"
+        copy {
+            from jarPath
+            into installerPath
+            rename { 'application.jar' }
+        }
+        println "Deployed jar file to installer directory"
+
+        // Building the installer using Inno Setup within a Docker container
+        println "Building installer"
+        exec {
+            commandLine 'bash', '-c', "cd releases/windows/x64/inno && docker run --rm -i -v \"\$PWD:/work\" amake/innosetup subtitle-buddy.iss"
+        }
+
+        println "Done with windows x64"
+    }
+}
+
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
@@ -96,6 +135,12 @@ startShadowScripts {
     }
 }
 
+
+repositories {
+    mavenCentral()
+}
+
+
 // same as: java --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 run {
     doFirst {
@@ -106,18 +151,6 @@ run {
     }
 }
 
-javafx {
-    version = "17"
-    modules = ['javafx.controls', 'javafx.fxml']
-    platform = targetPlatform
-}
-
-repositories {
-    mavenCentral()
-    maven {
-        url "https://jpms.pkg.st/repository"
-    }
-}
 
 
 
