@@ -11,7 +11,7 @@ version = '1.1.0'
 
 
 application {
-    setMainClass('io.github.vincemann.subtitlebuddy.Main')
+    mainClass = 'io.github.vincemann.subtitlebuddy.Main'
 }
 
 ext {
@@ -32,6 +32,46 @@ test {
     }
 }
 
+tasks.register('buildLinuxAppImage') {
+    dependsOn('shadowJar')
+    doLast {
+        // Define necessary variables
+        def buildDir = project.buildDir
+        def platform = "linux"
+
+        // Read version from generated jar file
+        def jar = shadowJar.getArchiveFile().get().asFile
+        def jarName = jar.name
+        def version = project.version
+        def jarPath = jar.absolutePath
+
+        println "Jar file: $jarName"
+        println "Version: $version"
+        println "Jar path: $jarPath"
+
+        // Linux x64 specifics
+        println "linux x64..."
+        def appImagePath = "releases/linux/x64/SubtitleBuddy.AppDir/usr/bin"
+        delete "$appImagePath/application.jar"
+        copy {
+            from jarPath
+            into appImagePath
+            rename { 'application.jar' }
+        }
+        println "Jar copied"
+
+        // Build AppImage
+        println "Building app image"
+        def linuxImageName = "subtitle-buddy-$version-linux-x64.AppImage"
+
+        exec {
+            environment "ARCH", "x86_64"
+            commandLine 'bash', '-c', "cd releases/linux/x64 && ../appimagetool-x86_64.AppImage SubtitleBuddy.AppDir $linuxImageName"
+        }
+        println "Done with linux x64"
+    }
+}
+
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
@@ -44,10 +84,16 @@ shadowJar {
     manifest {
         attributes 'Main-Class': application.getMainClass().get()
     }
-    mergeServiceFiles {
-        include 'META-INF/services/com.example.MyService'
-    }
+    mergeServiceFiles {}
     minimize()  // Optional: minimize the jar to remove unused classes
+}
+
+startShadowScripts {
+    doLast {
+        // Modify the script file to point to the correct directory
+        unixScript.text = unixScript.text.replace('lib/', 'libs/')
+        windowsScript.text = windowsScript.text.replace('lib\\', 'libs\\')
+    }
 }
 
 // same as: java --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
@@ -72,6 +118,8 @@ repositories {
         url "https://jpms.pkg.st/repository"
     }
 }
+
+
 
 dependencies {
 

@@ -57,7 +57,7 @@ public class Main extends Application {
         UIStringsFile stringConfiguration = new ApacheUIStringsFile(classPathFileExtractor.findOnClassPath(UI_STRINGS_CONFIG_FILE_PATH).getFile());
         injector = createInjector(propertiesManager,stringConfiguration,primaryStage, classPathFileExtractor);
         EventBus eventBus = injector.getInstance(EventBus.class);
-        srtService= injector.getInstance(SrtService.class);
+        srtService = injector.getInstance(SrtService.class);
         eventHandlerRegistrar = injector.getInstance(EventHandlerRegistrar.class);
         eventHandlerRegistrar.registerEventHandlers();
         eventBus.register(srtService);
@@ -74,7 +74,7 @@ public class Main extends Application {
         if(injector==null) {
             //use default modules
             List<Module> moduleList = Arrays.asList(
-                    new ClassPathFileLocatorModule(classPathFileExtractor),
+                    new ClassPathFileExtractorModule(classPathFileExtractor),
                     new ConfigFileModule(propertiesManager, stringConfiguration),
                     new FileChooserModule(stringConfiguration, propertiesManager) ,
                     new ParserModule(stringConfiguration, propertiesManager) ,

@@ -196,7 +196,6 @@ public abstract class AbstractStageController {
         log.trace("unregistering eventHandlers from " + getClass().getSimpleName());
         for(Table.Cell<Node,EventHandler,EventType> tableCell:  nodeEventHandlerEventTable.cellSet()){
             Node node = tableCell.getRowKey();
-            //lässt sich leider nicht ändern mit dem raw type hier..
             node.removeEventHandler(tableCell.getValue(),tableCell.getColumnKey());
         }
         onUnregisterEventHandlers();

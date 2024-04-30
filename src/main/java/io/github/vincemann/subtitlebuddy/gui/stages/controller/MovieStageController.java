@@ -167,7 +167,7 @@ public class MovieStageController extends AbstractStageController implements Mov
     private void handleVBoxDoubleClick(MouseEvent event){
         if(event.getButton().equals(MouseButton.PRIMARY)){
             if(event.getClickCount() == 2){
-                //doppelklick
+                // double click
                 log.debug("user doubleclicked movieText -> switching to SettingsSrtDisplayer");
                 eventBus.post(new SwitchSrtDisplayerEvent(SettingsSrtDisplayer.class));
             }
