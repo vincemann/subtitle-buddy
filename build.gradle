@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'application'
-//    pulls the correct platform dependent native libraries on the module path
+//    pulls the correct platform dependent native libraries onto the classpath path
     id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
@@ -38,7 +38,8 @@ test {
     }
 }
 
-// execute with -PtargetPlatform=win
+// uses app image tool generating binary, which must be placed into: releases/linux/appimagetool.AppImage
+// execute with -PtargetPlatform=linux
 tasks.register('buildLinuxAppImage') {
     dependsOn('shadowJar')
     doLast {
@@ -47,6 +48,10 @@ tasks.register('buildLinuxAppImage') {
         def jarName = jar.name
         def version = project.version
         def jarPath = jar.absolutePath
+        def baseDir = "${projectDir}/releases/linux/x64"
+        def zipName = "subtitle-buddy-$version-linux-x64.zip"
+        def linuxImageName = "subtitle-buddy-$version-linux-x64.AppImage"
+        def zipOutputPath = "${baseDir}/$zipName"
 
         println "Jar file: $jarName"
         println "Version: $version"
@@ -54,7 +59,7 @@ tasks.register('buildLinuxAppImage') {
 
         // Linux x64 specifics
         println "linux x64..."
-        def appImagePath = "releases/linux/x64/SubtitleBuddy.AppDir/usr/bin"
+        def appImagePath = "${baseDir}/SubtitleBuddy.AppDir/usr/bin"
         delete "$appImagePath/application.jar"
         copy {
             from jarPath
@@ -65,25 +70,34 @@ tasks.register('buildLinuxAppImage') {
 
         // Build AppImage
         println "Building app image"
-        def linuxImageName = "subtitle-buddy-$version-linux-x64.AppImage"
 
         exec {
             environment "ARCH", "x86_64"
-            commandLine 'bash', '-c', "cd releases/linux/x64 && ../appimagetool-x86_64.AppImage SubtitleBuddy.AppDir $linuxImageName"
+            commandLine 'bash', '-c', "cd ${baseDir} && ../appimagetool.AppImage SubtitleBuddy.AppDir $linuxImageName"
         }
+
+        // Create ZIP of the binary
+        delete zipOutputPath
+        ant.zip(destFile: "$zipOutputPath", basedir: "${baseDir}", includes: "$linuxImageName")
+
         println "Done with linux x64"
     }
 }
 
-
-// execute with -PtargetPlatform=linux
+// uses a docker container with image name 'amake/innosetup' that uses wine for building windows installer from linux host machines
+// execute with -PtargetPlatform=win
 tasks.register('buildWindowsInstaller') {
     dependsOn('shadowJar')
     doLast {
         def jar = shadowJar.getArchiveFile().get().asFile
         def version = project.version
         def jarPath = jar.absolutePath
-        def installerPath = "${projectDir}/releases/windows/x64/inno"
+        def baseDir = "${projectDir}/releases/windows/x64"
+        def installerPath = "${baseDir}/inno"
+        def windowsImageName = "subtitle-buddy-installer.exe"
+        def zipName = "subtitle-buddy-$version-windows-x64.zip"
+        def zipOutputPath = "${baseDir}/$zipName"
+        def outputExePath = "${installerPath}/output/${windowsImageName}"
 
         println "Jar file: ${jar.name}"
         println "Version: $version"
@@ -104,12 +118,64 @@ tasks.register('buildWindowsInstaller') {
         // Building the installer using Inno Setup within a Docker container
         println "Building installer"
         exec {
-            commandLine 'bash', '-c', "cd releases/windows/x64/inno && docker run --rm -i -v \"\$PWD:/work\" amake/innosetup subtitle-buddy.iss"
+            commandLine 'bash', '-c', "cd ${installerPath} && docker run --rm -i -v \"\$PWD:/work\" amake/innosetup subtitle-buddy.iss && mv ${outputExePath} ${baseDir}"
         }
+
+        // Packaging into a zip file
+        delete zipOutputPath
+        ant.zip(destFile: "$zipOutputPath", basedir: "${baseDir}", includes: "$windowsImageName")
 
         println "Done with windows x64"
     }
 }
+
+// uses genisoimage linux cli tool, need to install it first
+// execute with -PtargetPlatform=mac
+tasks.register('buildMacDmg') {
+    dependsOn 'shadowJar'
+    doLast {
+        def jar = shadowJar.getArchiveFile().get().asFile
+        def jarName = jar.name
+        def version = project.version
+        def jarPath = jar.absolutePath
+        def baseDir = "${projectDir}/releases/macos/x64"
+        def appPath = "${baseDir}/SubtitleBuddy.app/Contents/Java"
+        def dmgName = "subtitle-buddy-$version-macos-x64.dmg"
+        def zipName = "subtitle-buddy-$version-macos-x64.zip"
+        def dmgOutputPath = "${baseDir}/$dmgName"
+        def zipOutputPath = "${baseDir}/$zipName"
+
+        println "Jar file: $jarName"
+        println "Version: $version"
+        println "Jar path: $jarPath"
+
+        // Ensure the application directory exists
+        file(appPath).mkdirs()
+
+        // Copy the JAR to the application directory
+        println "Deploying jar file to application directory..."
+        file("$appPath/application.jar").delete()
+        copy {
+            from jarPath
+            into appPath
+            rename { 'application.jar' }
+        }
+        println "Jar copied"
+
+        // Build DMG
+        println "Building DMG image..."
+        exec {
+            commandLine 'bash', '-c', "cd ${baseDir} && genisoimage -D -V SubtitleBuddy -no-pad -r -apple -o ${dmgOutputPath} SubtitleBuddy.app/"
+        }
+
+        // Create ZIP of the binary
+        println "Creating ZIP archive..."
+        delete zipOutputPath
+        ant.zip(destFile: "$zipOutputPath", basedir: "${baseDir}", includes: "$dmgName")
+        println "Done with macOS x64"
+    }
+}
+
 
 java {
     toolchain {
@@ -135,11 +201,9 @@ startShadowScripts {
     }
 }
 
-
 repositories {
     mavenCentral()
 }
-
 
 // same as: java --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 run {
@@ -151,15 +215,10 @@ run {
     }
 }
 
-
-
-
 dependencies {
 
     // capture mouse and keyboard events
     implementation 'com.1stleg:jnativehook:2.0.2'
-//    implementation files('lib/jnativehook-2.0.2-patched.jar')
-
 
     // dependency injection
     implementation('com.google.inject:guice:7.0.0')
