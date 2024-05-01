@@ -39,6 +39,21 @@ public class FileUtils {
         }
     }
 
+    public static String extractFileName(String relPath) {
+        // Handle both Unix/Linux and Windows separators
+        int lastUnixPos = relPath.lastIndexOf('/');
+        int lastWindowsPos = relPath.lastIndexOf('\\');
+        int lastPos = Math.max(lastUnixPos, lastWindowsPos);
+
+        if (lastPos == -1) {
+            // No separator found, the relPath is the filename
+            return relPath;
+        } else {
+            // Extract the substring after the last path separator
+            return relPath.substring(lastPos + 1);
+        }
+    }
+
     public static File findInDir(Path dir, String filename) throws IOException {
         Optional<Path> foundFile = Files.walk(dir)
                 .filter(path -> path.getFileName().toString().equals(filename))
