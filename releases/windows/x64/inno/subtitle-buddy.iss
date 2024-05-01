@@ -11,6 +11,7 @@ SolidCompression=yes
 [Files]
 Source: "application.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "jre/*"; DestDir: "{app}\jre"; Flags: recursesubdirs ignoreversion
+Source: "lib/*"; DestDir: "{app}\lib"; Flags: recursesubdirs ignoreversion
 Source: "start.bat"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]

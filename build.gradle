@@ -198,7 +198,7 @@ shadowJar {
         attributes 'Main-Class': application.getMainClass().get()
     }
     mergeServiceFiles {}
-    minimize()  // Optional: minimize the jar to remove unused classes
+//    minimize()  // Optional: minimize the jar to remove unused classes
 }
 
 startShadowScripts {

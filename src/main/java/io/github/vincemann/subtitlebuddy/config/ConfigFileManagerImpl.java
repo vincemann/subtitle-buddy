@@ -41,11 +41,13 @@ public class ConfigFileManagerImpl implements ConfigFileManager {
         try {
             // first check if config file is already extracted into application folder
             Path configFolder = configDirectory.findOrCreate();
+            log.debug("config folder: " + configFolder.toString());
             File configFile = FileUtils.findInDir(configFolder, fileName);
             if (configFile != null){
+                log.debug("found config file: " + configFile.toPath().toAbsolutePath());
                 return configFile;
             }
-            // file is not in folder, create it by extracting from within the jar into the jars folder
+            // file is not in folder, create it by extracting from within the jar into the subtitle buddy folder in user dir
             CopiedClassPathFile configFileInJar = classPathFileExtractor.findOnClassPath(fileName);
             Path targetPath = configFolder.resolve(fileName);
             Files.copy(Paths.get(configFileInJar.getFile().toURI()),targetPath, StandardCopyOption.COPY_ATTRIBUTES);

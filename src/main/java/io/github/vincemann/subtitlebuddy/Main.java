@@ -24,17 +24,18 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jnativehook.DefaultLibraryLocator;
 import org.jnativehook.GlobalScreen;
+import org.slf4j.spi.SLF4JServiceProvider;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.ServiceLoader;
 
 @Slf4j
 @NoArgsConstructor
 @Singleton
 public class Main extends Application {
 
-    // somehow manually setting the locator fixes something in jnativehook
-    // otherwise the lib cant be found at runtime when running jar
+    // fixing classloader issues with fat jar
     static {
         System.setProperty("jnativehook.lib.locator", DefaultLibraryLocator.class.getName());
     }
