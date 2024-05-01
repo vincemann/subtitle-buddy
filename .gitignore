@@ -6,6 +6,7 @@ out/
 test/
 old/
 modulepath
+releases/windows/x64/inno/lib/javafx
 !releases/linux/appimagetool-x86_64.AppImage
 *.zip
 releases/linux/x64/SubtitleBuddy.AppDir/usr/lib/jre
