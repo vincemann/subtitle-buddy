@@ -38,16 +38,15 @@ javafx {
 }
 
 
-// for testing on windows, need to mkdir test/win/lib/javafx-sdk
-// and put the windows javafx skd version 17 in this folder
 test {
     doFirst {
         jvmArgs = [
                 '--add-modules', javafx.modules.join(","),
                 // javafx plugin fails for windows to pull the modules on test path and compile path maybe
-                // or windows does not recognize, thats why I need to manually ship the native javafx sdk with it
+                // or windows does not recognize, that's why I need to manually ship the native javafx sdk with it
                 // and setup the module path in testing and when running the fat jar on windows
-                '--module-path', "${projectDir}/test/win/lib/javafx-sdk/lib",
+                // when running on other platforms this is ignored silently
+                '--module-path', "${projectDir}/lib/javafx/win",
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2",
                 //                resolve some issues with javafx and testfx
@@ -61,19 +60,29 @@ test {
 jlink {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
 
+
     switch (project.ext.targetPlatform) {
         case 'linux':
+            println("building jlink image for linux")
             targetPlatform("linux") {
-                jdkHome = "/home/vince/.jdks/liberica-17.0.8"
+                jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_linux_hotspot_2021-05-06-23-30.tar.gz')
             }
             break
         case 'win':
+            println("building jlink image for windows")
+
             targetPlatform("win") {
-                jdkHome = "/home/vince/projekte/important/Subtitle-Buddy/testing/win/jre"
-                addExtraModulePath("/home/vince/projekte/important/Subtitle-Buddy/lib/javafx/win")
+                jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_windows_hotspot_2021-05-06-23-30.zip')
+                addExtraModulePath("${projectDir}/lib/javafx/win")
             }
             break
-        throw new GradleException("need to specify target platform")
+        case 'mac':
+            println("building jlink image for mac")
+            targetPlatform("mac") {
+                jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_mac_hotspot_2021-05-06-23-30.tar.gz')
+            }
+            break
+            throw new GradleException("need to specify target platform")
     }
 
     launcher {
@@ -235,6 +244,8 @@ java {
     modularity.inferModulePath.set(true)
 }
 
+// build fat jar containing javafx moudles and all other deps
+// in wwid oensnv jmods of javafx need to be shipped and declared anyways
 shadowJar {
     archiveClassifier.set('')
     archiveFileName = "SubtitleBuddy-${project.version}-${targetPlatform}.jar"

@@ -5,7 +5,6 @@ out/
 *.AppImage
 testing/
 old/
-lib/javafx
 modulepath
 releases/windows/x64/inno/lib/javafx
 !releases/linux/appimagetool-x86_64.AppImage
