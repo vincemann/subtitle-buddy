@@ -34,17 +34,20 @@ javafx {
 }
 
 
+// for testing on windows, need to mkdir test/win/lib/javafx-sdk
+// and put the windows javafx skd version 17 in this folder
 test {
     doFirst {
         jvmArgs = [
                 '--add-modules', javafx.modules.join(","),
-//                resolve some issues with javafx and testfx
-                '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
-                '--add-exports', 'javafx.graphics/com.sun.javafx.application=org.testfx',
-                '--add-opens', 'javafx.graphics/com.sun.javafx.application=org.testfx'
+                // javafx plugin fails for windows to pull the modules on test path and compile path maybe
+                // or windows does not recognize, thats why I need to manually ship the native javafx sdk with it
+                // and setup the module path in testing and when running the fat jar on windows
+                '--module-path', "${projectDir}/test/win/lib/javafx-sdk/lib",
         ]
     }
 }
+
 
 // uses app image tool generating binary, which must be placed into: releases/linux/appimagetool.AppImage
 // execute with -PtargetPlatform=linux
@@ -198,6 +201,7 @@ shadowJar {
         attributes 'Main-Class': application.getMainClass().get()
     }
     mergeServiceFiles {}
+    // this removes needed classes for slf4j, making dynamic class loading of slf4j impl fail
 //    minimize()  // Optional: minimize the jar to remove unused classes
 }
 
@@ -214,6 +218,7 @@ repositories {
 }
 
 // same as: java --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
+// in windows this command in cli is needed java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 run {
     doFirst {
         jvmArgs = [

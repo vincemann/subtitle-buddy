@@ -22,7 +22,7 @@ public class ClassPathFileExtractorImpl implements ClassPathFileExtractor {
         log.debug("Relative path of classpath resource to load: " + relPath);
         // not working with paths or urls here, because this causes issues with windows, resulting in wrong path syntax ect
         InputStream resourceStream = getClass().getClassLoader().getResourceAsStream(relPath);
-        return copyToTempFile(resourceStream, FileUtils.extractFileName(relPath));
+        return copyToTempFile(resourceStream, FileUtils.getFileNameOfPath(relPath));
     }
 
     private CopiedClassPathFile copyToTempFile(InputStream resourceStream, String fileName) throws IOException {

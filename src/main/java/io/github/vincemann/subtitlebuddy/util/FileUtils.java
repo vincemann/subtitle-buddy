@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 public class FileUtils {
@@ -39,7 +38,7 @@ public class FileUtils {
         }
     }
 
-    public static String extractFileName(String relPath) {
+    public static String getFileNameOfPath(String relPath) {
         // Handle both Unix/Linux and Windows separators
         int lastUnixPos = relPath.lastIndexOf('/');
         int lastWindowsPos = relPath.lastIndexOf('\\');
