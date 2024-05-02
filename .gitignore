@@ -3,7 +3,7 @@ out/
 *.dmg
 *.exe
 *.AppImage
-test/
+testing/
 old/
 modulepath
 releases/windows/x64/inno/lib/javafx
