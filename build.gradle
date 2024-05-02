@@ -45,12 +45,12 @@ test {
                 // javafx plugin fails for windows to pull the modules on test path and compile path maybe
                 // or windows does not recognize, thats why I need to manually ship the native javafx sdk with it
                 // and setup the module path in testing and when running the fat jar on windows
-//                '--module-path', "${projectDir}/test/win/lib/javafx-sdk/lib",
-                //                resolve some issues with javafx and testfx
+                '--module-path', "${projectDir}/test/win/lib/javafx-sdk/lib",
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
+                "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2",
+                //                resolve some issues with javafx and testfx
                 '--add-exports', 'javafx.graphics/com.sun.javafx.application=org.testfx',
                 '--add-opens', 'javafx.graphics/com.sun.javafx.application=org.testfx',
-                "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2"
 
         ]
     }
@@ -61,6 +61,11 @@ jlink {
     launcher {
         name = 'appLauncher'
         mainClass = application.mainClass.get()
+        jvmArgs = ['--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
+                   '--add-reads', 'io.github.vincemann.merged.module=org.apache.commons.logging',
+                   '--add-reads', 'org.apache.commons.configuration2=io.github.vincemann.merged.module',
+                   "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2"
+        ]
     }
 }
 
@@ -232,6 +237,9 @@ startShadowScripts {
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://jpms.pkg.st/repository"
+    }
 }
 
 // same as: java --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
@@ -275,7 +283,7 @@ dependencies {
 
 
     // event handling
-    implementation('com.google.guava:guava:33.0.0-jre')
+    implementation('com.google.guava:guava:33.0.0-jre-jpms')
 
     // utils
     compileOnly 'org.projectlombok:lombok:1.18.28'
