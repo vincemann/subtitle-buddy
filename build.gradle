@@ -45,11 +45,12 @@ test {
                 // javafx plugin fails for windows to pull the modules on test path and compile path maybe
                 // or windows does not recognize, thats why I need to manually ship the native javafx sdk with it
                 // and setup the module path in testing and when running the fat jar on windows
-                '--module-path', "${projectDir}/test/win/lib/javafx-sdk/lib",
+//                '--module-path', "${projectDir}/test/win/lib/javafx-sdk/lib",
                 //                resolve some issues with javafx and testfx
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.application=org.testfx',
-                '--add-opens', 'javafx.graphics/com.sun.javafx.application=org.testfx'
+                '--add-opens', 'javafx.graphics/com.sun.javafx.application=org.testfx',
+                "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2"
 
         ]
     }
@@ -239,7 +240,9 @@ run {
     doFirst {
         jvmArgs = [
                 // modules are not part of sdk anymore - need to add them manually to module graph
-                "--add-modules", javafx.modules.join(",")
+                "--add-modules", javafx.modules.join(","),
+                '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
+                "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2"
         ]
     }
 }
@@ -287,8 +290,12 @@ dependencies {
     }
 
     // testing
-    testImplementation('org.testfx:testfx-core:4.0.18')
-    testImplementation('org.testfx:testfx-junit:4.0.18')
+    testImplementation('org.testfx:testfx-core:4.0.18') {
+        exclude module: 'hamcrest-all'
+    }
+    testImplementation('org.testfx:testfx-junit:4.0.18') {
+        exclude module: 'hamcrest-core'
+    }
     testImplementation('org.loadui:testFx:3.1.2')
     testImplementation('org.hamcrest:hamcrest-core:1.3')
     testImplementation('junit:junit:4.13.2')
