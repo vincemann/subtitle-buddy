@@ -2,8 +2,4 @@
 # Get the directory of the current script (resolve symlinks)
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Set the path to the embedded JDK
-export JAVA_HOME="$DIR/../Java/jre"
-
-# Launch the Java application
-"$JAVA_HOME/bin/java" -jar "$DIR/../Java/application.jar"
+"$DIR/image/bin/appLauncher"

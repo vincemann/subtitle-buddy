@@ -1,4 +1,3 @@
-import org.beryx.jlink.JlinkTask
 
 plugins {
     id 'java'
@@ -26,9 +25,9 @@ ext {
 static def evalCurrentOs() {
     def os = org.gradle.internal.os.OperatingSystem.current()
     if (os.isWindows()) {
-        return  "win"
+        return "win"
     } else if (os.isLinux()) {
-        return  "linux"
+        return "linux"
     } else if (os.isMacOsX()) {
         return "mac"
     }
@@ -177,49 +176,41 @@ tasks.register('buildWindowsInstaller') {
 // uses genisoimage linux cli tool, need to install it first
 // execute with -PtargetPlatform=mac
 tasks.register('buildMacDmg') {
-    dependsOn 'shadowJar'
+    dependsOn 'jlink' // Ensure this task runs after the jlink image is created
     doLast {
-        def jar = shadowJar.getArchiveFile().get().asFile
-        def jarName = jar.name
         def version = project.version
-        def jarPath = jar.absolutePath
         def baseDir = "${projectDir}/releases/macos/x64"
-        def appPath = "${baseDir}/SubtitleBuddy.app/Contents/Java"
+        def imagePath = "${baseDir}/SubtitleBuddy.app/Contents/Java/image"
         def dmgName = "subtitle-buddy-$version-macos-x64.dmg"
-        def zipName = "subtitle-buddy-$version-macos-x64.zip"
         def dmgOutputPath = "${baseDir}/$dmgName"
-        def zipOutputPath = "${baseDir}/$zipName"
+        def jlinkImagePath = "${projectDir}/build/image/appLauncher-mac" // Path to the jlink runtime image
 
-        println "Jar file: $jarName"
         println "Version: $version"
-        println "Jar path: $jarPath"
+        println "jlink Image Path: $jlinkImagePath"
 
         // Ensure the application directory exists
-        file(appPath).mkdirs()
+        file(imagePath).mkdirs()
 
-        // Copy the JAR to the application directory
-        println "Deploying jar file to application directory..."
-        file("$appPath/application.jar").delete()
+        // Copy the jlink image to the application directory
+        println "Deploying jlink runtime image to application directory..."
+        delete imagePath
+        mkdir imagePath
         copy {
-            from jarPath
-            into appPath
-            rename { 'application.jar' }
+            from jlinkImagePath
+            into imagePath
         }
-        println "Jar copied"
+        println "jlink runtime image copied"
 
         // Build DMG
         println "Building DMG image..."
         exec {
-            commandLine 'bash', '-c', "cd ${baseDir} && genisoimage -D -V SubtitleBuddy -no-pad -r -apple -o ${dmgOutputPath} SubtitleBuddy.app/"
+            commandLine 'bash', '-c', "cd ${baseDir} && genisoimage -D -V 'Subtitle Buddy' -no-pad -r -apple -o ${dmgOutputPath} SubtitleBuddy.app/"
         }
-
-        // Create ZIP of the binary
-        println "Creating ZIP archive..."
-        delete zipOutputPath
-        ant.zip(destFile: "$zipOutputPath", basedir: "${baseDir}", includes: "$dmgName")
+        println "DMG created at $dmgOutputPath"
         println "Done with macOS x64"
     }
 }
+
 
 
 java {
@@ -240,14 +231,6 @@ shadowJar {
     mergeServiceFiles {}
     // this removes needed classes for slf4j, making dynamic class loading of slf4j impl fail
 //    minimize()  // Optional: minimize the jar to remove unused classes
-}
-
-startShadowScripts {
-    doLast {
-        // Modify the script file to point to the correct directory
-        unixScript.text = unixScript.text.replace('lib/', 'libs/')
-        windowsScript.text = windowsScript.text.replace('lib\\', 'libs\\')
-    }
 }
 
 repositories {
