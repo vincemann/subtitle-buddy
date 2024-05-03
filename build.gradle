@@ -19,17 +19,22 @@ application {
 }
 
 ext {
-    // Determine the OS name from the system property
-    def osName = System.getProperty("os.name").toLowerCase()
-
-    // Set default platform based on the OS
-    def defaultPlatform = osName.contains("linux") ? "linux" :
-            osName.contains("mac") || osName.contains("os x") ? "mac" :
-                    osName.contains("win") ? "win" : "unknown"
-
     // Use the provided targetPlatform property if available, otherwise use the detected OS
-    targetPlatform = project.hasProperty('targetPlatform') ? project.targetPlatform : defaultPlatform
+    targetPlatform = project.hasProperty('targetPlatform') ? project.targetPlatform : evalCurrentOs()
 }
+
+static def evalCurrentOs() {
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    if (os.isWindows()) {
+        return  "win"
+    } else if (os.isLinux()) {
+        return  "linux"
+    } else if (os.isMacOsX()) {
+        return "mac"
+    }
+    throw new GradleException("cant eval current os")
+}
+
 
 javafx {
     version = "17"
@@ -42,14 +47,12 @@ test {
     doFirst {
         jvmArgs = [
                 '--add-modules', javafx.modules.join(","),
-                // javafx plugin fails for windows to pull the modules on test path and compile path maybe
-                // or windows does not recognize, that's why I need to manually ship the native javafx sdk with it
+                // windows does not recognize javafx deps, that's why I need to manually ship the native javafx jmods with it
                 // and setup the module path in testing and when running the fat jar on windows
                 // when running on other platforms this is ignored silently
                 '--module-path', "${projectDir}/lib/javafx/win",
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2",
-                //                resolve some issues with javafx and testfx
                 '--add-exports', 'javafx.graphics/com.sun.javafx.application=org.testfx',
                 '--add-opens', 'javafx.graphics/com.sun.javafx.application=org.testfx',
 
@@ -88,6 +91,7 @@ jlink {
     launcher {
         name = 'appLauncher'
         mainClass = application.mainClass.get()
+        forceMerge('log4j-api')
         jvmArgs = [
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-reads', 'io.github.vincemann.merged.module=org.apache.commons.logging',
@@ -101,93 +105,73 @@ jlink {
 // uses app image tool generating binary, which must be placed into: releases/linux/appimagetool.AppImage
 // execute with -PtargetPlatform=linux
 tasks.register('buildLinuxAppImage') {
-    dependsOn('shadowJar')
+    dependsOn('jlink')
     doLast {
-        // Read version from generated jar file
-        def jar = shadowJar.getArchiveFile().get().asFile
-        def jarName = jar.name
+        // Define version and paths
         def version = project.version
-        def jarPath = jar.absolutePath
         def baseDir = "${projectDir}/releases/linux/x64"
-        def zipName = "subtitle-buddy-$version-linux-x64.zip"
         def linuxImageName = "subtitle-buddy-$version-linux-x64.AppImage"
-        def zipOutputPath = "${baseDir}/$zipName"
+        def appImagePath = "${baseDir}/SubtitleBuddy.AppDir/usr/image"
+        def jlinkImagePath = "${projectDir}/build/image/appLauncher-linux"  // Path to the jlink runtime image
 
-        println "Jar file: $jarName"
-        println "Version: $version"
-        println "Jar path: $jarPath"
-
-        // Linux x64 specifics
-        println "linux x64..."
-        def appImagePath = "${baseDir}/SubtitleBuddy.AppDir/usr/bin"
-        delete "$appImagePath/application.jar"
+        // Prepare AppDir for AppImage
+        println "Preparing AppDir with jlink image..."
+        delete appImagePath  // Clear the previous contents
+        mkdir appImagePath
         copy {
-            from jarPath
+            from "$jlinkImagePath"  // Copy runtime image created by jlink
             into appImagePath
-            rename { 'application.jar' }
         }
-        println "Jar copied"
+        println "jlink runtime image copied"
 
         // Build AppImage
-        println "Building app image"
-
+        println "Building AppImage..."
         exec {
             environment "ARCH", "x86_64"
             commandLine 'bash', '-c', "cd ${baseDir} && ../appimagetool.AppImage SubtitleBuddy.AppDir $linuxImageName"
         }
-
-        // Create ZIP of the binary
-        delete zipOutputPath
-        ant.zip(destFile: "$zipOutputPath", basedir: "${baseDir}", includes: "$linuxImageName")
-
-        println "Done with linux x64"
+        println "AppImage created at $linuxImageName"
+        println "Done with linux x64 AppImage build"
     }
 }
 
 // uses a docker container with image name 'amake/innosetup' that uses wine for building windows installer from linux host machines
 // execute with -PtargetPlatform=win
 tasks.register('buildWindowsInstaller') {
-    dependsOn('shadowJar')
+    dependsOn('jlink')
     doLast {
-        def jar = shadowJar.getArchiveFile().get().asFile
         def version = project.version
-        def jarPath = jar.absolutePath
         def baseDir = "${projectDir}/releases/windows/x64"
         def installerPath = "${baseDir}/inno"
         def windowsImageName = "subtitle-buddy-installer.exe"
         def zipName = "subtitle-buddy-$version-windows-x64.zip"
-        def zipOutputPath = "${baseDir}/$zipName"
         def outputExePath = "${installerPath}/output/${windowsImageName}"
+        def appImagePath = "${installerPath}/image"
+        def jlinkImagePath = "${projectDir}/build/image/appLauncher-win" // Path to the jlink runtime image
 
-        println "Jar file: ${jar.name}"
         println "Version: $version"
-        println "Jar path: $jarPath"
 
         // Ensure target directories exist
         file(installerPath).mkdirs()
 
-        // Deploy the jar to the installer directory
-        delete "$installerPath/application.jar"
+        // Deploy the jlink image to the installer directory
+        delete "$appImagePath"
+        mkdir "$appImagePath"
         copy {
-            from jarPath
-            into installerPath
-            rename { 'application.jar' }
+            from "$jlinkImagePath" // Copy runtime image created by jlink
+            into "$appImagePath"
         }
-        println "Deployed jar file to installer directory"
+        println "Deployed jlink runtime image to installer directory"
 
         // Building the installer using Inno Setup within a Docker container
         println "Building installer"
         exec {
-            commandLine 'bash', '-c', "cd ${installerPath} && docker run --rm -i -v \"\$PWD:/work\" amake/innosetup subtitle-buddy.iss && mv ${outputExePath} ${baseDir}"
+            commandLine 'bash', '-c', "cd ${installerPath} && docker run --rm -v \"\$PWD:/work\" amake/innosetup subtitle-buddy.iss && mv ${outputExePath} ${baseDir}"
         }
-
-        // Packaging into a zip file
-        delete zipOutputPath
-        ant.zip(destFile: "$zipOutputPath", basedir: "${baseDir}", includes: "$windowsImageName")
-
-        println "Done with windows x64"
+        println "Installer created at ${outputExePath}"
     }
 }
+
 
 // uses genisoimage linux cli tool, need to install it first
 // execute with -PtargetPlatform=mac

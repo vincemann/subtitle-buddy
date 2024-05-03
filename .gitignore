@@ -6,12 +6,11 @@ out/
 testing/
 old/
 modulepath
-releases/windows/x64/inno/lib/javafx
+releases/windows/x64/inno/image
 !releases/linux/appimagetool-x86_64.AppImage
 *.zip
-releases/linux/x64/SubtitleBuddy.AppDir/usr/lib/jre
+releases/linux/x64/SubtitleBuddy.AppDir/usr/image
 releases/macos/x64/SubtitleBuddy.app/Contents/Java/jre
-releases/windows/x64/inno/jre
 *.gz
 *.tar.gz
 build/

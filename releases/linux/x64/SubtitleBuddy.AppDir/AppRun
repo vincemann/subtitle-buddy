@@ -1,4 +1,3 @@
 #!/bin/bash
 HERE=$(dirname $(readlink -f "${0}"))
-export PATH="${HERE}/usr/lib/jre/bin:$PATH"
-java -jar "${HERE}/usr/bin/application.jar"
+${HERE}/usr/image/bin/appLauncher
