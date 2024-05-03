@@ -274,7 +274,7 @@ dependencies {
 
     // capture mouse and keyboard events
 //    implementation 'com.1stleg:jnativehook:2.0.2'
-    
+
     // need to use old version bc of segfaults on linux + keyboard strokes not working
     // needed to self modularize the jar in order to include for whatever reason + this way I can build a custom jlink image
     // bc cant use automatic modules in jlink
