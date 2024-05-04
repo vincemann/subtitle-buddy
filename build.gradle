@@ -20,6 +20,7 @@ application {
 ext {
     // Use the provided targetPlatform property if available, otherwise use the detected OS
     targetPlatform = project.hasProperty('targetPlatform') ? project.targetPlatform : evalCurrentOs()
+    releaseDir = "${projectDir}/build/releases"
 }
 
 static def evalCurrentOs() {
@@ -103,17 +104,20 @@ jlink {
     }
 }
 
-// execute with -PtargetPlatform=linux
-tasks.register('tarLinuxJlink', Exec) {
+// creates tarball for jlink image and stores in build dir
+// execute with -PtargetPlatform=[linux,mac,win]
+tasks.register('tarJlink', Exec) {
     dependsOn 'jlink'
+    def version = project.version
 
     // Set the working directory and define the tarball path outside the doFirst
-    workingDir "${projectDir}/build/image/appLauncher-linux"
-    def tarballPath = "${projectDir}/build/subtitle-buddy-1.1.0-linux-x64.tar.gz"
+    workingDir "${projectDir}/build/image/appLauncher-${project.ext.targetPlatform}"
+    def tarballPath = "${project.ext.releaseDir}/subtitle-buddy-$version-${project.ext.targetPlatform}.tar.gz"
 
     doFirst {
         // Ensure any previous tarball is deleted before creating a new one
         delete tarballPath
+        mkdir project.ext.releaseDir
     }
 
     // Define the command line to execute within the main configuration block
@@ -134,11 +138,18 @@ tasks.register('tarLinuxJlink', Exec) {
 // execute with -PtargetPlatform=linux
 tasks.register('buildLinuxAppImage') {
     dependsOn('jlink')
+    doFirst {
+        mkdir project.ext.releaseDir
+    }
     doLast {
+        if (project.ext.targetPlatform != "linux"){
+            throw new GradleException("Need to specify linux target platform or run on linux")
+        }
         // Define version and paths
         def version = project.version
         def baseDir = "${projectDir}/releases/linux/x64"
         def linuxImageName = "subtitle-buddy-$version-linux-x64.AppImage"
+        def linuxImagePath = "${project.ext.releaseDir}/${linuxImageName}"
         def appImagePath = "${baseDir}/SubtitleBuddy.AppDir/usr/image"
         def jlinkImagePath = "${projectDir}/build/image/appLauncher-linux"  // Path to the jlink runtime image
 
@@ -156,9 +167,9 @@ tasks.register('buildLinuxAppImage') {
         println "Building AppImage..."
         exec {
             environment "ARCH", "x86_64"
-            commandLine 'bash', '-c', "cd ${baseDir} && ../appimagetool.AppImage SubtitleBuddy.AppDir $linuxImageName"
+            commandLine 'bash', '-c', "cd ${baseDir} && ../appimagetool.AppImage SubtitleBuddy.AppDir $linuxImagePath"
         }
-        println "AppImage created at $linuxImageName"
+        println "AppImage created at $linuxImagePath"
         println "Done with linux x64 AppImage build"
     }
 }
@@ -167,20 +178,26 @@ tasks.register('buildLinuxAppImage') {
 // execute with -PtargetPlatform=win
 tasks.register('buildWindowsInstaller') {
     dependsOn('jlink')
+    if (project.ext.targetPlatform != "win"){
+        throw new GradleException("Need to specify win target platform or run on win")
+    }
+    doFirst {
+        mkdir project.ext.releaseDir
+    }
     doLast {
         def version = project.version
         def baseDir = "${projectDir}/releases/windows/x64"
-        def installerPath = "${baseDir}/inno"
-        def windowsImageName = "subtitle-buddy-installer.exe"
-        def zipName = "subtitle-buddy-$version-windows-x64.zip"
-        def outputExePath = "${installerPath}/output/${windowsImageName}"
-        def appImagePath = "${installerPath}/image"
+        def installerBaseDir = "${baseDir}/inno"
+        def outputExeName = "subtitle-buddy-installer.exe"
+        def installerName = "subtitle-buddy-$version-windowsx64-installer.exe"
+        def outputExePath = "${installerBaseDir}/output/${outputExeName}"
+        def appImagePath = "${installerBaseDir}/image"
         def jlinkImagePath = "${projectDir}/build/image/appLauncher-win" // Path to the jlink runtime image
 
         println "Version: $version"
 
         // Ensure target directories exist
-        file(installerPath).mkdirs()
+        file(installerBaseDir).mkdirs()
 
         // Deploy the jlink image to the installer directory
         delete "$appImagePath"
@@ -194,9 +211,20 @@ tasks.register('buildWindowsInstaller') {
         // Building the installer using Inno Setup within a Docker container
         println "Building installer"
         exec {
-            commandLine 'bash', '-c', "cd ${installerPath} && docker run --rm -v \"\$PWD:/work\" amake/innosetup subtitle-buddy.iss && mv ${outputExePath} ${baseDir}"
+            commandLine 'bash', '-c', "cd ${installerBaseDir} && docker run --rm -v \"\$PWD:/work\" amake/innosetup subtitle-buddy.iss"
         }
-        println "Installer created at ${outputExePath}"
+
+        def installerPath = "${project.ext.releaseDir}/${installerName}"
+        delete installerPath
+        copy {
+            from "${installerBaseDir}/output/${outputExeName}"
+            into "${project.ext.releaseDir}"
+            rename { String fileName ->
+                installerName
+            }
+        }
+        delete outputExePath
+        println "Installer created at ${installerPath}"
     }
 }
 
@@ -205,6 +233,9 @@ tasks.register('buildWindowsInstaller') {
 // execute with -PtargetPlatform=mac
 tasks.register('buildMacDmg') {
     dependsOn 'jlink' // Ensure this task runs after the jlink image is created
+    if (project.ext.targetPlatform != "mac"){
+        throw new GradleException("Need to specify mac target platform or run on mac")
+    }
     doLast {
         def version = project.version
         def baseDir = "${projectDir}/releases/macos/x64"
