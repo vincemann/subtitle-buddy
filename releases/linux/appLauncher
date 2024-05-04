@@ -1,0 +1,10 @@
+#!/bin/sh
+# Get the real path to the script accounting for symlinks
+SCRIPT=\$(readlink -f "\$0")
+SCRIPT_NAME=\$(basename "\$SCRIPT")
+APP_NAME=\${SCRIPT_NAME%.sh}
+
+# Calculate the directory of the actual script
+DIR=\$(dirname "\$SCRIPT")
+
+"\$DIR/java" \$CDS_JVM_OPTS ${jvmArgs} -p "\$DIR/../app" -m ${moduleName}/${mainClassName} "\$@"

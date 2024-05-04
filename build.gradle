@@ -91,6 +91,8 @@ jlink {
     launcher {
         name = 'appLauncher'
         mainClass = application.mainClass.get()
+        // make sure symlinks work when installed via homebrew
+        unixScriptTemplate = new File("${projectDir}/releases/linux/appLauncher")
         forceMerge('log4j-api')
         jvmArgs = [
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
@@ -100,6 +102,32 @@ jlink {
         ]
     }
 }
+
+// execute with -PtargetPlatform=linux
+tasks.register('tarLinuxJlink', Exec) {
+    dependsOn 'jlink'
+
+    // Set the working directory and define the tarball path outside the doFirst
+    workingDir "${projectDir}/build/image/appLauncher-linux"
+    def tarballPath = "${projectDir}/build/subtitle-buddy-1.1.0-linux-x64.tar.gz"
+
+    doFirst {
+        // Ensure any previous tarball is deleted before creating a new one
+        delete tarballPath
+    }
+
+    // Define the command line to execute within the main configuration block
+    commandLine 'tar', '-czvf', tarballPath, '.', '--transform=s,^./,image/,'
+
+    // Capture and print the output
+    standardOutput = new ByteArrayOutputStream()
+    errorOutput = new ByteArrayOutputStream()
+    doLast {
+        println("STDOUT: ${standardOutput.toString()}")
+        println("STDERR: ${errorOutput.toString()}")
+    }
+}
+
 
 
 // uses app image tool generating binary, which must be placed into: releases/linux/appimagetool.AppImage
