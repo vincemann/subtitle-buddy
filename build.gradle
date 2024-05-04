@@ -1,4 +1,3 @@
-
 plugins {
     id 'java'
     id 'application'
@@ -65,7 +64,7 @@ jlink {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
 
 
-    switch (project.ext.targetPlatform) {
+    switch (targetPlatform) {
         case 'linux':
             println("building jlink image for linux")
             targetPlatform("linux") {
@@ -108,16 +107,15 @@ jlink {
 // execute with -PtargetPlatform=[linux,mac,win]
 tasks.register('tarJlink', Exec) {
     dependsOn 'jlink'
-    def version = project.version
 
     // Set the working directory and define the tarball path outside the doFirst
-    workingDir "${projectDir}/build/image/appLauncher-${project.ext.targetPlatform}"
-    def tarballPath = "${project.ext.releaseDir}/subtitle-buddy-$version-${project.ext.targetPlatform}.tar.gz"
+    workingDir "${projectDir}/build/image/appLauncher-${targetPlatform}"
+    def tarballPath = "${releaseDir}/subtitle-buddy-${version}-${targetPlatform}x64.tar.gz"
 
     doFirst {
         // Ensure any previous tarball is deleted before creating a new one
         delete tarballPath
-        mkdir project.ext.releaseDir
+        mkdir releaseDir
     }
 
     // Define the command line to execute within the main configuration block
@@ -139,17 +137,16 @@ tasks.register('tarJlink', Exec) {
 tasks.register('buildLinuxAppImage') {
     dependsOn('jlink')
     doFirst {
-        mkdir project.ext.releaseDir
+        mkdir releaseDir
     }
     doLast {
-        if (project.ext.targetPlatform != "linux"){
+        if (targetPlatform != "linux"){
             throw new GradleException("Need to specify linux target platform or run on linux")
         }
         // Define version and paths
-        def version = project.version
         def baseDir = "${projectDir}/releases/linux/x64"
-        def linuxImageName = "subtitle-buddy-$version-linux-x64.AppImage"
-        def linuxImagePath = "${project.ext.releaseDir}/${linuxImageName}"
+        def linuxImageName = "subtitle-buddy-${version}-linuxx64.AppImage"
+        def linuxImagePath = "${releaseDir}/${linuxImageName}"
         def appImagePath = "${baseDir}/SubtitleBuddy.AppDir/usr/image"
         def jlinkImagePath = "${projectDir}/build/image/appLauncher-linux"  // Path to the jlink runtime image
 
@@ -178,23 +175,25 @@ tasks.register('buildLinuxAppImage') {
 // execute with -PtargetPlatform=win
 tasks.register('buildWindowsInstaller') {
     dependsOn('jlink')
-    if (project.ext.targetPlatform != "win"){
-        throw new GradleException("Need to specify win target platform or run on win")
+    if (targetPlatform != "win"){
+        throw new GradleException("Need to specify win target platform")
+    }
+    def os = evalCurrentOs()
+    if (os == "win"){
+        throw new GradleException("This task is meant for building windows installer on a linux host machine. " +
+                "For building on windows use 'gradlew.bat clean winJpackage -PtargetPlatform=win'")
     }
     doFirst {
-        mkdir project.ext.releaseDir
+        mkdir releaseDir
     }
     doLast {
-        def version = project.version
         def baseDir = "${projectDir}/releases/windows/x64"
         def installerBaseDir = "${baseDir}/inno"
         def outputExeName = "subtitle-buddy-installer.exe"
-        def installerName = "subtitle-buddy-$version-windowsx64-installer.exe"
+        def installerName = "subtitle-buddy-${version}-windowsx64-installer.exe"
         def outputExePath = "${installerBaseDir}/output/${outputExeName}"
         def appImagePath = "${installerBaseDir}/image"
         def jlinkImagePath = "${projectDir}/build/image/appLauncher-win" // Path to the jlink runtime image
-
-        println "Version: $version"
 
         // Ensure target directories exist
         file(installerBaseDir).mkdirs()
@@ -214,11 +213,11 @@ tasks.register('buildWindowsInstaller') {
             commandLine 'bash', '-c', "cd ${installerBaseDir} && docker run --rm -v \"\$PWD:/work\" amake/innosetup subtitle-buddy.iss"
         }
 
-        def installerPath = "${project.ext.releaseDir}/${installerName}"
+        def installerPath = "${releaseDir}/${installerName}"
         delete installerPath
         copy {
             from "${installerBaseDir}/output/${outputExeName}"
-            into "${project.ext.releaseDir}"
+            into "${releaseDir}"
             rename { String fileName ->
                 installerName
             }
@@ -233,14 +232,13 @@ tasks.register('buildWindowsInstaller') {
 // execute with -PtargetPlatform=mac
 tasks.register('buildMacDmg') {
     dependsOn 'jlink' // Ensure this task runs after the jlink image is created
-    if (project.ext.targetPlatform != "mac"){
+    if (targetPlatform != "mac"){
         throw new GradleException("Need to specify mac target platform or run on mac")
     }
     doLast {
-        def version = project.version
         def baseDir = "${projectDir}/releases/macos/x64"
         def imagePath = "${baseDir}/SubtitleBuddy.app/Contents/Java/image"
-        def dmgName = "subtitle-buddy-$version-macos-x64.dmg"
+        def dmgName = "subtitle-buddy-${version}-macx64.dmg"
         def dmgOutputPath = "${baseDir}/$dmgName"
         def jlinkImagePath = "${projectDir}/build/image/appLauncher-mac" // Path to the jlink runtime image
 
@@ -283,7 +281,7 @@ java {
 // in wwid oensnv jmods of javafx need to be shipped and declared anyways
 shadowJar {
     archiveClassifier.set('')
-    archiveFileName = "SubtitleBuddy-${project.version}-${targetPlatform}.jar"
+    archiveFileName = "subtitle-buddy-${version}-${targetPlatform}.jar"
     manifest {
         attributes 'Main-Class': application.getMainClass().get()
     }
@@ -294,9 +292,9 @@ shadowJar {
 
 repositories {
     mavenCentral()
-    maven {
-        url "https://jpms.pkg.st/repository"
-    }
+//    maven {
+//        url "https://jpms.pkg.st/repository"
+//    }
 }
 
 // same as: java --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
@@ -318,8 +316,7 @@ dependencies {
 //    implementation 'com.1stleg:jnativehook:2.0.2'
 
     // need to use old version bc of segfaults on linux + keyboard strokes not working
-    // needed to self modularize the jar in order to include for whatever reason + this way I can build a custom jlink image
-    // bc cant use automatic modules in jlink
+    // needed to self modularize the jar in order to include for whatever reason
     implementation files('lib/jnativehook-2.0.2-patched.jar')
 
     // dependency injection
@@ -341,8 +338,8 @@ dependencies {
 
 
     // event handling
-    // is already present in guice
-//    implementation('com.google.guava:guava:33.0.0-jre-jpms')
+    // using non modularized and same version that guice is using for max compatibility
+    implementation('com.google.guava:guava:31.0.1-jre')
 
     // utils
     compileOnly 'org.projectlombok:lombok:1.18.28'
