@@ -8,13 +8,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.HotKeyPressedEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Listens for global hotkeys and translates to respective events.
  * Events are handled by {@link io.github.vincemann.subtitlebuddy.listeners.UserInputEventHandler}.
  */
-@Slf4j
+@Log4j2
 @Singleton
 public class GlobalHotKeyListener implements NativeKeyListener , KeyListener{
 

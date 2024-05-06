@@ -12,12 +12,12 @@ import io.github.vincemann.subtitlebuddy.events.DoneParsingEvent;
 import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Starts and manages the background thread in which updates take place.
  */
-@Slf4j
+@Log4j2
 @Singleton
 public class SrtParserEngineImpl extends SrtParserEngine implements Runnable{
 

@@ -1,7 +1,7 @@
 package io.github.vincemann.subtitlebuddy.properties;
 
 import com.google.inject.Singleton;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -10,7 +10,7 @@ import org.apache.commons.configuration2.io.FileHandler;
 import java.io.File;
 import java.util.NoSuchElementException;
 
-@Slf4j
+@Log4j2
 @Singleton
 public class ApachePropertiesFile extends PropertiesConfiguration implements PropertiesFile {
 

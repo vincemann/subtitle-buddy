@@ -12,14 +12,14 @@ import io.github.vincemann.subtitlebuddy.gui.dialog.AlertDialog;
 import io.github.vincemann.subtitlebuddy.gui.dialog.ContinueDialog;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtFileParser;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
 
-@Slf4j
+@Log4j2
 @Singleton
 public class SubtitleFileProvider implements Provider<SubtitleFile> {
 

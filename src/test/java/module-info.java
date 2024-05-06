@@ -10,7 +10,6 @@ open module io.github.vincemann.subtitlebuddy.test {
     requires org.apache.commons.logging;
     requires org.apache.commons.configuration2;
     requires org.apache.logging.log4j;
-    requires org.slf4j;
     requires jakarta.inject;
 
     // Test libraries

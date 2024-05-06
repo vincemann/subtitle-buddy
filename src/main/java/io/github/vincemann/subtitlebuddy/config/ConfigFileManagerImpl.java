@@ -6,7 +6,7 @@ import io.github.vincemann.subtitlebuddy.config.ConfigFileException;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.cp.CopiedClassPathFile;
 import io.github.vincemann.subtitlebuddy.util.FileUtils;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -24,7 +24,7 @@ import java.nio.file.StandardCopyOption;
  * If config file is already in config target folder, it is just returned.
  */
 @Singleton
-@Slf4j
+@Log4j2
 public class ConfigFileManagerImpl implements ConfigFileManager {
 
     private ConfigDirectory configDirectory;

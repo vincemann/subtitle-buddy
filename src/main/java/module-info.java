@@ -4,21 +4,19 @@ open module io.github.vincemann.subtitlebuddy {
     requires javafx.controls;
     requires javafx.fxml;
     requires org.apache.commons.lang3;
+    // needs to be here
     requires org.apache.commons.logging;
     requires org.apache.commons.configuration2;
     requires org.jnativehook;  // self modularized
+
+    requires java.compiler;
+    requires java.naming;
     requires org.apache.logging.log4j;
-    requires org.slf4j;
+
     requires jakarta.inject;
     requires org.apache.commons.io;
     requires com.google.guice;
     requires com.google.common;
-
-
-//    opens io.github.vincemann.subtitlebuddy to javafx.fxml;
-//    opens io.github.vincemann.subtitlebuddy.gui.srtdisplayer to com.google.guice;
-//    opens io.github.vincemann.subtitlebuddy.gui.stages.controller to com.google.guice;
-
 
     exports io.github.vincemann.subtitlebuddy;
     exports io.github.vincemann.subtitlebuddy.srt;
@@ -50,4 +48,10 @@ open module io.github.vincemann.subtitlebuddy {
     exports io.github.vincemann.subtitlebuddy.util;
     exports io.github.vincemann.subtitlebuddy.util.fx;
     exports io.github.vincemann.subtitlebuddy.util.vec;
+
+//    uses org.apache.logging.log4j.spi.Provider;
+
+    //    opens io.github.vincemann.subtitlebuddy to javafx.fxml;
+//    opens io.github.vincemann.subtitlebuddy.gui.srtdisplayer to com.google.guice;
+//    opens io.github.vincemann.subtitlebuddy.gui.stages.controller to com.google.guice;
 }

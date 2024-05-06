@@ -2,7 +2,7 @@ package io.github.vincemann.subtitlebuddy.cp;
 
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.util.FileUtils;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +15,7 @@ import java.nio.file.StandardCopyOption;
  * Files inside the running jar are only accessible as a Stream, so they are copied to a temp file.
  */
 @Singleton
-@Slf4j
+@Log4j2
 public class ClassPathFileExtractorImpl implements ClassPathFileExtractor {
 
     public CopiedClassPathFile findOnClassPath(String relPath) throws IOException {

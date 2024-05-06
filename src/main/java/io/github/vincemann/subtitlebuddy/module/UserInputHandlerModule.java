@@ -8,12 +8,12 @@ import io.github.vincemann.subtitlebuddy.listeners.key.KeyListener;
 import io.github.vincemann.subtitlebuddy.listeners.key.GlobalHotKeyListener;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.MouseListener;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.GlobalMouseListener;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 
 
-@Slf4j
+@Log4j2
 public class UserInputHandlerModule extends AbstractModule {
 
     @Override

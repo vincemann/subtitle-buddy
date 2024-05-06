@@ -17,7 +17,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +28,7 @@ import java.net.URL;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-@Slf4j
+@Log4j2
 @NoArgsConstructor
 public abstract class AbstractStageController {
 

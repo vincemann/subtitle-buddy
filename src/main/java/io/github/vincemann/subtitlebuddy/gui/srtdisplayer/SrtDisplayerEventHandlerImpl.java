@@ -11,11 +11,11 @@ import io.github.vincemann.subtitlebuddy.events.MovieTextPositionChangedEvent;
 import io.github.vincemann.subtitlebuddy.events.SrtFontChangeEvent;
 import io.github.vincemann.subtitlebuddy.events.SrtFontColorChangeEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 
 
-@Slf4j
+@Log4j2
 @Singleton
 public class SrtDisplayerEventHandlerImpl implements SrtDisplayerEventHandler {
 

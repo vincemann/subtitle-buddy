@@ -11,7 +11,7 @@ import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.StopWatch;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 
 import java.util.Collections;
@@ -19,7 +19,7 @@ import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-@Slf4j
+@Log4j2
 @Singleton
 public class SrtParserImpl implements SrtParser {
     private static final long NANO_2_MILLIS = 1000000L;

@@ -19,13 +19,13 @@ import io.github.vincemann.subtitlebuddy.listeners.key.HotKeyEventHandler;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.MouseClickedEventHandler;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Handles user input events like hot key presses and mouse clicks.
  */
 @Singleton
-@Slf4j
+@Log4j2
 public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEventHandler {
 
     private PropertiesFile properties;

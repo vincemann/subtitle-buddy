@@ -44,7 +44,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Controller for the movie stage.
  */
-@Slf4j
+@Log4j2
 @Singleton
 @io.github.vincemann.subtitlebuddy.gui.stages.MovieStageController
 public class MovieStageController extends AbstractStageController implements MovieSrtDisplayer {

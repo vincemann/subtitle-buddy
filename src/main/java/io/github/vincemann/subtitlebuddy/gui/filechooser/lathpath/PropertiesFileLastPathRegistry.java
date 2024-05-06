@@ -6,7 +6,7 @@ import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.properties.PropertyAccessException;
 import io.github.vincemann.subtitlebuddy.properties.PropertyNotFoundException;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.util.NoSuchElementException;
@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
  *
  * This impl saves to {@link PropertiesFile}.
  */
-@Slf4j
+@Log4j2
 @Singleton
 public class PropertiesFileLastPathRegistry implements LastPathRegistry {
 

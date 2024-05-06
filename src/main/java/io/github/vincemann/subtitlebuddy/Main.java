@@ -21,16 +21,17 @@ import io.github.vincemann.subtitlebuddy.service.SrtService;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.LogManager;
 import org.jnativehook.DefaultLibraryLocator;
 import org.jnativehook.GlobalScreen;
-import org.slf4j.spi.SLF4JServiceProvider;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
 
-@Slf4j
+//@Log4j2
+@Log4j2
 @NoArgsConstructor
 @Singleton
 public class Main extends Application {
@@ -62,6 +63,9 @@ public class Main extends Application {
         eventHandlerRegistrar = injector.getInstance(EventHandlerRegistrar.class);
         eventHandlerRegistrar.registerEventHandlers();
         eventBus.register(srtService);
+
+
+        log.debug("HELLO FROM LOG4J2!");
 
         SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
         settingsStageController.open();
