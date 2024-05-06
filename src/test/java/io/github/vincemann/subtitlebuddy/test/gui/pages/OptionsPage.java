@@ -9,6 +9,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 
@@ -18,7 +19,7 @@ public class OptionsPage extends AbstractPage {
         super(driver);
     }
 
-    public Color selectRandomColor(Color defaultColor) throws TimeoutException {
+    public Color selectRandomColor(Color defaultColor) {
         // Ensure the node is visible and can receive focus
         getDriver().waitForVisibleNode(FxTestConstants.COLOR_CHOOSE_ID);
         ColorPicker colorChooser = getDriver().find(FxTestConstants.COLOR_CHOOSE_ID);

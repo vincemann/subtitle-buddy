@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 
@@ -71,7 +72,7 @@ public class OptionsTest extends GuiTest {
     }
 
     @Test
-    public void testChangeFontInSettingsMode() throws TimeoutException {
+    public void testChangeFontInSettingsMode() throws TimeoutException, ExecutionException, InterruptedException {
         focusStage(SettingsStageController.class);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(OptionsStageController.class);
@@ -86,7 +87,7 @@ public class OptionsTest extends GuiTest {
     }
 
     @Test
-    public void testChangeFontInMovieMode() throws TimeoutException {
+    public void testChangeFontInMovieMode() throws TimeoutException, ExecutionException, InterruptedException {
         focusStage(SettingsStageController.class);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(OptionsStageController.class);

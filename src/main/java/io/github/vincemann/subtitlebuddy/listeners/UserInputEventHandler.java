@@ -113,7 +113,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
                 try {
                     properties.saveProperty(PropertyFileKeys.START_STOP_HOT_KEY_TOGGLED,e.isToggled());
                 } catch (PropertyAccessException e1) {
-                    log.debug("coult not save property",e1);
+                    log.error("could not not save property",e1);
                 }
                 break;
             case NEXT_CLICK:
@@ -121,7 +121,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
                 try {
                     properties.saveProperty(PropertyFileKeys.NEXT_CLICK_HOT_KEY_TOGGLED,e.isToggled());
                 } catch (PropertyAccessException e1) {
-                    log.debug("coult not save property",e1);
+                    log.error("could not save property",e1);
                 }
 
                 break;

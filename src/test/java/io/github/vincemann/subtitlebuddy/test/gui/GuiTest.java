@@ -1,21 +1,20 @@
 package io.github.vincemann.subtitlebuddy.test.gui;
 
 import com.google.inject.Key;
-import io.github.vincemann.subtitlebuddy.test.TestFiles;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
-import io.github.vincemann.subtitlebuddy.properties.ApachePropertiesFile;
-import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
+import io.github.vincemann.subtitlebuddy.Main;
 import io.github.vincemann.subtitlebuddy.config.strings.ApacheUIStringsFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
+import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.stages.StageState;
 import io.github.vincemann.subtitlebuddy.gui.stages.controller.AbstractStageController;
+import io.github.vincemann.subtitlebuddy.module.*;
+import io.github.vincemann.subtitlebuddy.properties.ApachePropertiesFile;
+import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
+import io.github.vincemann.subtitlebuddy.test.TestFiles;
 import io.github.vincemann.subtitlebuddy.test.guice.IntegrationTest;
 import io.github.vincemann.subtitlebuddy.test.guice.MockFileChooserModule;
-import io.github.vincemann.subtitlebuddy.Main;
-import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.util.LoggingUtils;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -30,10 +29,7 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 import static org.testfx.api.FxToolkit.registerPrimaryStage;
 import static org.testfx.util.WaitForAsyncUtils.waitFor;
@@ -41,19 +37,6 @@ import static org.testfx.util.WaitForAsyncUtils.waitFor;
 public abstract class GuiTest extends ApplicationTest implements IntegrationTest {
 
     private static final long GUI_TEST_TIME_OUT = 3000;
-
-
-    private static class Result{
-        private boolean done = false;
-
-        public boolean isDone() {
-            return done;
-        }
-
-        public void setDone(boolean done) {
-            this.done = done;
-        }
-    }
 
     @BeforeClass
     public static void setupSpec() throws Exception {
@@ -77,13 +60,18 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
         // Explicitly wait for the application to be ready
         WaitForAsyncUtils.waitForFxEvents();
 
+        waitUntilJNativeHookListenersAdded(application);
 
+    }
+
+    private void waitUntilJNativeHookListenersAdded(Main application){
         // wait until jnativehook is registered
         FutureTask<Boolean> readyTask = new FutureTask<>(() -> application.readyProperty().get());
 
         // Submit the task to be run on the JavaFX thread and wait for it
         WaitForAsyncUtils.asyncFx(readyTask);
         WaitForAsyncUtils.waitFor(readyTask);
+        assert application.isReady();
     }
 
 
@@ -94,26 +82,26 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
         refreshGui();
     }
 
-    protected void doOnFxThreadAndWait(Runnable task) throws TimeoutException {
-        long startTime = System.nanoTime();
-        final Result result = new Result();
-        Runnable runnable = () -> {
-            task.run();
-            result.setDone(true);
-        };
-        Platform.runLater(runnable);
-        while (true){
-            if(result.isDone()){
-                break;
+    protected void doOnFxThreadAndWait(Runnable task) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        Platform.runLater(() -> {
+            try {
+                task.run();
+                future.complete(null);  // Signal completion
+            } catch (Exception e) {
+                future.completeExceptionally(e);  // Propagate error
             }
-            long currTime = System.nanoTime();
-            if(currTime-startTime>=GUI_TEST_TIME_OUT*1000000){
-                throw new TimeoutException();
-            }
-            sleep(50);
+        });
+
+        try {
+            future.get();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e.getCause());  // Throw the cause of the exception
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();  // Handle thread interruption
+            throw new RuntimeException("Interrupted while waiting", e);
         }
     }
-
     public boolean isStageShowing(Class<? extends Annotation> a){
         AbstractStageController abstractStageController = getInstance(AbstractStageController.class,a);
         return abstractStageController.getStageState().equals(StageState.OPEN);
@@ -208,15 +196,45 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
      * WaitForAsyncUtils.waitForVisibleNode("#someNode", 15, TimeUnit.SECONDS, fxRobot);
      * }</pre>
      */
-    public void waitForVisibleNode(String nodeQuery)
-            throws TimeoutException {
-        // First we wait for the node lookup to be non-null. Then, in the remaining time, wait for the node to be visible.
-        waitFor(GUI_TEST_TIME_OUT/2, TimeUnit.MILLISECONDS, () -> {
-            return lookup(nodeQuery).query()!=null;
+    public void waitForVisibleNode(String nodeQuery) {
+        try {
+            CompletableFuture<Void> nodeExistsFuture = new CompletableFuture<>();
+            CompletableFuture<Void> nodeVisibleFuture = new CompletableFuture<>();
 
-        });
-        waitFor(GUI_TEST_TIME_OUT/2,
-                TimeUnit.MILLISECONDS, () -> lookup(nodeQuery).query().isVisible());
+            // Check for node existence
+            Platform.runLater(() -> {
+                try {
+                    if (lookup(nodeQuery).query() != null) {
+                        nodeExistsFuture.complete(null);  // Node exists
+                    } else {
+                        nodeExistsFuture.completeExceptionally(new IllegalStateException("Node does not exist: " + nodeQuery));
+                    }
+                } catch (Exception e) {
+                    nodeExistsFuture.completeExceptionally(e);
+                }
+            });
+
+            // Wait for node existence without a timeout
+            nodeExistsFuture.get();  // This will block until the future is completed
+
+            // Check for node visibility
+            Platform.runLater(() -> {
+                try {
+                    if (lookup(nodeQuery).query().isVisible()) {
+                        nodeVisibleFuture.complete(null);  // Node is visible
+                    } else {
+                        nodeVisibleFuture.completeExceptionally(new IllegalStateException("Node is not visible: " + nodeQuery));
+                    }
+                } catch (Exception e) {
+                    nodeVisibleFuture.completeExceptionally(e);
+                }
+            });
+
+            // Wait for node visibility without a timeout
+            nodeVisibleFuture.get();  // This will block until the future is completed
+        }catch (InterruptedException| ExecutionException e){
+            throw new RuntimeException(e);
+        }
     }
 
     public <T> T find(final String query){
