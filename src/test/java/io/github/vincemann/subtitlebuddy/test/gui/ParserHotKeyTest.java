@@ -32,7 +32,7 @@ public class ParserHotKeyTest extends GuiTest {
         super.setUpClass();
         this.srtParser = getApplicationInjector().getInstance(SrtParser.class);
         this.eventBus = getApplicationInjector().getInstance(EventBus.class);
-        this.settingsPage=new SettingsPage(this);
+        this.settingsPage = new SettingsPage(this);
     }
 
     @Test

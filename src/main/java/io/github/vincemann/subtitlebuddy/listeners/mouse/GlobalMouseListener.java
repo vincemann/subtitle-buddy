@@ -1,13 +1,15 @@
 package io.github.vincemann.subtitlebuddy.listeners.mouse;
 
 
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.mouse.NativeMouseEvent;
-import org.jnativehook.mouse.NativeMouseInputListener;
+import com.github.kwhat.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.dispatcher.SwingDispatchService;
+import com.github.kwhat.jnativehook.mouse.NativeMouseEvent;
+import com.github.kwhat.jnativehook.mouse.NativeMouseInputListener;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.MouseClickedEvent;
+import javafx.application.Platform;
 import lombok.extern.log4j.Log4j2;
 
 /**
@@ -23,8 +25,19 @@ public class GlobalMouseListener implements NativeMouseInputListener, MouseListe
     @Inject
     public GlobalMouseListener(EventBus eventBus) {
         this.eventBus = eventBus;
-        GlobalScreen.addNativeMouseListener(this);
+//        registerListener();
     }
+
+//    private void registerListener(){
+//        new Thread(()->{
+//            try {
+//                Thread.sleep(500);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            GlobalScreen.addNativeMouseListener(this);
+//        }).start();
+//    }
 
     public synchronized void nativeMouseClicked(NativeMouseEvent e) {
     }

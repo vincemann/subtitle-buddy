@@ -71,21 +71,17 @@ jlink {
 
     switch (targetPlatform) {
         case 'linux':
-            println("building jlink image for linux")
             targetPlatform("linux") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_linux_hotspot_2021-05-06-23-30.tar.gz')
             }
             break
         case 'win':
-            println("building jlink image for windows")
-
             targetPlatform("win") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_windows_hotspot_2021-05-06-23-30.zip')
                 addExtraModulePath("${projectDir}/lib/javafx/win")
             }
             break
         case 'mac':
-            println("building jlink image for mac")
             targetPlatform("mac") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_mac_hotspot_2021-05-06-23-30.tar.gz')
             }
@@ -318,7 +314,10 @@ dependencies {
     // capture mouse and keyboard events
     // need to use old version bc of segfaults on linux + keyboard strokes not working
     // needed to self modularize the jar in order to include for whatever reason
-    implementation files('lib/jnativehook-2.0.2-patched.jar')
+
+//    implementation files('lib/jnativehook-2.0.2-patched.jar')
+    implementation 'com.github.kwhat:jnativehook:2.2.2'
+
     //    implementation 'com.1stleg:jnativehook:2.0.2'
 
     // di
@@ -331,7 +330,7 @@ dependencies {
     // using a version here that works with jlink plugin
     implementation 'org.apache.logging.log4j:log4j-api:2.11.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.11.1'
-    // route apache commons logging to slf4j (commons configuration depends on using commons logging)
+    // route apache commons logging to log4j2 (commons configuration depends on using commons logging)
     runtimeOnly 'org.apache.logging.log4j:log4j-jcl:2.14.0'
 
 

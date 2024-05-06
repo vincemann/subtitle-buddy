@@ -15,6 +15,7 @@ import io.github.vincemann.subtitlebuddy.test.guice.MockFileChooserModule;
 import io.github.vincemann.subtitlebuddy.Main;
 import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.util.LoggingUtils;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -29,6 +30,8 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -69,8 +72,20 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
     @Before
     public void setUpClass() throws Exception {
         LoggingUtils.disableUtilLogger();
-        ApplicationTest.launch(Main.class);
+        Main application = (Main) ApplicationTest.launch(Main.class);
+
+        // Explicitly wait for the application to be ready
+        WaitForAsyncUtils.waitForFxEvents();
+
+
+        // wait until jnativehook is registered
+        FutureTask<Boolean> readyTask = new FutureTask<>(() -> application.readyProperty().get());
+
+        // Submit the task to be run on the JavaFX thread and wait for it
+        WaitForAsyncUtils.asyncFx(readyTask);
+        WaitForAsyncUtils.waitFor(readyTask);
     }
+
 
     public void focusNode(String query) throws TimeoutException {
         Node node = find(query);

@@ -118,12 +118,10 @@ public class SrtFontManagerImpl implements SrtFontManager {
 
     private Font resolveFont(String fontFilename, double fontSize) throws FontsLocationNotFoundException, FileNotFoundException, SrtFontLoadingException {
         String fileType = FilenameUtils.getExtension(fontFilename);
-        log.debug("loading font with file name: " + fontFilename);
+        log.debug("loading font: " + fontFilename);
         checkArgument(fileType.equals("ttf") || fileType.equals("otf"));
         Path fontsDir = fontsDirectory.findOrCreate();
-        log.debug("fonts directory: " + fontsDir.toString());
         Path fontPath = fontsDir.resolve(fontFilename).toAbsolutePath();
-        log.debug("font path: " + fontPath.toString());
         File fontFile = fontPath.toFile();
         if(!fontFile.exists()){
             throw new SrtFontLoadingException("Font with name: " + fontFile + " not found");
