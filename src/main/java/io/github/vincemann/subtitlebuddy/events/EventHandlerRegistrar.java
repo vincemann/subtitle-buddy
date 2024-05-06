@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.service;
+package io.github.vincemann.subtitlebuddy.events;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;

@@ -7,30 +7,27 @@ import com.google.inject.Module;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.config.ConfigDirectoryImpl;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileManager;
+import io.github.vincemann.subtitlebuddy.config.ConfigFileManagerImpl;
 import io.github.vincemann.subtitlebuddy.config.strings.ApacheUIStringsFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
-import io.github.vincemann.subtitlebuddy.config.ConfigFileManagerImpl;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.gui.stages.controller.SettingsStageController;
 import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.properties.ApachePropertiesFile;
 import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
-import io.github.vincemann.subtitlebuddy.service.EventHandlerRegistrar;
-import io.github.vincemann.subtitlebuddy.service.SrtService;
+import io.github.vincemann.subtitlebuddy.events.EventHandlerRegistrar;
+import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngine;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.LogManager;
 import org.jnativehook.DefaultLibraryLocator;
 import org.jnativehook.GlobalScreen;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.ServiceLoader;
 
-//@Log4j2
 @Log4j2
 @NoArgsConstructor
 @Singleton
@@ -43,8 +40,6 @@ public class Main extends Application {
 
     public static final String CONFIG_FILE_NAME = "application.properties";
     public static final String UI_STRINGS_CONFIG_FILE_PATH = "application.string.properties";
-
-    private SrtService srtService;
     private EventHandlerRegistrar eventHandlerRegistrar;
     private static Injector injector;
 
@@ -58,18 +53,14 @@ public class Main extends Application {
         PropertiesFile propertiesManager = new ApachePropertiesFile(configFileManager.findOrCreateConfigFile(CONFIG_FILE_NAME));
         UIStringsFile stringConfiguration = new ApacheUIStringsFile(classPathFileExtractor.findOnClassPath(UI_STRINGS_CONFIG_FILE_PATH).getFile());
         injector = createInjector(propertiesManager,stringConfiguration,primaryStage, classPathFileExtractor);
-        EventBus eventBus = injector.getInstance(EventBus.class);
-        srtService = injector.getInstance(SrtService.class);
         eventHandlerRegistrar = injector.getInstance(EventHandlerRegistrar.class);
         eventHandlerRegistrar.registerEventHandlers();
-        eventBus.register(srtService);
-
-
-        log.debug("HELLO FROM LOG4J2!");
 
         SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
         settingsStageController.open();
-        start();
+
+        // start parser
+        getInjector().getInstance(SrtParserEngine.class).start();
     }
 
     private static Injector createInjector(PropertiesFile propertiesManager,
@@ -102,7 +93,4 @@ public class Main extends Application {
         return injector;
     }
 
-    private void start() {
-        srtService.startParser();
-    }
 }

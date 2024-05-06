@@ -39,7 +39,6 @@ open module io.github.vincemann.subtitlebuddy {
 
     exports io.github.vincemann.subtitlebuddy.module;
     exports io.github.vincemann.subtitlebuddy.properties;
-    exports io.github.vincemann.subtitlebuddy.service;
     exports io.github.vincemann.subtitlebuddy.events;
     exports io.github.vincemann.subtitlebuddy.config;
     exports io.github.vincemann.subtitlebuddy.config.strings;
@@ -48,10 +47,4 @@ open module io.github.vincemann.subtitlebuddy {
     exports io.github.vincemann.subtitlebuddy.util;
     exports io.github.vincemann.subtitlebuddy.util.fx;
     exports io.github.vincemann.subtitlebuddy.util.vec;
-
-//    uses org.apache.logging.log4j.spi.Provider;
-
-    //    opens io.github.vincemann.subtitlebuddy to javafx.fxml;
-//    opens io.github.vincemann.subtitlebuddy.gui.srtdisplayer to com.google.guice;
-//    opens io.github.vincemann.subtitlebuddy.gui.stages.controller to com.google.guice;
 }
