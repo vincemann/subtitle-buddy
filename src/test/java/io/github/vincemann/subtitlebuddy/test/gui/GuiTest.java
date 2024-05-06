@@ -29,14 +29,14 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeoutException;
 
 import static org.testfx.api.FxToolkit.registerPrimaryStage;
-import static org.testfx.util.WaitForAsyncUtils.waitFor;
 
 public abstract class GuiTest extends ApplicationTest implements IntegrationTest {
-
-    private static final long GUI_TEST_TIME_OUT = 3000;
 
     @BeforeClass
     public static void setupSpec() throws Exception {
@@ -75,7 +75,7 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
     }
 
 
-    public void focusNode(String query) throws TimeoutException {
+    public void focusNode(String query) {
         Node node = find(query);
         Runnable runnable = node::requestFocus;
         doOnFxThreadAndWait(runnable);
@@ -111,7 +111,7 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
      * holt stage to front und returned erst wenn stage @ front ist
      * @param a
      */
-    public void focusStage(Class<? extends Annotation> a) throws TimeoutException {
+    public void focusStage(Class<? extends Annotation> a) {
         AbstractStageController abstractStageController = getInstance(AbstractStageController.class,a);
         Runnable toFrontTask = () -> {
             abstractStageController.getStage().toFront();
