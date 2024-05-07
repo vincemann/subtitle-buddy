@@ -44,18 +44,23 @@ javafx {
 
 test {
     doFirst {
-        jvmArgs = [
+        // Initialize the list with common JVM arguments
+        List<String> args = [
                 '--add-modules', javafx.modules.join(","),
-                // windows does not recognize javafx deps, that's why I need to manually ship the native javafx jmods with it
-                // and setup the module path in testing and when running the fat jar on windows
-                // when running on other platforms this is ignored silently
-                '--module-path', "${projectDir}/lib/javafx/win",
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
-//                "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2",
                 '--add-exports', 'javafx.graphics/com.sun.javafx.application=org.testfx',
-                '--add-opens', 'javafx.graphics/com.sun.javafx.application=org.testfx',
-
+                '--add-opens', 'javafx.graphics/com.sun.javafx.application=org.testfx'
         ]
+
+        // Conditionally add module-path based on the target platform
+        if (project.targetPlatform == 'win') {
+            args += ['--module-path', "${projectDir}/lib/javafx/win"]
+        } else if (project.targetPlatform == 'mac') {
+            args += ['--module-path', "${projectDir}/lib/javafx/osx"]
+        }
+
+        // Assign the constructed argument list to jvmArgs
+        jvmArgs = args
     }
 }
 
@@ -84,6 +89,7 @@ jlink {
         case 'mac':
             targetPlatform("mac") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_mac_hotspot_2021-05-06-23-30.tar.gz')
+                addExtraModulePath("${projectDir}/lib/javafx/osx")
             }
             break
         default:
@@ -300,12 +306,23 @@ repositories {
 // in windows this command in cli is needed java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 run {
     doFirst {
-        jvmArgs = [
+        // Initialize the list with common JVM arguments
+        List<String> args = [
                 // modules are not part of sdk anymore - need to add them manually to module graph
                 "--add-modules", javafx.modules.join(","),
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
 //                "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2"
         ]
+
+        // Conditionally add module-path based on the target platform
+        if (project.targetPlatform == 'win') {
+            args += ['--module-path', "${projectDir}/lib/javafx/win"]
+        } else if (project.targetPlatform == 'mac') {
+            args += ['--module-path', "${projectDir}/lib/javafx/osx"]
+        }
+
+        // Assign the constructed argument list to jvmArgs
+        jvmArgs = args
     }
 }
 
