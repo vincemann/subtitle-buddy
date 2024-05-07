@@ -55,11 +55,13 @@ test {
         // Conditionally add module-path based on the target platform
         if (project.targetPlatform == 'win') {
             println("adding win javafx modules to module path")
-            args += ['--module-path', "${projectDir}/lib/javafx/win"]
-        } else if (project.targetPlatform == 'mac') {
-            println("adding osx javafx modules to module path")
-            args += ['--module-path', "${projectDir}/lib/javafx/osx/sdk/lib"]
+            args += ['--module-path', "${projectDir}/lib/javafx/win/jmods"]
         }
+        // doesnt seem to be needed
+//        else if (project.targetPlatform == 'mac') {
+//            println("adding osx javafx modules to module path")
+//            args += ['--module-path', "${projectDir}/lib/javafx/osx/jmods"]
+//        }
 
         // Assign the constructed argument list to jvmArgs
         jvmArgs = args
@@ -67,6 +69,7 @@ test {
 }
 
 // builds platform specific jlink images in build/images
+// NOTE: for mac this only works, when building on mac for whatever reason - otherwise it will segfault
 jlink {
     options = [
             '--strip-debug',
@@ -85,13 +88,13 @@ jlink {
         case 'win':
             targetPlatform("win") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_windows_hotspot_2021-05-06-23-30.zip')
-                addExtraModulePath("${projectDir}/lib/javafx/win")
+                addExtraModulePath("${projectDir}/lib/javafx/win/jmods")
             }
             break
         case 'mac':
             targetPlatform("mac") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_mac_hotspot_2021-05-06-23-30.tar.gz')
-                addExtraModulePath("${projectDir}/lib/javafx/osx/sdk/lib")
+                addExtraModulePath("${projectDir}/lib/javafx/osx/jmods")
             }
             break
         default:
@@ -116,8 +119,9 @@ jlink {
 }
 
 // creates tarball for jlink image and stores in build dir
-// execute with -PtargetPlatform=[linux,mac,win]
+// execute with -PtargetPlatform=[linux | win| mac]
 // this can then be shipped via homebrew
+// NOTE: for mac this only works, when building on mac for whatever reason - otherwise it will segfault
 tasks.register('tarJlink', Exec) {
     dependsOn 'jlink'
 
@@ -248,7 +252,7 @@ tasks.register('buildMacDmg') {
         throw new GradleException("Need to specify mac target platform or run on mac")
     }
     doLast {
-        def baseDir = "${projectDir}/releases/macos/x64"
+        def baseDir = "${projedctDir}/releases/macos/x64"
         def imagePath = "${baseDir}/SubtitleBuddy.app/Contents/Java/image"
         def dmgName = "subtitle-buddy-${version}-macx64.dmg"
         def dmgOutputPath = "${baseDir}/$dmgName"
@@ -288,8 +292,12 @@ java {
     modularity.inferModulePath.set(true)
 }
 
-// build fat jar containing javafx moudles and all other deps
-// in wwid oensnv jmods of javafx need to be shipped and declared anyways
+// build fat jar containing javafx moules and all other deps
+// in windows and macos jmods of javafx need to be shipped and declared anyways
+// after building, jar can be launched like that (when java17 is installed)
+// linux: java --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
+// osx: java --module-path /path/to/javafx/sdk/lib --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
+// win: java --module-path /path/to/javafx/jmods --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 shadowJar {
     archiveClassifier.set('')
     archiveFileName = "subtitle-buddy-${version}-${targetPlatform}.jar"
@@ -305,7 +313,7 @@ repositories {
     mavenCentral()
 }
 
-// same as: java --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
+
 // in windows this command in cli is needed java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 run {
     doFirst {
@@ -320,10 +328,13 @@ run {
         // Conditionally add module-path based on the target platform
         if (project.targetPlatform == 'win') {
             println("adding win javafx modules to module path")
-            args += ['--module-path', "${projectDir}/lib/javafx/win"]
-        } else if (project.targetPlatform == 'mac') {
+            args += ['--module-path', "${projectDir}/lib/javafx/win/jmods"]
+        }
+        // for whatever reason I cant get this to work on mac - always fails with FindException Module javafx.controls not found
+        // even when specifying path to javafx jmods or javafx sdk/lib
+        else if (project.targetPlatform == 'mac') {
             println("adding osx javafx modules to module path")
-            args += ['--module-path', "${projectDir}/lib/javafx/osx/sdk/lib"]
+            args += ['--module-path', "${projectDir}/lib/javafx/osx/jmods"]
         }
 
         // Assign the constructed argument list to jvmArgs
@@ -334,13 +345,9 @@ run {
 dependencies {
 
     // capture mouse and keyboard events
-    // need to use old version bc of segfaults on linux + keyboard strokes not working
-    // needed to self modularize the jar in order to include for whatever reason
-
 //    implementation files('lib/jnativehook-2.0.2-patched.jar')
     implementation 'com.github.kwhat:jnativehook:2.2.2'
-
-    //    implementation 'com.1stleg:jnativehook:2.0.2'
+//    implementation 'com.1stleg:jnativehook:2.0.2'
 
     // di
     implementation('com.google.inject:guice:7.0.0')
