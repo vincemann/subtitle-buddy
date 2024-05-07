@@ -323,7 +323,7 @@ run {
             args += ['--module-path', "${projectDir}/lib/javafx/win"]
         } else if (project.targetPlatform == 'mac') {
             println("adding osx javafx modules to module path")
-            args += ['--module-path', "${projectDir}/lib/javafx/osx"]
+            args += ['--module-path', "${projectDir}/lib/javafx/osx/sdk/lib"]
         }
 
         // Assign the constructed argument list to jvmArgs
