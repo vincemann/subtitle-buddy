@@ -1,5 +1,7 @@
 package io.github.vincemann.subtitlebuddy.gui.filechooser;
 
+import javafx.stage.Stage;
+
 import java.io.File;
 
 /**

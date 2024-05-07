@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import io.github.vincemann.subtitlebuddy.Main;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.srt.parser.CorruptedSrtFileException;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.FileChooser;
@@ -59,7 +60,8 @@ public class SubtitleFileProvider implements Provider<SubtitleFile> {
                 File file =  fileChooser.letUserChooseFile();
                 List<SubtitleParagraph> subtitles = srtFileParser.transformFileToSubtitles(file);
                 this.chosenFile = new SubtitleFileImpl(subtitles);
-                return new SubtitleFileImpl(subtitles);
+                return chosenFile;
+//                return new SubtitleFileImpl(subtitles);
             }catch (FileNotFoundException e){
                 log.warn("file not found",e);
                 alertDialog.tellUser(fileNotFoundMessage);

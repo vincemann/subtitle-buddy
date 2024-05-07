@@ -34,7 +34,7 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable{
         this.srtParser=srtParser;
         this.srtDisplayerProvider = srtDisplayerProvider;
         this.eventBus=eventBus;
-        this.updaterThread=new Thread(this);
+        this.updaterThread = new Thread(this);
     }
 
     @Override

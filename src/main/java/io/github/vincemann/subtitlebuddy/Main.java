@@ -62,11 +62,14 @@ public class Main extends Application {
         injector = createInjector(propertiesManager,stringConfiguration,primaryStage, classPathFileExtractor);
         injector.getInstance(EventHandlerRegistrar.class).registerEventHandlers();
 
+
+
         SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
         settingsStageController.open();
 
         // start parser
         getInjector().getInstance(SrtParserEngine.class).start();
+        // needs to be run later, otherwise segfault
         Platform.runLater(this::registerHook);
     }
 
