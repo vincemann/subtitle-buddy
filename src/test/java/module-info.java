@@ -3,7 +3,7 @@ open module io.github.vincemann.subtitlebuddy.test {
 
     requires javafx.controls;
     requires javafx.fxml;
-    requires com.github.kwhat.jnativehook;
+    requires org.jnativehook;
     requires com.google.common;
     requires com.google.guice;
     requires org.apache.commons.io;

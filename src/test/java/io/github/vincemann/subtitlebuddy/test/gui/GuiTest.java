@@ -59,18 +59,19 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
 
         // Explicitly wait for the application to be ready
         WaitForAsyncUtils.waitForFxEvents();
-        waitUntilApplicationReady(application);
+//        waitUntilApplicationReady(application);
     }
 
-    private void waitUntilApplicationReady(Main application){
-        // wait until jnativehook is registered
-        FutureTask<Boolean> readyTask = new FutureTask<>(() -> application.readyProperty().get());
-
-        // Submit the task to be run on the JavaFX thread and wait for it
-        WaitForAsyncUtils.asyncFx(readyTask);
-        WaitForAsyncUtils.waitFor(readyTask);
-        assert application.isReady();
-    }
+    // only needed for jnativehook 2.2.2
+//    private void waitUntilApplicationReady(Main application){
+//        // wait until jnativehook is registered
+//        FutureTask<Boolean> readyTask = new FutureTask<>(() -> application.readyProperty().get());
+//
+//        // Submit the task to be run on the JavaFX thread and wait for it
+//        WaitForAsyncUtils.asyncFx(readyTask);
+//        WaitForAsyncUtils.waitFor(readyTask);
+//        assert application.isReady();
+//    }
 
 
     public void focusNode(String query) {
