@@ -11,6 +11,7 @@ import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
 import io.github.vincemann.subtitlebuddy.srt.font.SrtFontManager;
 import javafx.scene.paint.Color;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 
 import java.util.concurrent.ExecutionException;
@@ -88,6 +89,11 @@ public class OptionsTest extends GuiTest {
 
     @Test
     public void testChangeFontInMovieMode() throws TimeoutException {
+        // Assume that the OS is not Mac OS X
+        // this test wont work on osx, because when in movie mode it cannot focus back on options
+        String osName = System.getProperty("os.name").toLowerCase();
+        Assume.assumeFalse(osName.contains("mac"));
+
         focusStage(SettingsStageController.class);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(OptionsStageController.class);
