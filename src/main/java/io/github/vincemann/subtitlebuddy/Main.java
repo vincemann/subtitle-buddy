@@ -76,7 +76,7 @@ public class Main extends Application {
     private void registerHook(){
         try {
             GlobalScreen.registerNativeHook();
-            // needs to be done here so it does not trigger a race condition
+            // needs to be done here so it does not trigger a race condition in jnativehook
             GlobalHotKeyListener hotKeyListener = injector.getInstance(GlobalHotKeyListener.class);
             GlobalMouseListener mouseListener = injector.getInstance(GlobalMouseListener.class);
 
@@ -96,7 +96,7 @@ public class Main extends Application {
                                            Stage primaryStage,
                                            ClassPathFileExtractor classPathFileExtractor){
         if(injector==null) {
-            //use default modules
+            // use default modules
             List<Module> moduleList = Arrays.asList(
                     new ClassPathFileExtractorModule(classPathFileExtractor),
                     new ConfigFileModule(propertiesManager, stringConfiguration),
@@ -107,7 +107,7 @@ public class Main extends Application {
             );
            return Guice.createInjector(moduleList);
         }else {
-            //use external modules
+            // use external modules
             return injector;
         }
     }

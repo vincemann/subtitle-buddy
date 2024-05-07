@@ -51,8 +51,13 @@ public class JavaFxFileChooser implements FileChooser {
 
         try {
             String startingDir = lastPathRegistry.getSavedPath();
+            log.debug("last path: " + startingDir);
             if (Files.exists(Paths.get(startingDir))) {
+                log.debug("starting from last path");
                 fileChooser.setInitialDirectory(new File(startingDir));
+            }
+            else{
+                log.debug("last path does not exist");
             }
         } catch (PropertyNotFoundException | InvalidPathException e) {
             log.warn("Starting at root directory due to error: " + e.getMessage());
