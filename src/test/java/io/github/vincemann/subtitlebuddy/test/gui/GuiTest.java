@@ -59,12 +59,10 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
 
         // Explicitly wait for the application to be ready
         WaitForAsyncUtils.waitForFxEvents();
-
-        waitUntilJNativeHookListenersAdded(application);
-
+        waitUntilApplicationReady(application);
     }
 
-    private void waitUntilJNativeHookListenersAdded(Main application){
+    private void waitUntilApplicationReady(Main application){
         // wait until jnativehook is registered
         FutureTask<Boolean> readyTask = new FutureTask<>(() -> application.readyProperty().get());
 
