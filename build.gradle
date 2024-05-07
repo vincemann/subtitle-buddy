@@ -91,9 +91,7 @@ jlink {
             '--strip-debug',
             '--compress', '2',
             '--no-header-files',
-            '--no-man-pages',
-            '--module-path', file('lib/jnativehook-2.2.2.jar').absolutePath,
-            '--add-modules', 'com.github.kwhat.jnativehook',
+            '--no-man-pages'
     ]
 
 
