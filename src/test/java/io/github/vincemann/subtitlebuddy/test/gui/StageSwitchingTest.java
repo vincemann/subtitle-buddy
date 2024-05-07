@@ -24,6 +24,7 @@ public class StageSwitchingTest extends GuiTest {
     @Test
     public void testSwitchToMovieMode() throws TimeoutException {
         settingsPage.switchToMovieMode();
+        WaitForAsyncUtils.waitForFxEvents();
         Assert.assertTrue(findSrtDisplayer(MovieSrtDisplayer.class).isDisplaying());
     }
 
