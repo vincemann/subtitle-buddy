@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.gui.filechooser;
 
-public class UserQuitException extends Exception {
+public class UserQuitException extends RuntimeException {
 
     public UserQuitException() {
     }
