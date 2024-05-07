@@ -73,7 +73,7 @@ public class ParserHotKeyTest extends GuiTest {
 
         press(KeyCode.ALT).type(KeyCode.N).release(KeyCode.ALT);
         Stage settingsStage = findStageController(SettingsStageController.class).getStage();
-        Point2D nextToSettingsStage = new Point2D(settingsStage.getX()+settingsStage.getWidth()+1,settingsStage.getY());
+        Point2D nextToSettingsStage = new Point2D(settingsStage.getX()+settingsStage.getWidth()+10,settingsStage.getY()+10);
         clickOn(nextToSettingsStage);
         refreshGui();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtParser.getCurrentState());
@@ -96,7 +96,7 @@ public class ParserHotKeyTest extends GuiTest {
 
         press(KeyCode.ALT).type(KeyCode.N).release(KeyCode.ALT);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Point2D middleOfScreen = new Point2D(screenSize.getWidth()/2,screenSize.getWidth()/2);
+        Point2D middleOfScreen = new Point2D(screenSize.getWidth()/2,screenSize.getHeight()/2);
         clickOn(middleOfScreen);
         refreshGui();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtParser.getCurrentState());

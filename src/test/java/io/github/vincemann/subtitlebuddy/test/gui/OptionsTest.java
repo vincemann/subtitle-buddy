@@ -59,6 +59,11 @@ public class OptionsTest extends GuiTest {
 
     @Test
     public void testChangeColorOnMovieMode() throws TimeoutException {
+        // Assume that the OS is not Mac OS X
+        // this test wont work on osx, because when in movie mode it cannot focus back on options
+        String osName = System.getProperty("os.name").toLowerCase();
+        Assume.assumeFalse(osName.contains("mac"));
+
         focusStage(SettingsStageController.class);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(SettingsStageController.class);
