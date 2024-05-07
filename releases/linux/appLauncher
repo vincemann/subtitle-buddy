@@ -8,6 +8,6 @@ APP_NAME=\${SCRIPT_NAME%.sh}
 DIR=\$(dirname "\$SCRIPT")
 
 # Change to the image root directory - this is important for the native lib loading
-cd "\$DIR/.."
+cd "\$DIR/.." || { echo "Failed to change directory to image root"; exit 1; }
 
 "\$DIR/java" \$CDS_JVM_OPTS ${jvmArgs} -p "\$DIR/../app" -m ${moduleName}/${mainClassName} "\$@"
