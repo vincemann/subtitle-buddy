@@ -19,7 +19,7 @@ public class OptionsPage extends AbstractPage {
         super(driver);
     }
 
-    public Color selectRandomColor(Color defaultColor) {
+    public Color selectRandomColor(Color defaultColor) throws TimeoutException {
         // Ensure the node is visible and can receive focus
         getDriver().waitForVisibleNode(FxTestConstants.COLOR_CHOOSE_ID);
         ColorPicker colorChooser = getDriver().find(FxTestConstants.COLOR_CHOOSE_ID);

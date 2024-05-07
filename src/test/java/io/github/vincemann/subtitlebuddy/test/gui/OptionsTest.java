@@ -57,7 +57,7 @@ public class OptionsTest extends GuiTest {
     }
 
     @Test
-    public void testChangeColorOnMovieMode() throws TimeoutException, InterruptedException {
+    public void testChangeColorOnMovieMode() throws TimeoutException {
         focusStage(SettingsStageController.class);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(SettingsStageController.class);
@@ -72,7 +72,7 @@ public class OptionsTest extends GuiTest {
     }
 
     @Test
-    public void testChangeFontInSettingsMode() throws TimeoutException, ExecutionException, InterruptedException {
+    public void testChangeFontInSettingsMode() throws TimeoutException {
         focusStage(SettingsStageController.class);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(OptionsStageController.class);
@@ -87,7 +87,7 @@ public class OptionsTest extends GuiTest {
     }
 
     @Test
-    public void testChangeFontInMovieMode() throws TimeoutException, ExecutionException, InterruptedException {
+    public void testChangeFontInMovieMode() throws TimeoutException {
         focusStage(SettingsStageController.class);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(OptionsStageController.class);

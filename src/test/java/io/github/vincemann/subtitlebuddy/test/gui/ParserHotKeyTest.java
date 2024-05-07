@@ -36,7 +36,7 @@ public class ParserHotKeyTest extends GuiTest {
     }
 
     @Test
-    public void testStartParserBySpace() throws InterruptedException {
+    public void testStartParserBySpace() {
         eventBus.post(new ToggleHotKeyEvent(HotKey.START_STOP,false));
         refreshGui();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtParser.getCurrentState());

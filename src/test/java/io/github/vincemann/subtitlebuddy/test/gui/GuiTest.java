@@ -31,12 +31,15 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static org.testfx.api.FxToolkit.registerPrimaryStage;
+import static org.testfx.util.WaitForAsyncUtils.waitFor;
 
 public abstract class GuiTest extends ApplicationTest implements IntegrationTest {
+
+    private static final long GUI_TEST_TIME_OUT = 3000;
 
     @BeforeClass
     public static void setupSpec() throws Exception {
@@ -58,7 +61,7 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
         Main application = (Main) ApplicationTest.launch(Main.class);
 
         // Explicitly wait for the application to be ready
-        WaitForAsyncUtils.waitForFxEvents();
+//        WaitForAsyncUtils.waitForFxEvents();
 //        waitUntilApplicationReady(application);
     }
 
@@ -74,33 +77,54 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
 //    }
 
 
-    public void focusNode(String query) {
+    public void focusNode(String query) throws TimeoutException {
         Node node = find(query);
         Runnable runnable = node::requestFocus;
         doOnFxThreadAndWait(runnable);
         refreshGui();
     }
 
-    protected void doOnFxThreadAndWait(Runnable task) {
-        CompletableFuture<Void> future = new CompletableFuture<>();
-        Platform.runLater(() -> {
-            try {
-                task.run();
-                future.complete(null);  // Signal completion
-            } catch (Exception e) {
-                future.completeExceptionally(e);  // Propagate error
+    protected void doOnFxThreadAndWait(Runnable task) throws TimeoutException {
+        long startTime = System.nanoTime();
+        final Result result = new Result();
+        Runnable runnable = () -> {
+            task.run();
+            result.setDone(true);
+        };
+        Platform.runLater(runnable);
+        while (true){
+            if(result.isDone()){
+                break;
             }
-        });
-
-        try {
-            future.get();
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e.getCause());  // Throw the cause of the exception
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();  // Handle thread interruption
-            throw new RuntimeException("Interrupted while waiting", e);
+            long currTime = System.nanoTime();
+            if(currTime-startTime>=GUI_TEST_TIME_OUT*1000000){
+                throw new TimeoutException();
+            }
+            sleep(50);
         }
     }
+
+
+    //    protected void doOnFxThreadAndWait(Runnable task) {
+//        CompletableFuture<Void> future = new CompletableFuture<>();
+//        Platform.runLater(() -> {
+//            try {
+//                task.run();
+//                future.complete(null);  // Signal completion
+//            } catch (Exception e) {
+//                future.completeExceptionally(e);  // Propagate error
+//            }
+//        });
+//
+//        try {
+//            future.get();
+//        } catch (ExecutionException e) {
+//            throw new RuntimeException(e.getCause());  // Throw the cause of the exception
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();  // Handle thread interruption
+//            throw new RuntimeException("Interrupted while waiting", e);
+//        }
+//    }
     public boolean isStageShowing(Class<? extends Annotation> a){
         AbstractStageController abstractStageController = getInstance(AbstractStageController.class,a);
         return abstractStageController.getStageState().equals(StageState.OPEN);
@@ -110,7 +134,7 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
      * holt stage to front und returned erst wenn stage @ front ist
      * @param a
      */
-    public void focusStage(Class<? extends Annotation> a) {
+    public void focusStage(Class<? extends Annotation> a) throws TimeoutException {
         AbstractStageController abstractStageController = getInstance(AbstractStageController.class,a);
         Runnable toFrontTask = () -> {
             abstractStageController.getStage().toFront();
@@ -185,6 +209,57 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
 
     }
 
+//    /**
+//     * Waits for the {@code Node} that is looked up by the given {@code NodeQuery} to be visible.
+//     * <p>
+//     * This method handles the case where the node lookup first returns {@literal null} gracefully.
+//     * <p>
+//     * Example:
+//     * <pre>{@code
+//     * WaitForAsyncUtils.waitForVisibleNode("#someNode", 15, TimeUnit.SECONDS, fxRobot);
+//     * }</pre>
+//     */
+//    public void waitForVisibleNode(String nodeQuery) {
+//        try {
+//            CompletableFuture<Void> nodeExistsFuture = new CompletableFuture<>();
+//            CompletableFuture<Void> nodeVisibleFuture = new CompletableFuture<>();
+//
+//            // Check for node existence
+//            Platform.runLater(() -> {
+//                try {
+//                    if (lookup(nodeQuery).query() != null) {
+//                        nodeExistsFuture.complete(null);  // Node exists
+//                    } else {
+//                        nodeExistsFuture.completeExceptionally(new IllegalStateException("Node does not exist: " + nodeQuery));
+//                    }
+//                } catch (Exception e) {
+//                    nodeExistsFuture.completeExceptionally(e);
+//                }
+//            });
+//
+//            // Wait for node existence without a timeout
+//            nodeExistsFuture.get();  // This will block until the future is completed
+//
+//            // Check for node visibility
+//            Platform.runLater(() -> {
+//                try {
+//                    if (lookup(nodeQuery).query().isVisible()) {
+//                        nodeVisibleFuture.complete(null);  // Node is visible
+//                    } else {
+//                        nodeVisibleFuture.completeExceptionally(new IllegalStateException("Node is not visible: " + nodeQuery));
+//                    }
+//                } catch (Exception e) {
+//                    nodeVisibleFuture.completeExceptionally(e);
+//                }
+//            });
+//
+//            // Wait for node visibility without a timeout
+//            nodeVisibleFuture.get();  // This will block until the future is completed
+//        }catch (InterruptedException| ExecutionException e){
+//            throw new RuntimeException(e);
+//        }
+//    }
+
     /**
      * Waits for the {@code Node} that is looked up by the given {@code NodeQuery} to be visible.
      * <p>
@@ -195,44 +270,26 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
      * WaitForAsyncUtils.waitForVisibleNode("#someNode", 15, TimeUnit.SECONDS, fxRobot);
      * }</pre>
      */
-    public void waitForVisibleNode(String nodeQuery) {
-        try {
-            CompletableFuture<Void> nodeExistsFuture = new CompletableFuture<>();
-            CompletableFuture<Void> nodeVisibleFuture = new CompletableFuture<>();
+    public void waitForVisibleNode(String nodeQuery)
+            throws TimeoutException {
+        // First we wait for the node lookup to be non-null. Then, in the remaining time, wait for the node to be visible.
+        waitFor(GUI_TEST_TIME_OUT/2, TimeUnit.MILLISECONDS, () -> {
+            return lookup(nodeQuery).query()!=null;
 
-            // Check for node existence
-            Platform.runLater(() -> {
-                try {
-                    if (lookup(nodeQuery).query() != null) {
-                        nodeExistsFuture.complete(null);  // Node exists
-                    } else {
-                        nodeExistsFuture.completeExceptionally(new IllegalStateException("Node does not exist: " + nodeQuery));
-                    }
-                } catch (Exception e) {
-                    nodeExistsFuture.completeExceptionally(e);
-                }
-            });
+        });
+        waitFor(GUI_TEST_TIME_OUT/2,
+                TimeUnit.MILLISECONDS, () -> lookup(nodeQuery).query().isVisible());
+    }
 
-            // Wait for node existence without a timeout
-            nodeExistsFuture.get();  // This will block until the future is completed
+    private static class Result{
+        private boolean done = false;
 
-            // Check for node visibility
-            Platform.runLater(() -> {
-                try {
-                    if (lookup(nodeQuery).query().isVisible()) {
-                        nodeVisibleFuture.complete(null);  // Node is visible
-                    } else {
-                        nodeVisibleFuture.completeExceptionally(new IllegalStateException("Node is not visible: " + nodeQuery));
-                    }
-                } catch (Exception e) {
-                    nodeVisibleFuture.completeExceptionally(e);
-                }
-            });
+        public boolean isDone() {
+            return done;
+        }
 
-            // Wait for node visibility without a timeout
-            nodeVisibleFuture.get();  // This will block until the future is completed
-        }catch (InterruptedException| ExecutionException e){
-            throw new RuntimeException(e);
+        public void setDone(boolean done) {
+            this.done = done;
         }
     }
 
