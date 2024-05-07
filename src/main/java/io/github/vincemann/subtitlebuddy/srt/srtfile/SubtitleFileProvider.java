@@ -15,7 +15,6 @@ import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtFileParser;
 import lombok.extern.log4j.Log4j2;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;

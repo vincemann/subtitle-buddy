@@ -7,18 +7,13 @@ import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.LastPathRegistry;
 import io.github.vincemann.subtitlebuddy.properties.PropertyNotFoundException;
 import io.github.vincemann.subtitlebuddy.util.FileUtils;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Opens a JavaFX file chooser dialog, where the user can choose a file.

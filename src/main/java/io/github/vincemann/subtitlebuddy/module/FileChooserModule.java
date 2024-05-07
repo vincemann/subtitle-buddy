@@ -6,8 +6,8 @@ import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.gui.dialog.AlertDialog;
 import io.github.vincemann.subtitlebuddy.gui.dialog.ContinueDialog;
-import io.github.vincemann.subtitlebuddy.gui.dialog.SwingAlertDialog;
-import io.github.vincemann.subtitlebuddy.gui.dialog.SwingContinueDialog;
+import io.github.vincemann.subtitlebuddy.gui.dialog.JavaFxAlertDialog;
+import io.github.vincemann.subtitlebuddy.gui.dialog.JavaFxContinueDialog;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.FileChooser;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.JavaFxFileChooser;
 import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
@@ -36,7 +36,7 @@ public class FileChooserModule extends PropertyFilesModule {
     @Override
     protected void initClassBindings() {
         bind(FileChooser.class).to(JavaFxFileChooser.class);
-        bind(ContinueDialog.class).to(SwingContinueDialog.class);
-        bind(AlertDialog.class).to(SwingAlertDialog.class);
+        bind(ContinueDialog.class).to(JavaFxContinueDialog.class);
+        bind(AlertDialog.class).to(JavaFxAlertDialog.class);
     }
 }
