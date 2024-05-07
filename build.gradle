@@ -58,7 +58,7 @@ test {
             args += ['--module-path', "${projectDir}/lib/javafx/win"]
         } else if (project.targetPlatform == 'mac') {
             println("adding osx javafx modules to module path")
-            args += ['--module-path', "${projectDir}/lib/javafx/osx"]
+            args += ['--module-path', "${projectDir}/lib/javafx/osx/sdk/lib"]
         }
 
         // Assign the constructed argument list to jvmArgs
@@ -91,7 +91,7 @@ jlink {
         case 'mac':
             targetPlatform("mac") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_mac_hotspot_2021-05-06-23-30.tar.gz')
-                addExtraModulePath("${projectDir}/lib/javafx/osx")
+                addExtraModulePath("${projectDir}/lib/javafx/osx/sdk/lib")
             }
             break
         default:
