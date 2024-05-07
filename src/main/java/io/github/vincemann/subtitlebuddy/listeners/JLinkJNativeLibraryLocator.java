@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy;
+package io.github.vincemann.subtitlebuddy.listeners;
 
 import com.github.kwhat.jnativehook.NativeLibraryLocator;
 import com.github.kwhat.jnativehook.NativeSystem;

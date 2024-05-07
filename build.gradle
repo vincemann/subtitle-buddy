@@ -123,7 +123,7 @@ jlink {
         forceMerge('log4j-api')
         forceMerge('commons-logging')
         // fixes : package org.apache.commons.logging is declared in module org.apache.commons.logging, but module io.github.vincemann.merged.module does not read it
-        // make sure symlinks work when installed via homebrew
+        // make sure symlinks work when installed via homebrew and more
         unixScriptTemplate = new File("${projectDir}/releases/linux/appLauncher")
         jvmArgs = [
                 // tells application to use the jlink lib locator
@@ -367,7 +367,6 @@ dependencies {
     // also its self modularized to fix some issues with jpms
 //    implementation files('lib/jnativehook-2.0.2-patched.jar')
     implementation 'com.github.kwhat:jnativehook:2.2.2'
-//    implementation 'com.1stleg:jnativehook:2.0.2'
 
     // di
     implementation('com.google.inject:guice:7.0.0')

@@ -14,6 +14,7 @@ import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.events.EventHandlerRegistrar;
 import io.github.vincemann.subtitlebuddy.gui.stages.controller.SettingsStageController;
+import io.github.vincemann.subtitlebuddy.listeners.JLinkJNativeLibraryLocator;
 import io.github.vincemann.subtitlebuddy.listeners.key.GlobalHotKeyListener;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.GlobalMouseListener;
 import io.github.vincemann.subtitlebuddy.module.*;
