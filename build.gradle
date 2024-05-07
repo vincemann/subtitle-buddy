@@ -54,8 +54,10 @@ test {
 
         // Conditionally add module-path based on the target platform
         if (project.targetPlatform == 'win') {
+            println("adding win javafx modules to module path")
             args += ['--module-path', "${projectDir}/lib/javafx/win"]
         } else if (project.targetPlatform == 'mac') {
+            println("adding osx javafx modules to module path")
             args += ['--module-path', "${projectDir}/lib/javafx/osx"]
         }
 
@@ -100,7 +102,8 @@ jlink {
         name = 'appLauncher'
         mainClass = application.mainClass.get()
         forceMerge('log4j-api')
-        forceMerge('commons-logging') // fixes : package org.apache.commons.logging is declared in module org.apache.commons.logging, but module io.github.vincemann.merged.module does not read it
+        forceMerge('commons-logging')
+        // fixes : package org.apache.commons.logging is declared in module org.apache.commons.logging, but module io.github.vincemann.merged.module does not read it
         // make sure symlinks work when installed via homebrew
         unixScriptTemplate = new File("${projectDir}/releases/linux/appLauncher")
         jvmArgs = [
@@ -316,8 +319,10 @@ run {
 
         // Conditionally add module-path based on the target platform
         if (project.targetPlatform == 'win') {
+            println("adding win javafx modules to module path")
             args += ['--module-path', "${projectDir}/lib/javafx/win"]
         } else if (project.targetPlatform == 'mac') {
+            println("adding osx javafx modules to module path")
             args += ['--module-path', "${projectDir}/lib/javafx/osx"]
         }
 
