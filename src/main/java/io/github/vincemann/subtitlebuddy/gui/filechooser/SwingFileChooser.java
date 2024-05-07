@@ -40,6 +40,12 @@ public class SwingFileChooser implements FileChooser {
         this.description = description;
         this.dialogTitle = dialogTitle;
         this.lastPathRegistry = lastPathRegistry;
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            log.error("Failed to set Look and Feel", e);
+        }
     }
 
     @Override
