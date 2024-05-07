@@ -68,6 +68,19 @@ test {
     }
 }
 
+// copies native jnativehook libraries into the image, which can be picked up by JLinkJNativeLibraryLocator
+tasks.register("copyNativeLibs", Copy) {
+    // Ensure this task runs after the jlink task
+    mustRunAfter jlink
+
+    from "${projectDir}/lib/jnativehook"
+    into "${projectDir}/build/image/appLauncher-${targetPlatform}/lib/jnativehook"
+
+    doLast {
+        println "Native libraries copied to ${destinationDir}"
+    }
+}
+
 // builds platform specific jlink images in build/images
 // NOTE: for mac this only works, when building on mac for whatever reason - otherwise it will segfault
 jlink {
@@ -75,7 +88,9 @@ jlink {
             '--strip-debug',
             '--compress', '2',
             '--no-header-files',
-            '--no-man-pages'
+            '--no-man-pages',
+            '--module-path', file('lib/jnativehook-2.2.2.jar').absolutePath,
+            '--add-modules', 'com.github.kwhat.jnativehook',
     ]
 
 
@@ -110,12 +125,17 @@ jlink {
         // make sure symlinks work when installed via homebrew
         unixScriptTemplate = new File("${projectDir}/releases/linux/appLauncher")
         jvmArgs = [
+                // tells application to use the jlink lib locator
+                '-Djlink=true',
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-reads', 'io.github.vincemann.merged.module=org.apache.commons.logging',
                 '--add-reads', 'org.apache.commons.configuration2=io.github.vincemann.merged.module',
                 "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2"
         ]
     }
+
+    // Add a finalizer task to run after jlink execution
+    finalizedBy copyNativeLibs
 }
 
 // creates tarball for jlink image and stores in build dir
@@ -347,8 +367,8 @@ dependencies {
     // capture mouse and keyboard events
     // this old versions works in terms of loading the native libs at runtime within jlink image
     // also its self modularized to fix some issues with jpms
-    implementation files('lib/jnativehook-2.0.2-patched.jar')
-//    implementation 'com.github.kwhat:jnativehook:2.2.2'
+//    implementation files('lib/jnativehook-2.0.2-patched.jar')
+    implementation 'com.github.kwhat:jnativehook:2.2.2'
 //    implementation 'com.1stleg:jnativehook:2.0.2'
 
     // di

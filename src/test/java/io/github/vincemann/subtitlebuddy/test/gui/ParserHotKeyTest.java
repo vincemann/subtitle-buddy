@@ -36,7 +36,7 @@ public class ParserHotKeyTest extends GuiTest {
     }
 
     @Test
-    public void testStartParserBySpace() {
+    public void testStartParserBySpace() throws InterruptedException {
         eventBus.post(new ToggleHotKeyEvent(HotKey.START_STOP,false));
         refreshGui();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtParser.getCurrentState());
@@ -46,7 +46,7 @@ public class ParserHotKeyTest extends GuiTest {
     }
 
     @Test
-    public void testStartStopParserBySpace() {
+    public void testStartStopParserBySpace() throws InterruptedException {
         eventBus.post(new ToggleHotKeyEvent(HotKey.START_STOP,false));
         refreshGui();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtParser.getCurrentState());
@@ -66,28 +66,24 @@ public class ParserHotKeyTest extends GuiTest {
     }
 
     @Test
-    public void testNextClickCountsSettingsMode() throws TimeoutException {
+    public void testNextClickCountsSettingsMode() throws TimeoutException, InterruptedException {
         eventBus.post(new ToggleHotKeyEvent(HotKey.NEXT_CLICK,false));
         refreshGui();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtParser.getCurrentState());
 
         press(KeyCode.ALT).type(KeyCode.N).release(KeyCode.ALT);
-        Stage settingsStage = findStageController(SettingsStageController.class).getStage();
-        Point2D nextToSettingsStage = new Point2D(settingsStage.getX()+settingsStage.getWidth()+10,settingsStage.getY()+10);
-        clickOn(nextToSettingsStage);
-        refreshGui();
+        clickNextToSettingsStage();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtParser.getCurrentState());
 
         focusStage(SettingsStageController.class);
         refreshGui();
         press(KeyCode.ALT).type(KeyCode.N).release(KeyCode.ALT);
-        clickOn(nextToSettingsStage);
-        refreshGui();
+        clickNextToSettingsStage();
         Assert.assertEquals(RunningState.STATE_SUSPENDED, srtParser.getCurrentState());
     }
 
     @Test
-    public void testNextClickCountsMovieMode() throws TimeoutException {
+    public void testNextClickCountsMovieMode() throws TimeoutException, InterruptedException {
         eventBus.post(new ToggleHotKeyEvent(HotKey.NEXT_CLICK,false));
         refreshGui();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtParser.getCurrentState());

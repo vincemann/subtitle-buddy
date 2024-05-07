@@ -6,9 +6,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.HotKeyPressedEvent;
 import lombok.extern.log4j.Log4j2;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
+import com.github.kwhat.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 
 /**
  * Listens for global hotkeys and translates to respective events.
@@ -24,7 +24,7 @@ public class GlobalHotKeyListener implements NativeKeyListener, KeyListener {
 
     @Inject
     public GlobalHotKeyListener(EventBus eventBus) {
-        GlobalScreen.addNativeKeyListener(this);
+//        GlobalScreen.addNativeKeyListener(this);
         this.eventBus = eventBus;
     }
 
@@ -48,16 +48,16 @@ public class GlobalHotKeyListener implements NativeKeyListener, KeyListener {
                 log.debug("end movie mode hotkey pressed");
                 eventBus.post(new HotKeyPressedEvent(HotKey.END_MOVIE_MODE));
             }
-        } else if (e.getKeyCode() == NativeKeyEvent.VC_ALT_L || e.getKeyCode() == NativeKeyEvent.VC_ALT_R) {
-//        } else if (e.getKeyCode() == NativeKeyEvent.VC_ALT || e.getKeyCode() == NativeKeyEvent.VC_ALT) {
+//        } else if (e.getKeyCode() == NativeKeyEvent.VC_ALT_L || e.getKeyCode() == NativeKeyEvent.VC_ALT_R) {
+        } else if (e.getKeyCode() == NativeKeyEvent.VC_ALT || e.getKeyCode() == NativeKeyEvent.VC_ALT) {
             alt = true;
         }
     }
 
     @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
-        if (e.getKeyCode() == NativeKeyEvent.VC_ALT_L || e.getKeyCode() == NativeKeyEvent.VC_ALT_R){
-//        if (e.getKeyCode() == NativeKeyEvent.VC_ALT || e.getKeyCode() == NativeKeyEvent.VC_ALT) {
+//        if (e.getKeyCode() == NativeKeyEvent.VC_ALT_L || e.getKeyCode() == NativeKeyEvent.VC_ALT_R){
+        if (e.getKeyCode() == NativeKeyEvent.VC_ALT || e.getKeyCode() == NativeKeyEvent.VC_ALT) {
             this.alt = false;
         }
     }

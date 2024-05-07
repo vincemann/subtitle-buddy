@@ -6,9 +6,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.MouseClickedEvent;
 import lombok.extern.log4j.Log4j2;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.mouse.NativeMouseEvent;
-import org.jnativehook.mouse.NativeMouseInputListener;
+import com.github.kwhat.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.mouse.NativeMouseEvent;
+import com.github.kwhat.jnativehook.mouse.NativeMouseInputListener;
 
 /**
  * Listens for global mouse clicks and translates to respective events.
@@ -23,7 +23,7 @@ public class GlobalMouseListener implements NativeMouseInputListener, MouseListe
     @Inject
     public GlobalMouseListener(EventBus eventBus) {
         this.eventBus = eventBus;
-        GlobalScreen.addNativeMouseListener(this);
+//        GlobalScreen.addNativeMouseListener(this);
     }
 
     public synchronized void nativeMouseClicked(NativeMouseEvent e) {

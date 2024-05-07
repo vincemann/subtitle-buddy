@@ -14,18 +14,21 @@ import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.events.EventHandlerRegistrar;
 import io.github.vincemann.subtitlebuddy.gui.stages.controller.SettingsStageController;
+import io.github.vincemann.subtitlebuddy.listeners.key.GlobalHotKeyListener;
+import io.github.vincemann.subtitlebuddy.listeners.mouse.GlobalMouseListener;
 import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.properties.ApachePropertiesFile;
 import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngine;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.jnativehook.DefaultLibraryLocator;
-import org.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.NativeHookException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,12 +38,18 @@ import java.util.List;
 @Singleton
 public class Main extends Application {
 
-    // fixing classloader issues with fat jar
     static {
-        System.setProperty("jnativehook.lib.locator", DefaultLibraryLocator.class.getName());
+        if ("true".equals(System.getProperty("jlink"))) {
+            // fixing lib loading issues within jlink image
+            log.info("Setting Jlink-specific library locator for jNativeHook");
+            System.setProperty("jnativehook.lib.locator", JLinkJNativeLibraryLocator.class.getName());
+        } else {
+            // for fat jars the default locator is fine
+            log.info("Using default library locator for jNativeHook");
+        }
     }
 
-//    private BooleanProperty readyProperty = new SimpleBooleanProperty(false);
+    private BooleanProperty readyProperty = new SimpleBooleanProperty(false);
 
     public static final String CONFIG_FILE_NAME = "application.properties";
     public static final String UI_STRINGS_CONFIG_FILE_PATH = "application.string.properties";
@@ -67,28 +76,28 @@ public class Main extends Application {
         getInjector().getInstance(SrtParserEngine.class).start();
         // only for jnativehook 2.2.2:
         // needs to be run later, otherwise segfault
-//        Platform.runLater(this::registerHook);
+        Platform.runLater(this::registerHook);
     }
 
 
     // this way works for 2.2.2:
-//    private void registerHook(){
-//        try {
-//            GlobalScreen.registerNativeHook();
-//            // needs to be done here so it does not trigger a race condition in jnativehook
-//            GlobalHotKeyListener hotKeyListener = injector.getInstance(GlobalHotKeyListener.class);
-//            GlobalMouseListener mouseListener = injector.getInstance(GlobalMouseListener.class);
-//
-//            GlobalScreen.addNativeMouseListener(mouseListener);
-//            GlobalScreen.addNativeKeyListener(hotKeyListener);
-//            setReady(true);
-//        } catch (NativeHookException ex) {
-//            System.err.println("There was a problem registering the native hook.");
-//            System.err.println(ex.getMessage());
-//
-//            System.exit(1);
-//        }
-//    }
+    private void registerHook(){
+        try {
+            GlobalScreen.registerNativeHook();
+            // needs to be done here so it does not trigger a race condition in jnativehook
+            GlobalHotKeyListener hotKeyListener = injector.getInstance(GlobalHotKeyListener.class);
+            GlobalMouseListener mouseListener = injector.getInstance(GlobalMouseListener.class);
+
+            GlobalScreen.addNativeMouseListener(mouseListener);
+            GlobalScreen.addNativeKeyListener(hotKeyListener);
+            setReady(true);
+        } catch (NativeHookException ex) {
+            System.err.println("There was a problem registering the native hook.");
+            System.err.println(ex.getMessage());
+
+            System.exit(1);
+        }
+    }
 
     private static Injector createInjector(PropertiesFile propertiesManager,
                                            UIStringsFile stringConfiguration,
@@ -111,18 +120,17 @@ public class Main extends Application {
         }
     }
 
-    // Getter for the property
-//    public BooleanProperty readyProperty() {
-//        return readyProperty;
-//    }
+    public BooleanProperty readyProperty() {
+        return readyProperty;
+    }
 
-//    public boolean isReady() {
-//        return readyProperty.get();
-//    }
+    public boolean isReady() {
+        return readyProperty.get();
+    }
 
-//    private void setReady(boolean ready) {
-//        this.readyProperty.set(ready);
-//    }
+    private void setReady(boolean ready) {
+        this.readyProperty.set(ready);
+    }
 
 
 

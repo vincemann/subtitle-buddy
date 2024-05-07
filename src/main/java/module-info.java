@@ -7,8 +7,8 @@ open module io.github.vincemann.subtitlebuddy {
     // needs to be here
     requires org.apache.commons.logging;
     requires org.apache.commons.configuration2;
-    requires org.jnativehook;  // self modularized
-//    requires org.jnativehook;
+//    requires com.github.kwhat.jnativehook;  // self modularized
+    requires com.github.kwhat.jnativehook;
 
     requires java.compiler;
     requires java.naming;
