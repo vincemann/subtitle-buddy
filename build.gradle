@@ -363,9 +363,6 @@ run {
 dependencies {
 
     // capture mouse and keyboard events
-    // this old versions works in terms of loading the native libs at runtime within jlink image
-    // also its self modularized to fix some issues with jpms
-//    implementation files('lib/jnativehook-2.0.2-patched.jar')
     implementation 'com.github.kwhat:jnativehook:2.2.2'
 
     // di
