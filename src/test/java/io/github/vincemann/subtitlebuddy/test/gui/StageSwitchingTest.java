@@ -16,8 +16,8 @@ public class StageSwitchingTest extends GuiTest {
     private SettingsPage settingsPage;
 
     @Override
-    public void setUpClass() throws Exception {
-        super.setUpClass();
+    public void beforeEach() throws Exception {
+        super.beforeEach();
         this.settingsPage = new SettingsPage(this);
     }
 

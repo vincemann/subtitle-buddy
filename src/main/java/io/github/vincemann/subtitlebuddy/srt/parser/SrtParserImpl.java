@@ -107,9 +107,9 @@ public class SrtParserImpl implements SrtParser {
 
     @Override
     public synchronized void reset() {
-        log.debug("io.github.vincemann.srtParser gets resetted");
+        log.debug("srtParser gets resetted");
         stopWatch.reset();
-        currentSubtitleText =defaultSubtitleText;
+        currentSubtitleText = defaultSubtitleText;
     }
 
     @Override

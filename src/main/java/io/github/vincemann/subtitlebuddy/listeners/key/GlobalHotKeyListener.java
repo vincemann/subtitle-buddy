@@ -32,7 +32,6 @@ public class GlobalHotKeyListener implements NativeKeyListener, KeyListener {
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
         //todo let user change hotkeys
-        //space
         if (e.getKeyCode() == NativeKeyEvent.VC_SPACE) {
             log.debug("space hotkey pressed");
             eventBus.post(new HotKeyPressedEvent(HotKey.START_STOP));

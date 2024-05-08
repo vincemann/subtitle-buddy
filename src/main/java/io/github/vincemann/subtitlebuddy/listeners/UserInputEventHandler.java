@@ -29,7 +29,7 @@ import lombok.extern.log4j.Log4j2;
 public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEventHandler {
 
     private PropertiesFile properties;
-    private final SrtParser srtParser;
+    private SrtParser srtParser;
     private boolean nextClickCounts;
     private boolean startStopHotKeyToggled;
     private boolean nextClickHotKeyToggled;
@@ -60,14 +60,14 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
     @Override
     @Subscribe
     public synchronized void handleHotKeyPressedEvent(HotKeyPressedEvent e) {
-        log.trace("hotKey event getting handled");
+        log.debug("hotKey event getting handled");
         switch (e.getHotKey()){
             case NEXT_CLICK:
-                log.trace("next click hotkey event recognized");
+                log.debug("next click hotkey event recognized");
                 handleNextClickHotKey();
                 break;
             case START_STOP:
-                log.trace("start stop hotkey event received");
+                log.debug("start stop hotkey event received");
                 if(!startStopHotKeyToggled) {
                     switchParserRunningState();
                 }else {
@@ -75,7 +75,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
                 }
                 break;
             case END_MOVIE_MODE:
-                log.trace("end movie mode hotkey event arrived");
+                log.debug("end movie mode hotkey event arrived");
                 MovieSrtDisplayer movieSrtDisplayer = srtDisplayerProvider.get(MovieSrtDisplayer.class);
                 if(movieSrtDisplayer.isDisplaying()){
                     log.debug("switching from movie mode to settings mode bc of end movie mode hotkey event");
@@ -148,11 +148,12 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
     private void switchParserRunningState(){
         log.debug("switching parsers running state");
         synchronized (srtParser){
+            log.debug("srt parser state: " + srtParser.getCurrentState());
             if(srtParser.getCurrentState().equals(RunningState.STATE_RUNNING)){
-                log.trace("stopping io.github.vincemann.srtParser");
+                log.trace("stopping srtParser");
                 srtParser.stop();
             }else if(srtParser.getCurrentState().equals(RunningState.STATE_SUSPENDED) || srtParser.getCurrentState().equals(RunningState.STATE_UNSTARTED)){
-                log.trace("starting io.github.vincemann.srtParser");
+                log.trace("starting srtParser");
                 srtParser.start();
             }else {
                 log.error("invalid state for switching ParserState : " + srtParser.getCurrentState().toString());

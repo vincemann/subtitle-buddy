@@ -1,5 +1,7 @@
 package io.github.vincemann.subtitlebuddy.test.gui;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Key;
 import io.github.vincemann.subtitlebuddy.Main;
 import io.github.vincemann.subtitlebuddy.config.strings.ApacheUIStringsFile;
@@ -13,7 +15,6 @@ import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.properties.ApachePropertiesFile;
 import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.test.TestFiles;
-import io.github.vincemann.subtitlebuddy.test.guice.IntegrationTest;
 import io.github.vincemann.subtitlebuddy.test.guice.MockFileChooserModule;
 import io.github.vincemann.subtitlebuddy.util.LoggingUtils;
 import javafx.application.Platform;
@@ -31,14 +32,15 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static org.testfx.api.FxToolkit.registerPrimaryStage;
 
-public abstract class GuiTest extends ApplicationTest implements IntegrationTest {
+public abstract class GuiTest extends ApplicationTest {
 
 //    private static final long GUI_TEST_TIME_OUT = 3000;
 
@@ -64,7 +66,7 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
     }
 
     @Before
-    public void setUpClass() throws Exception {
+    public void beforeEach() throws Exception {
         LoggingUtils.disableUtilLogger();
         Main application = (Main) ApplicationTest.launch(Main.class);
 
@@ -74,14 +76,9 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
     }
 
     // only needed for jnativehook 2.2.2
-    private void waitUntilApplicationReady(Main application) {
-        // wait until jnativehook is registered
-        FutureTask<Boolean> readyTask = new FutureTask<>(() -> application.readyProperty().get());
-
-        // Submit the task to be run on the JavaFX thread and wait for it
-        WaitForAsyncUtils.asyncFx(readyTask);
-        WaitForAsyncUtils.waitFor(readyTask);
-        assert application.isReady();
+    private void waitUntilApplicationReady(Main application) throws TimeoutException {
+        // Use a polling mechanism to wait for ready property to become true
+        WaitForAsyncUtils.waitFor(10, TimeUnit.SECONDS, application::isReady);
     }
 
 
@@ -91,9 +88,6 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
         doOnFxThreadAndWait(runnable);
         refreshGui();
     }
-
-//
-
 
     protected void doOnFxThreadAndWait(Runnable task) {
         CompletableFuture<Void> future = new CompletableFuture<>();
@@ -126,7 +120,7 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
      *
      * @param a
      */
-    public void focusStage(Class<? extends Annotation> a) throws TimeoutException {
+    public void focusStage(Class<? extends Annotation> a) {
         AbstractStageController abstractStageController = getInstance(AbstractStageController.class, a);
         Runnable toFrontTask = () -> {
             abstractStageController.getStage().toFront();
@@ -152,20 +146,22 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage primaryStage) throws Exception {
         PropertiesFile testPropertiesFile = new ApachePropertiesFile(new File(TestFiles.TEST_PROPERTIES_FILE_PATH));
-        //use original strings constants file
-        UIStringsFile testStringsFile = new ApacheUIStringsFile(new File(Main.UI_STRINGS_CONFIG_FILE_PATH));
-        //set all modules for integration test, mock those that need to be mocked
-        Main.createInjector(
+        // use original strings constants file
+        UIStringsFile testStringsFile = new ApacheUIStringsFile(new File(Main.UI_STRINGS_FILE_PATH));
+        // set all modules for integration test, mock those that need to be mocked
+        Injector testInjector = Guice.createInjector(Arrays.asList(
                 new ClassPathFileExtractorModule(new ClassPathFileExtractorImpl()),
                 new ConfigFileModule(testPropertiesFile, testStringsFile),
                 new MockFileChooserModule(testStringsFile, testPropertiesFile),
                 new ParserModule(testStringsFile, testPropertiesFile),
-                new GuiModule(testStringsFile, testPropertiesFile, stage),
-                new UserInputHandlerModule()
+                new GuiModule(testStringsFile, testPropertiesFile, primaryStage),
+                new UserInputHandlerModule())
         );
-        stage.show();
+        Main.setInjector(testInjector);
+
+        primaryStage.show();
     }
 
     /**
@@ -177,7 +173,7 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
      */
     <T> T getInstance(Class<T> type) {
         final Key<T> key = Key.get(type);
-        return getApplicationInjector().getInstance(key);
+        return Main.getInjector().getInstance(key);
     }
 
     /**
@@ -190,17 +186,15 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
      */
     <T> T getInstance(Class<T> type, Class<? extends Annotation> option) {
         final Key<T> key = Key.get(type, option);
-        return getApplicationInjector().getInstance(key);
+        return Main.getInjector().getInstance(key);
     }
 
 
     @After
     public void afterEachTest() throws TimeoutException {
-        System.err.println("hiding stage");
         FxToolkit.hideStage();
         release(new KeyCode[]{});
         release(new MouseButton[]{});
-
     }
 
     /**
@@ -249,63 +243,10 @@ public abstract class GuiTest extends ApplicationTest implements IntegrationTest
 
             // Wait for node visibility without a timeout
             nodeVisibleFuture.get();  // This will block until the future is completed
-        }catch (InterruptedException| ExecutionException e){
+        } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
-
-//    /**
-//     * Waits for the {@code Node} that is looked up by the given {@code NodeQuery} to be visible.
-//     * <p>
-//     * This method handles the case where the node lookup first returns {@literal null} gracefully.
-//     * <p>
-//     * Example:
-//     * <pre>{@code
-//     * WaitForAsyncUtils.waitForVisibleNode("#someNode", 15, TimeUnit.SECONDS, fxRobot);
-//     * }</pre>
-//     */
-//    public void waitForVisibleNode(String nodeQuery)
-//            throws TimeoutException {
-//        // First we wait for the node lookup to be non-null. Then, in the remaining time, wait for the node to be visible.
-//        waitFor(GUI_TEST_TIME_OUT / 2, TimeUnit.MILLISECONDS, () -> {
-//            return lookup(nodeQuery).query() != null;
-//
-//        });
-//        waitFor(GUI_TEST_TIME_OUT / 2,
-//                TimeUnit.MILLISECONDS, () -> lookup(nodeQuery).query().isVisible());
-//    }
-//
-//    private static class Result {
-//        private boolean done = false;
-//
-//        public boolean isDone() {
-//            return done;
-//        }
-//
-//        public void setDone(boolean done) {
-//            this.done = done;
-//        }
-//    }
-
-//    protected void doOnFxThreadAndWait(Runnable task) throws TimeoutException {
-//        long startTime = System.nanoTime();
-//        final Result result = new Result();
-//        Runnable runnable = () -> {
-//            task.run();
-//            result.setDone(true);
-//        };
-//        Platform.runLater(runnable);
-//        while (true) {
-//            if (result.isDone()) {
-//                break;
-//            }
-//            long currTime = System.nanoTime();
-//            if (currTime - startTime >= GUI_TEST_TIME_OUT * 1000000) {
-//                throw new TimeoutException();
-//            }
-//            sleep(50);
-//        }
-//    }
 
     public <T> T find(final String query) {
         return (T) lookup(query).queryAll().iterator().next();

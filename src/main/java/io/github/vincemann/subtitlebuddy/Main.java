@@ -1,6 +1,9 @@
 package io.github.vincemann.subtitlebuddy;
 
 
+import com.github.kwhat.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.NativeHookException;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -23,13 +26,9 @@ import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngine;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import com.github.kwhat.jnativehook.GlobalScreen;
-import com.github.kwhat.jnativehook.NativeHookException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,23 +49,24 @@ public class Main extends Application {
         }
     }
 
-    private BooleanProperty readyProperty = new SimpleBooleanProperty(false);
-
     public static final String CONFIG_FILE_NAME = "application.properties";
-    public static final String UI_STRINGS_CONFIG_FILE_PATH = "application.string.properties";
+    public static final String UI_STRINGS_FILE_PATH = "application.string.properties";
+
     private static Injector injector;
 
+    private boolean applicationReady = false;
+
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         // disable very verbose jnativehook logging
         java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(java.util.logging.Level.OFF);
 
         ClassPathFileExtractor classPathFileExtractor = new ClassPathFileExtractorImpl();
-        ConfigFileManager configFileManager =  new ConfigFileManagerImpl(new ConfigDirectoryImpl(), classPathFileExtractor);
+        ConfigFileManager configFileManager = new ConfigFileManagerImpl(new ConfigDirectoryImpl(), classPathFileExtractor);
         PropertiesFile propertiesManager = new ApachePropertiesFile(configFileManager.findOrCreateConfigFile(CONFIG_FILE_NAME));
-        UIStringsFile stringConfiguration = new ApacheUIStringsFile(classPathFileExtractor.findOnClassPath(UI_STRINGS_CONFIG_FILE_PATH).getFile());
-        injector = createInjector(propertiesManager,stringConfiguration,primaryStage, classPathFileExtractor);
+        UIStringsFile stringConfiguration = new ApacheUIStringsFile(classPathFileExtractor.findOnClassPath(UI_STRINGS_FILE_PATH).getFile());
+        injector = createInjector(propertiesManager, stringConfiguration, primaryStage, classPathFileExtractor);
         injector.getInstance(EventHandlerRegistrar.class).registerEventHandlers();
 
         // start by showing settings view
@@ -74,73 +74,89 @@ public class Main extends Application {
         settingsStageController.open();
 
         // start parser
-        getInjector().getInstance(SrtParserEngine.class).start();
+        injector.getInstance(SrtParserEngine.class).start();
         // only for jnativehook 2.2.2:
-        // needs to be run later, otherwise segfault
+        // needs to be run on diff thread, otherwise segfault
         Platform.runLater(this::registerHook);
     }
 
-
-    // this way works for 2.2.2:
-    private void registerHook(){
+    private void registerHook() {
         try {
-            GlobalScreen.registerNativeHook();
-            // needs to be done here so it does not trigger a race condition in jnativehook
+            if (GlobalScreen.isNativeHookRegistered()){
+                applicationReady = true;
+                log.debug("hook is already registered from previous launch");
+            }
+            else{
+                log.info("registering jnativehook");
+                GlobalScreen.registerNativeHook();
+            }
+            // listeners must be reset each time new context is created (in tests relevant)
+            // must register here bc of thread issues and race conditions in jnativehook
+            // otherwise I would do this centralized in EventHandlerRegistrar
             GlobalHotKeyListener hotKeyListener = injector.getInstance(GlobalHotKeyListener.class);
             GlobalMouseListener mouseListener = injector.getInstance(GlobalMouseListener.class);
-
             GlobalScreen.addNativeMouseListener(mouseListener);
             GlobalScreen.addNativeKeyListener(hotKeyListener);
-            setReady(true);
-        } catch (NativeHookException ex) {
-            System.err.println("There was a problem registering the native hook.");
-            System.err.println(ex.getMessage());
-
+            applicationReady = true;
+        } catch (NativeHookException e) {
+            log.error("Failed to register native hook", e);
             System.exit(1);
         }
     }
 
-    private static Injector createInjector(PropertiesFile propertiesManager,
+    /**
+     * Creates injector or use test injector created in GuiTest.
+     */
+    private Injector createInjector(PropertiesFile propertiesManager,
                                            UIStringsFile stringConfiguration,
                                            Stage primaryStage,
-                                           ClassPathFileExtractor classPathFileExtractor){
-        if(injector==null) {
+                                           ClassPathFileExtractor classPathFileExtractor) {
+        if (injector == null) {
             // use default modules
             List<Module> moduleList = Arrays.asList(
                     new ClassPathFileExtractorModule(classPathFileExtractor),
                     new ConfigFileModule(propertiesManager, stringConfiguration),
-                    new FileChooserModule(stringConfiguration, propertiesManager) ,
-                    new ParserModule(stringConfiguration, propertiesManager) ,
+                    new FileChooserModule(stringConfiguration, propertiesManager),
+                    new ParserModule(stringConfiguration, propertiesManager),
                     new GuiModule(stringConfiguration, propertiesManager, primaryStage),
                     new UserInputHandlerModule()
             );
-           return Guice.createInjector(moduleList);
-        }else {
+            return Guice.createInjector(moduleList);
+        } else {
+            // injector is already set via test, use it instead
             // use external modules
             return injector;
         }
     }
 
-    public BooleanProperty readyProperty() {
-        return readyProperty;
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        if (!GlobalScreen.isNativeHookRegistered()){
+            applicationReady = false;
+        }
+        else {
+            log.warn("jnative hook in stop method still registered - should unregister");
+        }
+        GlobalHotKeyListener hotKeyListener = injector.getInstance(GlobalHotKeyListener.class);
+        GlobalMouseListener mouseListener = injector.getInstance(GlobalMouseListener.class);
+        GlobalScreen.removeNativeKeyListener(hotKeyListener);
+        GlobalScreen.removeNativeMouseListener(mouseListener);
+
+        injector.getInstance(EventHandlerRegistrar.class).unregisterEventHandlers();
     }
+
 
     public boolean isReady() {
-        return readyProperty.get();
+        return applicationReady;
     }
-
-    private void setReady(boolean ready) {
-        this.readyProperty.set(ready);
-    }
-
-
 
     //only for testing Purposes
-    public static void createInjector(Module... modules){
-        injector = Guice.createInjector(Arrays.asList(modules));
+    public static void setInjector(Injector injector) {
+        Main.injector = injector;
     }
 
-    public static Injector getInjector()  {
+    public static Injector getInjector() {
         return injector;
     }
 

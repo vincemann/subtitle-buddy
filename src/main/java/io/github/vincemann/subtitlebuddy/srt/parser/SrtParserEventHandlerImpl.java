@@ -25,7 +25,7 @@ public class SrtParserEventHandlerImpl implements SrtParserEventHandler {
     @Override
     @Subscribe
     public void handleDoneParsingEvent(DoneParsingEvent doneParsingEvent) {
-        log.info("DoneParsingEvent arrived -> stopping io.github.vincemann.srtParser und updater");
+        log.info("DoneParsingEvent arrived -> stopping srtParser und updater");
         srtParserEngine.stop();
         srtParser.reset();
     }

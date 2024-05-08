@@ -14,7 +14,6 @@ import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 
@@ -26,10 +25,10 @@ public class OptionsTest extends GuiTest {
     private SrtFontManager srtFontManager;
 
     @Override
-    public void setUpClass() throws Exception {
-        super.setUpClass();
+    public void beforeEach() throws Exception {
+        super.beforeEach();
         this.settingsPage = new SettingsPage(this);
-        this.srtFontManager= getApplicationInjector().getInstance(SrtFontManager.class);
+        this.srtFontManager= getInstance(SrtFontManager.class);
     }
 
 

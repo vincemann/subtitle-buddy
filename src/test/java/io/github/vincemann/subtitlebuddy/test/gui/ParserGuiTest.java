@@ -15,9 +15,9 @@ public class ParserGuiTest extends GuiTest {
 
 
     @Override
-    public void setUpClass() throws Exception {
-        super.setUpClass();
-        this.applicationSrtParser = getApplicationInjector().getInstance(SrtParser.class);
+    public void beforeEach() throws Exception {
+        super.beforeEach();
+        this.applicationSrtParser = getInstance(SrtParser.class);
         this.settingsPage = new SettingsPage(this);
     }
 

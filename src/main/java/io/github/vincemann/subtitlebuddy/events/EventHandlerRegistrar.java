@@ -38,6 +38,13 @@ public class EventHandlerRegistrar {
         this.mouseListener = mouseListener;
     }
 
+    public void unregisterEventHandlers(){
+        eventBus.unregister(hotKeyEventHandler);
+        eventBus.unregister(mouseClickedEventHandler);
+        eventBus.unregister(srtDisplayerEventHandler);
+        eventBus.unregister(srtParserEventHandler);
+    }
+
     public void registerEventHandlers(){
         eventBus.register(hotKeyEventHandler);
         eventBus.register(mouseClickedEventHandler);

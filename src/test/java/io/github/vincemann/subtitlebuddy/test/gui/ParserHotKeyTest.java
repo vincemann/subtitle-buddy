@@ -11,8 +11,9 @@ import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
-import javafx.stage.Stage;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.*;
@@ -27,11 +28,13 @@ public class ParserHotKeyTest extends GuiTest {
     private EventBus eventBus;
 
 
+
+    @Before
     @Override
-    public void setUpClass() throws Exception {
-        super.setUpClass();
-        this.srtParser = getApplicationInjector().getInstance(SrtParser.class);
-        this.eventBus = getApplicationInjector().getInstance(EventBus.class);
+    public void beforeEach() throws Exception {
+        super.beforeEach();
+        this.srtParser = getInstance(SrtParser.class);
+        this.eventBus = getInstance(EventBus.class);
         this.settingsPage = new SettingsPage(this);
     }
 
@@ -49,6 +52,7 @@ public class ParserHotKeyTest extends GuiTest {
     public void testStartStopParserBySpace() throws InterruptedException {
         eventBus.post(new ToggleHotKeyEvent(HotKey.START_STOP,false));
         refreshGui();
+        System.err.println("srtParser in test: " + srtParser);
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtParser.getCurrentState());
 
         type(KeyCode.SPACE);
