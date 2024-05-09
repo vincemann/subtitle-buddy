@@ -43,6 +43,15 @@ javafx {
 
 
 test {
+    // Set this to true to capture printed output during tests
+    testLogging.showStandardStreams = true
+
+    // Configure which events get logged
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+        // To show detailed exception messages and stack traces in the console
+        exceptionFormat "full"
+    }
     doFirst {
         // Initialize the list with common JVM arguments
         List<String> args = [
