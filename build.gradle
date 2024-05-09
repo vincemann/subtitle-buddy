@@ -100,8 +100,7 @@ tasks.register("copyWinStartScript", Copy) {
     doFirst {
         if (project.targetPlatform != 'win') {
             logger.lifecycle("Skipping copyWinStartScript as the target platform is not Windows.")
-        }
-        else{
+        } else {
             delete "${projectDir}/releases/windows/x64/inno/start.bat"
         }
     }
@@ -149,6 +148,13 @@ jlink {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_mac_hotspot_2021-05-06-23-30.tar.gz')
                 addExtraModulePath("${projectDir}/lib/javafx/osx/jmods")
             }
+            // use jpackage to build dmg files, only works when also building on mac
+            if (evalCurrentOs() == 'mac') {
+                jpackage {
+                    imageOptions = ['--icon', 'icon.png']
+                    installerType = 'dmg'
+                }
+            }
             break
         default:
             throw new GradleException("need to specify target platform")
@@ -172,6 +178,7 @@ jlink {
                 "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2"
         ]
     }
+
 }
 
 // creates tarball for jlink image and stores in build dir
@@ -298,48 +305,6 @@ tasks.register('buildWindowsInstaller') {
         println "Installer created at ${installerPath}"
     }
 }
-
-
-// uses genisoimage linux cli tool, need to install it first
-// execute with -PtargetPlatform=mac
-tasks.register('buildMacDmg') {
-    dependsOn 'jlink' // Ensure this task runs after the jlink image is created
-    if (targetPlatform != "mac") {
-        throw new GradleException("Need to specify mac target platform or run on mac")
-    }
-    doLast {
-        def baseDir = "${projedctDir}/releases/macos/x64"
-        def imagePath = "${baseDir}/SubtitleBuddy.app/Contents/Java/image"
-        def dmgName = "subtitle-buddy-${version}-macx64.dmg"
-        def dmgOutputPath = "${baseDir}/$dmgName"
-        def jlinkImagePath = "${projectDir}/build/image/appLauncher-mac" // Path to the jlink runtime image
-
-        println "Version: $version"
-        println "jlink Image Path: $jlinkImagePath"
-
-        // Ensure the application directory exists
-        file(imagePath).mkdirs()
-
-        // Copy the jlink image to the application directory
-        println "Deploying jlink runtime image to application directory..."
-        delete imagePath
-        mkdir imagePath
-        copy {
-            from jlinkImagePath
-            into imagePath
-        }
-        println "jlink runtime image copied"
-
-        // Build DMG
-        println "Building DMG image..."
-        exec {
-            commandLine 'bash', '-c', "cd ${baseDir} && genisoimage -D -V 'Subtitle Buddy' -no-pad -r -apple -o ${dmgOutputPath} SubtitleBuddy.app/"
-        }
-        println "DMG created at $dmgOutputPath"
-        println "Done with macOS x64"
-    }
-}
-
 
 java {
     toolchain {
