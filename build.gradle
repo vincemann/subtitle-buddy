@@ -121,6 +121,11 @@ tasks.named('jlink').configure {
     finalizedBy 'copyWinStartScript', 'copyNativeLibs'
 }
 
+tasks.named('jpackageImage').configure {
+    dependsOn 'copyWinStartScript', 'copyNativeLibs'
+}
+
+
 // builds platform specific jlink images in build/images
 // NOTE: for mac this only works, when building on mac for whatever reason - otherwise it will segfault
 jlink {
@@ -137,7 +142,7 @@ jlink {
             targetPlatform("linux") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_linux_hotspot_2021-05-06-23-30.tar.gz')
             }
-            // use jpackage to build dmg files, only works when also building on mac
+            // use jpackage to build deb installer
             if (evalCurrentOs() == 'linux') {
                 jpackage {
                     icon = "${projectDir}/icon.png"
@@ -147,9 +152,10 @@ jlink {
                     installerOptions = [
                             '--linux-deb-maintainer', 'v.conrad98@web.de',
                             '--linux-menu-group', 'Applications',
+                            '--resource-dir',"${projectDir}/releases/linux/deb/"
                     ]
                     // add post installation script for creating a symlink after installation
-                    resourceDir = file("${projectDir}/releases/linux/deb/debian")
+                    resourceDir = file("${projectDir}/releases/linux/deb/")
                     installerType = 'deb'
                 }
             }
@@ -175,7 +181,7 @@ jlink {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_mac_hotspot_2021-05-06-23-30.tar.gz')
                 addExtraModulePath("${projectDir}/lib/javafx/osx/jmods")
             }
-            // use jpackage to build dmg files, only works when also building on mac
+            // use jpackage to build dmg and app files, only works when also building on mac
             if (evalCurrentOs() == 'mac') {
                 jpackage {
                     imageName = "subtitle-buddy"
@@ -216,6 +222,8 @@ jlink {
 // NOTE: for mac this only works, when building on mac for whatever reason - otherwise it will segfault
 tasks.register('tarJlink', Exec) {
     dependsOn 'jlink'
+    dependsOn 'copyNativeLibs'
+    dependsOn 'copyWinStartScript'
 
     // Set the working directory and define the tarball path outside the doFirst
     workingDir "${projectDir}/build/image/appLauncher-${targetPlatform}"
