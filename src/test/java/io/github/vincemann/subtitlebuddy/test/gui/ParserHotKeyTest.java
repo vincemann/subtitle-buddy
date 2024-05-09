@@ -3,6 +3,8 @@ package io.github.vincemann.subtitlebuddy.test.gui;
 
 import com.google.common.eventbus.EventBus;
 import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
+import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.MovieSrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.test.gui.pages.SettingsPage;
 import io.github.vincemann.subtitlebuddy.gui.stages.MovieStageController;
 import io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController;
@@ -11,10 +13,7 @@ import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.awt.*;
 import java.util.concurrent.TimeoutException;
@@ -24,10 +23,7 @@ public class ParserHotKeyTest extends GuiTest {
 
     private SrtParser srtParser;
     private SettingsPage settingsPage;
-
     private EventBus eventBus;
-
-
 
     @Before
     @Override
@@ -75,13 +71,14 @@ public class ParserHotKeyTest extends GuiTest {
         refreshGui();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtParser.getCurrentState());
 
-        press(KeyCode.ALT).type(KeyCode.N).release(KeyCode.ALT);
+
+        typeAltN();
         clickNextToSettingsStage();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtParser.getCurrentState());
 
         focusStage(SettingsStageController.class);
         refreshGui();
-        press(KeyCode.ALT).type(KeyCode.N).release(KeyCode.ALT);
+        typeAltN();
         clickNextToSettingsStage();
         Assert.assertEquals(RunningState.STATE_SUSPENDED, srtParser.getCurrentState());
     }
@@ -94,7 +91,7 @@ public class ParserHotKeyTest extends GuiTest {
         settingsPage.switchToMovieMode();
         refreshGui();
 
-        press(KeyCode.ALT).type(KeyCode.N).release(KeyCode.ALT);
+        typeAltN();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Point2D middleOfScreen = new Point2D(screenSize.getWidth()/2,screenSize.getHeight()/2);
         clickOn(middleOfScreen);
@@ -103,10 +100,25 @@ public class ParserHotKeyTest extends GuiTest {
         refreshGui();
         focusStage(MovieStageController.class);
         refreshGui();
-        press(KeyCode.ALT).type(KeyCode.N).release(KeyCode.ALT);
+        typeAltN();
         clickOn(middleOfScreen);
         refreshGui();
         Assert.assertEquals(RunningState.STATE_SUSPENDED, srtParser.getCurrentState());
+    }
+
+    @Test
+    public void testNavigateBackToSettingsModeViaAltEscape() throws TimeoutException, InterruptedException {
+        settingsPage.switchToMovieMode();
+        refreshGui();
+
+        focusStage(MovieStageController.class);
+        refreshGui();
+
+        typeAltEscape();
+        refreshGui();
+
+        Assert.assertTrue(findSrtDisplayer(SettingsSrtDisplayer.class).isDisplaying());
+        Assert.assertFalse(findSrtDisplayer(MovieSrtDisplayer.class).isDisplaying());
     }
 
 

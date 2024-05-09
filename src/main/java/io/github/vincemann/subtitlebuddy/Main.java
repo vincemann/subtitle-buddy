@@ -82,7 +82,6 @@ public class Main extends Application {
     private void registerHook() {
         try {
             if (GlobalScreen.isNativeHookRegistered()){
-                applicationReady = true;
                 log.debug("hook is already registered from previous launch");
             }
             else{
@@ -143,6 +142,7 @@ public class Main extends Application {
     private void unregisterHook(){
         if (!GlobalScreen.isNativeHookRegistered()){
             log.debug("hook is already unregistered");
+            applicationReady = false;
         }
         else {
             log.debug("unregistering nativehook");

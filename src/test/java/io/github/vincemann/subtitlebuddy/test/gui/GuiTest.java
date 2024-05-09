@@ -1,5 +1,6 @@
 package io.github.vincemann.subtitlebuddy.test.gui;
 
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -11,6 +12,7 @@ import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController;
 import io.github.vincemann.subtitlebuddy.gui.stages.StageState;
 import io.github.vincemann.subtitlebuddy.gui.stages.controller.AbstractStageController;
+import io.github.vincemann.subtitlebuddy.listeners.key.GlobalHotKeyListener;
 import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.properties.ApachePropertiesFile;
 import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
@@ -87,6 +89,86 @@ public abstract class GuiTest extends ApplicationTest {
         Runnable runnable = node::requestFocus;
         doOnFxThreadAndWait(runnable);
         refreshGui();
+    }
+
+    // needs to be pressed natively, bc robot works on a more abstract layer of keystrokes in javafx
+    public void typeAltN(){
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.contains("mac")){
+            typeNativeAltN();
+        }
+        else {
+            press(KeyCode.ALT).type(KeyCode.N).release(KeyCode.ALT);
+        }
+    }
+
+    public void typeAltEscape(){
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.contains("mac")){
+            typeNativeAltEscape();
+        }
+        else {
+            press(KeyCode.ALT).type(KeyCode.ESCAPE).release(KeyCode.ALT);
+        }
+    }
+
+    private void typeNativeAltEscape(){
+        GlobalHotKeyListener hotKeyListener = getInstance(GlobalHotKeyListener.class);
+        // Simulate pressing Alt
+        NativeKeyEvent altPressed = new NativeKeyEvent(
+                NativeKeyEvent.NATIVE_KEY_PRESSED,
+                0,  // Modifiers (none)
+                0, // Raw code can be left as 0 if not specifically handled
+                NativeKeyEvent.VC_ALT,
+                NativeKeyEvent.CHAR_UNDEFINED,
+                NativeKeyEvent.KEY_LOCATION_LEFT
+        );
+        hotKeyListener.nativeKeyPressed(altPressed);
+
+        // Simulate pressing N
+        NativeKeyEvent escapePressed = new NativeKeyEvent(
+                NativeKeyEvent.NATIVE_KEY_PRESSED,
+                NativeKeyEvent.ALT_MASK, // Modifier to indicate Alt is pressed
+                0, // Raw code for Escape, again, can be 0 if not handled
+                NativeKeyEvent.VC_ESCAPE,
+                NativeKeyEvent.CHAR_UNDEFINED,
+                NativeKeyEvent.KEY_LOCATION_STANDARD
+        );
+        hotKeyListener.nativeKeyPressed(escapePressed);
+
+        // Optionally release keys...
+        hotKeyListener.nativeKeyReleased(altPressed);
+        hotKeyListener.nativeKeyReleased(escapePressed);
+    }
+
+
+    private void typeNativeAltN(){
+        GlobalHotKeyListener hotKeyListener = getInstance(GlobalHotKeyListener.class);
+        // Simulate pressing Alt
+        NativeKeyEvent altPressed = new NativeKeyEvent(
+                NativeKeyEvent.NATIVE_KEY_PRESSED,
+                0,  // Modifiers (none)
+                0, // Raw code can be left as 0 if not specifically handled
+                NativeKeyEvent.VC_ALT,
+                NativeKeyEvent.CHAR_UNDEFINED,
+                NativeKeyEvent.KEY_LOCATION_LEFT
+        );
+        hotKeyListener.nativeKeyPressed(altPressed);
+
+        // Simulate pressing N
+        NativeKeyEvent nPressed = new NativeKeyEvent(
+                NativeKeyEvent.NATIVE_KEY_PRESSED,
+                NativeKeyEvent.ALT_MASK, // Modifier to indicate Alt is pressed
+                0,
+                NativeKeyEvent.VC_N,
+                'N', // Char representation of N
+                NativeKeyEvent.KEY_LOCATION_STANDARD
+        );
+        hotKeyListener.nativeKeyPressed(nPressed);
+
+        // Optionally release keys...
+        hotKeyListener.nativeKeyReleased(altPressed);
+        hotKeyListener.nativeKeyReleased(nPressed);
     }
 
     protected void doOnFxThreadAndWait(Runnable task) {
