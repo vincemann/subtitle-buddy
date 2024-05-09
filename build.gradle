@@ -87,6 +87,7 @@ tasks.register("copyNativeLibs", Copy) {
     }
 }
 
+
 tasks.named('jlink').configure {
     finalizedBy 'copyNativeLibs'
 }
@@ -132,6 +133,7 @@ jlink {
         forceMerge('commons-logging')
         // make sure symlinks work when installed via homebrew and more
         unixScriptTemplate = new File("${projectDir}/releases/linux/appLauncher")
+        windowsScriptTemplate = new File("${projectDir}/releases/windows/start.bat")
         jvmArgs = [
                 // tells application to use the jlink lib locator for jnativehook
                 '-Djlink=true',
