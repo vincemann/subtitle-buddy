@@ -4,7 +4,8 @@ plugins {
 //    pulls the correct platform dependent native libraries onto the classpath path
     id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id 'org.beryx.jlink' version '2.24.1'
+//    id 'org.beryx.jlink' version '2.24.1'
+    id 'org.beryx.jlink' version '3.0.1'
 }
 
 group = 'io.github.vincemann'
@@ -136,11 +137,37 @@ jlink {
             targetPlatform("linux") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_linux_hotspot_2021-05-06-23-30.tar.gz')
             }
+            // use jpackage to build dmg files, only works when also building on mac
+            if (evalCurrentOs() == 'linux') {
+                jpackage {
+                    icon = "${projectDir}/icon.png"
+                    imageName = "subtitle-buddy"
+                    installerName = "subtitle-buddy"
+                    imageOptions = ['--vendor', 'vincemann']
+                    installerOptions = [
+                            '--linux-deb-maintainer', 'v.conrad98@web.de',
+                            '--linux-menu-group', 'Applications',
+                    ]
+                    // add post installation script for creating a symlink after installation
+                    resourceDir = file("${projectDir}/releases/linux/deb/debian")
+                    installerType = 'deb'
+                }
+            }
             break
         case 'win':
             targetPlatform("win") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_windows_hotspot_2021-05-06-23-30.zip')
                 addExtraModulePath("${projectDir}/lib/javafx/win/jmods")
+            }
+            if (evalCurrentOs() == 'win') {
+                jpackage {
+                    icon = "${projectDir}/icon.png"
+                    imageName = "subtitle-buddy"
+                    installerName = "subtitle-buddy"
+                    imageOptions = ['--vendor', 'vincemann']
+                    installerOptions = ['--win-console', '--win-menu', '--win-shortcut']
+                    installerType = 'msi'
+                }
             }
             break
         case 'mac':
@@ -151,8 +178,10 @@ jlink {
             // use jpackage to build dmg files, only works when also building on mac
             if (evalCurrentOs() == 'mac') {
                 jpackage {
-                    imageOptions = ['--icon', 'icon.png']
-                    installerType = 'dmg'
+                    imageName = "subtitle-buddy"
+                    installerName = "subtitle-buddy"
+                    icon = "${projectDir}/icon.png"
+                    imageOptions = ['--vendor', 'vincemann']
                 }
             }
             break
