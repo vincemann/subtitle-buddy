@@ -3,7 +3,6 @@ package io.github.vincemann.subtitlebuddy;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -132,18 +131,35 @@ public class Main extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
+        unregisterListeners();
+        unregisterHook();
+        unregisterEventHandlers();
+    }
+
+    private void unregisterEventHandlers(){
+        injector.getInstance(EventHandlerRegistrar.class).unregisterEventHandlers();
+    }
+
+    private void unregisterHook(){
         if (!GlobalScreen.isNativeHookRegistered()){
-            applicationReady = false;
+            log.debug("hook is already unregistered");
         }
         else {
-            log.warn("jnative hook in stop method still registered - should unregister");
+            log.debug("unregistering nativehook");
+            try {
+                GlobalScreen.unregisterNativeHook();
+                applicationReady = false;
+            } catch (NativeHookException e) {
+                log.error("could not unregister jnativehook",e);
+            }
         }
+    }
+
+    public void unregisterListeners(){
         GlobalHotKeyListener hotKeyListener = injector.getInstance(GlobalHotKeyListener.class);
         GlobalMouseListener mouseListener = injector.getInstance(GlobalMouseListener.class);
         GlobalScreen.removeNativeKeyListener(hotKeyListener);
         GlobalScreen.removeNativeMouseListener(mouseListener);
-
-        injector.getInstance(EventHandlerRegistrar.class).unregisterEventHandlers();
     }
 
 

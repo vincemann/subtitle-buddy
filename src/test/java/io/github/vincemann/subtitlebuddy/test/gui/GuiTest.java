@@ -192,9 +192,11 @@ public abstract class GuiTest extends ApplicationTest {
 
     @After
     public void afterEachTest() throws TimeoutException {
+        Main app = getInstance(Main.class);
         FxToolkit.hideStage();
         release(new KeyCode[]{});
         release(new MouseButton[]{});
+        app.unregisterListeners();
     }
 
     /**
