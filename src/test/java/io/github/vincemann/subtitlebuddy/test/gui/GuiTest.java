@@ -67,6 +67,20 @@ public abstract class GuiTest extends ApplicationTest {
         refreshGui();
     }
 
+    public void moveToStage(Class<? extends Annotation> controllerClass){
+        Stage settingsStage = findStageController(controllerClass).getStage();
+        Point2D middleOfStage = new Point2D(settingsStage.getX() + settingsStage.getWidth()/2, settingsStage.getY() + settingsStage.getHeight()/2);
+        moveTo(middleOfStage);
+    }
+
+    // on mac sometimes need to hover to stage in order to focus, use this method in cases, when normal focus wont work
+    public void focusAndMoveToStage(Class<? extends Annotation> controller){
+        if (runningOnMac())
+            focusStage(controller,true);
+        else
+            focusStage(controller);
+    }
+
     @Before
     public void beforeEach() throws Exception {
         LoggingUtils.disableUtilLogger();
@@ -93,8 +107,7 @@ public abstract class GuiTest extends ApplicationTest {
 
     // needs to be pressed natively, bc robot works on a more abstract layer of keystrokes in javafx
     public void typeAltN(){
-        String osName = System.getProperty("os.name").toLowerCase();
-        if (osName.contains("mac")){
+        if (runningOnMac()){
             typeNativeAltN();
         }
         else {
@@ -102,9 +115,13 @@ public abstract class GuiTest extends ApplicationTest {
         }
     }
 
-    public void typeAltEscape(){
+    public boolean runningOnMac(){
         String osName = System.getProperty("os.name").toLowerCase();
-        if (osName.contains("mac")){
+        return osName.contains("mac");
+    }
+
+    public void typeAltEscape(){
+        if (runningOnMac()){
             typeNativeAltEscape();
         }
         else {
@@ -198,12 +215,15 @@ public abstract class GuiTest extends ApplicationTest {
     }
 
     /**
-     * holt stage to front und returned erst wenn stage @ front ist
-     *
-     * @param a
+     * Focus stage.
+     * Optional parameter move, only relevant for mac.
+     * Need to move cursor to stage, bc on mac can only focus when cursor hovers above it.
+     * @param controllerClass class of controller of stage to focus
      */
-    public void focusStage(Class<? extends Annotation> a) {
-        AbstractStageController abstractStageController = getInstance(AbstractStageController.class, a);
+    public void focusStage(Class<? extends Annotation> controllerClass, Boolean... move) {
+        if (move.length > 0 && move[0])
+            moveToStage(controllerClass);
+        AbstractStageController abstractStageController = getInstance(AbstractStageController.class, controllerClass);
         Runnable toFrontTask = () -> {
             abstractStageController.getStage().toFront();
             abstractStageController.getStage().requestFocus();
