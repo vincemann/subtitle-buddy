@@ -38,17 +38,18 @@ public class GlobalHotKeyListener implements NativeKeyListener, KeyListener {
             //alt +n
         } else if (e.getKeyCode() == NativeKeyEvent.VC_N) {
             if (alt) {
-                log.debug("ne click counts hotkey pressed");
+                log.debug("next click counts hotkey pressed (alt + n)");
                 eventBus.post(new HotKeyPressedEvent(HotKey.NEXT_CLICK));
             }
             //alt + esc
         } else if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
             if (alt) {
-                log.debug("end movie mode hotkey pressed");
+                log.debug("end movie mode hotkey pressed (alt + esc)");
                 eventBus.post(new HotKeyPressedEvent(HotKey.END_MOVIE_MODE));
             }
 //        } else if (e.getKeyCode() == NativeKeyEvent.VC_ALT_L || e.getKeyCode() == NativeKeyEvent.VC_ALT_R) {
         } else if (e.getKeyCode() == NativeKeyEvent.VC_ALT || e.getKeyCode() == NativeKeyEvent.VC_ALT) {
+            log.debug("alt pressed");
             alt = true;
         }
     }
@@ -57,6 +58,7 @@ public class GlobalHotKeyListener implements NativeKeyListener, KeyListener {
     public void nativeKeyReleased(NativeKeyEvent e) {
 //        if (e.getKeyCode() == NativeKeyEvent.VC_ALT_L || e.getKeyCode() == NativeKeyEvent.VC_ALT_R){
         if (e.getKeyCode() == NativeKeyEvent.VC_ALT || e.getKeyCode() == NativeKeyEvent.VC_ALT) {
+            log.debug("alt released");
             this.alt = false;
         }
     }
