@@ -67,14 +67,15 @@ public abstract class GuiTest extends ApplicationTest {
         refreshGui();
     }
 
-    public void moveToStage(Class<? extends Annotation> controllerClass){
+    public void clickOnStage(Class<? extends Annotation> controllerClass){
         Stage settingsStage = findStageController(controllerClass).getStage();
         Point2D middleOfStage = new Point2D(settingsStage.getX() + settingsStage.getWidth()/2, settingsStage.getY() + settingsStage.getHeight()/2);
-        moveTo(middleOfStage);
+        clickOn(middleOfStage);
     }
 
-    // on mac sometimes need to hover to stage in order to focus, use this method in cases, when normal focus wont work
-    public void focusAndMoveToStage(Class<? extends Annotation> controller){
+    // mac has stricter focus policies, so sometimes I need to click on the window, to tell mac its the active window and may
+    // request focus
+    public void safeFocusStage(Class<? extends Annotation> controller){
         if (runningOnMac())
             focusStage(controller,true);
         else
@@ -222,7 +223,7 @@ public abstract class GuiTest extends ApplicationTest {
      */
     public void focusStage(Class<? extends Annotation> controllerClass, Boolean... move) {
         if (move.length > 0 && move[0])
-            moveToStage(controllerClass);
+            clickOnStage(controllerClass);
         AbstractStageController abstractStageController = getInstance(AbstractStageController.class, controllerClass);
         Runnable toFrontTask = () -> {
             abstractStageController.getStage().toFront();

@@ -76,7 +76,7 @@ public class ParserHotKeyTest extends GuiTest {
         clickNextToSettingsStage();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtParser.getCurrentState());
 
-        focusAndMoveToStage(SettingsStageController.class);
+        safeFocusStage(SettingsStageController.class);
         refreshGui();
         typeAltN();
         clickNextToSettingsStage();
