@@ -291,43 +291,8 @@ tasks.register('repackageDeb', Exec) {
     }
 }
 
-tasks.register('repackageMacApp', Exec) {
-    onlyIf { project.targetPlatform == 'mac' }
-    mustRunAfter 'jpackage'
-    def originalAppPath = "${jpackage.getJpackageData().installerOutputDir}/subtitle-buddy.app"
-    println("Original app path: ${originalAppPath}")
-
-    doFirst {
-        if (project.targetPlatform != 'mac') {
-            logger.lifecycle("Skipping repackageMacApp as the target platform is not macOS.")
-            return
-        }
-
-        // Define the binary and symlink target paths
-        def binaryPath = new File(originalAppPath, "Contents/MacOS/subtitle-buddy")
-        def targetPath = "../runtime/Contents/Home/bin/appLauncher" // Relative path from the binary location
-
-        // Remove the original binary
-        if (binaryPath.exists()) {
-            binaryPath.delete() // Delete the original binary
-        }
-
-        // Create the symlink
-        exec {
-            workingDir = binaryPath.parentFile
-            commandLine 'ln', '-s', targetPath, binaryPath.name
-        }
-
-        println "Symlink created replacing the original binary."
-    }
-
-    doLast {
-        println "Repackaging of macOS app completed."
-    }
-}
-
 tasks.named('jpackage').configure {
-    finalizedBy 'repackageDeb','repackageMacApp'
+    finalizedBy 'repackageDeb'
 }
 
 

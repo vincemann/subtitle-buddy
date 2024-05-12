@@ -1,13 +1,19 @@
 #!/bin/sh
 # Get the real path to the script accounting for symlinks
-SCRIPT=\$(readlink -f "\$0")
+# SCRIPT=\$(readlink -f "\$0")
+# SCRIPT_NAME=\$(basename "\$SCRIPT")
+# APP_NAME=\${SCRIPT_NAME%.sh}
+
+SCRIPT=\$(cd "\$(dirname "\$0")"; pwd -P)/\$(basename "\$0")
 SCRIPT_NAME=\$(basename "\$SCRIPT")
 APP_NAME=\${SCRIPT_NAME%.sh}
 
 # Calculate the directory of the actual script
 DIR=\$(dirname "\$SCRIPT")
 
+
 # Change to the image root directory - this is important for the native lib loading
 cd "\$DIR/.." || { echo "Failed to change directory to image root"; exit 1; }
+
 
 "\$DIR/java" \$CDS_JVM_OPTS ${jvmArgs} -p "\$DIR/../app" -m ${moduleName}/${mainClassName} "\$@"
