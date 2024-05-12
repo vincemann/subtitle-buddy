@@ -322,6 +322,10 @@ tasks.register('repackageDeb', Exec) {
     }
 }
 
+tasks.named('jpackageImage').configure {
+    dependsOn 'copyWinStartScript', 'copyNativeLibs'
+}
+
 tasks.named('jpackage').configure {
     finalizedBy 'repackageDeb','repackageMacApp'
 }
