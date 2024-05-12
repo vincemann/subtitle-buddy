@@ -155,10 +155,6 @@ tasks.register('repackageMacApp', Exec) {
     }
 }
 
-tasks.named('jpackage').configure {
-    finalizedBy 'repackageDeb','repackageMacApp'
-}
-
 
 // builds platform specific jlink images in build/images
 // NOTE: for mac this only works, when building on mac for whatever reason - otherwise it will segfault
@@ -327,10 +323,8 @@ tasks.register('repackageDeb', Exec) {
 }
 
 tasks.named('jpackage').configure {
-    finalizedBy 'repackageDeb'
+    finalizedBy 'repackageDeb','repackageMacApp'
 }
-
-
 
 // creates tarball for jlink image and stores in build dir
 // execute with -PtargetPlatform=[linux|win|mac]
