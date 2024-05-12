@@ -145,17 +145,18 @@ jlink {
             // use jpackage to build deb installer
             if (evalCurrentOs() == 'linux') {
                 jpackage {
+                    targetPlatformName = "linux"
                     icon = "${projectDir}/icon.png"
                     imageName = "subtitle-buddy"
                     installerName = "subtitle-buddy"
-                    imageOptions = ['--vendor', 'vincemann']
+                    vendor = "vincemann"
                     installerOptions = [
                             '--linux-deb-maintainer', 'v.conrad98@web.de',
                             '--linux-menu-group', 'Applications',
-                            '--resource-dir',"${projectDir}/releases/linux/deb/"
                     ]
                     // add post installation script for creating a symlink after installation
-                    resourceDir = file("${projectDir}/releases/linux/deb/")
+                    resourceDir = file("${projectDir}/releases/linux/deb")
+                    println("resource dir: ${resourceDir.getPath()}")
                     installerType = 'deb'
                 }
             }
@@ -167,10 +168,11 @@ jlink {
             }
             if (evalCurrentOs() == 'win') {
                 jpackage {
+                    targetPlatformName = "win"
                     icon = "${projectDir}/icon.png"
                     imageName = "subtitle-buddy"
                     installerName = "subtitle-buddy"
-                    imageOptions = ['--vendor', 'vincemann']
+                    vendor = "vincemann"
                     installerOptions = ['--win-console', '--win-menu', '--win-shortcut']
                     installerType = 'msi'
                 }
@@ -184,10 +186,11 @@ jlink {
             // use jpackage to build dmg and app files, only works when also building on mac
             if (evalCurrentOs() == 'mac') {
                 jpackage {
+                    targetPlatformName = "mac"
                     imageName = "subtitle-buddy"
                     installerName = "subtitle-buddy"
                     icon = "${projectDir}/icon.png"
-                    imageOptions = ['--vendor', 'vincemann']
+                    vendor = "vincemann"
                 }
             }
             break
@@ -215,6 +218,76 @@ jlink {
     }
 
 }
+
+// somehow jpackage does not include my postinst script, so I need to repackage the deb package myself
+tasks.register('repackageDeb', Exec) {
+    onlyIf { project.targetPlatform == 'linux' }
+    mustRunAfter 'jpackage'
+    def originalDeb = "${jpackage.getJpackageData().installerOutputDir}/subtitle-buddy_1.1.0-1_amd64.deb" // there is no var to retrieve the installer name from
+    println("original deb: ${originalDeb}")
+    def tempDir = "${projectDir}/build/deb-temp"
+
+    // put postinst data into deb-temp
+    doFirst {
+        if (project.targetPlatform != 'linux') {
+            logger.lifecycle("Skipping repackageDeb as the target platform is not Linux.")
+            return
+        }
+        // Define paths
+        def postinstScript = "$projectDir/releases/linux/deb/DEBIAN/postinst"
+
+        // Ensure the temp directory is clean
+        delete tempDir
+        mkdir tempDir
+
+        // Unpack the original DEB
+        commandLine 'dpkg-deb', '-R', originalDeb, tempDir
+
+        // Ensure the DEBIAN directory exists
+        def debianDir = new File(tempDir, 'DEBIAN')
+//        if (!debianDir.exists()) {
+//            debianDir.mkdirs()
+//        }
+
+        // Check if postinst already exists and delete if necessary
+        def postinstFile = new File(debianDir, 'postinst')
+        if (postinstFile.exists()) {
+            println "postinst script already exists, overwriting..."
+            postinstFile.delete()
+        }
+
+        // Copy the postinst script
+        copy {
+            from postinstScript
+            into debianDir
+            fileMode 0755
+        }
+    }
+
+    doLast {
+        // Define the modified package path
+        def modifiedDeb = "${projectDir}/build/jpackage/subtitle-buddy-modified.deb"
+
+        // delete the old deb package
+        delete originalDeb
+
+        // Repackage the DEB
+        commandLine 'dpkg-deb', '-b', tempDir, modifiedDeb
+
+        // Clean up the temporary directory if needed
+        delete tempDir
+
+
+        // Log the completion
+        println "Modified DEB package created at: $modifiedDeb"
+    }
+}
+
+tasks.named('jpackage').configure {
+    finalizedBy repackageDeb
+}
+
+
 
 // creates tarball for jlink image and stores in build dir
 // execute with -PtargetPlatform=[linux|win|mac]
