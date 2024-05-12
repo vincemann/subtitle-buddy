@@ -1,10 +1,6 @@
 #!/bin/sh
 # Get the real path to the script accounting for symlinks
-# SCRIPT=\$(readlink -f "\$0")
-# SCRIPT_NAME=\$(basename "\$SCRIPT")
-# APP_NAME=\${SCRIPT_NAME%.sh}
-
-SCRIPT=\$(cd "\$(dirname "\$0")"; pwd -P)/\$(basename "\$0")
+SCRIPT=\$(readlink -f "\$0")
 SCRIPT_NAME=\$(basename "\$SCRIPT")
 APP_NAME=\${SCRIPT_NAME%.sh}
 
