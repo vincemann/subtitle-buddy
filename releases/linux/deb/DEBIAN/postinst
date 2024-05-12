@@ -1,8 +1,6 @@
 #!/bin/sh
 # postinst script for subtitle-buddy
 
-echo "Starting postinst script" >> /tmp/postinst.log
-
 # Create symlink to make subtitle-buddy executable globally accessible
 ln -sf /opt/subtitle-buddy/bin/subtitle-buddy /usr/local/bin/subtitle-buddy
 
@@ -11,8 +9,5 @@ if [ $? -eq 0 ]; then
 else
     echo "Failed to create symlink."
 fi
-
-echo "Trying to create symlink" >> /tmp/postinst.log
-echo "Symlink creation status: $?" >> /tmp/postinst.log
 
 exit $?

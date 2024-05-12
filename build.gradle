@@ -228,26 +228,38 @@ tasks.register('repackageDeb', Exec) {
     def tempDir = "${projectDir}/build/deb-temp"
 
     // put postinst data into deb-temp
+
     doFirst {
         if (project.targetPlatform != 'linux') {
             logger.lifecycle("Skipping repackageDeb as the target platform is not Linux.")
             return
         }
-        // Define paths
-        def postinstScript = "$projectDir/releases/linux/deb/DEBIAN/postinst"
 
         // Ensure the temp directory is clean
         delete tempDir
-        mkdir tempDir
 
         // Unpack the original DEB
         commandLine 'dpkg-deb', '-R', originalDeb, tempDir
+    }
+    doLast {
+        
+        // I dont want a binary created in bin folder, bc that breaks my JLinkLibLocator,
+        // instead replace with symlink too runtime start script
+        def binDir = new File(tempDir, '/opt/subtitle-buddy/bin')
+        def originalBinary = new File(binDir, 'subtitle-buddy')
+        if (originalBinary.exists()) {
+            originalBinary.delete() // Delete the original binary
+        }
+
+        // Create a symlink
+        exec {
+            workingDir = binDir
+            commandLine 'ln', '-s', '../lib/runtime/bin/appLauncher', 'subtitle-buddy'
+        }
 
         // Ensure the DEBIAN directory exists
         def debianDir = new File(tempDir, 'DEBIAN')
-//        if (!debianDir.exists()) {
-//            debianDir.mkdirs()
-//        }
+        def postinstScript = "$projectDir/releases/linux/deb/DEBIAN/postinst"
 
         // Check if postinst already exists and delete if necessary
         def postinstFile = new File(debianDir, 'postinst')
@@ -255,16 +267,12 @@ tasks.register('repackageDeb', Exec) {
             println "postinst script already exists, overwriting..."
             postinstFile.delete()
         }
-
         // Copy the postinst script
         copy {
             from postinstScript
             into debianDir
             fileMode 0755
         }
-    }
-
-    doLast {
         // Define the modified package path
         def modifiedDeb = "${projectDir}/build/jpackage/subtitle-buddy-modified.deb"
 
@@ -272,10 +280,9 @@ tasks.register('repackageDeb', Exec) {
         delete originalDeb
 
         // Repackage the DEB
-        commandLine 'dpkg-deb', '-b', tempDir, modifiedDeb
-
-        // Clean up the temporary directory if needed
-        delete tempDir
+        exec {
+            commandLine 'dpkg-deb', '-b', tempDir, modifiedDeb
+        }
 
 
         // Log the completion
