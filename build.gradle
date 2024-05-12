@@ -216,8 +216,6 @@ jlink {
             // use jpackage to build dmg and app files, only works when also building on mac
             if (evalCurrentOs() == 'mac') {
                 jpackage {
-                    // skipping installer bc I need to repackage the app file - I just ship the app file and via homebrew on macos
-                    skipInstaller = true
                     targetPlatformName = "mac"
                     imageName = "subtitle-buddy"
                     installerName = "subtitle-buddy"
@@ -252,6 +250,7 @@ jlink {
 }
 
 // somehow jpackage does not include my postinst script, so I need to repackage the deb package myself
+// also I need to replace the startup binary with a symlink, bc otherwise my liblocator for jnativehook breaks
 tasks.register('repackageDeb', Exec) {
     onlyIf { project.targetPlatform == 'linux' }
     mustRunAfter 'jpackage'
@@ -324,16 +323,18 @@ tasks.register('repackageDeb', Exec) {
 
 tasks.named('jpackageImage').configure {
     dependsOn 'copyWinStartScript', 'copyNativeLibs'
+    finalizedBy 'repackageMacApp'
+    finalizedBy 'repackageMacApp'
 }
 
 tasks.named('jpackage').configure {
-    finalizedBy 'repackageDeb','repackageMacApp'
+    finalizedBy 'repackageDeb'
 }
 
 // creates tarball for jlink image and stores in build dir
 // execute with -PtargetPlatform=[linux|win|mac]
 // this can then be shipped via homebrew
-// NOTE: for mac this only works, when building on mac for whatever reason - otherwise it will segfault
+// NOTE: for mac this only works, when building on mac for whatever reason - otherwise the app will segfault when run
 tasks.register('tarJlink', Exec) {
     dependsOn 'jlink'
     dependsOn 'copyNativeLibs'
@@ -401,6 +402,8 @@ tasks.register('buildLinuxAppImage') {
     }
 }
 
+// used for creating installer for windows running on linux host system
+// when building installer from win for win, better run 'gradlew.bat clean jpackage'
 // uses a docker container with image name 'amake/innosetup' that uses wine for building windows installer from linux host machines
 // execute with -PtargetPlatform=win
 tasks.register('buildWindowsInstaller') {
@@ -489,7 +492,6 @@ repositories {
 }
 
 
-// in windows this command in cli is needed java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 run {
     doFirst {
         // Initialize the list with common JVM arguments
