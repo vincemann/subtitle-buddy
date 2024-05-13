@@ -275,7 +275,7 @@ tasks.register('repackageDeb', Exec) {
     doLast {
 
         // I dont want a binary created in bin folder, bc that breaks my JLinkLibLocator,
-        // instead replace with symlink too runtime start script
+        // instead replace with symlink to runtime start script
         def binDir = new File(tempDir, '/opt/subtitle-buddy/bin')
         def originalBinary = new File(binDir, 'subtitle-buddy')
         if (originalBinary.exists()) {
@@ -350,9 +350,15 @@ tasks.register('tarJlink', Exec) {
         mkdir releaseDir
     }
 
-    // Define the command line to execute within the main configuration block
-    commandLine 'tar', '-czvf', tarballPath, '.', '--transform=s,^./,image/,'
-
+    if (project.targetPlatform == 'linux') {
+        // Linux uses tar with --transform
+        commandLine 'tar', '-czvf', "${tarballPath}", '.', '--transform=s,^./,image/,'
+    } else if (project.targetPlatform == 'mac') {
+        // macOS uses pax piped to gzip
+        // Gradle Exec task does not support pipe directly, use a shell to handle it
+        commandLine 'sh', '-c', "pax -w -x sv4cpio -s ',^\\./,image/,' . | gzip > ${tarballPath}"
+    }
+}
     // Capture and print the output
     standardOutput = new ByteArrayOutputStream()
     errorOutput = new ByteArrayOutputStream()
