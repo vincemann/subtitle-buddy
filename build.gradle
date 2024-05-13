@@ -358,7 +358,6 @@ tasks.register('tarJlink', Exec) {
         // Gradle Exec task does not support pipe directly, use a shell to handle it
         commandLine 'sh', '-c', "pax -w -x sv4cpio -s ',^\\./,image/,' . | gzip > ${tarballPath}"
     }
-}
     // Capture and print the output
     standardOutput = new ByteArrayOutputStream()
     errorOutput = new ByteArrayOutputStream()
