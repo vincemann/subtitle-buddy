@@ -353,30 +353,7 @@ tasks.register('tarJlink', Exec) {
     if (project.targetPlatform == 'linux') {
         commandLine 'tar', '-czvf', "${tarballPath}", '.', '--transform=s,^./,image/,'
     }else if (project.targetPlatform == 'mac') {
-
-        doFirst {
-            def stagingDir = "${projectDir}/build/staging"
-            // Create a staging directory
-            mkdir stagingDir
-
-            // Copy files to the staging directory with the desired structure
-            copy {
-                from "${projectDir}/build/image/appLauncher-${targetPlatform}"
-                into "${stagingDir}/image"
-            }
-
-            // Ensure any previous tarball is deleted before creating a new one
-            delete tarballPath
-            mkdir releaseDir
-        }
-
-        doLast {
-            def stagingDir = "${projectDir}/build/staging"
-            // Create the tarball from the staging directory
-            commandLine 'tar', '-czvf', tarballPath, '-C', stagingDir, '.'
-            // Clean up staging directory after archiving
-            delete stagingDir
-        }
+        commandLine 'gtar', '-czvf', "${tarballPath}", '.', '--transform=s,^./,image/,'
     }
     // Capture and print the output
     standardOutput = new ByteArrayOutputStream()
