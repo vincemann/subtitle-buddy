@@ -356,7 +356,7 @@ tasks.register('tarJlink', Exec) {
     } else if (project.targetPlatform == 'mac') {
         // macOS uses pax piped to gzip
         // Gradle Exec task does not support pipe directly, use a shell to handle it
-        commandLine 'sh', '-c', "pax -w -x sv4cpio -s ',^\\./,image/,' . | gzip > ${tarballPath}"
+        commandLine 'sh', '-c', "tar -czvf ${tarballPath} --options 's,^./,image/,' ."
     }
     // Capture and print the output
     standardOutput = new ByteArrayOutputStream()
