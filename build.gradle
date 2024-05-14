@@ -351,12 +351,30 @@ tasks.register('tarJlink', Exec) {
     }
 
     if (project.targetPlatform == 'linux') {
-        // Linux uses tar with --transform
         commandLine 'tar', '-czvf', "${tarballPath}", '.', '--transform=s,^./,image/,'
-    } else if (project.targetPlatform == 'mac') {
-        // macOS uses pax piped to gzip
-        // Gradle Exec task does not support pipe directly, use a shell to handle it
-        commandLine 'sh', '-c', "tar -czvf ${tarballPath} --options 's,^./,image/,' ."
+    }else if (project.targetPlatform == 'mac') {
+        def stagingDir = "${projectDir}/build/staging"
+        doFirst {
+            // Create a staging directory
+            mkdir stagingDir
+
+            // Copy files to the staging directory with the desired structure
+            copy {
+                from "${projectDir}/build/image/appLauncher-${targetPlatform}"
+                into "${stagingDir}/image"
+            }
+
+            // Ensure any previous tarball is deleted before creating a new one
+            delete tarballPath
+            mkdir releaseDir
+        }
+
+        doLast {
+            // Create the tarball from the staging directory
+            commandLine 'tar', '-czvf', tarballPath, '-C', stagingDir, '.'
+            // Clean up staging directory after archiving
+            delete stagingDir
+        }
     }
     // Capture and print the output
     standardOutput = new ByteArrayOutputStream()
