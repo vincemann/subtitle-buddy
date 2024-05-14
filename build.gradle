@@ -353,7 +353,7 @@ tasks.register('tarJlink', Exec) {
     if (project.targetPlatform == 'linux') {
         commandLine 'tar', '-czvf', "${tarballPath}", '.', '--transform=s,^./,image/,'
     }else if (project.targetPlatform == 'mac') {
-        commandLine 'gtar', '-czvf', "${tarballPath}", '.', '--transform=s,^./,image/,'
+        commandLine 'tar', '-czvf', "${tarballPath}", '.'
     }
     // Capture and print the output
     standardOutput = new ByteArrayOutputStream()
