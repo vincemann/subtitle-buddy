@@ -353,8 +353,9 @@ tasks.register('tarJlink', Exec) {
     if (project.targetPlatform == 'linux') {
         commandLine 'tar', '-czvf', "${tarballPath}", '.', '--transform=s,^./,image/,'
     }else if (project.targetPlatform == 'mac') {
-        def stagingDir = "${projectDir}/build/staging"
+
         doFirst {
+            def stagingDir = "${projectDir}/build/staging"
             // Create a staging directory
             mkdir stagingDir
 
@@ -370,6 +371,7 @@ tasks.register('tarJlink', Exec) {
         }
 
         doLast {
+            def stagingDir = "${projectDir}/build/staging"
             // Create the tarball from the staging directory
             commandLine 'tar', '-czvf', tarballPath, '-C', stagingDir, '.'
             // Clean up staging directory after archiving
