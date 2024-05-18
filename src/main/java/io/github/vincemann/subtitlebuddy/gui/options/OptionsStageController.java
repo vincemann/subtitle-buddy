@@ -70,6 +70,8 @@ public class OptionsStageController {
     private ChangeListener<Boolean> startStopChangeListener;
 
     private Table<Node, EventHandler, EventType> eventHandlers;
+    private boolean nextClickCountsToggled;
+    private boolean startStopHotKeyToggled;
 
 
     @Inject
@@ -84,8 +86,8 @@ public class OptionsStageController {
         this.srtFontManager = srtFontManager;
         // apache constants only supports List<Object> getList()
         this.fontPathMap = new HashMap<>();
-        updateCheckBoxes(nextClickCountsToggled, startStopHotKeyToggled);
-        populateFontChoiceBox(srtFontManager.getUserFontSize());
+        this.nextClickCountsToggled = nextClickCountsToggled;
+        this.startStopHotKeyToggled = startStopHotKeyToggled;
     }
 
 
@@ -144,6 +146,9 @@ public class OptionsStageController {
         checkNotNull(startStopCheckBox);
         checkNotNull(nextClickCheckBox);
         eventHandlers = registerEventHandlers();
+
+        updateCheckBoxes(nextClickCountsToggled, startStopHotKeyToggled);
+        populateFontChoiceBox(srtFontManager.getUserFontSize());
     }
 
 //    @Override
@@ -171,7 +176,7 @@ public class OptionsStageController {
 //    }
 
 
-    private void populateFontChoiceBox(double userFontSize) throws IOException {
+    private void populateFontChoiceBox(double userFontSize) {
         log.trace("populating font choice box from fonts dir");
 
         try {

@@ -109,12 +109,9 @@ public class MovieStageController implements MovieSrtDisplayer {
         this.eventBus= eventBus;
         this.movieVBoxPos = loadMovieVBoxStartPos(movieVBoxPosString,getScreenBoundsVector());
         this.updateSubtitleExecutionLimiter = new ExecutionLimiter(SUBTITLE_UPDATE_SLEEP_DURATION,this::updateSubtitle);
-        this.clickWarning = loadImageView(movieVBox,
-                "images/finger.png",
-                new Vector2D(MOVIE_CLICK_WARNING_SIZE,MOVIE_CLICK_WARNING_SIZE));
-        currentFontSize = (int) srtFontManager.getUserFontSize();
-        currentFont = srtFontManager.loadDefaultFont();
-        lastSubtitleText = new SubtitleText(new ArrayList<>(Collections.emptyList()));
+        this.currentFontSize = (int) srtFontManager.getUserFontSize();
+        this.currentFont = srtFontManager.loadDefaultFont();
+        this.lastSubtitleText = new SubtitleText(new ArrayList<>(Collections.emptyList()));
     }
 
     private Vector2D loadMovieVBoxStartPos(String savedPosition, Vector2D screenBounds){
@@ -212,6 +209,9 @@ public class MovieStageController implements MovieSrtDisplayer {
 
         eventHandlers = registerEventHandlers();
 
+        clickWarning = loadImageView(movieVBox,
+                "/images/finger.png",
+                new Vector2D(MOVIE_CLICK_WARNING_SIZE,MOVIE_CLICK_WARNING_SIZE));
         clickWarning.setVisible(false);
     }
 

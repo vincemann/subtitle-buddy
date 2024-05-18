@@ -1,5 +1,6 @@
 package io.github.vincemann.subtitlebuddy.util.fx;
 
+import io.github.vincemann.subtitlebuddy.Main;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

@@ -129,9 +129,6 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                                    @Named(UIStringsKeys.WRONG_TIMESTAMP_FORMAT_TEXT) String wrongTimeStampFormatText,
                                    @Named(UIStringsKeys.TIMESTAMP_JUMP_HINT_TEXT) String timestampJumpHintTextString
     ) {
-        this.settingsClickWarning = loadImageView(imageHBox,
-                "images/finger.png",
-                new Vector2D(SETTINGS_CLICK_WARNING_SIZE, SETTINGS_CLICK_WARNING_SIZE));
         this.settingsFontSize = settingsFontSize;
         this.srtParser = srtParser;
         this.eventBus = eventBus;
@@ -167,6 +164,10 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         eventHandlers = registerEventHandlers();
         settingsClickWarning.setVisible(false);
         loadUIStrings();
+
+        settingsClickWarning = loadImageView(imageHBox,
+                "/images/finger.png",
+                new Vector2D(SETTINGS_CLICK_WARNING_SIZE, SETTINGS_CLICK_WARNING_SIZE));
     }
 
     private void loadUIStrings() {
