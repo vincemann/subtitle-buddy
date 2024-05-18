@@ -1,5 +1,6 @@
 package io.github.vincemann.subtitlebuddy.gui;
 
+import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 
@@ -44,12 +45,19 @@ public class WindowManager {
         return find(name);
     }
 
-    public void showWindow(String name) {
+    public Window showWindowAtPos(String name, Vector2D pos){
+        Window window = showWindow(name);
+        window.getStage().setX(pos.getX());
+        window.getStage().setY(pos.getY());
+        return window;
+    }
+
+    public Window showWindow(String name) {
         Window window = find(name);
         if (current != null) {
             if (current.equals(window)) {
                 log.debug("already showing window: " + name);
-                return;
+                return current;
             }
             current.getStage().hide();
         }
@@ -57,6 +65,7 @@ public class WindowManager {
         stage.show();
         stage.toFront();
         current = window;
+        return current;
     }
 
     public Window getCurrent() {

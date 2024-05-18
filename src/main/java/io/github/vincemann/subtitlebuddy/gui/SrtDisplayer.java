@@ -23,16 +23,4 @@ public interface SrtDisplayer {
 
     SubtitleText getLastSubtitleText();
 
-//    /**
-//     * Close window or make invisible in order to switch to another window.
-//     */
-//    void close();
-//
-//    /**
-//     * Open window or make visible in order to switch to this window.
-//     */
-//    void open();
-//
-//    boolean isDisplaying();
-
 }

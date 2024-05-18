@@ -8,9 +8,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.events.RequestSrtParserUpdateEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
+import io.github.vincemann.subtitlebuddy.gui.Window;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
@@ -44,7 +44,7 @@ import lombok.extern.log4j.Log4j2;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.createImageView;
+import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.loadImageView;
 
 @Log4j2
 @NoArgsConstructor
@@ -123,7 +123,6 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                                    @Named(PropertyFileKeys.SETTINGS_FONT_SIZE) int settingsFontSize,
                                    @Named(PropertyFileKeys.FAST_FORWARD_DELTA) int fastForwardDelta,
                                    EventBus eventBus,
-                                   ClassPathFileExtractor classPathFileExtractor,
                                    @Named(UIStringsKeys.START_BUTTON_TEXT) String startButtonText,
                                    @Named(UIStringsKeys.STOP_BUTTON_TEXT) String stopButtonText,
                                    @Named(UIStringsKeys.MOVIE_MODE_BUTTON_TEXT)String movieModeButtonText,
@@ -131,8 +130,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                                    @Named(UIStringsKeys.WRONG_TIMESTAMP_FORMAT_TEXT) String wrongTimeStampFormatText,
                                    @Named(UIStringsKeys.TIMESTAMP_JUMP_HINT_TEXT) String timestampJumpHintTextString
     ) {
-//        createStage(this,mainStage);
-        this.settingsClickWarning = createImageView(imageHBox,
+        this.settingsClickWarning = loadImageView(imageHBox,
                 "images/finger.png",
                 new Vector2D(SETTINGS_CLICK_WARNING_SIZE,SETTINGS_CLICK_WARNING_SIZE));
         this.settingsFontSize=settingsFontSize;
@@ -293,8 +291,9 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
         EventHandler<MouseEvent> optionsButtonPressedHandler = event -> {
             //position options window right next settingsWindow, otherwise optionsWindow may be behind settingsWindow, bc they are both alwaysOnTop
-//            optionsWindow.openOptionsWindow(new Vector2D(getStage().getX()+getStage().getWidth(),getStage().getY()));
-            windowManager.showWindow(Windows.OPTIONS);
+            Window settingsWindow = windowManager.getCurrent();
+            Vector2D nextToSettingsWindow = new Vector2D(settingsWindow.getStage().getX() + settingsWindow.getStage().getWidth(), settingsWindow.getStage().getY());
+            windowManager.showWindowAtPos(Windows.OPTIONS,nextToSettingsWindow);
         };
 
 
@@ -337,16 +336,6 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             settingsClickWarning.setVisible(false);
         });
     }
-
-//    @Override
-//    public void onStageCreate(Stage stage){
-//        super.onStageCreate(stage);
-//        log.debug("stage initialized");
-//        stage.setAlwaysOnTop(true);
-//        stage.setResizable(false);
-//    }
-
-
 
     private void displayWrongTimeStampWarning(){
         new Thread(() -> {
@@ -402,30 +391,4 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             }
         });
     }
-
-//    @Override
-//    protected void onShowStage() {
-//        super.onShowStage();
-//    }
-
-//    @Override
-//    protected void onStageClose() {
-//        super.onStageClose();
-//        System.exit(0);
-//    }
-
-//    @Override
-//    public void close() {
-//        closeStage();
-//    }
-//
-//    @Override
-//    public void open() {
-//        showStage();
-//    }
-
-//    @Override
-//    public boolean isDisplaying() {
-//        return getStageState().equals(StageState.OPEN);
-//    }
 }
