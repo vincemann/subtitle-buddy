@@ -14,18 +14,22 @@ import java.io.InputStream;
 @Singleton
 public class SettingsStageFactory {
 
-    private FXMLLoader loader;
+    private SettingsStageController controller;
 
     @Inject
-    public SettingsStageFactory(FXMLLoader loader) {
-        this.loader = loader;
+    public SettingsStageFactory(SettingsStageController controller) {
+        this.controller = controller;
     }
 
-    public Stage create(Stage primaryStage) throws IOException {
-        InputStream fxmlInputStream = ClassLoader.getSystemResourceAsStream("settings-stage.fxml");
-        Parent parent = loader.load(fxmlInputStream);
-        primaryStage.setScene(new Scene(parent, 280, 340));
+    public Stage create() throws IOException {
+        // for some reason it wont work when setting loader.setControllerFactory( clazz -> injector.getInstance(clazz))) - the factory is never called
+        // thats why I do it the less clean way
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setController(controller);
+        InputStream is = ClassLoader.getSystemResourceAsStream("settings-stage.fxml");
+        Parent parent = fxmlLoader.load(is);
         Stage stage = new Stage();
+        stage.setScene(new Scene(parent, 280, 340));
         stage.setTitle("Subtitle Buddy");
         stage.setAlwaysOnTop(true);
         stage.setResizable(false);

@@ -115,9 +115,6 @@ public class MovieStageController implements MovieSrtDisplayer {
         currentFontSize = (int) srtFontManager.getUserFontSize();
         currentFont = srtFontManager.loadDefaultFont();
         lastSubtitleText = new SubtitleText(new ArrayList<>(Collections.emptyList()));
-        movieVBox.setLayoutX(movieVBoxPos.getX());
-        movieVBox.setLayoutY(movieVBoxPos.getY());
-        clickWarning.setVisible(false);
     }
 
     private Vector2D loadMovieVBoxStartPos(String savedPosition, Vector2D screenBounds){
@@ -214,6 +211,8 @@ public class MovieStageController implements MovieSrtDisplayer {
         movieVBox.setLayoutY(movieVBoxPos.getY());
 
         eventHandlers = registerEventHandlers();
+
+        clickWarning.setVisible(false);
     }
 
     private void onDraggedInPosition(MouseEvent mouseEvent){

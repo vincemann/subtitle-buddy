@@ -14,18 +14,22 @@ import java.io.InputStream;
 @Singleton
 public class OptionsStageFactory {
 
-    private FXMLLoader loader;
+    private OptionsStageController controller;
 
     @Inject
-    public OptionsStageFactory(FXMLLoader loader) {
-        this.loader = loader;
+    public OptionsStageFactory(OptionsStageController controller) {
+        this.controller = controller;
     }
 
-    public Stage create(Stage primaryStage) throws IOException {
-        InputStream fxmlInputStream = ClassLoader.getSystemResourceAsStream("options-stage.fxml");
-        Parent parent = loader.load(fxmlInputStream);
-        primaryStage.setScene(new Scene(parent, 450, 200));
+    public Stage create() throws IOException {
+        // for some reason it wont work when setting loader.setControllerFactory( clazz -> injector.getInstance(clazz))) - the factory is never called
+        // thats why I do it the less clean way
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setController(controller);
+        InputStream is = ClassLoader.getSystemResourceAsStream("options-stage.fxml");
+        Parent parent = fxmlLoader.load(is);
         Stage stage = new Stage();
+        stage.setScene(new Scene(parent, 450, 200));
         stage.setTitle("Options");
         stage.initModality(Modality.NONE);
         stage.setAlwaysOnTop(true);

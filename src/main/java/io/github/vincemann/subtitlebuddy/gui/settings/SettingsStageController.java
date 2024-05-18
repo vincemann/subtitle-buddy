@@ -113,11 +113,10 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     private Table<Node, EventHandler, EventType> eventHandlers;
 
 
-
     @Inject
     public SettingsStageController(SrtParser srtParser,
                                    @Named(PropertyFileKeys.TIME_STAMP_WARNING_DURATION)
-                                               long timeStampWarningDuration,
+                                   long timeStampWarningDuration,
                                    SrtFontManager srtFontManager,
                                    WindowManager windowManager,
                                    @Named(PropertyFileKeys.SETTINGS_FONT_SIZE) int settingsFontSize,
@@ -125,51 +124,36 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                                    EventBus eventBus,
                                    @Named(UIStringsKeys.START_BUTTON_TEXT) String startButtonText,
                                    @Named(UIStringsKeys.STOP_BUTTON_TEXT) String stopButtonText,
-                                   @Named(UIStringsKeys.MOVIE_MODE_BUTTON_TEXT)String movieModeButtonText,
+                                   @Named(UIStringsKeys.MOVIE_MODE_BUTTON_TEXT) String movieModeButtonText,
                                    @Named(UIStringsKeys.OPTIONS_BUTTON_TEXT) String optionsButtonText,
                                    @Named(UIStringsKeys.WRONG_TIMESTAMP_FORMAT_TEXT) String wrongTimeStampFormatText,
                                    @Named(UIStringsKeys.TIMESTAMP_JUMP_HINT_TEXT) String timestampJumpHintTextString
     ) {
         this.settingsClickWarning = loadImageView(imageHBox,
                 "images/finger.png",
-                new Vector2D(SETTINGS_CLICK_WARNING_SIZE,SETTINGS_CLICK_WARNING_SIZE));
-        this.settingsFontSize=settingsFontSize;
+                new Vector2D(SETTINGS_CLICK_WARNING_SIZE, SETTINGS_CLICK_WARNING_SIZE));
+        this.settingsFontSize = settingsFontSize;
         this.srtParser = srtParser;
-        this.eventBus=eventBus;
-        this.timeStampWarningDuration=timeStampWarningDuration;
+        this.eventBus = eventBus;
         this.srtFontManager = srtFontManager;
         this.windowManager = windowManager;
-        this.fastForwardDelta=fastForwardDelta;
-        //ui strings
-        this.startButtonText=startButtonText;
-        this.stopButtonText=stopButtonText;
-        this.optionsButtonText=optionsButtonText;
-        this.movieModeButtonText=movieModeButtonText;
-        this.wrongTimeStampFormatText=wrongTimeStampFormatText;
-        this.timestampJumpHintTextString=timestampJumpHintTextString;
-        loadUIStrings();
-        lastTimeStamp = Timestamp.ZERO();
-        lastSubtitleText = srtParser.getCurrentSubtitleText();
-        this.currentFont= srtFontManager.loadDefaultFont(settingsFontSize);
-        if(timeStampWarningDuration<MIN_TIME_STAMP_WARNING_DURATION){
-            timeStampWarningDuration=MIN_TIME_STAMP_WARNING_DURATION;
-        }
-        this.settingsClickWarning.setVisible(false);
-    }
-
-    private void loadUIStrings(){
-        Platform.runLater(() -> {
-            startButton.setText(startButtonText);
-            stopButton.setText(stopButtonText);
-            optionsButton.setText(optionsButtonText);
-            movieModeButton.setText(movieModeButtonText);
-            wrongFormatText.setText(wrongTimeStampFormatText);
-            timestampJumpHintText.setText(timestampJumpHintTextString);
-        });
+        this.fastForwardDelta = fastForwardDelta;
+        this.startButtonText = startButtonText;
+        this.stopButtonText = stopButtonText;
+        this.optionsButtonText = optionsButtonText;
+        this.movieModeButtonText = movieModeButtonText;
+        this.wrongTimeStampFormatText = wrongTimeStampFormatText;
+        this.timestampJumpHintTextString = timestampJumpHintTextString;
+        this.lastTimeStamp = Timestamp.ZERO();
+        this.lastSubtitleText = srtParser.getCurrentSubtitleText();
+        this.currentFont = srtFontManager.loadDefaultFont(settingsFontSize);
+        this.timeStampWarningDuration = timeStampWarningDuration < MIN_TIME_STAMP_WARNING_DURATION
+                ? MIN_TIME_STAMP_WARNING_DURATION
+                : timeStampWarningDuration;
     }
 
     @FXML
-    protected void fxmlInit() {
+    public void fxmlInit() {
         checkNotNull(optionsButton);
         checkNotNull(timeField);
         checkNotNull(startButton);
@@ -181,6 +165,19 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         checkNotNull(fastBackwardButton);
         checkNotNull(fastForwardButton);
         eventHandlers = registerEventHandlers();
+        settingsClickWarning.setVisible(false);
+        loadUIStrings();
+    }
+
+    private void loadUIStrings() {
+        Platform.runLater(() -> {
+            startButton.setText(startButtonText);
+            stopButton.setText(stopButtonText);
+            optionsButton.setText(optionsButtonText);
+            movieModeButton.setText(movieModeButtonText);
+            wrongFormatText.setText(wrongTimeStampFormatText);
+            timestampJumpHintText.setText(timestampJumpHintTextString);
+        });
     }
 
     @Override
@@ -196,7 +193,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
     @Override
     public void setCurrentFont(SrtFonts font) {
-        this.currentFont=font;
+        this.currentFont = font;
     }
 
 
@@ -207,7 +204,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             try {
                 log.trace("startbutton pressed");
                 srtParser.start();
-            }catch (IllegalStateException e){
+            } catch (IllegalStateException e) {
                 log.debug(e.getMessage());
             }
         };
@@ -216,7 +213,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             try {
                 log.trace("stopbutton pressed");
                 srtParser.stop();
-            }catch (IllegalStateException e){
+            } catch (IllegalStateException e) {
                 log.debug(e.getMessage());
             }
         };
@@ -231,7 +228,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                     srtParser.setTime(new Timestamp(srtParser.getTime().toMilliSeconds() + fastForwardDelta));
                     srtParser.start();
                 }
-            }catch (IllegalStateException e){
+            } catch (IllegalStateException e) {
                 log.debug(e.getMessage());
             }
         };
@@ -246,7 +243,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                     srtParser.setTime(new Timestamp(srtParser.getTime().toMilliSeconds() - fastForwardDelta));
                     srtParser.start();
                 }
-            }catch (IllegalStateException e){
+            } catch (IllegalStateException e) {
                 log.debug(e.getMessage());
             }
         };
@@ -268,10 +265,10 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             Timestamp timestamp;
             try {
                 log.debug("timestamp string entered: " + timeField.getText());
-                timestamp = new Timestamp(timeField.getText()+",000");
+                timestamp = new Timestamp(timeField.getText() + ",000");
                 log.debug("user set new timestamp: " + timestamp);
                 synchronized (srtParser) {
-                    if(srtParser.getCurrentState().equals(RunningState.STATE_RUNNING)) {
+                    if (srtParser.getCurrentState().equals(RunningState.STATE_RUNNING)) {
                         srtParser.stop();
                     }
                     srtParser.setTime(timestamp);
@@ -293,7 +290,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             //position options window right next settingsWindow, otherwise optionsWindow may be behind settingsWindow, bc they are both alwaysOnTop
             Window settingsWindow = windowManager.getCurrent();
             Vector2D nextToSettingsWindow = new Vector2D(settingsWindow.getStage().getX() + settingsWindow.getStage().getWidth(), settingsWindow.getStage().getY());
-            windowManager.showWindowAtPos(Windows.OPTIONS,nextToSettingsWindow);
+            windowManager.showWindowAtPos(Windows.OPTIONS, nextToSettingsWindow);
         };
 
 
@@ -306,17 +303,15 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         fastForwardButton.setOnMouseClicked(fastForwardButtonClickedHandler);
 
         Table<Node, EventHandler, EventType> resultTable = HashBasedTable.create();
-        resultTable.put(optionsButton,optionsButtonPressedHandler,MouseEvent.MOUSE_CLICKED);
-        resultTable.put(stopButton,stopButtonPressedHandler,MouseEvent.MOUSE_CLICKED);
-        resultTable.put(startButton,startButtonPressedHandler,MouseEvent.MOUSE_CLICKED);
-        resultTable.put(timeField,timeFieldActionHandler,ActionEvent.ACTION);
-        resultTable.put(movieModeButton,movieModeButtonPressedHandler,MouseEvent.MOUSE_CLICKED);
-        resultTable.put(fastBackwardButton,fastBackwardButtonClickedHandler,MouseEvent.MOUSE_CLICKED);
-        resultTable.put(fastForwardButton,fastForwardButtonClickedHandler,MouseEvent.MOUSE_CLICKED);
+        resultTable.put(optionsButton, optionsButtonPressedHandler, MouseEvent.MOUSE_CLICKED);
+        resultTable.put(stopButton, stopButtonPressedHandler, MouseEvent.MOUSE_CLICKED);
+        resultTable.put(startButton, startButtonPressedHandler, MouseEvent.MOUSE_CLICKED);
+        resultTable.put(timeField, timeFieldActionHandler, ActionEvent.ACTION);
+        resultTable.put(movieModeButton, movieModeButtonPressedHandler, MouseEvent.MOUSE_CLICKED);
+        resultTable.put(fastBackwardButton, fastBackwardButtonClickedHandler, MouseEvent.MOUSE_CLICKED);
+        resultTable.put(fastForwardButton, fastForwardButtonClickedHandler, MouseEvent.MOUSE_CLICKED);
         return resultTable;
     }
-
-
 
 
     @Override
@@ -337,7 +332,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         });
     }
 
-    private void displayWrongTimeStampWarning(){
+    private void displayWrongTimeStampWarning() {
         new Thread(() -> {
             wrongFormatText.setVisible(true);
             try {
@@ -352,28 +347,27 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
 
     @Override
-    @FXML
     public void displaySubtitle(@NonNull SubtitleText subtitleText) {
-        log.trace("asking javafx to display new subtitle in "+this.getClass().getSimpleName()+" : " + subtitleText);
-        lastSubtitleText =subtitleText;
+        log.trace("asking javafx to display new subtitle in " + this.getClass().getSimpleName() + " : " + subtitleText);
+        lastSubtitleText = subtitleText;
 
         Platform.runLater(() -> {
             log.trace("displaying new subtitle: " + subtitleText);
             settingsTextFlow.getChildren().clear();
-            for(List<SubtitleSegment> subtitleSegments: subtitleText.getSubtitleSegments()){
-                for(SubtitleSegment subtitleSegment: subtitleSegments){
+            for (List<SubtitleSegment> subtitleSegments : subtitleText.getSubtitleSegments()) {
+                for (SubtitleSegment subtitleSegment : subtitleSegments) {
                     Text text = new Text(subtitleSegment.getText());
 
-                    if(subtitleSegment.getType().equals(SubtitleType.ITALIC)){
+                    if (subtitleSegment.getType().equals(SubtitleType.ITALIC)) {
                         text.setFont(currentFont.getItalicFont());
-                    }else {
+                    } else {
                         text.setFont(currentFont.getRegularFont());
                     }
-                    log.trace("setting fontcolor: "+ srtFontManager.getFontColor());
+                    log.trace("setting fontcolor: " + srtFontManager.getFontColor());
                     text.setFill(SettingsSrtDisplayer.DEFAULT_FONT_COLOR);
-                    FontUtils.adjustTextSize(text,settingsFontSize);
+                    FontUtils.adjustTextSize(text, settingsFontSize);
 
-                    log.trace("displaying text: " + text + " in "+this.getClass().getSimpleName());
+                    log.trace("displaying text: " + text + " in " + this.getClass().getSimpleName());
                     settingsTextFlow.getChildren().add(text);
                     settingsTextFlow.getChildren().add(new Text(System.lineSeparator()));
                 }
@@ -385,9 +379,9 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     @Override
     public void setTime(@NonNull Timestamp time) {
         Platform.runLater(() -> {
-            if(!lastTimeStamp.equalBySeconds(time)) {
+            if (!lastTimeStamp.equalBySeconds(time)) {
                 currentTimeStampText.setText(time.toAlarmClockString());
-                lastTimeStamp=new Timestamp(time);
+                lastTimeStamp = new Timestamp(time);
             }
         });
     }

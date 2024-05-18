@@ -17,19 +17,23 @@ import java.io.InputStream;
 @Singleton
 public class MovieStageFactory {
 
-    private FXMLLoader loader;
+    private MovieStageController controller;
 
     @Inject
-    public MovieStageFactory(FXMLLoader loader) {
-        this.loader = loader;
+    public MovieStageFactory(MovieStageController controller) {
+        this.controller = controller;
     }
 
-    public Stage create(Stage primaryStage) throws IOException {
-        InputStream fxmlInputStream = ClassLoader.getSystemResourceAsStream("movie-stage.fxml");
-        Parent parent = loader.load(fxmlInputStream);
+    public Stage create() throws IOException {
+        // for some reason it wont work when setting loader.setControllerFactory( clazz -> injector.getInstance(clazz))) - the factory is never called
+        // thats why I do it the less clean way
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setController(controller);
+        InputStream is = ClassLoader.getSystemResourceAsStream("movie-stage.fxml");
+        Parent parent = fxmlLoader.load(is);
         Vector2D screenVec = ScreenUtils.getScreenBoundsVector();
-        primaryStage.setScene(new Scene(parent,screenVec.getX(), screenVec.getY()));
         Stage stage = new Stage();
+        stage.setScene(new Scene(parent,screenVec.getX(), screenVec.getY()));
         stage.setTitle("Movie Mode");
         stage.getScene().setFill(Color.TRANSPARENT);
         stage.initStyle(StageStyle.TRANSPARENT);

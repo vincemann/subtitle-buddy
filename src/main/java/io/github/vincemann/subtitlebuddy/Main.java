@@ -95,17 +95,17 @@ public class Main extends Application {
     private void createStages(Stage primaryStage) throws IOException {
         WindowManager windowManager = injector.getInstance(WindowManager.class);
         SettingsStageFactory settingsStageFactory = injector.getInstance(SettingsStageFactory.class);
-        Stage settingsStage = settingsStageFactory.create(primaryStage);
         SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
+        Stage settingsStage = settingsStageFactory.create();
         windowManager.registerWindow(new Window(Windows.SETTINGS,settingsStage,settingsStageController));
 
         OptionsStageFactory optionsStageFactory = injector.getInstance(OptionsStageFactory.class);
-        Stage optionsStage = optionsStageFactory.create(primaryStage);
+        Stage optionsStage = optionsStageFactory.create();
         OptionsStageController optionsStageController = injector.getInstance(OptionsStageController.class);
         windowManager.registerWindow(new Window(Windows.OPTIONS,optionsStage,optionsStageController));
 
         MovieStageFactory movieStageFactory = injector.getInstance(MovieStageFactory.class);
-        Stage movieStage = movieStageFactory.create(primaryStage);
+        Stage movieStage = movieStageFactory.create();
         MovieStageController movieStageController = injector.getInstance(MovieStageController.class);
         windowManager.registerWindow(new Window(Windows.MOVIE,movieStage,movieStageController));
 
