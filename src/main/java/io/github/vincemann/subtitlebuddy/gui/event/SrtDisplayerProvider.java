@@ -27,10 +27,6 @@ public class SrtDisplayerProvider implements Provider<SrtDisplayer> {
 
     private Class<? extends SrtDisplayer> currentDisplayer = SettingsSrtDisplayer.class;
 
-    public Class<? extends SrtDisplayer> getCurrentDisplayer() {
-        return currentDisplayer;
-    }
-
     public synchronized SrtDisplayer get(){
         checkNotNull(movieSrtDisplayer);
         checkNotNull(settingsSrtDisplayer);

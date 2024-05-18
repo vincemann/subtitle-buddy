@@ -43,7 +43,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Log4j2
 @NoArgsConstructor
 @Singleton
-@io.github.vincemann.subtitlebuddy.gui.stages.OptionsStageController
 public class OptionsStageController {
 
     @FXML

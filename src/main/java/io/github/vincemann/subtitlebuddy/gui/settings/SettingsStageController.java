@@ -11,7 +11,7 @@ import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.events.RequestSrtParserUpdateEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
-import io.github.vincemann.subtitlebuddy.gui.Stages;
+import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
@@ -48,7 +48,6 @@ import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.createImageVi
 
 @Log4j2
 @NoArgsConstructor
-@io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController
 @Singleton
 public class SettingsStageController implements SettingsSrtDisplayer {
     private static final int SETTINGS_CLICK_WARNING_SIZE = 40;
@@ -295,7 +294,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         EventHandler<MouseEvent> optionsButtonPressedHandler = event -> {
             //position options window right next settingsWindow, otherwise optionsWindow may be behind settingsWindow, bc they are both alwaysOnTop
 //            optionsWindow.openOptionsWindow(new Vector2D(getStage().getX()+getStage().getWidth(),getStage().getY()));
-            windowManager.showStage(Stages.OPTIONS);
+            windowManager.showWindow(Windows.OPTIONS);
         };
 
 

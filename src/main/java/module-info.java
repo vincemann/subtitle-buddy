@@ -31,8 +31,9 @@ open module io.github.vincemann.subtitlebuddy {
     exports io.github.vincemann.subtitlebuddy.gui.filechooser;
     exports io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath;
     exports io.github.vincemann.subtitlebuddy.gui.event;
-    exports io.github.vincemann.subtitlebuddy.gui.stages;
-    exports io.github.vincemann.subtitlebuddy.gui.stages.controller;
+    exports io.github.vincemann.subtitlebuddy.gui.movie;
+    exports io.github.vincemann.subtitlebuddy.gui.settings;
+    exports io.github.vincemann.subtitlebuddy.gui.options;
 
     exports io.github.vincemann.subtitlebuddy.listeners;
     exports io.github.vincemann.subtitlebuddy.listeners.key;
@@ -49,7 +50,4 @@ open module io.github.vincemann.subtitlebuddy {
     exports io.github.vincemann.subtitlebuddy.util.fx;
     exports io.github.vincemann.subtitlebuddy.util.vec;
     exports io.github.vincemann.subtitlebuddy.gui;
-    exports io.github.vincemann.subtitlebuddy.gui.movie;
-    exports io.github.vincemann.subtitlebuddy.gui.options;
-    exports io.github.vincemann.subtitlebuddy.gui.settings;
 }

@@ -15,8 +15,9 @@ import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.events.EventHandlerRegistrar;
+import io.github.vincemann.subtitlebuddy.gui.Window;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
-import io.github.vincemann.subtitlebuddy.gui.Stages;
+import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieStageFactory;
 import io.github.vincemann.subtitlebuddy.gui.options.OptionsStageFactory;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsStageFactory;
@@ -82,7 +83,7 @@ public class Main extends Application {
         createStages(primaryStage);
 
         // start by showing settings view
-        windowManager.showStage(Stages.SETTINGS);
+        windowManager.showWindow(Windows.SETTINGS);
 
         // start parser
         injector.getInstance(SrtParserEngine.class).start();
@@ -96,17 +97,17 @@ public class Main extends Application {
         SettingsStageFactory settingsStageFactory = injector.getInstance(SettingsStageFactory.class);
         Stage settingsStage = settingsStageFactory.create(primaryStage);
         SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
-        windowManager.addStage(Stages.SETTINGS,settingsStage,settingsStageController);
+        windowManager.registerWindow(new Window(Windows.SETTINGS,settingsStage,settingsStageController));
 
         OptionsStageFactory optionsStageFactory = injector.getInstance(OptionsStageFactory.class);
         Stage optionsStage = optionsStageFactory.create(primaryStage);
         OptionsStageController optionsStageController = injector.getInstance(OptionsStageController.class);
-        windowManager.addStage(Stages.OPTIONS,optionsStage,optionsStageController);
+        windowManager.registerWindow(new Window(Windows.OPTIONS,optionsStage,optionsStageController));
 
         MovieStageFactory movieStageFactory = injector.getInstance(MovieStageFactory.class);
         Stage movieStage = movieStageFactory.create(primaryStage);
         MovieStageController movieStageController = injector.getInstance(MovieStageController.class);
-        windowManager.addStage(Stages.MOVIE,movieStage,movieStageController);
+        windowManager.registerWindow(new Window(Windows.MOVIE,movieStage,movieStageController));
 
     }
 

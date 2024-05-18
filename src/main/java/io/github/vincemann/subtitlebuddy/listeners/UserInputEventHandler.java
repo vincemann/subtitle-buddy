@@ -5,18 +5,20 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
-import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.events.HotKeyPressedEvent;
 import io.github.vincemann.subtitlebuddy.events.MouseClickedEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
-import io.github.vincemann.subtitlebuddy.properties.PropertyAccessException;
+import io.github.vincemann.subtitlebuddy.gui.WindowManager;
+import io.github.vincemann.subtitlebuddy.gui.Windows;
+import io.github.vincemann.subtitlebuddy.gui.event.SrtDisplayerProvider;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.gui.event.SrtDisplayerProvider;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKeyEventHandler;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.MouseClickedEventHandler;
+import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
+import io.github.vincemann.subtitlebuddy.properties.PropertyAccessException;
+import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import lombok.extern.log4j.Log4j2;
@@ -36,15 +38,18 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
     private SrtDisplayerProvider srtDisplayerProvider;
     private EventBus eventBus;
 
+    private WindowManager windowManager;
+
 
     @Inject
     public UserInputEventHandler(SrtParser srtParser, PropertiesFile properties,
                                  @Named(PropertyFileKeys.START_STOP_HOT_KEY_TOGGLED) boolean startStopHotKeyToggled,
                                  @Named(PropertyFileKeys.NEXT_CLICK_HOT_KEY_TOGGLED) boolean nextClickHotKeyToggled ,
                                  SrtDisplayerProvider srtDisplayerProvider,
-                                 EventBus eventBus) {
+                                 EventBus eventBus, WindowManager windowManager) {
         this.properties = properties;
         this.srtParser = srtParser;
+        this.windowManager = windowManager;
         this.nextClickCounts=false;
         this.startStopHotKeyToggled=startStopHotKeyToggled;
         this.nextClickHotKeyToggled=nextClickHotKeyToggled;
@@ -76,11 +81,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
                 break;
             case END_MOVIE_MODE:
                 log.debug("end movie mode hotkey event arrived");
-                MovieSrtDisplayer movieSrtDisplayer = srtDisplayerProvider.get(MovieSrtDisplayer.class);
-                if(movieSrtDisplayer.isDisplaying()){
-                    log.debug("switching from movie mode to settings mode bc of end movie mode hotkey event");
-                    eventBus.post(new SwitchSrtDisplayerEvent(SettingsSrtDisplayer.class));
-                }
+                eventBus.post(new SwitchSrtDisplayerEvent(SettingsSrtDisplayer.class));
         }
     }
 

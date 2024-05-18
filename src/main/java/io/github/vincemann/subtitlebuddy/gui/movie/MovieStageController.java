@@ -8,6 +8,8 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.events.MovieTextPositionChangedEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
+import io.github.vincemann.subtitlebuddy.gui.WindowManager;
+import io.github.vincemann.subtitlebuddy.gui.event.SrtDisplayerProvider;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
@@ -98,6 +100,10 @@ public class MovieStageController implements MovieSrtDisplayer {
     private DragResizeMod dragResizeMod;
 
     private Table<Node, EventHandler, EventType> eventHandlers;
+
+    private WindowManager windowManager;
+
+    private SrtDisplayerProvider srtDisplayerProvider;
 
 
     @Inject

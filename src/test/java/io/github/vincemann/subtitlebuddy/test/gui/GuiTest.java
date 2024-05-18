@@ -8,10 +8,9 @@ import io.github.vincemann.subtitlebuddy.Main;
 import io.github.vincemann.subtitlebuddy.config.strings.ApacheUIStringsFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
-import io.github.vincemann.subtitlebuddy.gui.Stages;
-import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
-import io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController;
+import io.github.vincemann.subtitlebuddy.gui.Windows;
+import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.listeners.key.GlobalHotKeyListener;
 import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.properties.ApachePropertiesFile;
@@ -40,6 +39,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static io.github.vincemann.subtitlebuddy.util.fx.FxThreadUtils.runOnFxThreadAndWait;
 import static org.testfx.api.FxToolkit.registerPrimaryStage;
 
 public abstract class GuiTest extends ApplicationTest {
@@ -65,7 +65,7 @@ public abstract class GuiTest extends ApplicationTest {
 
 
     public void clickNextToSettingsStage() {
-        Stage settingsStage = findStage(Stages.SETTINGS);
+        Stage settingsStage = findStage(Windows.SETTINGS);
         Point2D nextToSettingsStage = new Point2D(settingsStage.getX() + settingsStage.getWidth() + 10, settingsStage.getY() + 10);
         clickOn(nextToSettingsStage);
         refreshGui();
@@ -110,7 +110,7 @@ public abstract class GuiTest extends ApplicationTest {
     public void focusNode(String query) throws TimeoutException {
         Node node = find(query);
         Runnable runnable = node::requestFocus;
-        doOnFxThreadAndWait(runnable);
+        runOnFxThreadAndWait(runnable);
         refreshGui();
     }
 
@@ -197,26 +197,7 @@ public abstract class GuiTest extends ApplicationTest {
         hotKeyListener.nativeKeyReleased(nPressed);
     }
 
-    protected void doOnFxThreadAndWait(Runnable task) {
-        CompletableFuture<Void> future = new CompletableFuture<>();
-        Platform.runLater(() -> {
-            try {
-                task.run();
-                future.complete(null);  // Signal completion
-            } catch (Exception e) {
-                future.completeExceptionally(e);  // Propagate error
-            }
-        });
 
-        try {
-            future.get();
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e.getCause());  // Throw the cause of the exception
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();  // Handle thread interruption
-            throw new RuntimeException("Interrupted while waiting", e);
-        }
-    }
 
     public boolean isStageShowing(String name) {
 //        AbstractStageController abstractStageController = getInstance(AbstractStageController.class, a);
@@ -226,7 +207,8 @@ public abstract class GuiTest extends ApplicationTest {
     }
 
     /**
-     * Focus stage.
+     * Tests Focus stage method.
+     * I am not using {@link WindowManager} here bc I need to wait until focused for testing.
      * Optional parameter move, only relevant for mac.
      * Need to move cursor to stage, bc on mac can only focus when cursor hovers above it.
      * @param name class of stage to focus
@@ -239,19 +221,15 @@ public abstract class GuiTest extends ApplicationTest {
             stage.toFront();
             stage.requestFocus();
         };
-        doOnFxThreadAndWait(toFrontTask);
+        runOnFxThreadAndWait(toFrontTask);
         refreshGui();
         if (!stage.isFocused()) {
             throw new IllegalStateException("Stage is not focused");
         }
     }
 
-    public Object findStageController(String name) {
-        return windowManager.getController(name);
-    }
-
     public Stage findStage(String name){
-        return windowManager.getStage(name);
+        return windowManager.findWindow(name).getStage();
     }
 
     public SrtDisplayer findSrtDisplayer(Class<? extends SrtDisplayer> modeAnnotation) {

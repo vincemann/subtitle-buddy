@@ -3,18 +3,16 @@ package io.github.vincemann.subtitlebuddy.test.gui;
 
 import com.google.common.eventbus.EventBus;
 import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
-import io.github.vincemann.subtitlebuddy.gui.Stages;
-import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.test.gui.pages.SettingsPage;
-import io.github.vincemann.subtitlebuddy.gui.stages.MovieStageController;
-import io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController;
+import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKey;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
+import io.github.vincemann.subtitlebuddy.test.gui.pages.SettingsPage;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.awt.*;
 import java.util.concurrent.TimeoutException;
@@ -77,7 +75,7 @@ public class ParserHotKeyTest extends GuiTest {
         clickNextToSettingsStage();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtParser.getCurrentState());
 
-        safeFocusStage(Stages.SETTINGS);
+        safeFocusStage(Windows.SETTINGS);
         refreshGui();
         typeAltN();
         clickNextToSettingsStage();
@@ -99,7 +97,7 @@ public class ParserHotKeyTest extends GuiTest {
         refreshGui();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtParser.getCurrentState());
         refreshGui();
-        focusStage(Stages.MOVIE);
+        focusStage(Windows.MOVIE);
         refreshGui();
         typeAltN();
         clickOn(middleOfScreen);
@@ -112,14 +110,14 @@ public class ParserHotKeyTest extends GuiTest {
         settingsPage.switchToMovieMode();
         refreshGui();
 
-        focusStage(Stages.MOVIE);
+        focusStage(Windows.MOVIE);
         refreshGui();
 
         typeAltEscape();
         refreshGui();
 
-        Assert.assertTrue(findSrtDisplayer(SettingsSrtDisplayer.class).isDisplaying());
-        Assert.assertFalse(findSrtDisplayer(MovieSrtDisplayer.class).isDisplaying());
+        Assert.assertTrue(isStageShowing(Windows.SETTINGS));
+        Assert.assertFalse(isStageShowing(Windows.MOVIE));
     }
 
 

@@ -3,18 +3,19 @@ package io.github.vincemann.subtitlebuddy.gui.event;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.gui.Stages;
+import io.github.vincemann.subtitlebuddy.events.MovieTextPositionChangedEvent;
+import io.github.vincemann.subtitlebuddy.events.SrtFontChangeEvent;
+import io.github.vincemann.subtitlebuddy.events.SrtFontColorChangeEvent;
+import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
+import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.properties.PropertyAccessException;
 import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
-import io.github.vincemann.subtitlebuddy.events.MovieTextPositionChangedEvent;
-import io.github.vincemann.subtitlebuddy.events.SrtFontChangeEvent;
-import io.github.vincemann.subtitlebuddy.events.SrtFontColorChangeEvent;
-import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 import lombok.extern.log4j.Log4j2;
 
 
@@ -83,15 +84,15 @@ public class SrtDisplayerEventHandlerImpl implements SrtDisplayerEventHandler {
     public void handleSwitchSrtDisplayerEvent(SwitchSrtDisplayerEvent e){
         log.debug("switching srt Displayer event getting handled...");
         SubtitleText lastSub = this.srtDisplayerProvider.get().getLastSubtitleText();
-        if (srtDisplayerProvider.getCurrentDisplayer().equals(SettingsSrtDisplayer.class)){
-            windowManager.closeStage(Stages.SETTINGS);
-            windowManager.showStage(Stages.MOVIE);
-        }
-        else{
-            windowManager.closeStage(Stages.MOVIE);
-            windowManager.showStage(Stages.SETTINGS);
-        }
-        this.srtDisplayerProvider.setCurrentDisplayer(e.getSrtDisplayerMode());
+        windowManager.showWindow(mapToWindow(e.getTarget()));
+        this.srtDisplayerProvider.setCurrentDisplayer(e.getTarget());
         this.srtDisplayerProvider.get().displaySubtitle(lastSub);
+    }
+
+    private String mapToWindow(Class<? extends SrtDisplayer> displayer){
+        if (displayer.equals(SettingsSrtDisplayer.class))
+            return Windows.SETTINGS;
+        else
+            return Windows.MOVIE;
     }
 }
