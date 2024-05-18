@@ -3,7 +3,7 @@ package io.github.vincemann.subtitlebuddy.events;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SrtDisplayerEventHandler;
+import io.github.vincemann.subtitlebuddy.gui.event.SrtDisplayerEventHandler;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtParserEventHandler;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKeyEventHandler;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.MouseClickedEventHandler;

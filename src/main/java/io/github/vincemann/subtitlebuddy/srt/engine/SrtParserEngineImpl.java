@@ -9,8 +9,8 @@ import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
 import io.github.vincemann.subtitlebuddy.events.DoneParsingEvent;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SettingsSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import lombok.extern.log4j.Log4j2;
 

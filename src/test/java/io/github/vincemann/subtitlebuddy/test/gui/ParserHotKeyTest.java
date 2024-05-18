@@ -3,8 +3,9 @@ package io.github.vincemann.subtitlebuddy.test.gui;
 
 import com.google.common.eventbus.EventBus;
 import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.MovieSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SettingsSrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.Stages;
+import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.test.gui.pages.SettingsPage;
 import io.github.vincemann.subtitlebuddy.gui.stages.MovieStageController;
 import io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController;
@@ -76,7 +77,7 @@ public class ParserHotKeyTest extends GuiTest {
         clickNextToSettingsStage();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtParser.getCurrentState());
 
-        safeFocusStage(SettingsStageController.class);
+        safeFocusStage(Stages.SETTINGS);
         refreshGui();
         typeAltN();
         clickNextToSettingsStage();
@@ -98,7 +99,7 @@ public class ParserHotKeyTest extends GuiTest {
         refreshGui();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtParser.getCurrentState());
         refreshGui();
-        focusStage(MovieStageController.class);
+        focusStage(Stages.MOVIE);
         refreshGui();
         typeAltN();
         clickOn(middleOfScreen);
@@ -111,7 +112,7 @@ public class ParserHotKeyTest extends GuiTest {
         settingsPage.switchToMovieMode();
         refreshGui();
 
-        focusStage(MovieStageController.class);
+        focusStage(Stages.MOVIE);
         refreshGui();
 
         typeAltEscape();

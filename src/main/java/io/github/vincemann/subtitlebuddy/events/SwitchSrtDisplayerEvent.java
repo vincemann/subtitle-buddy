@@ -1,7 +1,7 @@
 package io.github.vincemann.subtitlebuddy.events;
 
 
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
 import lombok.Getter;
 
 

@@ -3,11 +3,11 @@ package io.github.vincemann.subtitlebuddy.module;
 import com.google.inject.AbstractModule;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 
-public class ClassPathFileExtractorModule extends AbstractModule {
+public class ClassPathFileModule extends AbstractModule {
 
     private ClassPathFileExtractor classPathFileExtractor;
 
-    public ClassPathFileExtractorModule(ClassPathFileExtractor classPathFileExtractor) {
+    public ClassPathFileModule(ClassPathFileExtractor classPathFileExtractor) {
         this.classPathFileExtractor = classPathFileExtractor;
     }
 

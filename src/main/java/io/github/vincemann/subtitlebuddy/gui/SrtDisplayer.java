@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.gui.srtdisplayer;
+package io.github.vincemann.subtitlebuddy.gui;
 
 import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
@@ -23,16 +23,16 @@ public interface SrtDisplayer {
 
     SubtitleText getLastSubtitleText();
 
-    /**
-     * Close window or make invisible in order to switch to another window.
-     */
-    void close();
-
-    /**
-     * Open window or make visible in order to switch to this window.
-     */
-    void open();
-
-    boolean isDisplaying();
+//    /**
+//     * Close window or make invisible in order to switch to another window.
+//     */
+//    void close();
+//
+//    /**
+//     * Open window or make visible in order to switch to this window.
+//     */
+//    void open();
+//
+//    boolean isDisplaying();
 
 }

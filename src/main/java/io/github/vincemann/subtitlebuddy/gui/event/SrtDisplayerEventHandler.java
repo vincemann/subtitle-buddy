@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.gui.srtdisplayer;
+package io.github.vincemann.subtitlebuddy.gui.event;
 
 import io.github.vincemann.subtitlebuddy.events.MovieTextPositionChangedEvent;
 import io.github.vincemann.subtitlebuddy.events.SrtFontChangeEvent;

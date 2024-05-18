@@ -1,8 +1,11 @@
-package io.github.vincemann.subtitlebuddy.gui.srtdisplayer;
+package io.github.vincemann.subtitlebuddy.gui.event;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import lombok.extern.log4j.Log4j2;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -23,7 +26,10 @@ public class SrtDisplayerProvider implements Provider<SrtDisplayer> {
     private MovieSrtDisplayer movieSrtDisplayer;
 
     private Class<? extends SrtDisplayer> currentDisplayer = SettingsSrtDisplayer.class;
-    
+
+    public Class<? extends SrtDisplayer> getCurrentDisplayer() {
+        return currentDisplayer;
+    }
 
     public synchronized SrtDisplayer get(){
         checkNotNull(movieSrtDisplayer);

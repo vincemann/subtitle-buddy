@@ -1,31 +1,33 @@
 package io.github.vincemann.subtitlebuddy.module;
 
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Names;
+import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
+import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
+import io.github.vincemann.subtitlebuddy.gui.FXMLLoaderProvider;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.WindowManager;
+import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.movie.MovieStageController;
+import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.settings.SettingsStageController;
+import io.github.vincemann.subtitlebuddy.gui.event.*;
+import io.github.vincemann.subtitlebuddy.gui.settings.SettingsStageFactory;
 import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
-import io.github.vincemann.subtitlebuddy.gui.stages.MovieStageController;
-import io.github.vincemann.subtitlebuddy.gui.stages.OptionsStageController;
-import io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController;
-import io.github.vincemann.subtitlebuddy.gui.stages.controller.AbstractStageController;
-import io.github.vincemann.subtitlebuddy.gui.stages.controller.FXMLLoaderProvider;
-import io.github.vincemann.subtitlebuddy.gui.stages.controller.OptionsWindow;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.*;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.stage.Stage;
 
 import java.util.List;
 
 
 public class GuiModule extends PropertyFilesModule {
 
-    private Stage primaryStage;
 
-    public GuiModule(UIStringsFile stringConfiguration, PropertiesFile propertiesConfiguration, Stage primaryStage) {
+    public GuiModule(UIStringsFile stringConfiguration, PropertiesFile propertiesConfiguration) {
         super(stringConfiguration, propertiesConfiguration);
-        this.primaryStage = primaryStage;
     }
 
     @Override
@@ -79,15 +81,20 @@ public class GuiModule extends PropertyFilesModule {
 
     @Override
     protected void initClassBindings() {
-        bind(Stage.class).toInstance(primaryStage);
+        Platform.setImplicitExit(false); // https://stackoverflow.com/questions/29302837/javafx-platform-runlater-never-running
+        bind(WindowManager.class).in(Singleton.class);
+        bind(SettingsStageFactory.class).in(Singleton.class);
         bind(FXMLLoader.class).toProvider(FXMLLoaderProvider.class);
-        bind(SettingsSrtDisplayer.class).to(io.github.vincemann.subtitlebuddy.gui.stages.controller.SettingsStageController.class);
-        bind(MovieSrtDisplayer.class).to(io.github.vincemann.subtitlebuddy.gui.stages.controller.MovieStageController.class);
+        bind(SettingsSrtDisplayer.class).to(SettingsStageController.class);
+        bind(MovieSrtDisplayer.class).to(MovieStageController.class);
         bind(SrtDisplayer.class).toProvider(SrtDisplayerProvider.class);
-        bind(AbstractStageController.class).annotatedWith(MovieStageController.class).to(io.github.vincemann.subtitlebuddy.gui.stages.controller.MovieStageController.class);
-        bind(AbstractStageController.class).annotatedWith(SettingsStageController.class).to(io.github.vincemann.subtitlebuddy.gui.stages.controller.SettingsStageController.class);
-        bind(AbstractStageController.class).annotatedWith(OptionsStageController.class).to(io.github.vincemann.subtitlebuddy.gui.stages.controller.OptionsStageController.class);
-        bind(OptionsWindow.class).to(io.github.vincemann.subtitlebuddy.gui.stages.controller.OptionsStageController.class);
         bind(SrtDisplayerEventHandler.class).to(SrtDisplayerEventHandlerImpl.class);
     }
+
+    @Provides
+    @Singleton
+    public WindowManager provideWindowManager() {
+        return new WindowManager();
+    }
+
 }

@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.gui.stages.controller;
+package io.github.vincemann.subtitlebuddy.gui.settings;
 
 
 import com.google.common.collect.HashBasedTable;
@@ -7,17 +7,17 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
-import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
+import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.events.RequestSrtParserUpdateEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
+import io.github.vincemann.subtitlebuddy.gui.Stages;
+import io.github.vincemann.subtitlebuddy.gui.WindowManager;
+import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
+import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.srt.*;
-import io.github.vincemann.subtitlebuddy.srt.parser.InvalidTimestampFormatException;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.MovieSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SettingsSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.gui.stages.StageState;
 import io.github.vincemann.subtitlebuddy.srt.font.SrtFontManager;
+import io.github.vincemann.subtitlebuddy.srt.parser.InvalidTimestampFormatException;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import io.github.vincemann.subtitlebuddy.util.fx.FontUtils;
@@ -36,23 +36,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 
-import java.io.IOException;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.createImageView;
 
 @Log4j2
 @NoArgsConstructor
 @io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController
 @Singleton
-public class SettingsStageController extends AbstractStageController implements SettingsSrtDisplayer {
-    private static final String SETTINGS_STAGE_FXML_FILE_PATH = "settings-stage.fxml";
+public class SettingsStageController implements SettingsSrtDisplayer {
     private static final int SETTINGS_CLICK_WARNING_SIZE = 40;
     //millis
     private static final int MIN_TIME_STAMP_WARNING_DURATION = 1000;
@@ -98,7 +96,7 @@ public class SettingsStageController extends AbstractStageController implements 
 
     private SrtFontManager srtFontManager;
 
-    private OptionsWindow optionsWindow;
+    private WindowManager windowManager;
 
     private EventBus eventBus;
 
@@ -113,43 +111,37 @@ public class SettingsStageController extends AbstractStageController implements 
     private String wrongTimeStampFormatText;
     private String timestampJumpHintTextString;
 
+    private Table<Node, EventHandler, EventType> eventHandlers;
+
 
 
     @Inject
-    public SettingsStageController(Stage mainStage,
-                                   SrtParser srtParser,
-                                   @Named(UIStringsKeys.SETTINGS_STAGE_TITLE)
-                                           String windowTitle,
+    public SettingsStageController(SrtParser srtParser,
                                    @Named(PropertyFileKeys.TIME_STAMP_WARNING_DURATION)
                                                long timeStampWarningDuration,
                                    SrtFontManager srtFontManager,
-                                   OptionsWindow optionsWindow,
-                                   @Named(PropertyFileKeys.SETTINGS_WINDOW_SIZE) Vector2D minSize,
+                                   WindowManager windowManager,
                                    @Named(PropertyFileKeys.SETTINGS_FONT_SIZE) int settingsFontSize,
                                    @Named(PropertyFileKeys.FAST_FORWARD_DELTA) int fastForwardDelta,
                                    EventBus eventBus,
                                    ClassPathFileExtractor classPathFileExtractor,
-                                   @Named(PropertyFileKeys.CLICK_WARNING_IMAGE_PATH) String clickWarningImagePath,
                                    @Named(UIStringsKeys.START_BUTTON_TEXT) String startButtonText,
                                    @Named(UIStringsKeys.STOP_BUTTON_TEXT) String stopButtonText,
                                    @Named(UIStringsKeys.MOVIE_MODE_BUTTON_TEXT)String movieModeButtonText,
                                    @Named(UIStringsKeys.OPTIONS_BUTTON_TEXT) String optionsButtonText,
                                    @Named(UIStringsKeys.WRONG_TIMESTAMP_FORMAT_TEXT) String wrongTimeStampFormatText,
                                    @Named(UIStringsKeys.TIMESTAMP_JUMP_HINT_TEXT) String timestampJumpHintTextString
-    )
-            throws IOException {
-        super(classPathFileExtractor.findOnClassPath(SETTINGS_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(),windowTitle,
-                minSize);
-        createStage(this,mainStage);
+    ) {
+//        createStage(this,mainStage);
         this.settingsClickWarning = createImageView(imageHBox,
-                classPathFileExtractor.findOnClassPath(clickWarningImagePath).getFile(),
+                "images/finger.png",
                 new Vector2D(SETTINGS_CLICK_WARNING_SIZE,SETTINGS_CLICK_WARNING_SIZE));
         this.settingsFontSize=settingsFontSize;
         this.srtParser = srtParser;
         this.eventBus=eventBus;
         this.timeStampWarningDuration=timeStampWarningDuration;
         this.srtFontManager = srtFontManager;
-        this.optionsWindow=optionsWindow;
+        this.windowManager = windowManager;
         this.fastForwardDelta=fastForwardDelta;
         //ui strings
         this.startButtonText=startButtonText;
@@ -158,20 +150,6 @@ public class SettingsStageController extends AbstractStageController implements 
         this.movieModeButtonText=movieModeButtonText;
         this.wrongTimeStampFormatText=wrongTimeStampFormatText;
         this.timestampJumpHintTextString=timestampJumpHintTextString;
-        constructorInit();
-    }
-
-    @Override
-    public void setFontColor(Color color) {
-        // not supported in settings window
-    }
-
-    @Override
-    public Color getFontColor() {
-        return SettingsSrtDisplayer.DEFAULT_FONT_COLOR;
-    }
-
-    private void constructorInit(){
         loadUIStrings();
         lastTimeStamp = Timestamp.ZERO();
         lastSubtitleText = srtParser.getCurrentSubtitleText();
@@ -193,13 +171,38 @@ public class SettingsStageController extends AbstractStageController implements 
         });
     }
 
+    @FXML
+    protected void fxmlInit() {
+        checkNotNull(optionsButton);
+        checkNotNull(timeField);
+        checkNotNull(startButton);
+        checkNotNull(stopButton);
+        checkNotNull(settingsTextFlow);
+        checkNotNull(settingsTextFlow.getChildren());
+        checkNotNull(currentTimeStampText);
+        checkNotNull(wrongFormatText);
+        checkNotNull(fastBackwardButton);
+        checkNotNull(fastForwardButton);
+        eventHandlers = registerEventHandlers();
+    }
+
+    @Override
+    public void setFontColor(Color color) {
+        // not supported in settings window
+    }
+
+    @Override
+    public Color getFontColor() {
+        return SettingsSrtDisplayer.DEFAULT_FONT_COLOR;
+    }
+
 
     @Override
     public void setCurrentFont(SrtFonts font) {
         this.currentFont=font;
     }
 
-    @Override
+
     protected Table<Node, EventHandler, EventType> registerEventHandlers() {
 
         // todo put into own classes - separate concerns
@@ -291,7 +294,8 @@ public class SettingsStageController extends AbstractStageController implements 
 
         EventHandler<MouseEvent> optionsButtonPressedHandler = event -> {
             //position options window right next settingsWindow, otherwise optionsWindow may be behind settingsWindow, bc they are both alwaysOnTop
-            optionsWindow.openOptionsWindow(new Vector2D(getStage().getX()+getStage().getWidth(),getStage().getY()));
+//            optionsWindow.openOptionsWindow(new Vector2D(getStage().getX()+getStage().getWidth(),getStage().getY()));
+            windowManager.showStage(Stages.OPTIONS);
         };
 
 
@@ -314,20 +318,8 @@ public class SettingsStageController extends AbstractStageController implements 
         return resultTable;
     }
 
-    @Override
-    protected void onFXMLInitialize() {
-        super.onFXMLInitialize();
-        checkNotNull(optionsButton);
-        checkNotNull(timeField);
-        checkNotNull(startButton);
-        checkNotNull(stopButton);
-        checkNotNull(settingsTextFlow);
-        checkNotNull(settingsTextFlow.getChildren());
-        checkNotNull(currentTimeStampText);
-        checkNotNull(wrongFormatText);
-        checkNotNull(fastBackwardButton);
-        checkNotNull(fastForwardButton);
-    }
+
+
 
     @Override
     public void displayNextClickCounts() {
@@ -347,13 +339,13 @@ public class SettingsStageController extends AbstractStageController implements 
         });
     }
 
-    @Override
-    public void onStageCreate(Stage stage){
-        super.onStageCreate(stage);
-        log.debug("stage initialized");
-        stage.setAlwaysOnTop(true);
-        stage.setResizable(false);
-    }
+//    @Override
+//    public void onStageCreate(Stage stage){
+//        super.onStageCreate(stage);
+//        log.debug("stage initialized");
+//        stage.setAlwaysOnTop(true);
+//        stage.setResizable(false);
+//    }
 
 
 
@@ -412,29 +404,29 @@ public class SettingsStageController extends AbstractStageController implements 
         });
     }
 
-    @Override
-    protected void onShowStage() {
-        super.onShowStage();
-    }
+//    @Override
+//    protected void onShowStage() {
+//        super.onShowStage();
+//    }
 
-    @Override
-    protected void onStageClose() {
-        super.onStageClose();
-        System.exit(0);
-    }
+//    @Override
+//    protected void onStageClose() {
+//        super.onStageClose();
+//        System.exit(0);
+//    }
 
-    @Override
-    public void close() {
-        closeStage();
-    }
+//    @Override
+//    public void close() {
+//        closeStage();
+//    }
+//
+//    @Override
+//    public void open() {
+//        showStage();
+//    }
 
-    @Override
-    public void open() {
-        showStage();
-    }
-
-    @Override
-    public boolean isDisplaying() {
-        return getStageState().equals(StageState.OPEN);
-    }
+//    @Override
+//    public boolean isDisplaying() {
+//        return getStageState().equals(StageState.OPEN);
+//    }
 }

@@ -1,9 +1,8 @@
 package io.github.vincemann.subtitlebuddy.test.gui;
 
+import io.github.vincemann.subtitlebuddy.gui.Stages;
 import io.github.vincemann.subtitlebuddy.test.gui.pages.MoviePage;
 import io.github.vincemann.subtitlebuddy.test.gui.pages.SettingsPage;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.MovieSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.stages.MovieStageController;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,7 +24,7 @@ public class StageSwitchingTest extends GuiTest {
     public void testSwitchToMovieMode() throws TimeoutException {
         settingsPage.switchToMovieMode();
         WaitForAsyncUtils.waitForFxEvents();
-        Assert.assertTrue(findSrtDisplayer(MovieSrtDisplayer.class).isDisplaying());
+        Assert.assertTrue(isStageShowing(Stages.MOVIE));
     }
 
 
@@ -33,11 +32,11 @@ public class StageSwitchingTest extends GuiTest {
     public void testSwitchToMovieModeAndBack() throws TimeoutException {
         MoviePage moviePage = settingsPage.switchToMovieMode();
         refreshGui();
-        focusStage(MovieStageController.class);
+        focusStage(Stages.MOVIE);
         moviePage.switchToSettingsPage();
         refreshGui();
-        Assert.assertTrue(findSrtDisplayer(SettingsSrtDisplayer.class).isDisplaying());
-        Assert.assertFalse(findSrtDisplayer(MovieSrtDisplayer.class).isDisplaying());
+        Assert.assertTrue(isStageShowing(Stages.SETTINGS));
+        Assert.assertFalse(isStageShowing(Stages.MOVIE));
     }
 
 
@@ -45,8 +44,8 @@ public class StageSwitchingTest extends GuiTest {
     public void testSwitchToMovieModeWhenRunning() throws TimeoutException {
         settingsPage.pressStart();
         settingsPage.switchToMovieMode();
-        Assert.assertTrue(findSrtDisplayer(MovieSrtDisplayer.class).isDisplaying());
-        Assert.assertFalse(findSrtDisplayer(SettingsSrtDisplayer.class).isDisplaying());
+        Assert.assertTrue(isStageShowing(Stages.MOVIE));
+        Assert.assertFalse(isStageShowing(Stages.SETTINGS));
     }
 
     @Test

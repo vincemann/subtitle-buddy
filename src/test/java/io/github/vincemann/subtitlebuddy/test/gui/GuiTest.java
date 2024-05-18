@@ -8,10 +8,10 @@ import io.github.vincemann.subtitlebuddy.Main;
 import io.github.vincemann.subtitlebuddy.config.strings.ApacheUIStringsFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.Stages;
+import io.github.vincemann.subtitlebuddy.gui.WindowManager;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController;
-import io.github.vincemann.subtitlebuddy.gui.stages.StageState;
-import io.github.vincemann.subtitlebuddy.gui.stages.controller.AbstractStageController;
 import io.github.vincemann.subtitlebuddy.listeners.key.GlobalHotKeyListener;
 import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.properties.ApachePropertiesFile;
@@ -46,6 +46,8 @@ public abstract class GuiTest extends ApplicationTest {
 
 //    private static final long GUI_TEST_TIME_OUT = 3000;
 
+    private WindowManager windowManager;
+
     @BeforeClass
     public static void setupSpec() throws Exception {
 //        // cli arg
@@ -60,37 +62,43 @@ public abstract class GuiTest extends ApplicationTest {
         registerPrimaryStage();
     }
 
+
+
     public void clickNextToSettingsStage() {
-        Stage settingsStage = findStageController(SettingsStageController.class).getStage();
+        Stage settingsStage = findStage(Stages.SETTINGS);
         Point2D nextToSettingsStage = new Point2D(settingsStage.getX() + settingsStage.getWidth() + 10, settingsStage.getY() + 10);
         clickOn(nextToSettingsStage);
         refreshGui();
     }
 
-    public void clickOnStage(Class<? extends Annotation> controllerClass){
-        Stage settingsStage = findStageController(controllerClass).getStage();
+    public void clickOnStage(String name){
+        Stage settingsStage = findStage(name);
         Point2D middleOfStage = new Point2D(settingsStage.getX() + settingsStage.getWidth()/2, settingsStage.getY() + settingsStage.getHeight()/2);
         clickOn(middleOfStage);
     }
 
     // mac has stricter focus policies, so sometimes I need to click on the window, to tell mac its the active window and may
     // request focus
-    public void safeFocusStage(Class<? extends Annotation> controller){
+    public void safeFocusStage(String name){
         if (runningOnMac())
-            focusStage(controller,true);
+            focusStage(name,true);
         else
-            focusStage(controller);
+            focusStage(name);
     }
 
     @Before
     public void beforeEach() throws Exception {
         LoggingUtils.disableUtilLogger();
+
+        windowManager = getInstance(WindowManager.class);
+
         Main application = (Main) ApplicationTest.launch(Main.class);
 
         // Explicitly wait for the application to be ready
         WaitForAsyncUtils.waitForFxEvents();
         waitUntilApplicationReady(application);
     }
+
 
     // only needed for jnativehook 2.2.2
     private void waitUntilApplicationReady(Main application) throws TimeoutException {
@@ -210,34 +218,40 @@ public abstract class GuiTest extends ApplicationTest {
         }
     }
 
-    public boolean isStageShowing(Class<? extends Annotation> a) {
-        AbstractStageController abstractStageController = getInstance(AbstractStageController.class, a);
-        return abstractStageController.getStageState().equals(StageState.OPEN);
+    public boolean isStageShowing(String name) {
+//        AbstractStageController abstractStageController = getInstance(AbstractStageController.class, a);
+//        return abstractStageController.getStageState().equals(StageState.OPEN);
+        Stage stage = findStage(name);
+        return stage.isShowing();
     }
 
     /**
      * Focus stage.
      * Optional parameter move, only relevant for mac.
      * Need to move cursor to stage, bc on mac can only focus when cursor hovers above it.
-     * @param controllerClass class of controller of stage to focus
+     * @param name class of stage to focus
      */
-    public void focusStage(Class<? extends Annotation> controllerClass, Boolean... move) {
+    public void focusStage(String name, Boolean... move) {
         if (move.length > 0 && move[0])
-            clickOnStage(controllerClass);
-        AbstractStageController abstractStageController = getInstance(AbstractStageController.class, controllerClass);
+            clickOnStage(name);
+        Stage stage = findStage(name);
         Runnable toFrontTask = () -> {
-            abstractStageController.getStage().toFront();
-            abstractStageController.getStage().requestFocus();
+            stage.toFront();
+            stage.requestFocus();
         };
         doOnFxThreadAndWait(toFrontTask);
         refreshGui();
-        if (!abstractStageController.getStage().isFocused()) {
+        if (!stage.isFocused()) {
             throw new IllegalStateException("Stage is not focused");
         }
     }
 
-    public AbstractStageController findStageController(Class<? extends Annotation> stageAnnotation) {
-        return getInstance(AbstractStageController.class, stageAnnotation);
+    public Object findStageController(String name) {
+        return windowManager.getController(name);
+    }
+
+    public Stage findStage(String name){
+        return windowManager.getStage(name);
     }
 
     public SrtDisplayer findSrtDisplayer(Class<? extends SrtDisplayer> modeAnnotation) {
@@ -255,11 +269,11 @@ public abstract class GuiTest extends ApplicationTest {
         UIStringsFile testStringsFile = new ApacheUIStringsFile(new File(Main.UI_STRINGS_FILE_PATH));
         // set all modules for integration test, mock those that need to be mocked
         Injector testInjector = Guice.createInjector(Arrays.asList(
-                new ClassPathFileExtractorModule(new ClassPathFileExtractorImpl()),
+                new ClassPathFileModule(new ClassPathFileExtractorImpl()),
                 new ConfigFileModule(testPropertiesFile, testStringsFile),
                 new MockFileChooserModule(testStringsFile, testPropertiesFile),
                 new ParserModule(testStringsFile, testPropertiesFile),
-                new GuiModule(testStringsFile, testPropertiesFile, primaryStage),
+                new GuiModule(testStringsFile, testPropertiesFile),
                 new UserInputHandlerModule())
         );
         Main.setInjector(testInjector);

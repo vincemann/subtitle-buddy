@@ -15,7 +15,14 @@ import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.events.EventHandlerRegistrar;
-import io.github.vincemann.subtitlebuddy.gui.stages.controller.SettingsStageController;
+import io.github.vincemann.subtitlebuddy.gui.WindowManager;
+import io.github.vincemann.subtitlebuddy.gui.Stages;
+import io.github.vincemann.subtitlebuddy.gui.movie.MovieStageFactory;
+import io.github.vincemann.subtitlebuddy.gui.options.OptionsStageFactory;
+import io.github.vincemann.subtitlebuddy.gui.settings.SettingsStageFactory;
+import io.github.vincemann.subtitlebuddy.gui.movie.MovieStageController;
+import io.github.vincemann.subtitlebuddy.gui.options.OptionsStageController;
+import io.github.vincemann.subtitlebuddy.gui.settings.SettingsStageController;
 import io.github.vincemann.subtitlebuddy.listeners.JLinkJNativeLibraryLocator;
 import io.github.vincemann.subtitlebuddy.listeners.key.GlobalHotKeyListener;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.GlobalMouseListener;
@@ -29,6 +36,7 @@ import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -53,6 +61,9 @@ public class Main extends Application {
 
     private static Injector injector;
 
+    /**
+     * Is used for testing purposes. I need to register hook on diff thread, so I need a way to wait for registration in my tests.
+     */
     private boolean applicationReady = false;
 
     @Override
@@ -65,12 +76,13 @@ public class Main extends Application {
         ConfigFileManager configFileManager = new ConfigFileManagerImpl(new ConfigDirectoryImpl(), classPathFileExtractor);
         PropertiesFile propertiesManager = new ApachePropertiesFile(configFileManager.findOrCreateConfigFile(CONFIG_FILE_NAME));
         UIStringsFile stringConfiguration = new ApacheUIStringsFile(classPathFileExtractor.findOnClassPath(UI_STRINGS_FILE_PATH).getFile());
-        injector = createInjector(propertiesManager, stringConfiguration, primaryStage, classPathFileExtractor);
+        injector = createInjector(propertiesManager, stringConfiguration, classPathFileExtractor);
         injector.getInstance(EventHandlerRegistrar.class).registerEventHandlers();
+        WindowManager windowManager = injector.getInstance(WindowManager.class);
+        createStages(primaryStage);
 
         // start by showing settings view
-        SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
-        settingsStageController.open();
+        windowManager.showStage(Stages.SETTINGS);
 
         // start parser
         injector.getInstance(SrtParserEngine.class).start();
@@ -79,12 +91,30 @@ public class Main extends Application {
         Platform.runLater(this::registerHook);
     }
 
+    private void createStages(Stage primaryStage) throws IOException {
+        WindowManager windowManager = injector.getInstance(WindowManager.class);
+        SettingsStageFactory settingsStageFactory = injector.getInstance(SettingsStageFactory.class);
+        Stage settingsStage = settingsStageFactory.create(primaryStage);
+        SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
+        windowManager.addStage(Stages.SETTINGS,settingsStage,settingsStageController);
+
+        OptionsStageFactory optionsStageFactory = injector.getInstance(OptionsStageFactory.class);
+        Stage optionsStage = optionsStageFactory.create(primaryStage);
+        OptionsStageController optionsStageController = injector.getInstance(OptionsStageController.class);
+        windowManager.addStage(Stages.OPTIONS,optionsStage,optionsStageController);
+
+        MovieStageFactory movieStageFactory = injector.getInstance(MovieStageFactory.class);
+        Stage movieStage = movieStageFactory.create(primaryStage);
+        MovieStageController movieStageController = injector.getInstance(MovieStageController.class);
+        windowManager.addStage(Stages.MOVIE,movieStage,movieStageController);
+
+    }
+
     private void registerHook() {
         try {
-            if (GlobalScreen.isNativeHookRegistered()){
+            if (GlobalScreen.isNativeHookRegistered()) {
                 log.debug("hook is already registered from previous launch");
-            }
-            else{
+            } else {
                 log.info("registering jnativehook");
                 GlobalScreen.registerNativeHook();
             }
@@ -106,17 +136,16 @@ public class Main extends Application {
      * Creates injector or use test injector created in GuiTest.
      */
     private Injector createInjector(PropertiesFile propertiesManager,
-                                           UIStringsFile stringConfiguration,
-                                           Stage primaryStage,
-                                           ClassPathFileExtractor classPathFileExtractor) {
+                                    UIStringsFile stringConfiguration,
+                                    ClassPathFileExtractor classPathFileExtractor) {
         if (injector == null) {
             // use default modules
             List<Module> moduleList = Arrays.asList(
-                    new ClassPathFileExtractorModule(classPathFileExtractor),
+                    new ClassPathFileModule(classPathFileExtractor),
                     new ConfigFileModule(propertiesManager, stringConfiguration),
                     new FileChooserModule(stringConfiguration, propertiesManager),
                     new ParserModule(stringConfiguration, propertiesManager),
-                    new GuiModule(stringConfiguration, propertiesManager, primaryStage),
+                    new GuiModule(stringConfiguration, propertiesManager),
                     new UserInputHandlerModule()
             );
             return Guice.createInjector(moduleList);
@@ -135,27 +164,26 @@ public class Main extends Application {
         unregisterEventHandlers();
     }
 
-    private void unregisterEventHandlers(){
+    private void unregisterEventHandlers() {
         injector.getInstance(EventHandlerRegistrar.class).unregisterEventHandlers();
     }
 
-    private void unregisterHook(){
-        if (!GlobalScreen.isNativeHookRegistered()){
+    private void unregisterHook() {
+        if (!GlobalScreen.isNativeHookRegistered()) {
             log.debug("hook is already unregistered");
             applicationReady = false;
-        }
-        else {
-            log.debug("unregistering nativehook");
+        } else {
+            log.debug("unregistering jnativehook");
             try {
                 GlobalScreen.unregisterNativeHook();
                 applicationReady = false;
             } catch (NativeHookException e) {
-                log.error("could not unregister jnativehook",e);
+                log.error("could not unregister jnativehook", e);
             }
         }
     }
 
-    public void unregisterListeners(){
+    public void unregisterListeners() {
         GlobalHotKeyListener hotKeyListener = injector.getInstance(GlobalHotKeyListener.class);
         GlobalMouseListener mouseListener = injector.getInstance(GlobalMouseListener.class);
         GlobalScreen.removeNativeKeyListener(hotKeyListener);

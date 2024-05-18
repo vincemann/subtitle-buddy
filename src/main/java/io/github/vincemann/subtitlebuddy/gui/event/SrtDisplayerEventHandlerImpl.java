@@ -1,8 +1,12 @@
-package io.github.vincemann.subtitlebuddy.gui.srtdisplayer;
+package io.github.vincemann.subtitlebuddy.gui.event;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.github.vincemann.subtitlebuddy.gui.Stages;
+import io.github.vincemann.subtitlebuddy.gui.WindowManager;
+import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.properties.PropertyAccessException;
 import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
@@ -22,10 +26,13 @@ public class SrtDisplayerEventHandlerImpl implements SrtDisplayerEventHandler {
     private SrtDisplayerProvider srtDisplayerProvider;
     private PropertiesFile properties;
 
+    private WindowManager windowManager;
+
     @Inject
-    public SrtDisplayerEventHandlerImpl(SrtDisplayerProvider srtDisplayerProvider, PropertiesFile properties) {
+    public SrtDisplayerEventHandlerImpl(SrtDisplayerProvider srtDisplayerProvider, PropertiesFile properties, WindowManager windowManager) {
         this.srtDisplayerProvider = srtDisplayerProvider;
         this.properties = properties;
+        this.windowManager = windowManager;
     }
 
     @Override
@@ -76,9 +83,15 @@ public class SrtDisplayerEventHandlerImpl implements SrtDisplayerEventHandler {
     public void handleSwitchSrtDisplayerEvent(SwitchSrtDisplayerEvent e){
         log.debug("switching srt Displayer event getting handled...");
         SubtitleText lastSub = this.srtDisplayerProvider.get().getLastSubtitleText();
-        this.srtDisplayerProvider.get().close();
+        if (srtDisplayerProvider.getCurrentDisplayer().equals(SettingsSrtDisplayer.class)){
+            windowManager.closeStage(Stages.SETTINGS);
+            windowManager.showStage(Stages.MOVIE);
+        }
+        else{
+            windowManager.closeStage(Stages.MOVIE);
+            windowManager.showStage(Stages.SETTINGS);
+        }
         this.srtDisplayerProvider.setCurrentDisplayer(e.getSrtDisplayerMode());
-        this.srtDisplayerProvider.get().open();
         this.srtDisplayerProvider.get().displaySubtitle(lastSub);
     }
 }

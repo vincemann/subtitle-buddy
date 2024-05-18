@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.gui.stages.controller;
+package io.github.vincemann.subtitlebuddy.gui.options;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -7,18 +7,14 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.events.SrtFontColorChangeEvent;
 import io.github.vincemann.subtitlebuddy.events.SrtFontChangeEvent;
 import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
 import io.github.vincemann.subtitlebuddy.srt.font.SrtFontLoadingException;
 import io.github.vincemann.subtitlebuddy.srt.font.FontsDirectory;
-import io.github.vincemann.subtitlebuddy.gui.stages.StageState;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKey;
 import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
 import io.github.vincemann.subtitlebuddy.srt.font.SrtFontManager;
-import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
@@ -30,8 +26,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -50,8 +44,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @NoArgsConstructor
 @Singleton
 @io.github.vincemann.subtitlebuddy.gui.stages.OptionsStageController
-public class OptionsStageController extends AbstractStageController implements OptionsWindow {
-    private static final String OPTIONS_STAGE_FXML_FILE_PATH = "options-stage.fxml";
+public class OptionsStageController {
 
     @FXML
     private ColorPicker colorChooser;
@@ -77,19 +70,16 @@ public class OptionsStageController extends AbstractStageController implements O
     private ChangeListener<Boolean> nextClickChangeListener;
     private ChangeListener<Boolean> startStopChangeListener;
 
+    private Table<Node, EventHandler, EventType> eventHandlers;
+
 
     @Inject
     public OptionsStageController(EventBus eventBus,
                                   SrtFontManager srtFontManager,
-                                  @Named(UIStringsKeys.OPTIONS_WINDOW_TITLE) String title,
-                                  @Named(PropertyFileKeys.OPTIONS_WINDOW_SIZE) Vector2D size,
                                   @Named(PropertyFileKeys.NEXT_CLICK_HOT_KEY_TOGGLED) boolean nextClickCountsToggled,
                                   @Named(PropertyFileKeys.START_STOP_HOT_KEY_TOGGLED) boolean startStopHotKeyToggled,
-                                  ClassPathFileExtractor classPathFileExtractor,
                                   FontsDirectory fontsLocator)
             throws IOException {
-        super(classPathFileExtractor.findOnClassPath(OPTIONS_STAGE_FXML_FILE_PATH).getFile().toURI().toURL(), title, size);
-        createStage(this);
         this.fontsLocator = fontsLocator;
         this.eventBus = eventBus;
         this.srtFontManager = srtFontManager;
@@ -99,6 +89,7 @@ public class OptionsStageController extends AbstractStageController implements O
         populateFontChoiceBox(srtFontManager.getUserFontSize());
     }
 
+
     private void updateCheckBoxes(boolean nextClickToggled, boolean startStopToggled) {
         Platform.runLater(() -> {
             this.nextClickCheckBox.setSelected(!nextClickToggled);
@@ -106,7 +97,6 @@ public class OptionsStageController extends AbstractStageController implements O
         });
     }
 
-    @Override
     protected Table<Node, EventHandler, EventType> registerEventHandlers() {
         Table<Node, EventHandler, EventType> resultTable = HashBasedTable.create();
         EventHandler<ActionEvent> colorChooserEventHandler = event -> {
@@ -136,18 +126,16 @@ public class OptionsStageController extends AbstractStageController implements O
         return resultTable;
     }
 
-    @Override
-    public void onUnregisterEventHandlers() {
-        super.onUnregisterEventHandlers();
-        fontChoiceBox.getSelectionModel().selectedItemProperty().removeListener(fontChoiceBoxChangeListener);
-        startStopCheckBox.selectedProperty().removeListener(startStopChangeListener);
-        nextClickCheckBox.selectedProperty().removeListener(nextClickChangeListener);
-    }
+//    @Override
+//    public void onUnregisterEventHandlers() {
+//        super.onUnregisterEventHandlers();
+//        fontChoiceBox.getSelectionModel().selectedItemProperty().removeListener(fontChoiceBoxChangeListener);
+//        startStopCheckBox.selectedProperty().removeListener(startStopChangeListener);
+//        nextClickCheckBox.selectedProperty().removeListener(nextClickChangeListener);
+//    }
 
-    @Override
-    protected void onFXMLInitialize() {
-        super.onFXMLInitialize();
-        log.trace("fxml initialize of : " + this.getClass().getSimpleName());
+    @FXML
+    protected void fxmlInit() {
         checkNotNull(previewText);
         checkNotNull(colorChooser);
         checkNotNull(colorChooser.getValue());
@@ -156,31 +144,32 @@ public class OptionsStageController extends AbstractStageController implements O
         checkNotNull(fontChoiceBox.getItems());
         checkNotNull(startStopCheckBox);
         checkNotNull(nextClickCheckBox);
+        eventHandlers = registerEventHandlers();
     }
 
-    @Override
-    public void openOptionsWindow(Vector2D position) {
-        try {
-            if (!getStageState().equals(StageState.UNINITIALIZED)) {
-                showStage();
-                getStage().setX(position.getX());
-                getStage().setY(position.getY());
-            } else {
-                log.warn("cant open options stage, is not initialized yet");
-            }
-        } catch (IllegalStateException e) {
-            log.debug("could not open options window, reason: " + e.getMessage() + ". Bringing stage to front");
-            getStage().toFront();
-        }
-    }
+//    @Override
+//    public void openOptionsWindow(Vector2D position) {
+//        try {
+//            if (!getStageState().equals(StageState.UNINITIALIZED)) {
+//                showStage();
+//                getStage().setX(position.getX());
+//                getStage().setY(position.getY());
+//            } else {
+//                log.warn("cant open options stage, is not initialized yet");
+//            }
+//        } catch (IllegalStateException e) {
+//            log.debug("could not open options window, reason: " + e.getMessage() + ". Bringing stage to front");
+//            getStage().toFront();
+//        }
+//    }
 
-    @Override
-    protected void onStageCreate(Stage stage) {
-        super.onStageCreate(stage);
-        //options window is not bound to another stage
-        stage.initModality(Modality.NONE);
-        stage.setAlwaysOnTop(true);
-    }
+//    @Override
+//    protected void onStageCreate(Stage stage) {
+//        super.onStageCreate(stage);
+//        //options window is not bound to another stage
+//        stage.initModality(Modality.NONE);
+//        stage.setAlwaysOnTop(true);
+//    }
 
 
     private void populateFontChoiceBox(double userFontSize) throws IOException {

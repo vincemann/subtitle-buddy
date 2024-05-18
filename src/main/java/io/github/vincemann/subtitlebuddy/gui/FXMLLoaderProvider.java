@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.gui.stages.controller;
+package io.github.vincemann.subtitlebuddy.gui;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;

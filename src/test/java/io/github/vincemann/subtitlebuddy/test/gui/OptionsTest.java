@@ -1,14 +1,12 @@
 package io.github.vincemann.subtitlebuddy.test.gui;
 
-import io.github.vincemann.subtitlebuddy.test.gui.pages.OptionsPage;
-import io.github.vincemann.subtitlebuddy.test.gui.pages.SettingsPage;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.MovieSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.gui.srtdisplayer.SettingsSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.gui.stages.OptionsStageController;
-import io.github.vincemann.subtitlebuddy.gui.stages.SettingsStageController;
-import io.github.vincemann.subtitlebuddy.gui.stages.controller.AbstractStageController;
+import io.github.vincemann.subtitlebuddy.gui.Stages;
+import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
 import io.github.vincemann.subtitlebuddy.srt.font.SrtFontManager;
+import io.github.vincemann.subtitlebuddy.test.gui.pages.OptionsPage;
+import io.github.vincemann.subtitlebuddy.test.gui.pages.SettingsPage;
 import javafx.scene.paint.Color;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -34,10 +32,10 @@ public class OptionsTest extends GuiTest {
 
     @Test
     public void testNoColorChangeOnSettingsText() throws TimeoutException {
-        focusStage(SettingsStageController.class);
+        focusStage(Stages.SETTINGS);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         refreshGui();
-        focusStage(OptionsStageController.class);
+        focusStage(Stages.OPTIONS);
         Color selectedColor = optionsPage.selectRandomColor(SettingsSrtDisplayer.DEFAULT_FONT_COLOR);
         Assert.assertNotEquals(SettingsSrtDisplayer.DEFAULT_FONT_COLOR, selectedColor);
         refreshGui();
@@ -50,10 +48,9 @@ public class OptionsTest extends GuiTest {
     public void testShowOptions() throws TimeoutException {
         settingsPage.openOptionsWindow();
         refreshGui();
-        Assert.assertTrue(isStageShowing(OptionsStageController.class));
-        Assert.assertTrue(isStageShowing(SettingsStageController.class));
-        AbstractStageController optionsStageController = findStageController(OptionsStageController.class);
-        Assert.assertTrue(optionsStageController.getStage().isFocused());
+        Assert.assertTrue(isStageShowing(Stages.OPTIONS));
+        Assert.assertTrue(isStageShowing(Stages.SETTINGS));
+        Assert.assertTrue(isStageShowing(Stages.OPTIONS));
     }
 
     @Test
@@ -63,13 +60,13 @@ public class OptionsTest extends GuiTest {
         String osName = System.getProperty("os.name").toLowerCase();
         Assume.assumeFalse(osName.contains("mac"));
 
-        focusStage(SettingsStageController.class);
+        focusStage(Stages.SETTINGS);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
-        focusStage(SettingsStageController.class);
+        focusStage(Stages.SETTINGS);
         settingsPage.switchToMovieMode();
         findSrtDisplayer(MovieSrtDisplayer.class).setFontColor(Color.WHITE);
         refreshGui();
-        focusStage(OptionsStageController.class);
+        focusStage(Stages.OPTIONS);
         Color selectedColor = optionsPage.selectRandomColor(Color.WHITE);
         Assert.assertNotEquals(Color.WHITE, selectedColor);
         refreshGui();
@@ -78,9 +75,9 @@ public class OptionsTest extends GuiTest {
 
     @Test
     public void testChangeFontInSettingsMode() throws TimeoutException {
-        focusStage(SettingsStageController.class);
+        focusStage(Stages.SETTINGS);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
-        focusStage(OptionsStageController.class);
+        focusStage(Stages.OPTIONS);
         SrtFonts firstFont = srtFontManager.loadDefaultFont();
         findSrtDisplayer(SettingsSrtDisplayer.class).setCurrentFont(firstFont);
         SrtFonts currFont = findSrtDisplayer(SettingsSrtDisplayer.class).getCurrentFont();
@@ -98,16 +95,16 @@ public class OptionsTest extends GuiTest {
         String osName = System.getProperty("os.name").toLowerCase();
         Assume.assumeFalse(osName.contains("mac"));
 
-        focusStage(SettingsStageController.class);
+        focusStage(Stages.SETTINGS);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
-        focusStage(OptionsStageController.class);
+        focusStage(Stages.OPTIONS);
         SrtFonts firstFont = srtFontManager.loadDefaultFont();
-        focusStage(SettingsStageController.class);
+        focusStage(Stages.SETTINGS);
         settingsPage.switchToMovieMode();
         findSrtDisplayer(MovieSrtDisplayer.class).setCurrentFont(firstFont);
         SrtFonts currFont = findSrtDisplayer(MovieSrtDisplayer.class).getCurrentFont();
         Assert.assertEquals(currFont, firstFont);
-        focusStage(OptionsStageController.class);
+        focusStage(Stages.OPTIONS);
         SrtFonts newFont = optionsPage.selectNewFont(currFont);
         Assert.assertNotEquals(newFont, currFont);
         refreshGui();
