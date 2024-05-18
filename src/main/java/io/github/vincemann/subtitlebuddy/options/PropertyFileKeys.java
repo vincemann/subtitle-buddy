@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.properties;
+package io.github.vincemann.subtitlebuddy.options;
 
 public class PropertyFileKeys {
 

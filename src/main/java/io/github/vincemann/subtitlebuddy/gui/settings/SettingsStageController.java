@@ -7,6 +7,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import io.github.vincemann.subtitlebuddy.options.Options;
+import io.github.vincemann.subtitlebuddy.options.OptionsManager;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.events.RequestSrtParserUpdateEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
@@ -14,7 +16,7 @@ import io.github.vincemann.subtitlebuddy.gui.Window;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.srt.*;
 import io.github.vincemann.subtitlebuddy.srt.font.SrtFontManager;
 import io.github.vincemann.subtitlebuddy.srt.parser.InvalidTimestampFormatException;
@@ -87,7 +89,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     private SrtParser srtParser;
 
     @Getter
-    private SrtFonts currentFont;
+    private FontBundle currentFont;
 
     private Timestamp lastTimeStamp;
 
@@ -96,6 +98,10 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     private SrtFontManager srtFontManager;
 
     private WindowManager windowManager;
+
+    private Options options;
+
+    private OptionsManager optionsManager;
 
     private EventBus eventBus;
 
@@ -193,7 +199,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
 
     @Override
-    public void setCurrentFont(SrtFonts font) {
+    public void setCurrentFont(FontBundle font) {
         this.currentFont = font;
     }
 
@@ -203,7 +209,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         // todo put into own classes - separate concerns
         EventHandler<MouseEvent> startButtonPressedHandler = event -> {
             try {
-                log.trace("startbutton pressed");
+                log.trace("start button pressed");
                 srtParser.start();
             } catch (IllegalStateException e) {
                 log.debug(e.getMessage());
@@ -212,7 +218,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
         EventHandler<MouseEvent> stopButtonPressedHandler = event -> {
             try {
-                log.trace("stopbutton pressed");
+                log.trace("stop button pressed");
                 srtParser.stop();
             } catch (IllegalStateException e) {
                 log.debug(e.getMessage());
@@ -221,7 +227,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
         EventHandler<MouseEvent> fastForwardButtonClickedHandler = event -> {
             try {
-                log.trace("fastforward pressed");
+                log.trace("fast forward pressed");
                 synchronized (srtParser) {
                     if (srtParser.getCurrentState().equals(RunningState.STATE_RUNNING)) {
                         srtParser.stop();
@@ -236,7 +242,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
         EventHandler<MouseEvent> fastBackwardButtonClickedHandler = event -> {
             try {
-                log.trace("fastbackward pressed");
+                log.trace("fast backward pressed");
                 synchronized (srtParser) {
                     if (srtParser.getCurrentState().equals(RunningState.STATE_RUNNING)) {
                         srtParser.stop();

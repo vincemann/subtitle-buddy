@@ -10,7 +10,7 @@ import io.github.vincemann.subtitlebuddy.gui.dialog.JavaFxAlertDialog;
 import io.github.vincemann.subtitlebuddy.gui.dialog.JavaFxContinueDialog;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.FileChooser;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.JavaFxFileChooser;
-import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
+import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
 
 public class FileChooserModule extends PropertyFilesModule {
 

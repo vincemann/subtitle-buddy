@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.properties;
+package io.github.vincemann.subtitlebuddy.options;
 
 import com.google.inject.Singleton;
 import lombok.extern.log4j.Log4j2;

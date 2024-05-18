@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.test.gui.pages;
 
-import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
+import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.test.gui.GuiTest;
 import javafx.application.Platform;
 import javafx.scene.control.ChoiceBox;
@@ -9,7 +9,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 
@@ -50,20 +49,20 @@ public class OptionsPage extends AbstractPage {
 
 
 
-    public SrtFonts selectNewFont(SrtFonts oldFont) throws TimeoutException {
+    public FontBundle selectNewFont(FontBundle oldFont) throws TimeoutException {
        return selectNewFont(oldFont,1);
     }
 
-    private SrtFonts selectNewFont(SrtFonts oldFont, int amountKeyDown) throws TimeoutException {
+    private FontBundle selectNewFont(FontBundle oldFont, int amountKeyDown) throws TimeoutException {
         getDriver().waitForVisibleNode(FxTestConstants.FONT_CHOICE_BOX_ID);
         getDriver().focusNode(FxTestConstants.FONT_CHOICE_BOX_ID);
-        ChoiceBox<SrtFonts> fontChoiceBox = getDriver().find(FxTestConstants.FONT_CHOICE_BOX_ID);
+        ChoiceBox<FontBundle> fontChoiceBox = getDriver().find(FxTestConstants.FONT_CHOICE_BOX_ID);
         getDriver().clickOn(fontChoiceBox);
         for (int i = 0; i < amountKeyDown; i++) {
             getDriver().type(KeyCode.DOWN);
         }
         getDriver().type(KeyCode.ENTER);
-        SrtFonts newFont = fontChoiceBox.getSelectionModel().getSelectedItem();
+        FontBundle newFont = fontChoiceBox.getSelectionModel().getSelectedItem();
         if(newFont.equals(oldFont)){
             return selectNewFont(oldFont,amountKeyDown+1);
         }else {

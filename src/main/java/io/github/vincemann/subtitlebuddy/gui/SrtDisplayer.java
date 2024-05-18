@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.gui;
 
-import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
+import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import javafx.scene.paint.Color;
 
@@ -13,9 +13,9 @@ public interface SrtDisplayer {
 
     void displaySubtitle(SubtitleText subtitleText);
 
-    SrtFonts getCurrentFont();
+    FontBundle getCurrentFont();
 
-    void setCurrentFont(SrtFonts font);
+    void setCurrentFont(FontBundle font);
 
     Color getFontColor();
 

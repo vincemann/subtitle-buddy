@@ -1,6 +1,5 @@
 package io.github.vincemann.subtitlebuddy.module;
 
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
@@ -13,11 +12,10 @@ import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsStageController;
 import io.github.vincemann.subtitlebuddy.gui.event.*;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsStageFactory;
-import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
-import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
+import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package io.github.vincemann.subtitlebuddy.test.guice.providers;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
+import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.LastPathRegistry;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.PropertiesFileLastPathRegistry;
 

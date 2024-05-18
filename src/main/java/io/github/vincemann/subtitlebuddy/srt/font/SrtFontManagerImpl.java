@@ -4,8 +4,8 @@ package io.github.vincemann.subtitlebuddy.srt.font;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
-import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
+import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.util.fx.FontUtils;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -52,7 +52,7 @@ public class SrtFontManagerImpl implements SrtFontManager {
 
 
     @Override
-    public SrtFonts loadDefaultFont() {
+    public FontBundle loadDefaultFont() {
         return loadDefaultFont(userFontSize);
     }
 
@@ -60,14 +60,14 @@ public class SrtFontManagerImpl implements SrtFontManager {
      * Loads default font with size of {@link #userFontSize} from default font path specified by user via config file.
      */
     @Override
-    public SrtFonts loadDefaultFont(double fontSize) {
+    public FontBundle loadDefaultFont(double fontSize) {
         try {
             checkNotNull(defaultFontFilename);
             checkState(fontSize>0);
             return loadFont(defaultFontFilename,fontSize);
         } catch (Exception e) {
             log.error("Could not load applications default font, using System default Font instead ", e);
-            return new SrtFonts(Font.getDefault(),Font.getDefault());
+            return new FontBundle(Font.getDefault(),Font.getDefault());
         }
     }
 
@@ -86,13 +86,13 @@ public class SrtFontManagerImpl implements SrtFontManager {
      * @param fontFilename name of font file (must be within config/fonts dir)
      */
     @Override
-    public SrtFonts loadFont(String fontFilename, double fontSize) throws SrtFontLoadingException {
+    public FontBundle loadFont(String fontFilename, double fontSize) throws SrtFontLoadingException {
         try {
             Font regularFont = findRegularFont(fontFilename, fontSize);
             checkNotNull(regularFont);
             Font italicFont = findItalicFont(fontFilename, fontSize);
             checkNotNull(italicFont);
-            return new SrtFonts(regularFont,italicFont);
+            return new FontBundle(regularFont,italicFont);
         }catch (Exception e){
             throw new SrtFontLoadingException(e);
         }

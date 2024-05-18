@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
 import io.github.vincemann.subtitlebuddy.events.DoneParsingEvent;

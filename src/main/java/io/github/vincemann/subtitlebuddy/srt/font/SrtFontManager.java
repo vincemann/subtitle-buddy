@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.srt.font;
 
-import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
+import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import javafx.scene.paint.Color;
 
 
@@ -20,14 +20,14 @@ public interface SrtFontManager {
      * @throws IllegalArgumentException if unsupported type was supplied
      * @throws SrtFontLoadingException
      */
-    SrtFonts loadFont(String path, double fontSize) throws MalformedURLException, SrtFontLoadingException;
+    FontBundle loadFont(String path, double fontSize) throws MalformedURLException, SrtFontLoadingException;
 
 
-    SrtFonts loadDefaultFont();
+    FontBundle loadDefaultFont();
 
     Color getFontColor();
 
-    SrtFonts loadDefaultFont(double fontSize);
+    FontBundle loadDefaultFont(double fontSize);
 
     void setFontColor(Color color);
 

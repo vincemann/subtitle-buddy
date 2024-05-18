@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.test.guice;
 
-import io.github.vincemann.subtitlebuddy.properties.PropertiesFile;
+import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.FileChooser;
 import io.github.vincemann.subtitlebuddy.gui.dialog.AlertDialog;

@@ -1,8 +1,8 @@
 package io.github.vincemann.subtitlebuddy.test.filechooser;
 
 import io.github.vincemann.subtitlebuddy.test.config.properties.AbstractApacheConfigFileTest;
-import io.github.vincemann.subtitlebuddy.properties.PropertyAccessException;
-import io.github.vincemann.subtitlebuddy.properties.PropertyNotFoundException;
+import io.github.vincemann.subtitlebuddy.options.PropertyAccessException;
+import io.github.vincemann.subtitlebuddy.options.PropertyNotFoundException;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.LastPathRegistry;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.PropertiesFileLastPathRegistry;
 import io.github.vincemann.subtitlebuddy.util.FileUtils;

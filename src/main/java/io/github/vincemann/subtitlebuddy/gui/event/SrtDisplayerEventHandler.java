@@ -1,13 +1,13 @@
 package io.github.vincemann.subtitlebuddy.gui.event;
 
-import io.github.vincemann.subtitlebuddy.events.MovieTextPositionChangedEvent;
-import io.github.vincemann.subtitlebuddy.events.SrtFontChangeEvent;
-import io.github.vincemann.subtitlebuddy.events.SrtFontColorChangeEvent;
+import io.github.vincemann.subtitlebuddy.events.UpdateSubtitlePosEvent;
+import io.github.vincemann.subtitlebuddy.events.UpdateCurrentFontEvent;
+import io.github.vincemann.subtitlebuddy.events.UpdateFontColorEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 
 public interface SrtDisplayerEventHandler {
-    public void handleFontColorChangedEvent(SrtFontColorChangeEvent e);
-    public void handleFontChangedEvent(SrtFontChangeEvent e);
-    public void handleMovieTextPositionChangedEvent(MovieTextPositionChangedEvent e);
+    public void handleUpdateFontColorEvent(UpdateFontColorEvent e);
+    public void handleUpdateCurrentFontEvent(UpdateCurrentFontEvent e);
+    public void handleUpdateSubtitlePosEvent(UpdateSubtitlePosEvent e);
     public void handleSwitchSrtDisplayerEvent(SwitchSrtDisplayerEvent e);
 }

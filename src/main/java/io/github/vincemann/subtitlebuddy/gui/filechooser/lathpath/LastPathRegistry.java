@@ -1,7 +1,7 @@
 package io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath;
 
-import io.github.vincemann.subtitlebuddy.properties.PropertyAccessException;
-import io.github.vincemann.subtitlebuddy.properties.PropertyNotFoundException;
+import io.github.vincemann.subtitlebuddy.options.PropertyAccessException;
+import io.github.vincemann.subtitlebuddy.options.PropertyNotFoundException;
 
 import java.io.File;
 

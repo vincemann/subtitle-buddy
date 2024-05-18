@@ -1,7 +1,8 @@
-package io.github.vincemann.subtitlebuddy.properties;
+package io.github.vincemann.subtitlebuddy.options;
 
 import java.io.File;
 import java.util.List;
+
 
 public interface PropertiesFile {
 

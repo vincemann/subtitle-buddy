@@ -1,14 +1,13 @@
 package io.github.vincemann.subtitlebuddy.events;
 
-import javafx.scene.paint.Color;
+import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
 
-
 @AllArgsConstructor
 @Getter
-public class SrtFontColorChangeEvent {
-    private Color color;
+public class UpdateCurrentFontEvent {
+    private FontBundle font;
 }

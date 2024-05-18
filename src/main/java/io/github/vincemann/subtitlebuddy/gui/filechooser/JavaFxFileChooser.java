@@ -5,7 +5,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.LastPathRegistry;
-import io.github.vincemann.subtitlebuddy.properties.PropertyNotFoundException;
+import io.github.vincemann.subtitlebuddy.options.PropertyNotFoundException;
 import io.github.vincemann.subtitlebuddy.util.FileUtils;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;

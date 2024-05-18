@@ -1,8 +1,5 @@
 package io.github.vincemann.subtitlebuddy.config;
 
-import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
-import io.github.vincemann.subtitlebuddy.config.ConfigFileManager;
-import io.github.vincemann.subtitlebuddy.config.ConfigFileException;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.cp.CopiedClassPathFile;
 import io.github.vincemann.subtitlebuddy.util.FileUtils;
@@ -18,20 +15,20 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 /**
- * Component for creating/finding config file.
+ * Component for loading config file.
  * Original config file is within jar (on classpath).
  * This class extracts it to {@link ConfigDirectory#findOrCreate()} location, so the user can easily edit it.
- * If config file is already in config target folder, it is just returned.
+ * If config file is already in config target folder, it is just loaded from there.
  */
 @Singleton
 @Log4j2
-public class ConfigFileManagerImpl implements ConfigFileManager {
+public class ConfigFileLoaderImpl implements ConfigFileLoader {
 
     private ConfigDirectory configDirectory;
     private ClassPathFileExtractor classPathFileExtractor;
 
     @Inject
-    public ConfigFileManagerImpl(ConfigDirectory configDirectory, ClassPathFileExtractor classPathFileExtractor) {
+    public ConfigFileLoaderImpl(ConfigDirectory configDirectory, ClassPathFileExtractor classPathFileExtractor) {
         this.configDirectory = configDirectory;
         this.classPathFileExtractor = classPathFileExtractor;
     }

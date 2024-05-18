@@ -10,7 +10,8 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class SrtFonts {
+public class FontBundle {
     private Font regularFont;
     private Font italicFont;
+    private String path;
 }

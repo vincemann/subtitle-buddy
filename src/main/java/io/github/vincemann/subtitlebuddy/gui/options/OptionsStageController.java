@@ -6,14 +6,14 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
-import io.github.vincemann.subtitlebuddy.events.SrtFontColorChangeEvent;
-import io.github.vincemann.subtitlebuddy.events.SrtFontChangeEvent;
+import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.events.UpdateFontColorEvent;
+import io.github.vincemann.subtitlebuddy.events.UpdateCurrentFontEvent;
 import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
 import io.github.vincemann.subtitlebuddy.srt.font.SrtFontLoadingException;
 import io.github.vincemann.subtitlebuddy.srt.font.FontsDirectory;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKey;
-import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
+import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.srt.font.SrtFontManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -48,7 +48,7 @@ public class OptionsStageController {
     @FXML
     private ColorPicker colorChooser;
     @FXML
-    private ChoiceBox<SrtFonts> fontChoiceBox;
+    private ChoiceBox<FontBundle> fontChoiceBox;
     @FXML
     private Text previewText;
     @FXML
@@ -56,7 +56,7 @@ public class OptionsStageController {
     @FXML
     private CheckBox nextClickCheckBox;
 
-    private Map<SrtFonts, String> fontPathMap;
+    private Map<FontBundle, String> fontPathMap;
 
     private EventBus eventBus;
 
@@ -65,7 +65,7 @@ public class OptionsStageController {
 
     private FontsDirectory fontsLocator;
 
-    private ChangeListener<SrtFonts> fontChoiceBoxChangeListener;
+    private ChangeListener<FontBundle> fontChoiceBoxChangeListener;
     private ChangeListener<Boolean> nextClickChangeListener;
     private ChangeListener<Boolean> startStopChangeListener;
 
@@ -103,7 +103,7 @@ public class OptionsStageController {
         EventHandler<ActionEvent> colorChooserEventHandler = event -> {
             //new color chosen
             log.info("User selected new Color -> colorchange event fired");
-            eventBus.post(new SrtFontColorChangeEvent(colorChooser.getValue()));
+            eventBus.post(new UpdateFontColorEvent(colorChooser.getValue()));
             previewText.setFill(colorChooser.getValue());
         };
         colorChooser.setOnAction(colorChooserEventHandler);
@@ -111,7 +111,7 @@ public class OptionsStageController {
         //no suitable eventType
         fontChoiceBoxChangeListener = (observable, oldValue, newValue) -> {
             log.info("User selected new Font: " + newValue.toString() + " -> fontchangeevent fired");
-            eventBus.post(new SrtFontChangeEvent(newValue, fontPathMap.get(newValue)));
+            eventBus.post(new UpdateCurrentFontEvent(newValue));
             previewText.setFont(newValue.getRegularFont());
         };
 
@@ -191,9 +191,9 @@ public class OptionsStageController {
                             //dont load italic fonts, font manger already loads regular and italic fonts, if u give him the regular font path
                             if (!Paths.get(fontFileRelPath).getFileName().toString().contains("italic")) {
                                 try {
-                                    SrtFonts srtFonts = srtFontManager.loadFont(fontFileRelPath, userFontSize);
-                                    fontChoiceBox.getItems().add(srtFonts);
-                                    fontPathMap.put(srtFonts, fontFileRelPath);
+                                    FontBundle fontBundle = srtFontManager.loadFont(fontFileRelPath, userFontSize);
+                                    fontChoiceBox.getItems().add(fontBundle);
+                                    fontPathMap.put(fontBundle, fontFileRelPath);
                                 } catch (SrtFontLoadingException | MalformedURLException e) {
                                     log.error("could not load font (or respective italic font) with fontpath: " + fontFileRelPath + ", caused by: ", e);
                                 }

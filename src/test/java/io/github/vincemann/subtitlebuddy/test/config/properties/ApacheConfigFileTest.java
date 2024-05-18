@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.test.config.properties;
 
-import io.github.vincemann.subtitlebuddy.properties.PropertyAccessException;
+import io.github.vincemann.subtitlebuddy.options.PropertyAccessException;
 import org.junit.Assert;
 import org.junit.Test;
 

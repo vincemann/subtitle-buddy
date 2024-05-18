@@ -1,14 +1,14 @@
 package io.github.vincemann.subtitlebuddy.events;
 
-import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
+import javafx.scene.paint.Color;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
 
+
 @AllArgsConstructor
 @Getter
-public class MovieTextPositionChangedEvent {
-    
-    private Vector2D newPos;
+public class UpdateFontColorEvent {
+    private Color color;
 }

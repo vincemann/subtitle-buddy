@@ -6,11 +6,11 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.events.MovieTextPositionChangedEvent;
+import io.github.vincemann.subtitlebuddy.events.UpdateSubtitlePosEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.properties.PropertyFileKeys;
-import io.github.vincemann.subtitlebuddy.srt.SrtFonts;
+import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleSegment;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleType;
@@ -80,7 +80,7 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     @Getter
     @Setter
-    private SrtFonts currentFont;
+    private FontBundle currentFont;
 
     private EventBus eventBus;
 
@@ -143,7 +143,7 @@ public class MovieStageController implements MovieSrtDisplayer {
         if(event.getButton().equals(MouseButton.PRIMARY)){
             if(event.getClickCount() == 2){
                 // double click
-                log.debug("user doubleclicked movieText -> switching to SettingsSrtDisplayer");
+                log.debug("user double clicked movieText -> switching to settings srt displayer");
                 eventBus.post(new SwitchSrtDisplayerEvent(SettingsSrtDisplayer.class));
             }
         }
@@ -218,7 +218,7 @@ public class MovieStageController implements MovieSrtDisplayer {
     private void onDraggedInPosition(MouseEvent mouseEvent){
         // is called when user selected a new position for the movieVBox
         Vector2D nodePos = new Vector2D(movieVBox.getLayoutX(),movieVBox.getLayoutY());
-        eventBus.post(new MovieTextPositionChangedEvent(nodePos));
+        eventBus.post(new UpdateSubtitlePosEvent(nodePos));
     }
 
     private void onMovieBoxResize(Node node, double h, double w, double deltaH, double deltaW){

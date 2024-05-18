@@ -40,7 +40,7 @@ open module io.github.vincemann.subtitlebuddy {
     exports io.github.vincemann.subtitlebuddy.listeners.mouse;
 
     exports io.github.vincemann.subtitlebuddy.module;
-    exports io.github.vincemann.subtitlebuddy.properties;
+    exports io.github.vincemann.subtitlebuddy.options;
     exports io.github.vincemann.subtitlebuddy.events;
     exports io.github.vincemann.subtitlebuddy.config;
     exports io.github.vincemann.subtitlebuddy.config.strings;
