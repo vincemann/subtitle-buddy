@@ -14,24 +14,21 @@ public class FontOptions {
         this.manager = manager;
     }
 
-    public String getCurrentFontPath() {
-        return options.getCurrentFontPath();
+    public String getCurrentFont() {
+        return options.getCurrentFont();
     }
 
     public Color getFontColor() {
         return options.getFontColor();
     }
 
-    public void updateCurrentFontPath(String path){
-        manager.updateCurrentFontPath(path);
+    public void updateCurrentFont(String fileName){
+        manager.updateCurrentFontPath(fileName);
     }
 
     public void updateFontColor(Color color){
         manager.updateFontColor(color);
     }
 
-    public void updateDefaultFont(FontBundle fonts){
-        manager.updateDefaultFont(fonts);
-    }
 
 }

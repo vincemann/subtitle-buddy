@@ -15,6 +15,7 @@ import java.nio.file.Path;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+
 @Log4j2
 public class FontBundleLoaderImpl implements FontBundleLoader {
 
@@ -30,6 +31,7 @@ public class FontBundleLoaderImpl implements FontBundleLoader {
     @Override
     public FontBundle loadFontBundle(Path dir, String fontFilename) throws FontBundleLoadingException {
         try {
+            log.debug("loading font bundle at: " + dir.toString() + ":" + fontFilename);
             LoadedFont regularFont = loadRegularFont(dir,fontFilename, DEFAULT_FONT_SIZE);
             checkNotNull(regularFont);
             LoadedFont italicFont = loadItalicFont(dir,fontFilename, DEFAULT_FONT_SIZE);
@@ -53,14 +55,14 @@ public class FontBundleLoaderImpl implements FontBundleLoader {
         String fileType = FilenameUtils.getExtension(fileName);
         String italicFontFilename = fileName.substring(0, fileName.length() - 3) + ITALIC_FILE_SUFFIX + "." + fileType;
         log.trace("italic font filename = " + italicFontFilename);
-        return _loadFont(dir,italicFontFilename, fontSize);
+        return loadFontFile(dir,italicFontFilename, fontSize);
     }
 
     /**
      * Find regular font with given name in fonts dir or as backup in classpath.
      */
     private LoadedFont loadRegularFont(Path dir, String fontFilename, double fontSize) throws IOException, FontBundleLoadingException {
-        return _loadFont(dir,fontFilename, fontSize);
+        return loadFontFile(dir,fontFilename, fontSize);
     }
 
 
@@ -71,7 +73,8 @@ public class FontBundleLoaderImpl implements FontBundleLoader {
         private String filename;
     }
 
-    private LoadedFont _loadFont(Path fontsDir, String fontFilename, double fontSize) throws IOException, FontBundleLoadingException {
+    private LoadedFont loadFontFile(Path fontsDir, String fontFilename, double fontSize) throws IOException, FontBundleLoadingException {
+        log.debug("loading font file at: " + fontsDir + ":" + fontFilename);
         Path fontPath = fontsDir.resolve(fontFilename).toAbsolutePath();
         File fontFile = fontPath.toFile();
         if (!fontFile.exists()) {

@@ -2,7 +2,6 @@ package io.github.vincemann.subtitlebuddy.options;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
-import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.scene.paint.Color;
 import lombok.extern.log4j.Log4j2;
@@ -40,7 +39,7 @@ public class OptionsManagerImpl implements OptionsManager {
 
     @Override
     public void updateCurrentFontPath(String path){
-        options.setCurrentFontPath(path);
+        options.setCurrentFont(path);
 
         try {
             properties.saveProperty(PropertyFileKeys.USER_DEFAULT_FONT,path);

@@ -44,7 +44,7 @@ public class DefaultFontsInstallerImpl implements DefaultFontsInstaller {
         // get font files from jar
         if (io.github.vincemann.subtitlebuddy.util.FileUtils.isDirectoryEmpty(fontDir)) {
             log.debug("font dir is empty");
-            log.debug("adding default fonts now");
+            log.debug("installing default fonts...");
             List<CopiedClassPathFile> fontFiles = extractDefaultFonts();
             for (CopiedClassPathFile tmpFontFile : fontFiles) {
                 //every file
@@ -58,6 +58,7 @@ public class DefaultFontsInstallerImpl implements DefaultFontsInstaller {
         } else {
             log.debug("font dir is not empty");
         }
+        log.debug("default fonts installed");
     }
 
     private List<CopiedClassPathFile> extractDefaultFonts() throws IOException {

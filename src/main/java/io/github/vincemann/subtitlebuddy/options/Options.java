@@ -8,7 +8,8 @@ import javafx.scene.paint.Color;
  */
 public class Options {
 
-    private String currentFontPath;
+    // filename of current font
+    private String currentFont;
     private Color fontColor;
     private long settingsFontSize;
     private long movieFontSize;
@@ -17,8 +18,8 @@ public class Options {
     Options() {
     }
 
-    public String getCurrentFontPath() {
-        return currentFontPath;
+    public String getCurrentFont() {
+        return currentFont;
     }
 
     public Color getFontColor() {
@@ -53,7 +54,7 @@ public class Options {
         this.subtitlePosition = subtitlePosition;
     }
 
-    void setCurrentFontPath(String currentFontPath) {
-        this.currentFontPath = currentFontPath;
+    void setCurrentFont(String currentFont) {
+        this.currentFont = currentFont;
     }
 }

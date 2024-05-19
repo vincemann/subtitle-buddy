@@ -3,6 +3,7 @@ package io.github.vincemann.subtitlebuddy.srt.font;
 import com.google.inject.Inject;
 import io.github.vincemann.subtitlebuddy.options.FontOptions;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
+import javafx.scene.text.Font;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
@@ -28,6 +29,8 @@ public class FontManagerImpl implements FontManager {
 
     private List<FontBundle> loadedFonts = new ArrayList<>();
 
+    private FontBundle currentFont;
+
     @Inject
     public FontManagerImpl(FontOptions fontOptions, FontsDirectory fontsDirectory, FontBundleLoader fontBundleLoader) {
         this.fontOptions = fontOptions;
@@ -40,7 +43,7 @@ public class FontManagerImpl implements FontManager {
         // load all fonts from within font dir and stores in fontsLoaded list
         try {
             Path fontsDirPath = fontsDirectory.findOrCreate();
-            log.debug("using font path: " + fontsDirPath.toString());
+            log.debug("loading fonts from dir: " + fontsDirPath.toString());
             try (Stream<Path> paths = Files.walk(fontsDirPath)) {
                 paths
                         .filter(Files::isRegularFile)
@@ -62,22 +65,41 @@ public class FontManagerImpl implements FontManager {
         } catch (Exception e) {
             log.warn("could not load fonts from fonts dir", e);
         }
+        loadCurrentFont();
+    }
+
+    @Override
+    public void loadCurrentFont() {
+        List<FontBundle> matches = loadedFonts.stream()
+                .filter(font -> font.getRegularFileName().equals(fontOptions.getCurrentFont()))
+                .toList();
+        if (matches.isEmpty()) {
+            log.error("could not find current font with filename: " + fontOptions.getCurrentFont());
+            log.error("using default");
+            this.currentFont = new FontBundle(Font.getDefault(), Font.getDefault(), null, null);
+        } else if (matches.size() == 1) {
+            log.debug("found current font");
+            this.currentFont = matches.get(0);
+        } else {
+            log.error("found multiple current fonts, using first");
+            this.currentFont = matches.get(0);
+        }
     }
 
 
     @Override
     public FontBundle getSystemFont() {
-        return null;
+        return new FontBundle(Font.getDefault(), Font.getDefault(), null, null);
     }
 
     @Override
     public List<FontBundle> getLoadedFonts() {
-        return null;
+        return this.loadedFonts;
     }
 
     @Override
     public FontBundle getCurrentFont() {
-        return null;
+        return this.currentFont;
     }
 
 
