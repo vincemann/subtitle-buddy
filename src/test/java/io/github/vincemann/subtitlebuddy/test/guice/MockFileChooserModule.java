@@ -17,7 +17,7 @@ public class MockFileChooserModule extends FileChooserModule {
     }
 
     @Override
-    protected void initClassBindings() {
+    protected void configureClassBindings() {
         bind(FileChooser.class).toProvider(new MockedFileChooserProvider());
         bind(ContinueDialog.class).toInstance(message -> true);
         bind(AlertDialog.class).toInstance(message -> {

@@ -10,11 +10,10 @@ import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
 import io.github.vincemann.subtitlebuddy.events.UpdateCurrentFontEvent;
 import io.github.vincemann.subtitlebuddy.events.UpdateFontColorEvent;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKey;
+import io.github.vincemann.subtitlebuddy.options.OptionsManager;
 import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.srt.font.FontManager;
-import io.github.vincemann.subtitlebuddy.srt.font.FontsDirectory;
-import io.github.vincemann.subtitlebuddy.srt.font.SrtFontManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
@@ -29,9 +28,7 @@ import javafx.scene.text.Text;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -51,14 +48,9 @@ public class OptionsStageController {
     @FXML
     private CheckBox nextClickCheckBox;
 
-    private Map<FontBundle, String> fontPathMap;
-
     private EventBus eventBus;
 
-    private SrtFontManager srtFontManager;
-
-
-    private FontsDirectory fontsLocator;
+    private OptionsManager optionsManager;
 
     private ChangeListener<FontBundle> fontChoiceBoxChangeListener;
     private ChangeListener<Boolean> nextClickChangeListener;
@@ -73,16 +65,13 @@ public class OptionsStageController {
 
     @Inject
     public OptionsStageController(EventBus eventBus,
-                                  SrtFontManager srtFontManager,
+                                  OptionsManager optionsManager,
+                                  FontManager fontManager,
                                   @Named(PropertyFileKeys.NEXT_CLICK_HOT_KEY_ENABLED) boolean nextClickCountsToggled,
-                                  @Named(PropertyFileKeys.SPACE_HOTKEY_ENABLED) boolean startStopHotKeyToggled,
-                                  FontsDirectory fontsLocator)
-    {
-        this.fontsLocator = fontsLocator;
+                                  @Named(PropertyFileKeys.SPACE_HOTKEY_ENABLED) boolean startStopHotKeyToggled) {
+        this.optionsManager = optionsManager;
         this.eventBus = eventBus;
-        this.srtFontManager = srtFontManager;
-        // apache constants only supports List<Object> getList()
-        this.fontPathMap = new HashMap<>();
+        this.fontManager = fontManager;
         this.nextClickCountsToggled = nextClickCountsToggled;
         this.startStopHotKeyToggled = startStopHotKeyToggled;
     }
@@ -107,8 +96,8 @@ public class OptionsStageController {
 
         //no suitable eventType
         fontChoiceBoxChangeListener = (observable, oldValue, newValue) -> {
-            log.info("User selected new Font: " + newValue.toString() + " -> fontchangeevent fired");
-            eventBus.post(new UpdateCurrentFontEvent(newValue));
+            log.info("User selected new Font: " + newValue.toString() + " -> update current font event fired");
+            eventBus.post(new UpdateCurrentFontEvent(newValue.getRegularFileName()));
             previewText.setFont(newValue.getRegularFont());
         };
 
@@ -155,7 +144,6 @@ public class OptionsStageController {
         List<FontBundle> fonts = fontManager.getLoadedFonts();
         for (FontBundle fontBundle : fonts) {
             fontChoiceBox.getItems().add(fontBundle);
-            fontPathMap.put(fontBundle, fontBundle.getRegularFileName());
         }
     }
 

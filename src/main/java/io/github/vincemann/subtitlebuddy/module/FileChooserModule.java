@@ -19,7 +19,7 @@ public class FileChooserModule extends PropertyFilesModule {
     }
 
     @Override
-    protected void initPropertyBindings() {
+    protected void configurePropertyBindings() {
         bindConstant().annotatedWith(Names.named(UIStringsKeys.FILE_NOT_FOUND_MESSAGE))
                 .to(getStringsFile().getString(UIStringsKeys.FILE_NOT_FOUND_MESSAGE));
         bindConstant().annotatedWith(Names.named(UIStringsKeys.INVALID_FILE_FORMAT_MESSAGE))
@@ -34,7 +34,7 @@ public class FileChooserModule extends PropertyFilesModule {
     }
 
     @Override
-    protected void initClassBindings() {
+    protected void configureClassBindings() {
         bind(FileChooser.class).to(JavaFxFileChooser.class);
         bind(ContinueDialog.class).to(JavaFxContinueDialog.class);
         bind(AlertDialog.class).to(JavaFxAlertDialog.class);

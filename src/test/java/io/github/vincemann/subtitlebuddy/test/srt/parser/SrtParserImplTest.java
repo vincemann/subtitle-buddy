@@ -1,16 +1,17 @@
 package io.github.vincemann.subtitlebuddy.test.srt.parser;
 
-import io.github.vincemann.subtitlebuddy.srt.parser.SrtFileParserImpl;
-import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
-import io.github.vincemann.subtitlebuddy.srt.parser.SrtParserImpl;
-import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
+import io.github.vincemann.subtitlebuddy.options.SrtOptions;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.Timestamp;
-import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
-import io.github.vincemann.subtitlebuddy.srt.stopwatch.StopWatchImpl;
+import io.github.vincemann.subtitlebuddy.srt.parser.SrtFileParserImpl;
+import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
+import io.github.vincemann.subtitlebuddy.srt.parser.SrtParserImpl;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFile;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFileImpl;
+import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
+import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
+import io.github.vincemann.subtitlebuddy.srt.stopwatch.StopWatchImpl;
 import io.github.vincemann.subtitlebuddy.test.TestFiles;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,6 +19,9 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.Optional;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SrtParserImplTest {
 
@@ -29,7 +33,10 @@ public class SrtParserImplTest {
                 new SrtFileParserImpl().transformFileToSubtitles(
                         new File(TestFiles.VALID_SRT_FILE_PATH)));
 
-        this.parser= new SrtParserImpl(subtitleFile,new StopWatchImpl(),"###");
+        SrtOptions options = mock(SrtOptions.class);
+        when(options.getDefaultSubtitle())
+                .thenReturn("###");
+        this.parser= new SrtParserImpl(subtitleFile,new StopWatchImpl(),options);
     }
 
     @Test

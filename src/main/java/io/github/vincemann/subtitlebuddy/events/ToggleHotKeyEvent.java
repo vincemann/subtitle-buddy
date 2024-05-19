@@ -10,5 +10,5 @@ import lombok.ToString;
 @ToString
 public class ToggleHotKeyEvent {
     private HotKey hotKey;
-    private boolean toggled;
+    private boolean enabled;
 }

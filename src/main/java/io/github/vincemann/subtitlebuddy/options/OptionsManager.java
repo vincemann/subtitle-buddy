@@ -16,4 +16,6 @@ public interface OptionsManager {
     void updateSpaceHotkeyEnabled(boolean value);
 
     void updateNextClickHotkeyEnabled(boolean value);
+
+    void updateMovieFontSize(int size);
 }

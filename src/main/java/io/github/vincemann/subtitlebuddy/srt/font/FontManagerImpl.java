@@ -66,11 +66,11 @@ public class FontManagerImpl implements FontManager {
         } catch (Exception e) {
             log.warn("could not load fonts from fonts dir", e);
         }
-        loadCurrentFont();
+        reloadCurrentFont();
     }
 
     @Override
-    public void loadCurrentFont() {
+    public void reloadCurrentFont() {
         List<FontBundle> matches = loadedFonts.stream()
                 .filter(font -> font.getRegularFileName().equals(fontOptions.getCurrentFont()))
                 .toList();

@@ -15,11 +15,11 @@ public abstract class PropertyFilesModule extends AbstractModule {
 
     @Override
     protected final void configure() {
-        initPropertyBindings();
-        initClassBindings();
+        configurePropertyBindings();
+        configureClassBindings();
     }
 
-    protected abstract void initPropertyBindings();
+    protected abstract void configurePropertyBindings();
 
-    protected abstract void initClassBindings();
+    protected abstract void configureClassBindings();
 }

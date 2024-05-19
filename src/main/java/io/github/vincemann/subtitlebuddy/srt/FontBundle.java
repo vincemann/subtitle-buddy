@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.nio.file.Path;
 
-@AllArgsConstructor
 @Getter
 @ToString
 @EqualsAndHashCode
@@ -15,15 +14,12 @@ public class FontBundle {
     private Font italicFont;
     private String regularFileName;
     private String italicFileName;
-    @Setter
-    private Color fontColor;
 
     public FontBundle(Font regularFont, Font italicFont, String regularFileName, String italicFileName) {
         this.regularFont = regularFont;
         this.italicFont = italicFont;
         this.regularFileName = regularFileName;
         this.italicFileName = italicFileName;
-        this.fontColor = Color.WHITE;
     }
 
     /**
@@ -35,6 +31,12 @@ public class FontBundle {
     public FontBundle withSize(double size) {
         Font resizedRegular = Font.font(regularFont.getFamily(), size);
         Font resizedItalic = Font.font(italicFont.getFamily(), size);
-        return new FontBundle(resizedRegular, resizedItalic, regularFileName, italicFileName,fontColor);
+        return new FontBundle(resizedRegular, resizedItalic, regularFileName, italicFileName);
+    }
+
+    // used for displaying entries in font choice box
+    @Override
+    public String toString() {
+        return regularFileName;
     }
 }

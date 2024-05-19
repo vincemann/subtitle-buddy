@@ -65,7 +65,7 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable{
         }
     }
 
-    private synchronized void updateProgram(){
+    private void updateProgram(){
         SrtDisplayer srtDisplayer = this.srtDisplayerProvider.get();
         if(srtDisplayer instanceof SettingsSrtDisplayer){
             ((SettingsSrtDisplayer)srtDisplayer).setTime(srtParser.getTime());

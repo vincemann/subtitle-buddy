@@ -2,22 +2,18 @@ package io.github.vincemann.subtitlebuddy.srt.parser;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.events.RequestSrtParserUpdateEvent;
+import io.github.vincemann.subtitlebuddy.options.SrtOptions;
 import io.github.vincemann.subtitlebuddy.srt.*;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFile;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.StopWatch;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
-
 
 import java.util.Collections;
 import java.util.Optional;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 @Log4j2
 @Singleton
@@ -29,26 +25,38 @@ public class SrtParserImpl implements SrtParser {
     private StopWatch stopWatch;
     private final SubtitleText defaultSubtitleText;
     @Getter
-    private Optional<SubtitleParagraph> currentSubtitle= Optional.empty();
+    private Optional<SubtitleParagraph> currentSubtitle = Optional.empty();
 
     @Inject
-    public SrtParserImpl(SubtitleFile subtitleFile, StopWatch stopWatch, final @Named(PropertyFileKeys.DEFAULT_SUBTITLE) @NonNull String defaultSubtitleText) {
+    public SrtParserImpl(SubtitleFile subtitleFile, StopWatch stopWatch, SrtOptions options) {
         this.subtitleFile = subtitleFile;
         this.stopWatch = stopWatch;
-        checkArgument(!defaultSubtitleText.isEmpty());
-        this.defaultSubtitleText = new SubtitleText(Collections.singletonList(Collections.singletonList(new SubtitleSegment(SubtitleType.NORMAL,defaultSubtitleText))));
-        this.currentSubtitleText=this.defaultSubtitleText;
+        this.defaultSubtitleText = new SubtitleText(
+                Collections.singletonList(
+                        Collections.singletonList(
+                                new SubtitleSegment(SubtitleType.NORMAL, options.getDefaultSubtitle())
+                        )
+                )
+        );
+        this.currentSubtitleText = this.defaultSubtitleText;
     }
 
+    @Override
+    public synchronized void jumpToTimestamp(Timestamp timestamp) {
+        if (getCurrentState().equals(RunningState.STATE_RUNNING)) {
+            stop();
+        }
+        setTime(timestamp);
+    }
 
     @Override
-    public synchronized void start() throws IllegalStateException{
+    public synchronized void start() throws IllegalStateException {
         log.debug("srt parser start called");
-        if(stopWatch.getCurrentState()== RunningState.STATE_UNSTARTED){
+        if (stopWatch.getCurrentState() == RunningState.STATE_UNSTARTED) {
             stopWatch.start();
-        }else if(stopWatch.getCurrentState()==RunningState.STATE_SUSPENDED){
+        } else if (stopWatch.getCurrentState() == RunningState.STATE_SUSPENDED) {
             stopWatch.resume();
-        }else {
+        } else {
             log.warn("Parser is already running");
             throw new IllegalStateException("Parser is already running");
         }
@@ -64,11 +72,11 @@ public class SrtParserImpl implements SrtParser {
     }
 
     @Override
-    public synchronized void stop() throws IllegalStateException{
+    public synchronized void stop() throws IllegalStateException {
         log.debug("srt parser stop called");
-        if(stopWatch.getCurrentState()==RunningState.STATE_RUNNING){
+        if (stopWatch.getCurrentState() == RunningState.STATE_RUNNING) {
             stopWatch.suspend();
-        }else {
+        } else {
             log.warn("Parser is already stopped");
             throw new IllegalStateException("Parser is already stopped");
         }
@@ -76,16 +84,15 @@ public class SrtParserImpl implements SrtParser {
     }
 
     @Override
-    public synchronized void setTime(Timestamp timestamp) throws IllegalStateException{
+    public synchronized void setTime(Timestamp timestamp) throws IllegalStateException {
         log.debug("srt parser set time called");
-        if(stopWatch.getCurrentState()==RunningState.STATE_UNSTARTED || stopWatch.getCurrentState() == RunningState.STATE_SUSPENDED){
+        if (stopWatch.getCurrentState() == RunningState.STATE_UNSTARTED || stopWatch.getCurrentState() == RunningState.STATE_SUSPENDED) {
             //valid
             log.debug("setting Parsers time manually to timestamp : " + timestamp);
             stopWatch.reset();
-            stopWatch.start(timestamp.toMilliSeconds()*NANO_2_MILLIS);
+            stopWatch.start(timestamp.toMilliSeconds() * NANO_2_MILLIS);
             stopWatch.suspend();
-        }
-        else {
+        } else {
             //invalid
             log.warn("Invalid Access. Time can only be set when io.github.vincemann.srtParser is either unstarted or suspended");
             throw new IllegalStateException("Invalid Access. Time can only be set when io.github.vincemann.srtParser is either unstarted or suspended");
@@ -99,12 +106,12 @@ public class SrtParserImpl implements SrtParser {
 
     @Override
     public synchronized void updateCurrentSubtitle() throws TimeStampOutOfBoundsException {
-        Timestamp timestamp = new Timestamp(stopWatch.getTime()/NANO_2_MILLIS);
+        Timestamp timestamp = new Timestamp(stopWatch.getTime() / NANO_2_MILLIS);
         //log.trace("updating Parser to timestamp: " + timestamp);
         currentSubtitle = subtitleFile.getSubtitleAtTimeStamp(timestamp);
-        if(currentSubtitle.isPresent()){
-            this.currentSubtitleText=currentSubtitle.get().getText();
-        }else {
+        if (currentSubtitle.isPresent()) {
+            this.currentSubtitleText = currentSubtitle.get().getText();
+        } else {
             this.currentSubtitleText = defaultSubtitleText;
         }
     }
@@ -116,13 +123,13 @@ public class SrtParserImpl implements SrtParser {
 
     @Override
     public synchronized void reset() {
-        log.debug("srtParser gets resetted");
+        log.debug("srtParser reseted");
         stopWatch.reset();
         currentSubtitleText = defaultSubtitleText;
     }
 
     @Override
     public synchronized Timestamp getTime() {
-        return new Timestamp(stopWatch.getTime()/NANO_2_MILLIS);
+        return new Timestamp(stopWatch.getTime() / NANO_2_MILLIS);
     }
 }

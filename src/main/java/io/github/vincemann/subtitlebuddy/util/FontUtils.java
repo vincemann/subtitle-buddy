@@ -2,7 +2,6 @@ package io.github.vincemann.subtitlebuddy.util;
 
 import javafx.scene.text.Font;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileInputStream;

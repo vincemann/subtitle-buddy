@@ -8,7 +8,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
-import io.github.vincemann.subtitlebuddy.events.RequestSrtParserUpdateEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 import io.github.vincemann.subtitlebuddy.gui.Window;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
@@ -18,10 +17,8 @@ import io.github.vincemann.subtitlebuddy.options.FontOptions;
 import io.github.vincemann.subtitlebuddy.options.SrtDisplayerOptions;
 import io.github.vincemann.subtitlebuddy.srt.*;
 import io.github.vincemann.subtitlebuddy.srt.font.FontManager;
-import io.github.vincemann.subtitlebuddy.srt.font.SrtFontManager;
 import io.github.vincemann.subtitlebuddy.srt.parser.InvalidTimestampFormatException;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
-import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import io.github.vincemann.subtitlebuddy.util.fx.FontUtils;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.application.Platform;
@@ -114,10 +111,10 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
 
     @Inject
-    public SettingsStageController(Button startButton, Button stopButton, SrtParser srtParser,
+    public SettingsStageController(SrtParser srtParser,
                                    FontManager fontManager,
                                    WindowManager windowManager,
-                                   EventBus eventBus,
+                                   SrtDisplayerOptions options, FontOptions fontOptions, EventBus eventBus,
                                    @Named(UIStringsKeys.START_BUTTON_TEXT) String startButtonText,
                                    @Named(UIStringsKeys.STOP_BUTTON_TEXT) String stopButtonText,
                                    @Named(UIStringsKeys.MOVIE_MODE_BUTTON_TEXT) String movieModeButtonText,
@@ -125,9 +122,9 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                                    @Named(UIStringsKeys.WRONG_TIMESTAMP_FORMAT_TEXT) String wrongTimeStampFormatText,
                                    @Named(UIStringsKeys.TIMESTAMP_JUMP_HINT_TEXT) String timestampJumpHintTextString
     ) {
-        this.startButton = startButton;
-        this.stopButton = stopButton;
         this.srtParser = srtParser;
+        this.options = options;
+        this.fontOptions = fontOptions;
         this.eventBus = eventBus;
         this.fontManager = fontManager;
         this.windowManager = windowManager;
@@ -233,13 +230,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                 log.debug("timestamp string entered: " + timeField.getText());
                 timestamp = new Timestamp(timeField.getText() + ",000");
                 log.debug("user set new timestamp: " + timestamp);
-                synchronized (srtParser) {
-                    if (srtParser.getCurrentState().equals(RunningState.STATE_RUNNING)) {
-                        srtParser.stop();
-                    }
-                    srtParser.setTime(timestamp);
-                    eventBus.post(new RequestSrtParserUpdateEvent());
-                }
+                srtParser.jumpToTimestamp(timestamp);
                 setTime(timestamp);
             } catch (InvalidTimestampFormatException e) {
                 log.info("Wrong timeStamp entered: ");
@@ -281,6 +272,11 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
 
     @Override
+    public void refreshSubtitle() {
+        displaySubtitle(lastSubtitleText);
+    }
+
+    @Override
     public void displayNextClickCounts() {
         Platform.runLater(() -> {
             log.debug("showing next click counts image now");
@@ -316,12 +312,21 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         log.trace("asking javafx to display new subtitle in " + this.getClass().getSimpleName() + " : " + subtitleText);
         lastSubtitleText = subtitleText;
 
-        int fontSize = options.getSettingsFontSize();
-        FontBundle currentFont = fontManager.getCurrentFont().withSize(fontSize);
-        Color fontColor = fontOptions.getFontColor();
+
 
         Platform.runLater(() -> {
-            log.trace("displaying new subtitle: " + subtitleText);
+            int fontSize = options.getSettingsFontSize();
+            FontBundle currentFont = fontManager.getCurrentFont().withSize(fontSize);
+            Color fontColor = fontOptions.getFontColor();
+
+            if (log.isTraceEnabled()){
+                log.trace("setting fontcolor: " + fontColor);
+                log.trace("setting font size: " + fontSize);
+                log.trace("using font: " + currentFont.getRegularFont().getName());
+
+                log.trace("displaying new subtitle: " + subtitleText);
+            }
+
             settingsTextFlow.getChildren().clear();
             for (List<SubtitleSegment> subtitleSegments : subtitleText.getSubtitleSegments()) {
                 for (SubtitleSegment subtitleSegment : subtitleSegments) {
@@ -332,13 +337,14 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                     } else {
                         text.setFont(currentFont.getRegularFont());
                     }
-                    log.trace("setting fontcolor: " + fontColor);
+
                     text.setFill(fontColor);
 
-                    log.trace("setting font size: " + fontSize);
+
                     FontUtils.adjustTextSize(text, fontSize);
 
-                    log.trace("displaying text: " + text + " in " + this.getClass().getSimpleName());
+                    if (log.isTraceEnabled())
+                        log.trace("displaying text: " + text + " in settings mode");
                     settingsTextFlow.getChildren().add(text);
                     settingsTextFlow.getChildren().add(new Text(System.lineSeparator()));
                 }

@@ -28,7 +28,7 @@ public class GuiModule extends PropertyFilesModule {
     }
 
     @Override
-    protected void initPropertyBindings() {
+    protected void configurePropertyBindings() {
         bindConstant().annotatedWith(Names.named(UIStringsKeys.SELECT_FILE_DESC))
                 .to(getStringsFile().getString(UIStringsKeys.SELECT_FILE_DESC));
         bindConstant().annotatedWith(Names.named(UIStringsKeys.SELECT_FILE_WINDOW_TITLE))
@@ -77,7 +77,7 @@ public class GuiModule extends PropertyFilesModule {
     }
 
     @Override
-    protected void initClassBindings() {
+    protected void configureClassBindings() {
         Platform.setImplicitExit(false); // https://stackoverflow.com/questions/29302837/javafx-platform-runlater-never-running
         bind(WindowManager.class).in(Singleton.class);
         bind(SettingsStageFactory.class).in(Singleton.class);

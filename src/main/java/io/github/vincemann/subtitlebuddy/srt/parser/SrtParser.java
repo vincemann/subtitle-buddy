@@ -19,6 +19,7 @@ public interface SrtParser {
 
     void setTime(Timestamp timestamp);
 
+    void jumpToTimestamp(Timestamp timestamp);
 
     Timestamp getTime();
 

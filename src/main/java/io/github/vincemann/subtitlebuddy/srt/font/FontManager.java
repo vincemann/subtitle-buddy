@@ -13,7 +13,7 @@ public interface FontManager {
      * This is for reloading if current font changed.
      * You could also call loadFonts again to reload everything.
      */
-    void loadCurrentFont();
+    void reloadCurrentFont();
 
     FontBundle getSystemFont();
 

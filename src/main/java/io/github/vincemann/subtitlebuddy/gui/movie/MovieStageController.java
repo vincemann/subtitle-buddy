@@ -5,21 +5,22 @@ import com.google.common.collect.Table;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.events.UpdateSubtitlePosEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
+import io.github.vincemann.subtitlebuddy.events.UpdateSubtitlePosEvent;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.options.FontOptions;
+import io.github.vincemann.subtitlebuddy.options.OptionsManager;
+import io.github.vincemann.subtitlebuddy.options.SrtDisplayerOptions;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleSegment;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleType;
-import io.github.vincemann.subtitlebuddy.srt.font.SrtFontManager;
+import io.github.vincemann.subtitlebuddy.srt.font.FontManager;
 import io.github.vincemann.subtitlebuddy.util.ExecutionLimiter;
 import io.github.vincemann.subtitlebuddy.util.fx.DragResizeMod;
 import io.github.vincemann.subtitlebuddy.util.fx.FontUtils;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
-import io.github.vincemann.subtitlebuddy.util.vec.VectorDecodeException;
+import io.github.vincemann.subtitlebuddy.util.vec.VectorUtils;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -35,7 +36,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
@@ -56,15 +56,15 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     private static final int MOVIE_CLICK_WARNING_SIZE = 60;
     //200 millis in nano
-    private static final long SUBTITLE_UPDATE_SLEEP_DURATION = 200000000L;
+    private static final long UPDATE_SLEEP_DURATION = 200000000L;
 
     private static final String BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE = "-fx-background-color: rgba(0, 100, 100, 0.51); -fx-background-radius: 10;";
     private static final String TRANSPARENT_BACKGROUND_STYLE = "-fx-background-color: transparent;";
     public static final String OUTLINED_TEXT_STYLE = /*"color: #ff0;"+*/
 //            "text-shadow: 3px 0 0 #000, 0 -3px 0 #000, 0 3px 0 #000, -3px 0 0 #000;";
 //        "-fx-fill: lightseagreen;\n"+
-        "-fx-stroke: black;\n"+
-        "-fx-stroke-width: 2px;\n";
+            "-fx-stroke: black;\n" +
+                    "-fx-stroke-width: 2px;\n";
 
 
     @FXML
@@ -75,22 +75,19 @@ public class MovieStageController implements MovieSrtDisplayer {
     private AnchorPane movieAnchorPane;
 
 
-
     private ImageView clickWarning;
 
-    @Getter
-    @Setter
-    private FontBundle currentFont;
 
     private EventBus eventBus;
 
-    private SrtFontManager srtFontManager;
+    private FontManager fontManager;
+
+    private SrtDisplayerOptions options;
+
+    private OptionsManager optionsManager;
 
     private Vector2D movieVBoxPos;
 
-    private int currentFontSize;
-
-    private ExecutionLimiter updateSubtitleExecutionLimiter;
 
     @Getter
     private SubtitleText lastSubtitleText;
@@ -99,34 +96,25 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     private Table<Node, EventHandler, EventType> eventHandlers;
 
+    private FontOptions fontOptions;
+
 
     @Inject
-    public MovieStageController(SrtFontManager srtFontManager,
+    public MovieStageController(FontManager srtFontManager,
                                 EventBus eventBus,
-                                @Named(PropertyFileKeys.SUBTITLE_POS) String movieVBoxPosString)
-    {
-        this.srtFontManager = srtFontManager;
-        this.eventBus= eventBus;
-        this.movieVBoxPos = loadMovieVBoxStartPos(movieVBoxPosString,getScreenBoundsVector());
-        this.updateSubtitleExecutionLimiter = new ExecutionLimiter(SUBTITLE_UPDATE_SLEEP_DURATION,this::updateSubtitle);
-        this.currentFontSize = (int) srtFontManager.getUserFontSize();
-        this.currentFont = srtFontManager.loadDefaultFont();
+                                OptionsManager optionsManager,
+                                SrtDisplayerOptions options,
+                                FontOptions fontOptions) {
+        this.fontManager = srtFontManager;
+        this.eventBus = eventBus;
+        this.options = options;
+        this.optionsManager = optionsManager;
+        // make sure subtitles can be seen
+        this.movieVBoxPos = VectorUtils.getVecWithinBounds(options.getSubtitlePosition(), getScreenBoundsVector());
+        this.fontOptions = fontOptions;
         this.lastSubtitleText = new SubtitleText(new ArrayList<>(Collections.emptyList()));
     }
 
-    private Vector2D loadMovieVBoxStartPos(String savedPosition, Vector2D screenBounds){
-        //todo test
-        try {
-            Vector2D screenPos = new Vector2D(savedPosition);
-            if(!Vector2D.isVectorInBounds(screenBounds.getX(),screenBounds.getY(),0,0,screenPos)){
-                throw new IllegalArgumentException("read movieVBoxPos: "+ screenPos + " is out of screenbounds: " + screenBounds);
-            }
-            return new Vector2D(savedPosition);
-        }catch (IllegalArgumentException | VectorDecodeException e){
-            log.warn("could not load user movie vbox startPos, using center of screen instead", e);
-            return new Vector2D(screenBounds.getX()/2,screenBounds.getY()/2);
-        }
-    }
 
     @Override
     public void displayNextClickCounts() {
@@ -139,9 +127,9 @@ public class MovieStageController implements MovieSrtDisplayer {
     }
 
 
-    private void handleVBoxDoubleClick(MouseEvent event){
-        if(event.getButton().equals(MouseButton.PRIMARY)){
-            if(event.getClickCount() == 2){
+    private void onVBoxClicked(MouseEvent event) {
+        if (event.getButton().equals(MouseButton.PRIMARY)) {
+            if (event.getClickCount() == 2) {
                 // double click
                 log.debug("user double clicked movieText -> switching to settings srt displayer");
                 eventBus.post(new SwitchSrtDisplayerEvent(SettingsSrtDisplayer.class));
@@ -149,20 +137,11 @@ public class MovieStageController implements MovieSrtDisplayer {
         }
     }
 
-    private void updateSubtitle(){
+    @Override
+    public void refreshSubtitle() {
         displaySubtitle(lastSubtitleText);
     }
 
-
-    @Override
-    public void setFontColor(Color color) {
-        srtFontManager.setFontColor(color);
-    }
-
-    @Override
-    public Color getFontColor() {
-        return srtFontManager.getFontColor();
-    }
 
     @Override
     public void displaySubtitle(SubtitleText subtitleText) {
@@ -171,22 +150,33 @@ public class MovieStageController implements MovieSrtDisplayer {
 
 
         Platform.runLater(() -> {
-            log.trace("displaying new subtitle: " + subtitleText);
+            Color fontColor = fontOptions.getFontColor();
+            int fontSize = options.getMovieFontSize();
+            FontBundle currentFont = fontManager.getCurrentFont();
+
+            if (log.isTraceEnabled()) {
+                log.trace("using text size: " + fontSize);
+                log.trace("setting fontcolor: " + fontColor);
+                log.trace("using font: " + currentFont.getRegularFont().getName());
+
+                log.trace("displaying new subtitle: " + subtitleText);
+            }
+
             movieTextFlow.getChildren().clear();
-            for(List<SubtitleSegment> subtitleSegments: subtitleText.getSubtitleSegments()){
-                for(SubtitleSegment subtitleSegment: subtitleSegments){
+            for (List<SubtitleSegment> subtitleSegments : subtitleText.getSubtitleSegments()) {
+                for (SubtitleSegment subtitleSegment : subtitleSegments) {
                     Text text = new Text(subtitleSegment.getText());
 
-                    if(subtitleSegment.getType().equals(SubtitleType.ITALIC)){
+                    if (subtitleSegment.getType().equals(SubtitleType.ITALIC)) {
                         text.setFont(currentFont.getItalicFont());
-                    }else {
+                    } else {
                         text.setFont(currentFont.getRegularFont());
                     }
-                    FontUtils.adjustTextSize(text,currentFontSize);
 
-                    log.trace("setting fontcolor: "+ srtFontManager.getFontColor());
-                    text.setFill(srtFontManager.getFontColor());
+                    FontUtils.adjustTextSize(text, fontSize);
+                    text.setFill(fontColor);
                     text.setStyle(OUTLINED_TEXT_STYLE);
+
                     movieTextFlow.getChildren().add(text);
                     movieTextFlow.getChildren().add(new Text(System.lineSeparator()));
                 }
@@ -211,23 +201,25 @@ public class MovieStageController implements MovieSrtDisplayer {
 
         clickWarning = loadImageView(movieVBox,
                 "/images/finger.png",
-                new Vector2D(MOVIE_CLICK_WARNING_SIZE,MOVIE_CLICK_WARNING_SIZE));
+                new Vector2D(MOVIE_CLICK_WARNING_SIZE, MOVIE_CLICK_WARNING_SIZE));
         clickWarning.setVisible(false);
     }
 
-    private void onDraggedInPosition(MouseEvent mouseEvent){
+    private void onDraggedInPosition(MouseEvent mouseEvent) {
         // is called when user selected a new position for the movieVBox
-        Vector2D nodePos = new Vector2D(movieVBox.getLayoutX(),movieVBox.getLayoutY());
+        Vector2D nodePos = new Vector2D(movieVBox.getLayoutX(), movieVBox.getLayoutY());
         eventBus.post(new UpdateSubtitlePosEvent(nodePos));
     }
 
-    private void onMovieBoxResize(Node node, double h, double w, double deltaH, double deltaW){
-        checkArgument(node==movieVBox);
+    private void onMovieBoxResize(Node node, double h, double w, double deltaH, double deltaW) {
+        checkArgument(node == movieVBox);
         movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
         movieVBox.setPrefHeight(h);
         movieVBox.setPrefWidth(w);
-        this.currentFontSize=  ((int)(h+w)/2)/9;
-        updateSubtitleExecutionLimiter.tryExecuting();
+        int fontSize = ((int) (h + w) / 2) / 9;
+        // dont write to disk too often, this method is called often in a short time
+        ExecutionLimiter.executeMaxEveryNMillis("fontResize", UPDATE_SLEEP_DURATION,
+                () -> optionsManager.updateMovieFontSize(fontSize));
     }
 
     protected Table<Node, EventHandler, EventType> registerEventHandlers() {
@@ -243,16 +235,16 @@ public class MovieStageController implements MovieSrtDisplayer {
         dragResizeMod = DragResizeMod.builder()
                 .node(movieVBox)
                 .mouseReleasedFunction(this::onDraggedInPosition)
-                .mouseClickedFunction(this::handleVBoxDoubleClick)
+                .mouseClickedFunction(this::onVBoxClicked)
                 .resizeFunction(this::onMovieBoxResize)
                 .nodeHeight(movieVBox.getHeight())
                 .nodeWidth(movieVBox.getWidth())
                 .build();
         dragResizeMod.makeResizableAndDraggable();
 
-        Table<Node, EventHandler, EventType> resultTable =  HashBasedTable.create();
-        resultTable.put(movieVBox,movieBoxMouseEnteredHandler,MouseEvent.MOUSE_ENTERED);
-        resultTable.put(movieVBox,movieBoxMouseExitedHandler,MouseEvent.MOUSE_EXITED);
+        Table<Node, EventHandler, EventType> resultTable = HashBasedTable.create();
+        resultTable.put(movieVBox, movieBoxMouseEnteredHandler, MouseEvent.MOUSE_ENTERED);
+        resultTable.put(movieVBox, movieBoxMouseExitedHandler, MouseEvent.MOUSE_EXITED);
         return resultTable;
     }
 

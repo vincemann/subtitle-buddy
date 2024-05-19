@@ -1,10 +1,10 @@
 package io.github.vincemann.subtitlebuddy.options;
 
-class PropertyFileKeys {
+public class PropertyFileKeys {
 
     public static final String LAST_PATH = "lastPath";
     public static final String ENCODING = "encoding";
-    public static final String USER_FONT_SIZE = "userFontSize";
+    public static final String MOVIE_FONT_SIZE = "movieFontSize";
     public static final String UPDATER_DELAY = "updaterDelay";
     public static final String TIME_STAMP_WARNING_DURATION = "timeStampWarningDuration";
     public static final String USER_FONT_COLOR = "userFontColor";
