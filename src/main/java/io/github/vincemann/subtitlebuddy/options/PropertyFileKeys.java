@@ -10,14 +10,14 @@ class PropertyFileKeys {
     public static final String USER_FONT_COLOR = "userFontColor";
     public static final String SETTINGS_WINDOW_SIZE = "settingsStageSize";
     public static final String OPTIONS_WINDOW_SIZE = "optionsWindowSize";
-    public static final String USER_MOVIE_TEXT_POSITION = "userMovieTextPosition";
+    public static final String SUBTITLE_POS = "subtitlePos";
     public static final String DEFAULT_SUBTITLE = "defaultSubtitle";
     public static final String SETTINGS_FONT_SIZE = "settingsFontSize";
-    public static final String START_STOP_HOT_KEY_TOGGLED = "startStopHotKeyToggled";
-    public static final String NEXT_CLICK_HOT_KEY_TOGGLED = "nextClickHotKeyToggled";
+    public static final String SPACE_HOTKEY_ENABLED = "spaceHotkeyEnabled";
+    public static final String NEXT_CLICK_HOT_KEY_ENABLED = "nextClickHotKeyEnabled";
     public static final String FAST_FORWARD_DELTA = "fastForwardDelta";
     public static final String CLICK_WARNING_IMAGE_PATH = "clickWarningImagePath";
-    public static final String USER_DEFAULT_FONT = "userDefaultFont";
+    public static final String USER_CURRENT_FONT = "currentFont";
 
     private PropertyFileKeys(){}
 

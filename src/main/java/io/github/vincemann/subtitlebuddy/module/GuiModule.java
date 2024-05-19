@@ -56,14 +56,14 @@ public class GuiModule extends PropertyFilesModule {
 
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.TIME_STAMP_WARNING_DURATION))
                 .to(getPropertiesFile().getString(PropertyFileKeys.TIME_STAMP_WARNING_DURATION));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.USER_MOVIE_TEXT_POSITION))
-                .to(getPropertiesFile().getString(PropertyFileKeys.USER_MOVIE_TEXT_POSITION));
+        bindConstant().annotatedWith(Names.named(PropertyFileKeys.SUBTITLE_POS))
+                .to(getPropertiesFile().getString(PropertyFileKeys.SUBTITLE_POS));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.SETTINGS_FONT_SIZE))
                 .to(getPropertiesFile().getInt(PropertyFileKeys.SETTINGS_FONT_SIZE));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.START_STOP_HOT_KEY_TOGGLED))
-                .to(getPropertiesFile().getBoolean(PropertyFileKeys.START_STOP_HOT_KEY_TOGGLED));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.NEXT_CLICK_HOT_KEY_TOGGLED))
-                .to(getPropertiesFile().getBoolean(PropertyFileKeys.NEXT_CLICK_HOT_KEY_TOGGLED));
+        bindConstant().annotatedWith(Names.named(PropertyFileKeys.SPACE_HOTKEY_ENABLED))
+                .to(getPropertiesFile().getBoolean(PropertyFileKeys.SPACE_HOTKEY_ENABLED));
+        bindConstant().annotatedWith(Names.named(PropertyFileKeys.NEXT_CLICK_HOT_KEY_ENABLED))
+                .to(getPropertiesFile().getBoolean(PropertyFileKeys.NEXT_CLICK_HOT_KEY_ENABLED));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.FAST_FORWARD_DELTA))
                 .to(getPropertiesFile().getInt(PropertyFileKeys.FAST_FORWARD_DELTA));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.CLICK_WARNING_IMAGE_PATH))

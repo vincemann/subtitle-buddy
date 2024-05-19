@@ -103,7 +103,7 @@ public class MovieStageController implements MovieSrtDisplayer {
     @Inject
     public MovieStageController(SrtFontManager srtFontManager,
                                 EventBus eventBus,
-                                @Named(PropertyFileKeys.USER_MOVIE_TEXT_POSITION) String movieVBoxPosString)
+                                @Named(PropertyFileKeys.SUBTITLE_POS) String movieVBoxPosString)
     {
         this.srtFontManager = srtFontManager;
         this.eventBus= eventBus;

@@ -1,7 +1,6 @@
 package io.github.vincemann.subtitlebuddy.options;
 
 import com.google.inject.Inject;
-import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import javafx.scene.paint.Color;
 
 public class FontOptions {
@@ -23,7 +22,7 @@ public class FontOptions {
     }
 
     public void updateCurrentFont(String fileName){
-        manager.updateCurrentFontPath(fileName);
+        manager.updateCurrentFont(fileName);
     }
 
     public void updateFontColor(Color color){

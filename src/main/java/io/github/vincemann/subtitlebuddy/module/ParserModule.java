@@ -36,8 +36,8 @@ public class ParserModule extends PropertyFilesModule {
     protected void initPropertyBindings() {
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.UPDATER_DELAY))
                 .to(getPropertiesFile().getLong(PropertyFileKeys.UPDATER_DELAY));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.USER_DEFAULT_FONT))
-                .to(getPropertiesFile().getString(PropertyFileKeys.USER_DEFAULT_FONT));
+        bindConstant().annotatedWith(Names.named(PropertyFileKeys.USER_CURRENT_FONT))
+                .to(getPropertiesFile().getString(PropertyFileKeys.USER_CURRENT_FONT));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.USER_FONT_SIZE))
                 .to(getPropertiesFile().getString(PropertyFileKeys.USER_FONT_SIZE));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.ENCODING))

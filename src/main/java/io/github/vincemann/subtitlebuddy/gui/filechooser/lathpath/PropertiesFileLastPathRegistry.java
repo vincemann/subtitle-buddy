@@ -31,7 +31,7 @@ public class PropertiesFileLastPathRegistry implements LastPathRegistry {
     @Override
     public String getSavedPath() {
         try {
-            return configuration.getString(PropertyFileKeys.LAST_PATH);
+            return configuration.getString("lastPath");
         }catch (NoSuchElementException e){
             throw new PropertyNotFoundException(e);
         }
@@ -41,7 +41,7 @@ public class PropertiesFileLastPathRegistry implements LastPathRegistry {
     public void savePath(File file) throws PropertyAccessException {
         log.trace("saving path: " + file);
         String path = file.getPath();
-        configuration.saveProperty(PropertyFileKeys.LAST_PATH, path);
+        configuration.saveProperty("lastPath", path);
         log.debug("Successfully saved path: " + path);
 
     }

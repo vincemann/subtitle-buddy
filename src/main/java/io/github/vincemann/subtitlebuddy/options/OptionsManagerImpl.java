@@ -28,24 +28,42 @@ public class OptionsManagerImpl implements OptionsManager {
     @Override
     public Options parseOptions(){
         Options options = new Options();
+
+        String currentFont = properties.getString(PropertyFileKeys.USER_CURRENT_FONT);
+        options.setCurrentFont(currentFont);
+
         String sColor = properties.getString(PropertyFileKeys.USER_FONT_COLOR);
         Color color = Color.valueOf(sColor);
         options.setFontColor(color);
 
+        String subtitlePos = properties.getString(PropertyFileKeys.SUBTITLE_POS);
+        Vector2D pos = new Vector2D(subtitlePos);
+        options.setSubtitlePosition(pos);
 
+        boolean spaceHotkeyEnabled = properties.getBoolean(PropertyFileKeys.SPACE_HOTKEY_ENABLED);
+        options.setSpaceHotkeyEnabled(spaceHotkeyEnabled);
 
+        boolean nextClickHotkeyEnabled = properties.getBoolean(PropertyFileKeys.NEXT_CLICK_HOT_KEY_ENABLED);
+        options.setNextClickHotkeyEnabled(nextClickHotkeyEnabled);
 
+        String defaultSubtitle = properties.getString(PropertyFileKeys.DEFAULT_SUBTITLE);
+        options.setDefaultSubtitle(defaultSubtitle);
+
+        String encoding = properties.getString(PropertyFileKeys.ENCODING);
+        options.setEncoding(encoding);
+
+        return options;
     }
 
     @Override
-    public void updateCurrentFontPath(String path){
+    public void updateCurrentFont(String path){
         options.setCurrentFont(path);
 
         try {
-            properties.saveProperty(PropertyFileKeys.USER_DEFAULT_FONT,path);
+            properties.saveProperty(PropertyFileKeys.USER_CURRENT_FONT,path);
         }
         catch (PropertyAccessException e1) {
-            log.error("could not save default font modification, "+ e1.getMessage());
+            log.error("could not save current font modification, "+ e1.getMessage());
         }
         eventBus.post(new OptionsUpdatedEvent());
     }
@@ -65,13 +83,39 @@ public class OptionsManagerImpl implements OptionsManager {
     public void updateSubtitlePos(Vector2D pos){
         options.setSubtitlePosition(pos);
         try {
-            properties.saveProperty(PropertyFileKeys.USER_MOVIE_TEXT_POSITION, pos.toString());
+            properties.saveProperty(PropertyFileKeys.SUBTITLE_POS, pos.toString());
         } catch (PropertyAccessException e1) {
-            log.error("could not save movieTextPosition modification, " + e1.getMessage());
+            log.error("could not save subtitle pos modification, " + e1.getMessage());
         }
         // give components that read options the chance to refresh
         eventBus.post(new OptionsUpdatedEvent());
     }
+
+    @Override
+    public void updateSpaceHotkeyEnabled(boolean value){
+        options.setSpaceHotkeyEnabled(value);
+        try {
+            properties.saveProperty(PropertyFileKeys.SPACE_HOTKEY_ENABLED, String.valueOf(value));
+        } catch (PropertyAccessException e1) {
+            log.error("could not save space hotkey enabled modification, " + e1.getMessage());
+        }
+        // give components that read options the chance to refresh
+        eventBus.post(new OptionsUpdatedEvent());
+    }
+
+    @Override
+    public void updateNextClickHotkeyEnabled(boolean value){
+        options.setNextClickHotkeyEnabled(value);
+        try {
+            properties.saveProperty(PropertyFileKeys.NEXT_CLICK_HOT_KEY_ENABLED, String.valueOf(value));
+        } catch (PropertyAccessException e1) {
+            log.error("could not save next click hotkey enabled modification, " + e1.getMessage());
+        }
+        // give components that read options the chance to refresh
+        eventBus.post(new OptionsUpdatedEvent());
+    }
+
+
 
 
 }

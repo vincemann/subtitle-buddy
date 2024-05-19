@@ -54,7 +54,7 @@ public class SrtDisplayerEventHandlerImpl implements SrtDisplayerEventHandler {
 //        srtDisplayerProvider.get(SettingsSrtDisplayer.class).setCurrentFont(e.getFont());
         srtDisplayerProvider.get().displaySubtitle(srtDisplayerProvider.get().getLastSubtitleText());
 
-        optionsManager.updateCurrentFontPath(e.getFont().getPath());
+        optionsManager.updateCurrentFont(e.getFont().getPath());
         // also save this font as new default font
         fontManager.reloadDefaultFont(e.getFont());
     }

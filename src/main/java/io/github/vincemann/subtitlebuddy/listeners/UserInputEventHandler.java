@@ -42,8 +42,8 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
 
     @Inject
     public UserInputEventHandler(SrtParser srtParser, PropertiesFile properties,
-                                 @Named(PropertyFileKeys.START_STOP_HOT_KEY_TOGGLED) boolean startStopHotKeyToggled,
-                                 @Named(PropertyFileKeys.NEXT_CLICK_HOT_KEY_TOGGLED) boolean nextClickHotKeyToggled ,
+                                 @Named(PropertyFileKeys.SPACE_HOTKEY_ENABLED) boolean startStopHotKeyToggled,
+                                 @Named(PropertyFileKeys.NEXT_CLICK_HOT_KEY_ENABLED) boolean nextClickHotKeyToggled ,
                                  SrtDisplayerProvider srtDisplayerProvider,
                                  EventBus eventBus, WindowManager windowManager) {
         this.properties = properties;
@@ -111,7 +111,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
             case START_STOP:
                 this.startStopHotKeyToggled = e.isToggled();
                 try {
-                    properties.saveProperty(PropertyFileKeys.START_STOP_HOT_KEY_TOGGLED,e.isToggled());
+                    properties.saveProperty(PropertyFileKeys.SPACE_HOTKEY_ENABLED,e.isToggled());
                 } catch (PropertyAccessException e1) {
                     log.error("could not not save property",e1);
                 }
@@ -119,7 +119,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
             case NEXT_CLICK:
                 this.nextClickHotKeyToggled = e.isToggled();
                 try {
-                    properties.saveProperty(PropertyFileKeys.NEXT_CLICK_HOT_KEY_TOGGLED,e.isToggled());
+                    properties.saveProperty(PropertyFileKeys.NEXT_CLICK_HOT_KEY_ENABLED,e.isToggled());
                 } catch (PropertyAccessException e1) {
                     log.error("could not save property",e1);
                 }
