@@ -17,27 +17,27 @@ public class SettingsPage extends AbstractPage {
     }
 
     public SettingsPage pressStart() {
-        getDriver().clickOn(FxTestConstants.START_BUTTON_ID);
+        getDriver().clickOn(FxIds.START_BUTTON_ID);
         return this;
     }
 
     public SettingsPage pressStop() {
-        getDriver().clickOn(FxTestConstants.STOP_BUTTON_ID);
+        getDriver().clickOn(FxIds.STOP_BUTTON_ID);
         return this;
     }
 
     public SettingsPage enterTimeStamp(String timeStamp) {
-        getDriver().clickOn(FxTestConstants.TIME_FIELD_ID).write(timeStamp).type(KeyCode.ENTER);
+        getDriver().clickOn(FxIds.TIME_FIELD_ID).write(timeStamp).type(KeyCode.ENTER);
         return this;
     }
 
     public boolean isTimeStampWarningShowing() {
-        Text text = getDriver().find(FxTestConstants.WRONG_FORMAT_TEXT_WARNING__ID);
+        Text text = getDriver().find(FxIds.WRONG_FORMAT_TEXT_WARNING__ID);
         return text.isVisible();
     }
 
     public String findDisplayedSubtitleText() {
-        TextFlow settingsTextFlow = getDriver().find(FxTestConstants.SETTINGS_TEXT_FLOW_ID);
+        TextFlow settingsTextFlow = getDriver().find(FxIds.SETTINGS_TEXT_FLOW_ID);
         StringBuilder textFlowText = new StringBuilder();
         for (Node n : settingsTextFlow.getChildren()) {
             textFlowText.append(((Text) n).getText());
@@ -46,20 +46,20 @@ public class SettingsPage extends AbstractPage {
     }
 
     public String findDisplayedTimeStamp() {
-        Text currentTimeStamp = getDriver().find(FxTestConstants.CURRENT_TIME_STAMP_TEXT_ID);
+        Text currentTimeStamp = getDriver().find(FxIds.CURRENT_TIME_STAMP_TEXT_ID);
         return currentTimeStamp.getText();
     }
 
     public MoviePage switchToMovieMode() throws TimeoutException {
-        getDriver().focusNode(FxTestConstants.MOVIE_MODE_BUTTON_ID);
-        getDriver().clickOn(FxTestConstants.MOVIE_MODE_BUTTON_ID);
+        getDriver().focusNode(FxIds.MOVIE_MODE_BUTTON_ID);
+        getDriver().clickOn(FxIds.MOVIE_MODE_BUTTON_ID);
         return new MoviePage(getDriver());
     }
 
     public OptionsPage openOptionsWindow() throws TimeoutException {
-        getDriver().focusNode(FxTestConstants.OPTIONS_BUTTON_ID);
+        getDriver().focusNode(FxIds.OPTIONS_BUTTON_ID);
         getDriver().refreshGui();
-        getDriver().clickOn(FxTestConstants.OPTIONS_BUTTON_ID);
+        getDriver().clickOn(FxIds.OPTIONS_BUTTON_ID);
         getDriver().refreshGui();
         /*Stage settingsStage = getDriver().findStageController(SettingsStageController.class).getStage();
         Stage optionsStage = getDriver().findStageController(OptionsStageController.class).getStage();

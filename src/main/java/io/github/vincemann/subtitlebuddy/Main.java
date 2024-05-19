@@ -80,7 +80,7 @@ public class Main extends Application {
         injector = createInjector(propertiesManager, stringConfiguration, classPathFileExtractor);
         injector.getInstance(EventHandlerRegistrar.class).registerEventHandlers();
         WindowManager windowManager = injector.getInstance(WindowManager.class);
-        createStages(primaryStage);
+        createStages();
 
         // start by showing settings view
         windowManager.showWindow(Windows.SETTINGS);
@@ -92,7 +92,7 @@ public class Main extends Application {
         Platform.runLater(this::registerHook);
     }
 
-    private void createStages(Stage primaryStage) throws IOException {
+    private void createStages() throws IOException {
         WindowManager windowManager = injector.getInstance(WindowManager.class);
         SettingsStageFactory settingsStageFactory = injector.getInstance(SettingsStageFactory.class);
         SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);

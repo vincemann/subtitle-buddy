@@ -9,5 +9,5 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class UpdateCurrentFontEvent {
-    private FontBundle font;
+    private String fontPath;
 }

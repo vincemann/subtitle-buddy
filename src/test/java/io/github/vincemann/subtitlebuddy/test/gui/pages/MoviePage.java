@@ -14,7 +14,7 @@ public class MoviePage extends AbstractPage{
 
 
     public SettingsPage switchToSettingsPage()  {
-        TextFlow movieTextFlow = getDriver().find(FxTestConstants.MOVIE_TEXT_FLOW_ID);
+        TextFlow movieTextFlow = getDriver().find(FxIds.MOVIE_TEXT_FLOW_ID);
         System.out.println(movieTextFlow.isVisible());
         System.out.println(movieTextFlow.getLayoutX());
         System.out.println(movieTextFlow.getLayoutY());
@@ -25,7 +25,7 @@ public class MoviePage extends AbstractPage{
     }
 
     public String findDisplayedSubtitleText(){
-        TextFlow settingsTextFlow =  getDriver().find(FxTestConstants.MOVIE_TEXT_FLOW_ID);
+        TextFlow settingsTextFlow =  getDriver().find(FxIds.MOVIE_TEXT_FLOW_ID);
         StringBuilder textFlowText = new StringBuilder();
         for(Node n : settingsTextFlow.getChildren()){
             textFlowText.append(((Text)n).getText());

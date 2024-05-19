@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.options;
 
-public class PropertyFileKeys {
+class PropertyFileKeys {
 
     public static final String LAST_PATH = "lastPath";
     public static final String ENCODING = "encoding";

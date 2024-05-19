@@ -12,7 +12,7 @@ import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.options.OptionsManager;
+import io.github.vincemann.subtitlebuddy.options.OptionsManagerImpl;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import lombok.extern.log4j.Log4j2;
 
@@ -24,12 +24,12 @@ public class SrtDisplayerEventHandlerImpl implements SrtDisplayerEventHandler {
 
     private SrtDisplayerProvider srtDisplayerProvider;
 
-    private OptionsManager optionsManager;
+    private OptionsManagerImpl optionsManager;
 
     private WindowManager windowManager;
 
     @Inject
-    public SrtDisplayerEventHandlerImpl(SrtDisplayerProvider srtDisplayerProvider, OptionsManager optionsManager, WindowManager windowManager) {
+    public SrtDisplayerEventHandlerImpl(SrtDisplayerProvider srtDisplayerProvider, OptionsManagerImpl optionsManager, WindowManager windowManager) {
         this.srtDisplayerProvider = srtDisplayerProvider;
         this.optionsManager = optionsManager;
         this.windowManager = windowManager;
@@ -49,13 +49,14 @@ public class SrtDisplayerEventHandlerImpl implements SrtDisplayerEventHandler {
     @Subscribe
     public void handleUpdateCurrentFontEvent(UpdateCurrentFontEvent e) {
         log.info("UpdateCurrentFontEvent arrived ");
-        srtDisplayerProvider.get(MovieSrtDisplayer.class).setCurrentFont(e.getFont());
-        srtDisplayerProvider.get(SettingsSrtDisplayer.class).setCurrentFont(e.getFont());
+        // those will react to optionsUpdated event and ask the fontManager again to load the current font!
+//        srtDisplayerProvider.get(MovieSrtDisplayer.class).setCurrentFont(e.getFont());
+//        srtDisplayerProvider.get(SettingsSrtDisplayer.class).setCurrentFont(e.getFont());
         srtDisplayerProvider.get().displaySubtitle(srtDisplayerProvider.get().getLastSubtitleText());
 
-        optionsManager.updateCurrentFont(e.getFont());
+        optionsManager.updateCurrentFontPath(e.getFont().getPath());
         // also save this font as new default font
-        optionsManager.updateDefaultFont(e.getFont());
+        fontManager.reloadDefaultFont(e.getFont());
     }
 
     @Override

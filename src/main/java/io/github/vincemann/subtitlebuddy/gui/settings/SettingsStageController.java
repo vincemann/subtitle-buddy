@@ -8,7 +8,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.options.Options;
-import io.github.vincemann.subtitlebuddy.options.OptionsManager;
+import io.github.vincemann.subtitlebuddy.options.OptionsManagerImpl;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.events.RequestSrtParserUpdateEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
@@ -101,7 +101,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
     private Options options;
 
-    private OptionsManager optionsManager;
+    private OptionsManagerImpl optionsManager;
 
     private EventBus eventBus;
 

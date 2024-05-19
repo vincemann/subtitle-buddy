@@ -1,24 +1,40 @@
 package io.github.vincemann.subtitlebuddy.options;
 
-import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.scene.paint.Color;
-import lombok.Getter;
 
 /**
  * Global options/state that can be configured and is shared across the application.
  */
-@Getter
 public class Options {
 
-    private FontBundle font;
+    private String currentFontPath;
     private Color fontColor;
     private long settingsFontSize;
     private long movieFontSize;
     private Vector2D subtitlePosition;
 
-    void setFont(FontBundle font) {
-        this.font = font;
+    Options() {
+    }
+
+    public String getCurrentFontPath() {
+        return currentFontPath;
+    }
+
+    public Color getFontColor() {
+        return fontColor;
+    }
+
+    public long getSettingsFontSize() {
+        return settingsFontSize;
+    }
+
+    public long getMovieFontSize() {
+        return movieFontSize;
+    }
+
+    public Vector2D getSubtitlePosition() {
+        return subtitlePosition;
     }
 
     void setFontColor(Color fontColor) {
@@ -35,5 +51,9 @@ public class Options {
 
     void setSubtitlePosition(Vector2D subtitlePosition) {
         this.subtitlePosition = subtitlePosition;
+    }
+
+    void setCurrentFontPath(String currentFontPath) {
+        this.currentFontPath = currentFontPath;
     }
 }

@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.test.gui.pages;
 
-class FxTestConstants {
+class FxIds {
 
       static final String START_BUTTON_ID = "#startButton";
       static final String STOP_BUTTON_ID = "#stopButton";

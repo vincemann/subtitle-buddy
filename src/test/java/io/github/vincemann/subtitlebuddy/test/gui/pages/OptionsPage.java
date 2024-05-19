@@ -20,8 +20,8 @@ public class OptionsPage extends AbstractPage {
 
     public Color selectRandomColor(Color defaultColor) throws TimeoutException {
         // Ensure the node is visible and can receive focus
-        getDriver().waitForVisibleNode(FxTestConstants.COLOR_CHOOSE_ID);
-        ColorPicker colorChooser = getDriver().find(FxTestConstants.COLOR_CHOOSE_ID);
+        getDriver().waitForVisibleNode(FxIds.COLOR_CHOOSE_ID);
+        ColorPicker colorChooser = getDriver().find(FxIds.COLOR_CHOOSE_ID);
         if (!colorChooser.isFocused()) {
             getDriver().clickOn(colorChooser);
         }
@@ -54,9 +54,9 @@ public class OptionsPage extends AbstractPage {
     }
 
     private FontBundle selectNewFont(FontBundle oldFont, int amountKeyDown) throws TimeoutException {
-        getDriver().waitForVisibleNode(FxTestConstants.FONT_CHOICE_BOX_ID);
-        getDriver().focusNode(FxTestConstants.FONT_CHOICE_BOX_ID);
-        ChoiceBox<FontBundle> fontChoiceBox = getDriver().find(FxTestConstants.FONT_CHOICE_BOX_ID);
+        getDriver().waitForVisibleNode(FxIds.FONT_CHOICE_BOX_ID);
+        getDriver().focusNode(FxIds.FONT_CHOICE_BOX_ID);
+        ChoiceBox<FontBundle> fontChoiceBox = getDriver().find(FxIds.FONT_CHOICE_BOX_ID);
         getDriver().clickOn(fontChoiceBox);
         for (int i = 0; i < amountKeyDown; i++) {
             getDriver().type(KeyCode.DOWN);
