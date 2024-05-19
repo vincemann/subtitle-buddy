@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public abstract class PropertyFilesModule extends AbstractModule {
     private UIStringsFile stringsFile;
-    private PropertiesFile propertiesFile;
+    private PropertiesFile properties;
 
 
     @Override

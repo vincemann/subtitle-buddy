@@ -6,8 +6,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ConfigDirectoryImpl implements ConfigDirectory {
+
     @Override
-    public Path findOrCreate() throws IOException {
+    public void create() throws IOException {
+        Files.createDirectories(getAppDataDirectory());
+    }
+
+    @Override
+    public Path find() throws IOException {
         Path appDirectoryPath = getAppDataDirectory();
         // The Files.createDirectories method creates the directory only if it does not exist,
         // and does nothing if the directory already exists, which removes the need for the existence check.

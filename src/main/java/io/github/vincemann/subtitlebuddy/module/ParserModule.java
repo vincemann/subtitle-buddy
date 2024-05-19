@@ -26,11 +26,11 @@ public class ParserModule extends PropertyFilesModule {
     @Override
     protected void configurePropertyBindings() {
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.UPDATER_DELAY))
-                .to(getPropertiesFile().getLong(PropertyFileKeys.UPDATER_DELAY));
+                .to(getProperties().getLong(PropertyFileKeys.UPDATER_DELAY));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.ENCODING))
-                .to(getPropertiesFile().getString(PropertyFileKeys.ENCODING));
+                .to(getProperties().getString(PropertyFileKeys.ENCODING));
         bindConstant().annotatedWith(Names.named(PropertyFileKeys.DEFAULT_SUBTITLE))
-                .to(getPropertiesFile().getString(PropertyFileKeys.DEFAULT_SUBTITLE));
+                .to(getProperties().getString(PropertyFileKeys.DEFAULT_SUBTITLE));
     }
 
     @Override

@@ -9,5 +9,7 @@ import java.nio.file.Path;
  */
 public interface ConfigDirectory {
 
-    Path findOrCreate() throws IOException;
+
+    void create() throws IOException;
+    Path find() throws IOException;
 }

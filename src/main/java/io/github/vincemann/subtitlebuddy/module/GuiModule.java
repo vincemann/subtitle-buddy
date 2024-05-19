@@ -54,24 +54,10 @@ public class GuiModule extends PropertyFilesModule {
         bindConstant().annotatedWith(Names.named(UIStringsKeys.TIMESTAMP_JUMP_HINT_TEXT))
                 .to(getStringsFile().getString(UIStringsKeys.TIMESTAMP_JUMP_HINT_TEXT));
 
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.TIME_STAMP_WARNING_DURATION))
-                .to(getPropertiesFile().getString(PropertyFileKeys.TIME_STAMP_WARNING_DURATION));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.SUBTITLE_POS))
-                .to(getPropertiesFile().getString(PropertyFileKeys.SUBTITLE_POS));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.SETTINGS_FONT_SIZE))
-                .to(getPropertiesFile().getInt(PropertyFileKeys.SETTINGS_FONT_SIZE));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.SPACE_HOTKEY_ENABLED))
-                .to(getPropertiesFile().getBoolean(PropertyFileKeys.SPACE_HOTKEY_ENABLED));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.NEXT_CLICK_HOT_KEY_ENABLED))
-                .to(getPropertiesFile().getBoolean(PropertyFileKeys.NEXT_CLICK_HOT_KEY_ENABLED));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.FAST_FORWARD_DELTA))
-                .to(getPropertiesFile().getInt(PropertyFileKeys.FAST_FORWARD_DELTA));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.CLICK_WARNING_IMAGE_PATH))
-                .to(getPropertiesFile().getString(PropertyFileKeys.CLICK_WARNING_IMAGE_PATH));
-        List<String> settingsWindowSizeList = (List<String>)(Object) getPropertiesFile().getList(PropertyFileKeys.SETTINGS_WINDOW_SIZE);
+        List<String> settingsWindowSizeList = (List<String>)(Object) getProperties().getList(PropertyFileKeys.SETTINGS_WINDOW_SIZE);
         bind(Vector2D.class).annotatedWith(Names.named(PropertyFileKeys.SETTINGS_WINDOW_SIZE))
                 .toInstance(new Vector2D(Integer.valueOf(settingsWindowSizeList.get(0)),Integer.valueOf(settingsWindowSizeList.get(1))));
-        List<String> optionsWindowSizeList = (List<String>)(Object) getPropertiesFile().getList(PropertyFileKeys.OPTIONS_WINDOW_SIZE);
+        List<String> optionsWindowSizeList = (List<String>)(Object) getProperties().getList(PropertyFileKeys.OPTIONS_WINDOW_SIZE);
         bind(Vector2D.class).annotatedWith(Names.named(PropertyFileKeys.OPTIONS_WINDOW_SIZE))
                 .toInstance(new Vector2D(Integer.valueOf(optionsWindowSizeList.get(0)),Integer.valueOf(optionsWindowSizeList.get(1))));
     }
@@ -84,7 +70,7 @@ public class GuiModule extends PropertyFilesModule {
         bind(SettingsSrtDisplayer.class).to(SettingsStageController.class);
         bind(MovieSrtDisplayer.class).to(MovieStageController.class);
         bind(SrtDisplayer.class).toProvider(SrtDisplayerProvider.class);
-        bind(SrtDisplayerEventHandler.class).to(SrtDisplayerEventHandlerImpl.class);
+        bind(SrtDisplayerEventHandler.class).in(Singleton.class);
     }
 
 }

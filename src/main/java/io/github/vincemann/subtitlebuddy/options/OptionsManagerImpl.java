@@ -20,12 +20,14 @@ public class OptionsManagerImpl implements OptionsManager {
     private EventBus eventBus;
 
     @Inject
-    public OptionsManagerImpl(Options options, PropertiesFile propertiesFile, EventBus eventBus) {
-        this.options = options;
+    public OptionsManagerImpl(PropertiesFile propertiesFile, EventBus eventBus) {
         this.properties = propertiesFile;
         this.eventBus = eventBus;
     }
 
+    /**
+     * Parse properties file and create Options
+     */
     @Override
     public Options parseOptions() {
         Options options = new Options();
@@ -58,6 +60,7 @@ public class OptionsManagerImpl implements OptionsManager {
         int settingsFontSize = properties.getInt(PropertyFileKeys.SETTINGS_FONT_SIZE);
         options.setSettingsFontSize(settingsFontSize);
 
+        this.options = options;
         return options;
     }
 

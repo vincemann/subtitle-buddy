@@ -6,7 +6,6 @@ public class PropertyFileKeys {
     public static final String ENCODING = "encoding";
     public static final String MOVIE_FONT_SIZE = "movieFontSize";
     public static final String UPDATER_DELAY = "updaterDelay";
-    public static final String TIME_STAMP_WARNING_DURATION = "timeStampWarningDuration";
     public static final String USER_FONT_COLOR = "userFontColor";
     public static final String SETTINGS_WINDOW_SIZE = "settingsStageSize";
     public static final String OPTIONS_WINDOW_SIZE = "optionsWindowSize";
@@ -15,8 +14,6 @@ public class PropertyFileKeys {
     public static final String SETTINGS_FONT_SIZE = "settingsFontSize";
     public static final String SPACE_HOTKEY_ENABLED = "spaceHotkeyEnabled";
     public static final String NEXT_CLICK_HOT_KEY_ENABLED = "nextClickHotKeyEnabled";
-    public static final String FAST_FORWARD_DELTA = "fastForwardDelta";
-    public static final String CLICK_WARNING_IMAGE_PATH = "clickWarningImagePath";
     public static final String USER_CURRENT_FONT = "currentFont";
 
     private PropertyFileKeys(){}

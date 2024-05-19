@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 /**
  * Global options/state that can be configured and is shared across the application.
  */
-class Options {
+public class Options {
 
     // font options
 

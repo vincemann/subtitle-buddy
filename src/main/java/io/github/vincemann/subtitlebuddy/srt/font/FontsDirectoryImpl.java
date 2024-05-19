@@ -30,7 +30,7 @@ public class FontsDirectoryImpl implements FontsDirectory {
 
     @Override
     public Path findOrCreate() throws IOException {
-        Path configDir = configDirectory.findOrCreate();
+        Path configDir = configDirectory.find();
         Path fontsDir = configDir.resolve(fontPath).toAbsolutePath();
         if (!fontsDir.toFile().exists()) {
             log.warn("font directory" + fontsDir + " does not exist");

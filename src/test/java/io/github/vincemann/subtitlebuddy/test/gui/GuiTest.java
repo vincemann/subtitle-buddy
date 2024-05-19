@@ -250,6 +250,7 @@ public abstract class GuiTest extends ApplicationTest {
                 new ClassPathFileModule(new ClassPathFileExtractorImpl()),
                 new ConfigFileModule(testPropertiesFile, testStringsFile),
                 new MockFileChooserModule(testStringsFile, testPropertiesFile),
+                new FontModule(testStringsFile,testPropertiesFile),
                 new ParserModule(testStringsFile, testPropertiesFile),
                 new GuiModule(testStringsFile, testPropertiesFile),
                 new UserInputHandlerModule())

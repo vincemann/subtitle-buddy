@@ -29,6 +29,7 @@ import io.github.vincemann.subtitlebuddy.listeners.key.GlobalHotKeyListener;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.GlobalMouseListener;
 import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.options.ApachePropertiesFile;
+import io.github.vincemann.subtitlebuddy.options.OptionsManager;
 import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngine;
 import javafx.application.Application;
@@ -145,6 +146,7 @@ public class Main extends Application {
                     new ClassPathFileModule(classPathFileExtractor),
                     new ConfigFileModule(propertiesManager, stringConfiguration),
                     new FileChooserModule(stringConfiguration, propertiesManager),
+                    new FontModule(stringConfiguration,propertiesManager),
                     new ParserModule(stringConfiguration, propertiesManager),
                     new GuiModule(stringConfiguration, propertiesManager),
                     new UserInputHandlerModule()
