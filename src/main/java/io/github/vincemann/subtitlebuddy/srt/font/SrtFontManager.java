@@ -10,7 +10,7 @@ public interface SrtFontManager {
 
     /**
      * It is expected, that next for '/foo/filename.ttf' there is a file coexisting '/foo/filename.italic.ttf',
-     * otherwise {@link SrtFontLoadingException} is thrown.
+     * otherwise {@link FontBundleLoadingException} is thrown.
      *
      * Supported font types = ttf, otf
      * @param path
@@ -18,9 +18,9 @@ public interface SrtFontManager {
      * @return
      * @throws MalformedURLException
      * @throws IllegalArgumentException if unsupported type was supplied
-     * @throws SrtFontLoadingException
+     * @throws FontBundleLoadingException
      */
-    FontBundle loadFont(String path, double fontSize) throws MalformedURLException, SrtFontLoadingException;
+    FontBundle loadFont(String path, double fontSize) throws MalformedURLException, FontBundleLoadingException;
 
 
     FontBundle loadDefaultFont();

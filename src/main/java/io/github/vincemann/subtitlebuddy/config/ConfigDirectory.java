@@ -1,5 +1,6 @@
 package io.github.vincemann.subtitlebuddy.config;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -8,5 +9,5 @@ import java.nio.file.Path;
  */
 public interface ConfigDirectory {
 
-    Path findOrCreate() throws ConfigFileException;
+    Path findOrCreate() throws IOException;
 }

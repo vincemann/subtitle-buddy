@@ -34,7 +34,7 @@ public class ConfigFileLoaderImpl implements ConfigFileLoader {
     }
 
     @Override
-    public File findOrCreateConfigFile(String fileName) throws ConfigFileException {
+    public File findOrCreateConfigFile(String fileName) throws ConfigDirCreationException {
         try {
             // first check if config file is already extracted into application folder
             Path configFolder = configDirectory.findOrCreate();
@@ -50,7 +50,7 @@ public class ConfigFileLoaderImpl implements ConfigFileLoader {
             Files.copy(Paths.get(configFileInJar.getFile().toURI()),targetPath, StandardCopyOption.COPY_ATTRIBUTES);
             return targetPath.toFile();
         }catch (IOException e) {
-            throw new ConfigFileException("Could not find/create config file: " + fileName,e);
+            throw new ConfigDirCreationException("Could not find/create config file: " + fileName,e);
         }
     }
 

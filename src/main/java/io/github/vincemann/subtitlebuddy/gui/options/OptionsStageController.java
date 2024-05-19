@@ -10,7 +10,7 @@ import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.events.UpdateFontColorEvent;
 import io.github.vincemann.subtitlebuddy.events.UpdateCurrentFontEvent;
 import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
-import io.github.vincemann.subtitlebuddy.srt.font.SrtFontLoadingException;
+import io.github.vincemann.subtitlebuddy.srt.font.FontBundleLoadingException;
 import io.github.vincemann.subtitlebuddy.srt.font.FontsDirectory;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKey;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
@@ -194,7 +194,7 @@ public class OptionsStageController {
                                     FontBundle fontBundle = srtFontManager.loadFont(fontFileRelPath, userFontSize);
                                     fontChoiceBox.getItems().add(fontBundle);
                                     fontPathMap.put(fontBundle, fontFileRelPath);
-                                } catch (SrtFontLoadingException | MalformedURLException e) {
+                                } catch (FontBundleLoadingException | MalformedURLException e) {
                                     log.error("could not load font (or respective italic font) with fontpath: " + fontFileRelPath + ", caused by: ", e);
                                 }
                             }

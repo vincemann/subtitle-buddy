@@ -4,5 +4,5 @@ import java.io.File;
 
 public interface ConfigFileLoader {
 
-    File findOrCreateConfigFile(String fileName) throws ConfigFileException;
+    File findOrCreateConfigFile(String fileName) throws ConfigDirCreationException;
 }

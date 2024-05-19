@@ -7,15 +7,11 @@ import java.nio.file.Paths;
 
 public class ConfigDirectoryImpl implements ConfigDirectory {
     @Override
-    public Path findOrCreate() throws ConfigFileException {
+    public Path findOrCreate() throws IOException {
         Path appDirectoryPath = getAppDataDirectory();
-        try {
-            // The Files.createDirectories method creates the directory only if it does not exist,
-            // and does nothing if the directory already exists, which removes the need for the existence check.
-            Files.createDirectories(appDirectoryPath);
-        } catch (IOException e) {
-            throw new ConfigFileException("Failed to create config directory: " + appDirectoryPath, e);
-        }
+        // The Files.createDirectories method creates the directory only if it does not exist,
+        // and does nothing if the directory already exists, which removes the need for the existence check.
+        Files.createDirectories(appDirectoryPath);
         return appDirectoryPath;
     }
 
