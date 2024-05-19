@@ -6,15 +6,15 @@ import javafx.scene.paint.Color;
 /**
  * Global options/state that can be configured and is shared across the application.
  */
-public class Options {
+class Options {
 
     // font options
 
     // filename of current font
     private String currentFont;
     private Color fontColor;
-    private long settingsFontSize;
-    private long movieFontSize;
+    private int settingsFontSize;
+    private int movieFontSize;
 
     // srt displayer options
 
@@ -70,11 +70,11 @@ public class Options {
         return fontColor;
     }
 
-    public long getSettingsFontSize() {
+    public int getSettingsFontSize() {
         return settingsFontSize;
     }
 
-    public long getMovieFontSize() {
+    public int getMovieFontSize() {
         return movieFontSize;
     }
 
@@ -87,11 +87,11 @@ public class Options {
         this.fontColor = fontColor;
     }
 
-    void setSettingsFontSize(long settingsFontSize) {
+    void setSettingsFontSize(int settingsFontSize) {
         this.settingsFontSize = settingsFontSize;
     }
 
-    void setMovieFontSize(long movieFontSize) {
+    void setMovieFontSize(int movieFontSize) {
         this.movieFontSize = movieFontSize;
     }
 
@@ -102,4 +102,5 @@ public class Options {
     void setCurrentFont(String currentFont) {
         this.currentFont = currentFont;
     }
+
 }

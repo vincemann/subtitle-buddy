@@ -3,9 +3,8 @@ package io.github.vincemann.subtitlebuddy.srt.parser;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
 import io.github.vincemann.subtitlebuddy.gui.dialog.AlertDialog;
+import io.github.vincemann.subtitlebuddy.options.SrtOptions;
 import io.github.vincemann.subtitlebuddy.srt.*;
 import lombok.NonNull;
 
@@ -34,8 +33,8 @@ public class SrtFileParserImpl implements SrtFileParser {
 
 
     @Inject
-    public SrtFileParserImpl(@Named(PropertyFileKeys.ENCODING) String encoding, AlertDialog alertDialog) {
-        initUserDefinedEncoding(encoding,alertDialog);
+    public SrtFileParserImpl(SrtOptions options, AlertDialog alertDialog) {
+        initUserDefinedEncoding(options.getEncoding(),alertDialog);
     }
 
     public SrtFileParserImpl() {
@@ -59,7 +58,6 @@ public class SrtFileParserImpl implements SrtFileParser {
             List<SubtitleParagraph> subtitles = new ArrayList<>();
 
             FileInputStream in = new FileInputStream(srtFile);
-            //todo aktuell verlasse ich mich noch auf default encoding
             Scanner scanner = new Scanner(in, this.encoding.name());
             int linesRead= 0;
 

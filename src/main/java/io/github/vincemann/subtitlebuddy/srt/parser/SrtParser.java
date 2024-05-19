@@ -13,9 +13,12 @@ public interface SrtParser {
 
     void start();
 
+    void forward(long delta);
+
     void stop();
 
     void setTime(Timestamp timestamp);
+
 
     Timestamp getTime();
 

@@ -42,7 +42,7 @@ public class SrtDisplayerEventHandlerImpl implements SrtDisplayerEventHandler {
         srtDisplayerProvider.get(MovieSrtDisplayer.class).setFontColor(e.getColor());
         log.debug("changing color to: " + e.getColor().toString());
         srtDisplayerProvider.get().displaySubtitle(srtDisplayerProvider.get().getLastSubtitleText());
-        optionsManager.updateFontColor(e.getColor());
+        optionsManager.updateFontColor(e.getColor().toString());
     }
 
     @Override

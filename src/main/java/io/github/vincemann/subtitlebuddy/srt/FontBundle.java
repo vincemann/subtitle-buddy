@@ -1,10 +1,8 @@
 package io.github.vincemann.subtitlebuddy.srt;
 
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.nio.file.Path;
 
@@ -17,6 +15,16 @@ public class FontBundle {
     private Font italicFont;
     private String regularFileName;
     private String italicFileName;
+    @Setter
+    private Color fontColor;
+
+    public FontBundle(Font regularFont, Font italicFont, String regularFileName, String italicFileName) {
+        this.regularFont = regularFont;
+        this.italicFont = italicFont;
+        this.regularFileName = regularFileName;
+        this.italicFileName = italicFileName;
+        this.fontColor = Color.WHITE;
+    }
 
     /**
      * Creates a new FontBundle with the specified size for both regular and italic fonts.
@@ -27,6 +35,6 @@ public class FontBundle {
     public FontBundle withSize(double size) {
         Font resizedRegular = Font.font(regularFont.getFamily(), size);
         Font resizedItalic = Font.font(italicFont.getFamily(), size);
-        return new FontBundle(resizedRegular, resizedItalic, regularFileName, italicFileName);
+        return new FontBundle(resizedRegular, resizedItalic, regularFileName, italicFileName,fontColor);
     }
 }

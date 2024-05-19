@@ -12,13 +12,14 @@ public class SrtDisplayerOptions {
         return options.getNextClickHotkeyEnabled();
     }
 
-    public String getDefaultSubtitle() {
-        return options.getDefaultSubtitle();
+    public int getSettingsFontSize() {
+        return options.getSettingsFontSize();
     }
 
-    public String getEncoding() {
-        return options.getEncoding();
+    public int getMovieFontSize() {
+        return options.getMovieFontSize();
     }
+
 
     public Boolean getSpaceHotkeyEnabled() {
         return options.getSpaceHotkeyEnabled();

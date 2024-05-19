@@ -33,8 +33,7 @@ public class OptionsManagerImpl implements OptionsManager {
         options.setCurrentFont(currentFont);
 
         String sColor = properties.getString(PropertyFileKeys.USER_FONT_COLOR);
-        Color color = Color.valueOf(sColor);
-        options.setFontColor(color);
+        options.setFontColor(Color.valueOf(sColor));
 
         String subtitlePos = properties.getString(PropertyFileKeys.SUBTITLE_POS);
         Vector2D pos = new Vector2D(subtitlePos);

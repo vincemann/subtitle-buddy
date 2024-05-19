@@ -55,6 +55,15 @@ public class SrtParserImpl implements SrtParser {
     }
 
     @Override
+    public synchronized void forward(long delta) {
+        if (getCurrentState().equals(RunningState.STATE_RUNNING)) {
+            stop();
+        }
+        setTime(new Timestamp(getTime().toMilliSeconds() + delta));
+        start();
+    }
+
+    @Override
     public synchronized void stop() throws IllegalStateException{
         log.debug("srt parser stop called");
         if(stopWatch.getCurrentState()==RunningState.STATE_RUNNING){

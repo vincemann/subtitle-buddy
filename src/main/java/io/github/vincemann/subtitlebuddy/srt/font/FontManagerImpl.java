@@ -3,6 +3,7 @@ package io.github.vincemann.subtitlebuddy.srt.font;
 import com.google.inject.Inject;
 import io.github.vincemann.subtitlebuddy.options.FontOptions;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import lombok.extern.log4j.Log4j2;
 
@@ -83,6 +84,11 @@ public class FontManagerImpl implements FontManager {
         } else {
             log.error("found multiple current fonts, using first");
             this.currentFont = matches.get(0);
+        }
+
+        if (this.currentFont != null){
+            Color fontColor = fontOptions.getFontColor();
+            this.currentFont.setFontColor(fontColor);
         }
     }
 
