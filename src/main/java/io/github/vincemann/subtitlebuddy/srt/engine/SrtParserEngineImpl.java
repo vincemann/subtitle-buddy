@@ -16,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 
 /**
  * Starts and manages the background thread in which updates take place.
+ * The background thread updates the ui in form of {@link SrtDisplayer} in a given update interval.
  */
 @Log4j2
 @Singleton

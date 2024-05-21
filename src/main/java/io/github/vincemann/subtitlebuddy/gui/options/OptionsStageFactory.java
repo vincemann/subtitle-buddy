@@ -36,6 +36,7 @@ public class OptionsStageFactory {
         stage.setOnCloseRequest(e -> {
             stage.hide();
         });
+        controller.setStage(stage);
         return stage;
     }
 }

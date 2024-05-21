@@ -24,10 +24,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -60,6 +63,8 @@ public class OptionsStageController {
     private FontManager fontManager;
     private SrtDisplayerOptions options;
 
+    private Stage stage;
+
 
     @Inject
     public OptionsStageController(EventBus eventBus,
@@ -80,7 +85,7 @@ public class OptionsStageController {
         });
     }
 
-    protected Table<Node, EventHandler, EventType> registerEventHandlers() {
+    protected void registerEventHandlers() {
         Table<Node, EventHandler, EventType> resultTable = HashBasedTable.create();
         EventHandler<ActionEvent> colorChooserEventHandler = event -> {
             //new color chosen
@@ -106,19 +111,11 @@ public class OptionsStageController {
         startStopCheckBox.selectedProperty().addListener(startStopChangeListener);
 
         resultTable.put(colorChooser, colorChooserEventHandler, ActionEvent.ACTION);
-        return resultTable;
+        this.eventHandlers = resultTable;
     }
 
-//    @Override
-//    public void onUnregisterEventHandlers() {
-//        super.onUnregisterEventHandlers();
-//        fontChoiceBox.getSelectionModel().selectedItemProperty().removeListener(fontChoiceBoxChangeListener);
-//        startStopCheckBox.selectedProperty().removeListener(startStopChangeListener);
-//        nextClickCheckBox.selectedProperty().removeListener(nextClickChangeListener);
-//    }
-
     @FXML
-    protected void fxmlInit() {
+    public void initialize() {
         checkNotNull(previewText);
         checkNotNull(colorChooser);
         checkNotNull(colorChooser.getValue());
@@ -127,10 +124,41 @@ public class OptionsStageController {
         checkNotNull(fontChoiceBox.getItems());
         checkNotNull(startStopCheckBox);
         checkNotNull(nextClickCheckBox);
-        eventHandlers = registerEventHandlers();
+
+
+        registerEventHandlers();
 
         updateCheckBoxes(options.getNextClickHotkeyEnabled(), options.getSpaceHotkeyEnabled());
         populateFontChoiceBox();
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        registerEventHandlingStageListener();
+    }
+
+    private void registerEventHandlingStageListener() {
+        stage.showingProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                registerEventHandlers();
+            } else {
+                unregisterEventHandlers();
+            }
+        });
+    }
+
+    private void unregisterEventHandlers() {
+        Set<Table.Cell<Node, EventHandler, EventType>> cells = this.eventHandlers.cellSet();
+        for (Table.Cell<Node, EventHandler, EventType> cell : cells) {
+            Node node = cell.getRowKey();
+            EventHandler eventhandler = cell.getColumnKey();
+            EventType eventType = cell.getValue();
+            node.removeEventHandler(eventType, eventhandler);
+        }
+
+        fontChoiceBox.getSelectionModel().selectedItemProperty().removeListener(fontChoiceBoxChangeListener);
+        startStopCheckBox.selectedProperty().removeListener(startStopChangeListener);
+        nextClickCheckBox.selectedProperty().removeListener(nextClickChangeListener);
     }
 
 

@@ -9,12 +9,9 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
-import io.github.vincemann.subtitlebuddy.gui.Window;
-import io.github.vincemann.subtitlebuddy.gui.Windows;
-import io.github.vincemann.subtitlebuddy.gui.WindowManager;
+import io.github.vincemann.subtitlebuddy.gui.*;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.font.FontOptions;
-import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
 import io.github.vincemann.subtitlebuddy.srt.*;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.srt.parser.InvalidTimestampFormatException;
@@ -35,12 +32,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.loadImageView;
@@ -107,6 +106,8 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     private String wrongTimeStampFormatText;
     private String timestampJumpHintTextString;
 
+    private Stage stage;
+
     private Table<Node, EventHandler, EventType> eventHandlers;
 
 
@@ -139,7 +140,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     }
 
     @FXML
-    public void fxmlInit() {
+    public void initialize() {
         checkNotNull(optionsButton);
         checkNotNull(timeField);
         checkNotNull(startButton);
@@ -150,13 +151,41 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         checkNotNull(wrongFormatText);
         checkNotNull(fastBackwardButton);
         checkNotNull(fastForwardButton);
-        eventHandlers = registerEventHandlers();
-        settingsClickWarning.setVisible(false);
+
+        registerEventHandlers();
+
         loadUIStrings();
 
         settingsClickWarning = loadImageView(imageHBox,
                 "/images/finger.png",
                 new Vector2D(SETTINGS_CLICK_WARNING_SIZE, SETTINGS_CLICK_WARNING_SIZE));
+        settingsClickWarning.setVisible(false);
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        registerEventHandlingStageListener();
+    }
+
+    private void registerEventHandlingStageListener(){
+        stage.showingProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                registerEventHandlers();
+            } else {
+                unregisterEventHandlers();
+            }
+        });
+    }
+
+    private void unregisterEventHandlers() {
+        Set<Table.Cell<Node, EventHandler, EventType>> cells = this.eventHandlers.cellSet();
+        for (Table.Cell<Node, EventHandler, EventType> cell : cells) {
+            Node node = cell.getRowKey();
+            EventHandler eventhandler = cell.getColumnKey();
+            EventType eventType = cell.getValue();
+
+            node.removeEventHandler(eventType,eventhandler);
+        }
     }
 
     private void loadUIStrings() {
@@ -171,42 +200,40 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     }
 
 
-    protected Table<Node, EventHandler, EventType> registerEventHandlers() {
-
-        // todo put into own classes - separate concerns
+    private void registerEventHandlers() {
         EventHandler<MouseEvent> startButtonPressedHandler = event -> {
             try {
-                log.trace("start button pressed");
+                log.debug("start button pressed");
                 srtParser.start();
             } catch (IllegalStateException e) {
-                log.debug(e.getMessage());
+                log.error(e.getMessage());
             }
         };
 
         EventHandler<MouseEvent> stopButtonPressedHandler = event -> {
             try {
-                log.trace("stop button pressed");
+                log.debug("stop button pressed");
                 srtParser.stop();
             } catch (IllegalStateException e) {
-                log.debug(e.getMessage());
+                log.error(e.getMessage());
             }
         };
 
         EventHandler<MouseEvent> fastForwardButtonClickedHandler = event -> {
             try {
-                log.trace("fast forward pressed");
+                log.debug("fast forward pressed");
                 srtParser.forward(FORWARD_DELTA);
             } catch (IllegalStateException e) {
-                log.debug(e.getMessage());
+                log.error(e.getMessage());
             }
         };
 
         EventHandler<MouseEvent> fastBackwardButtonClickedHandler = event -> {
             try {
-                log.trace("fast backward pressed");
+                log.debug("fast backward pressed");
                 srtParser.forward(-FORWARD_DELTA);
             } catch (IllegalStateException e) {
-                log.debug(e.getMessage());
+                log.error(e.getMessage());
             }
         };
         //set Listener to wait until the scene&stage is initialized, then init the scene/stage specific stuff
@@ -223,32 +250,11 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                 });
             }
         });*/
-        EventHandler<ActionEvent> timeFieldActionHandler = event -> {
-            Timestamp timestamp;
-            try {
-                // put this into method of parser or own component
-                log.debug("timestamp string entered: " + timeField.getText());
-                timestamp = new Timestamp(timeField.getText() + ",000");
-                log.debug("user set new timestamp: " + timestamp);
-                srtParser.jumpToTimestamp(timestamp);
-                setTime(timestamp);
-            } catch (InvalidTimestampFormatException e) {
-                log.info("Wrong timeStamp entered: ");
-                displayWrongTimeStampWarning();
-                timeField.clear();
-                return;
-            }
-            timeField.clear();
-        };
+        EventHandler<ActionEvent> timeFieldActionHandler = event -> jumpToTimestamp();
 
         EventHandler<MouseEvent> movieModeButtonPressedHandler = event -> eventBus.post(new SwitchSrtDisplayerEvent(MovieSrtDisplayer.class));
 
-        EventHandler<MouseEvent> optionsButtonPressedHandler = event -> {
-            //position options window right next settingsWindow, otherwise optionsWindow may be behind settingsWindow, bc they are both alwaysOnTop
-            Window settingsWindow = windowManager.getCurrent();
-            Vector2D nextToSettingsWindow = new Vector2D(settingsWindow.getStage().getX() + settingsWindow.getStage().getWidth(), settingsWindow.getStage().getY());
-            windowManager.showWindowAtPos(Windows.OPTIONS, nextToSettingsWindow);
-        };
+        EventHandler<MouseEvent> optionsButtonPressedHandler = event -> openOptionsWindow();
 
 
         optionsButton.setOnMouseClicked(optionsButtonPressedHandler);
@@ -267,7 +273,31 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         resultTable.put(movieModeButton, movieModeButtonPressedHandler, MouseEvent.MOUSE_CLICKED);
         resultTable.put(fastBackwardButton, fastBackwardButtonClickedHandler, MouseEvent.MOUSE_CLICKED);
         resultTable.put(fastForwardButton, fastForwardButtonClickedHandler, MouseEvent.MOUSE_CLICKED);
-        return resultTable;
+        this.eventHandlers = resultTable;
+    }
+
+    private void jumpToTimestamp(){
+        try {
+            // put this into method of parser or own component
+            log.debug("timestamp string entered: " + timeField.getText());
+            Timestamp timestamp = new Timestamp(timeField.getText() + ",000");
+            log.debug("user set new timestamp: " + timestamp);
+            srtParser.jumpToTimestamp(timestamp);
+            setTime(timestamp);
+        } catch (InvalidTimestampFormatException e) {
+            log.error("Wrong timeStamp entered: " + e.getMessage());
+            displayWrongTimeStampWarning();
+            timeField.clear();
+            return;
+        }
+        timeField.clear();
+    }
+
+    private void openOptionsWindow(){
+        //position options window right next settingsWindow, otherwise optionsWindow may be behind settingsWindow, bc they are both alwaysOnTop
+        Window settingsWindow = windowManager.getOpened().get(0);
+        Vector2D nextToSettingsWindow = new Vector2D(settingsWindow.getStage().getX() + settingsWindow.getStage().getWidth(), settingsWindow.getStage().getY());
+        windowManager.showWindowAtPos(Windows.OPTIONS, nextToSettingsWindow,false);
     }
 
 

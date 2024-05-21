@@ -41,6 +41,7 @@ public class MovieStageFactory {
         stage.setOnCloseRequest(e -> {
             stage.hide();
         });
+        controller.setStage(stage);
         return stage;
     }
 }

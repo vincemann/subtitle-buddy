@@ -9,8 +9,9 @@ import io.github.vincemann.subtitlebuddy.config.strings.ApacheUIStringsFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
-import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
+import io.github.vincemann.subtitlebuddy.gui.Windows;
+import io.github.vincemann.subtitlebuddy.gui.WindowManagerImpl;
 import io.github.vincemann.subtitlebuddy.listeners.key.GlobalHotKeyListener;
 import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.options.ApachePropertiesFile;
@@ -208,7 +209,7 @@ public abstract class GuiTest extends ApplicationTest {
 
     /**
      * Tests Focus stage method.
-     * I am not using {@link WindowManager} here bc I need to wait until focused for testing.
+     * I am not using {@link WindowManagerImpl} here bc I need to wait until focused for testing.
      * Optional parameter move, only relevant for mac.
      * Need to move cursor to stage, bc on mac can only focus when cursor hovers above it.
      * @param name class of stage to focus
@@ -248,7 +249,7 @@ public abstract class GuiTest extends ApplicationTest {
         UIStringsFile strings = new ApacheUIStringsFile(Main.UI_STRINGS_FILE_PATH);
         // set all modules for integration test, mock those that need to be mocked
         Injector testInjector = Guice.createInjector(Arrays.asList(
-                new ClassPathFileModule(new ClassPathFileExtractorImpl()),
+                new ClassPathFileModule(),
                 new ConfigFileModule(properties, strings),
                 new OptionsModule(strings,properties),
                 new MockFileChooserModule(strings, properties),

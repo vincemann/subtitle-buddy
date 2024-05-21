@@ -18,6 +18,7 @@ import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.events.EventHandlerRegistrar;
 import io.github.vincemann.subtitlebuddy.gui.Window;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
+import io.github.vincemann.subtitlebuddy.gui.WindowManagerImpl;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieStageController;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieStageFactory;
@@ -78,8 +79,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         disableVerboseJNativeHookLogging();
 
-        ConfigDirectory configDir = initConfigDir();
-        PropertiesFile properties = initPropertiesFile(configDir);
+        ConfigDirectory configDir = createConfigDir();
+        PropertiesFile properties = createPropertiesFile(configDir);
         UIStringsFile strings = readUIStrings();
 
         injector = createInjector(properties,strings);
@@ -88,7 +89,7 @@ public class Main extends Application {
 
         registerEventHandlers();
 
-        WindowManager windowManager = createStagesAndWindows();
+        WindowManager windowManager = createStages();
 
         // start by showing settings view
         windowManager.showWindow(Windows.SETTINGS);
@@ -99,6 +100,7 @@ public class Main extends Application {
     }
 
     private UIStringsFile readUIStrings() throws ConfigurationException {
+        // reads from application.string.properties from within jar
         return new ApacheUIStringsFile(UI_STRINGS_FILE_PATH);
     }
 
@@ -142,11 +144,11 @@ public class Main extends Application {
     }
 
     /**
-     * Create settings, options and movie stage and register in {@link WindowManager}.
+     * Create settings, options and movie stage and register in {@link io.github.vincemann.subtitlebuddy.gui.WindowManager}.
      *
      * @return
      */
-    private WindowManager createStagesAndWindows() throws IOException {
+    private WindowManager createStages() throws IOException {
         WindowManager windowManager = injector.getInstance(WindowManager.class);
         SettingsStageFactory settingsStageFactory = injector.getInstance(SettingsStageFactory.class);
         SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
@@ -215,12 +217,13 @@ public class Main extends Application {
         );
     }
 
-    private ConfigDirectory initConfigDir() throws IOException {
+    private ConfigDirectory createConfigDir() throws IOException {
         ConfigDirectory configDirectory = new ConfigDirectoryImpl();
         configDirectory.create();
+        return configDirectory;
     }
 
-    private ApachePropertiesFile initPropertiesFile(ConfigDirectory configDirectory) throws IOException, ConfigurationException {
+    private ApachePropertiesFile createPropertiesFile(ConfigDirectory configDirectory) throws IOException, ConfigurationException {
         // init config dir and files
         ClassPathFileExtractor classPathFileExtractor = new ClassPathFileExtractorImpl();
         ConfigFileLoader configFileLoader = new ConfigFileLoaderImpl(configDirectory, classPathFileExtractor);

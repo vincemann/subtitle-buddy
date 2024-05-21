@@ -36,6 +36,7 @@ public class SettingsStageFactory {
         stage.setOnCloseRequest(e -> {
             System.exit(0);
         });
+        controller.setStage(stage);
         return stage;
     }
 }

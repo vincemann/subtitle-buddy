@@ -9,7 +9,6 @@ import io.github.vincemann.subtitlebuddy.events.MouseClickedEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
-import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.event.SrtDisplayerProvider;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;

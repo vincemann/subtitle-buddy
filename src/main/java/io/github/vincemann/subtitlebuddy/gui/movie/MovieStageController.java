@@ -35,12 +35,15 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -97,6 +100,8 @@ public class MovieStageController implements MovieSrtDisplayer {
     private Table<Node, EventHandler, EventType> eventHandlers;
 
     private FontOptions fontOptions;
+
+    private Stage stage;
 
 
     @Inject
@@ -185,7 +190,7 @@ public class MovieStageController implements MovieSrtDisplayer {
 
 
     @FXML
-    protected void fxmlInit() {
+    public void initialize() {
         movieVBoxPos = VectorUtils.getVecWithinBounds(options.getSubtitlePosition(), getScreenBounds());
         checkNotNull(movieVBox);
         checkNotNull(movieTextFlow);
@@ -197,12 +202,39 @@ public class MovieStageController implements MovieSrtDisplayer {
         movieVBox.setLayoutX(movieVBoxPos.getX());
         movieVBox.setLayoutY(movieVBoxPos.getY());
 
-        eventHandlers = registerEventHandlers();
+        registerEventHandlers();
 
         clickWarning = loadImageView(movieVBox,
                 "/images/finger.png",
                 new Vector2D(MOVIE_CLICK_WARNING_SIZE, MOVIE_CLICK_WARNING_SIZE));
         clickWarning.setVisible(false);
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        registerEventHandlingStageListener();
+    }
+
+    private void registerEventHandlingStageListener(){
+        stage.showingProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                registerEventHandlers();
+            } else {
+                unregisterEventHandlers();
+            }
+        });
+    }
+
+    private void unregisterEventHandlers() {
+        Set<Table.Cell<Node, EventHandler, EventType>> cells = this.eventHandlers.cellSet();
+        for (Table.Cell<Node, EventHandler, EventType> cell : cells) {
+            Node node = cell.getRowKey();
+            EventHandler eventhandler = cell.getColumnKey();
+            EventType eventType = cell.getValue();
+
+            node.removeEventHandler(eventType,eventhandler);
+        }
+        dragResizeMod.unregisterListeners();
     }
 
     private void onDraggedInPosition(MouseEvent mouseEvent) {
@@ -222,7 +254,7 @@ public class MovieStageController implements MovieSrtDisplayer {
                 () -> optionsManager.updateMovieFontSize(fontSize));
     }
 
-    protected Table<Node, EventHandler, EventType> registerEventHandlers() {
+    private void registerEventHandlers() {
         EventHandler<MouseEvent> movieBoxMouseEnteredHandler =
                 event -> movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
 
@@ -245,13 +277,7 @@ public class MovieStageController implements MovieSrtDisplayer {
         Table<Node, EventHandler, EventType> resultTable = HashBasedTable.create();
         resultTable.put(movieVBox, movieBoxMouseEnteredHandler, MouseEvent.MOUSE_ENTERED);
         resultTable.put(movieVBox, movieBoxMouseExitedHandler, MouseEvent.MOUSE_EXITED);
-        return resultTable;
+        this.eventHandlers = resultTable;
     }
-
-//    @Override
-//    public void onUnregisterEventHandlers() {
-//        super.onUnregisterEventHandlers();
-//        dragResizeMod.unregisterListeners();
-//    }
 
 }
