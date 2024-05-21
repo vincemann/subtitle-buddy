@@ -8,6 +8,12 @@ import io.github.vincemann.subtitlebuddy.events.*;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * All options write operations are implemented via events so components dont depend on {@link OptionsManager} directly
+ * just on their respective domain options for reading (like {@link io.github.vincemann.subtitlebuddy.font.FontOptions}).
+ *
+ * Also like this I can do other stuff on options updates.
+ */
 @Log4j2
 @Singleton
 public class OptionsEventHandler {

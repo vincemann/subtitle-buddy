@@ -25,6 +25,8 @@ public class Options {
     private String defaultSubtitle;
     private String encoding;
 
+    private boolean backViaEsc;
+
 
 
     Options() {
@@ -54,6 +56,9 @@ public class Options {
         return encoding;
     }
 
+    public boolean getBackViaEsc() {
+        return backViaEsc;
+    }
 
     public Boolean getNextClickHotkeyEnabled() {
         return nextClickHotkeyEnabled;
@@ -104,4 +109,7 @@ public class Options {
         this.currentFont = currentFont;
     }
 
+    void setBackViaEsc(boolean backViaEsc) {
+        this.backViaEsc = backViaEsc;
+    }
 }

@@ -38,6 +38,10 @@ public class SrtDisplayerProvider implements Provider<SrtDisplayer> {
         throw new IllegalArgumentException("Unknown current srt displayer type: " + currentDisplayer.getSimpleName());
     }
 
+    public Class<? extends SrtDisplayer> getCurrentDisplayer() {
+        return currentDisplayer;
+    }
+
     public synchronized <T extends SrtDisplayer> T get(Class<T> srtDisplayerMode){
         if(srtDisplayerMode.equals(SettingsSrtDisplayer.class)){
             return (T)settingsSrtDisplayer;

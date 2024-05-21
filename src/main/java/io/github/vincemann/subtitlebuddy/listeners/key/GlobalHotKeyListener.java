@@ -5,8 +5,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.HotKeyPressedEvent;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
 import lombok.extern.log4j.Log4j2;
-import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 
@@ -21,11 +21,13 @@ public class GlobalHotKeyListener implements NativeKeyListener, KeyListener {
     private EventBus eventBus;
     private boolean alt = false;
 
+    private SrtDisplayerOptions options;
+
 
     @Inject
-    public GlobalHotKeyListener(EventBus eventBus) {
-//        GlobalScreen.addNativeKeyListener(this);
+    public GlobalHotKeyListener(EventBus eventBus, SrtDisplayerOptions options) {
         this.eventBus = eventBus;
+        this.options = options;
     }
 
 
@@ -43,11 +45,12 @@ public class GlobalHotKeyListener implements NativeKeyListener, KeyListener {
             }
             //alt + esc
         } else if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
-            if (alt) {
-                log.debug("end movie mode hotkey pressed (alt + esc)");
+            if (options.getBackViaEsc()){
+                log.debug("end movie mode hotkey pressed (escape)");
                 eventBus.post(new HotKeyPressedEvent(HotKey.END_MOVIE_MODE));
+            }else{
+                log.debug("escape pressed, but ignored via config");
             }
-//        } else if (e.getKeyCode() == NativeKeyEvent.VC_ALT_L || e.getKeyCode() == NativeKeyEvent.VC_ALT_R) {
         } else if (e.getKeyCode() == NativeKeyEvent.VC_ALT || e.getKeyCode() == NativeKeyEvent.VC_ALT) {
             log.debug("alt pressed");
             alt = true;
@@ -56,7 +59,6 @@ public class GlobalHotKeyListener implements NativeKeyListener, KeyListener {
 
     @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
-//        if (e.getKeyCode() == NativeKeyEvent.VC_ALT_L || e.getKeyCode() == NativeKeyEvent.VC_ALT_R){
         if (e.getKeyCode() == NativeKeyEvent.VC_ALT || e.getKeyCode() == NativeKeyEvent.VC_ALT) {
             log.debug("alt released");
             this.alt = false;

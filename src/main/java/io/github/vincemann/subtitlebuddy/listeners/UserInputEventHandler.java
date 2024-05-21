@@ -70,7 +70,9 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
                 break;
             case END_MOVIE_MODE:
                 log.debug("end movie mode hotkey event arrived");
-                eventBus.post(new SwitchSrtDisplayerEvent(SettingsSrtDisplayer.class));
+                // only switch if actually in movie mode
+                if (srtDisplayerProvider.getCurrentDisplayer().equals(MovieSrtDisplayer.class))
+                    eventBus.post(new SwitchSrtDisplayerEvent(SettingsSrtDisplayer.class));
         }
     }
 
@@ -82,7 +84,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
                 srtDisplayerProvider.get(MovieSrtDisplayer.class).hideNextClickCounts();
                 srtDisplayerProvider.get(SettingsSrtDisplayer.class).hideNextClickCounts();
             } else {
-                log.trace("next click counts wasnt active, enabling now");
+                log.trace("next click counts was not active, enabling now");
                 srtDisplayerProvider.get(MovieSrtDisplayer.class).displayNextClickCounts();
                 srtDisplayerProvider.get(SettingsSrtDisplayer.class).displayNextClickCounts();
                 nextClickCounts = true;

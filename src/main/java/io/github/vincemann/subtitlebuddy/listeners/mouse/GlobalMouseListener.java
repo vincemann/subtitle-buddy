@@ -23,7 +23,6 @@ public class GlobalMouseListener implements NativeMouseInputListener, MouseListe
     @Inject
     public GlobalMouseListener(EventBus eventBus) {
         this.eventBus = eventBus;
-//        GlobalScreen.addNativeMouseListener(this);
     }
 
     public synchronized void nativeMouseClicked(NativeMouseEvent e) {

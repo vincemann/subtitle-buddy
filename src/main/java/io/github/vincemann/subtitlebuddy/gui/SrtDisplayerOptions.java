@@ -31,6 +31,10 @@ public class SrtDisplayerOptions {
     }
 
 
+    public boolean getBackViaEsc() {
+        return options.getBackViaEsc();
+    }
+
     public Boolean getSpaceHotkeyEnabled() {
         return options.getSpaceHotkeyEnabled();
     }
@@ -49,5 +53,9 @@ public class SrtDisplayerOptions {
 
     public void updateNextClickHotkeyEnabled(boolean value){
         manager.updateNextClickHotkeyEnabled(value);
+    }
+
+    public void updateBackViaEscape(boolean value){
+        manager.updateBackViaEsc(value);
     }
 }

@@ -308,7 +308,9 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         Platform.runLater(() -> {
             int fontSize = options.getSettingsFontSize();
             FontBundle currentFont = fontManager.getCurrentFont().withSize(fontSize);
-            Color fontColor = fontOptions.getFontColor();
+            // hard code color to black for visibility in settings mode
+//            Color fontColor = fontOptions.getFontColor();
+            Color fontColor = Color.BLACK;
 
             if (log.isTraceEnabled()){
                 log.trace("setting fontcolor: " + fontColor);

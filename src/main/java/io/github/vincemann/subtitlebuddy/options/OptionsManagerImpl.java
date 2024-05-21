@@ -126,6 +126,19 @@ public class OptionsManagerImpl implements OptionsManager {
     }
 
     @Override
+    public void updateBackViaEsc(boolean value) {
+        options.setBackViaEsc(value);
+
+        try {
+            properties.saveProperty(PropertyFileKeys.BACK_VIA_ESCAPE, String.valueOf(value));
+        } catch (PropertyAccessException e) {
+            log.error("could not save movie font size modification, " + e.getMessage());
+        }
+        // give components that read options the chance to refresh
+        eventBus.post(new OptionsUpdatedEvent());
+    }
+
+    @Override
     public void updateNextClickHotkeyEnabled(boolean value) {
         options.setNextClickHotkeyEnabled(value);
         try {

@@ -18,4 +18,6 @@ public interface OptionsManager {
     void updateNextClickHotkeyEnabled(boolean value);
 
     void updateMovieFontSize(int size);
+
+    void updateBackViaEsc(boolean value);
 }
