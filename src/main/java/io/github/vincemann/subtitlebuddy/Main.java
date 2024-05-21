@@ -78,7 +78,11 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         disableVerboseJNativeHookLogging();
 
-        injector = createInjector();
+        ConfigDirectory configDir = initConfigDir();
+        PropertiesFile properties = initPropertiesFile(configDir);
+        UIStringsFile strings = readUIStrings();
+
+        injector = createInjector(properties,strings);
 
         initFonts();
 
@@ -92,6 +96,10 @@ public class Main extends Application {
         startParser();
 
         registerJNativeHook();
+    }
+
+    private UIStringsFile readUIStrings() throws ConfigurationException {
+        return new ApacheUIStringsFile(UI_STRINGS_FILE_PATH);
     }
 
     private void registerJNativeHook(){
@@ -183,37 +191,41 @@ public class Main extends Application {
     /**
      * Creates injector or use test injector created in GuiTest.
      */
-    private Injector createInjector() throws IOException, ConfigurationException {
+    private Injector createInjector(PropertiesFile properties, UIStringsFile strings) {
         if (injector == null) {
-
-            // init config dir and files
-            ConfigDirectory configDirectory = new ConfigDirectoryImpl();
-            configDirectory.create();
-            ClassPathFileExtractor classPathFileExtractor = new ClassPathFileExtractorImpl();
-            ConfigFileLoader configFileLoader = new ConfigFileLoaderImpl(configDirectory, classPathFileExtractor);
-            File configFile = configFileLoader.findOrCreateConfigFile(CONFIG_FILE_NAME);
-//            File stringsFile = classPathFileExtractor.findOnClassPath(UI_STRINGS_FILE_PATH).getFile();
-            PropertiesFile properties = new ApachePropertiesFile(configFile);
-            UIStringsFile strings = new ApacheUIStringsFile(UI_STRINGS_FILE_PATH);
-
-
             // use default modules
-            List<Module> moduleList = Arrays.asList(
-                    new ClassPathFileModule(classPathFileExtractor),
-                    new ConfigFileModule(properties, strings),
-                    new OptionsModule(strings, properties),
-                    new FileChooserModule(strings, properties),
-                    new FontModule(strings, properties),
-                    new ParserModule(strings, properties),
-                    new GuiModule(strings, properties),
-                    new UserInputHandlerModule()
-            );
-            return Guice.createInjector(moduleList);
+            return Guice.createInjector(withDefaultModules(properties,strings));
         } else {
             // injector is already set via test, use it instead
             // use external modules
             return injector;
         }
+    }
+
+    private List<Module> withDefaultModules(PropertiesFile properties, UIStringsFile strings){
+        return Arrays.asList(
+                new ClassPathFileModule(),
+                new ConfigFileModule(properties, strings),
+                new OptionsModule(strings, properties),
+                new FileChooserModule(strings, properties),
+                new FontModule(strings, properties),
+                new ParserModule(strings, properties),
+                new GuiModule(strings, properties),
+                new UserInputHandlerModule()
+        );
+    }
+
+    private ConfigDirectory initConfigDir() throws IOException {
+        ConfigDirectory configDirectory = new ConfigDirectoryImpl();
+        configDirectory.create();
+    }
+
+    private ApachePropertiesFile initPropertiesFile(ConfigDirectory configDirectory) throws IOException, ConfigurationException {
+        // init config dir and files
+        ClassPathFileExtractor classPathFileExtractor = new ClassPathFileExtractorImpl();
+        ConfigFileLoader configFileLoader = new ConfigFileLoaderImpl(configDirectory, classPathFileExtractor);
+        File configFile = configFileLoader.findOrCreateConfigFile(CONFIG_FILE_NAME);
+        return new ApachePropertiesFile(configFile);
     }
 
     @Override
