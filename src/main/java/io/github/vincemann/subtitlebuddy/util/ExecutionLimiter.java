@@ -11,6 +11,8 @@ public class ExecutionLimiter {
     private long delta;
     private Runnable runnable;
 
+
+
     public static void executeMaxEveryNMillis(String key, long n, Runnable runnable){
         ExecutionLimiter limiter = registry.get(key);
         if (limiter == null){
@@ -18,6 +20,9 @@ public class ExecutionLimiter {
             el.tryExecuting();
             registry.put(key,el);
             return;
+        }
+        else {
+            limiter.runnable = runnable;
         }
         limiter.tryExecuting();
     }

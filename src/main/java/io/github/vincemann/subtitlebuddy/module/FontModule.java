@@ -1,11 +1,9 @@
 package io.github.vincemann.subtitlebuddy.module;
 
 import com.google.inject.Singleton;
-import com.google.inject.name.Names;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.font.*;
 import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
-import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
 
 public class FontModule extends PropertyFilesModule{
 
@@ -15,12 +13,6 @@ public class FontModule extends PropertyFilesModule{
 
     @Override
     protected void configurePropertyBindings() {
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.USER_CURRENT_FONT))
-                .to(getProperties().getString(PropertyFileKeys.USER_CURRENT_FONT));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.MOVIE_FONT_SIZE))
-                .to(getProperties().getString(PropertyFileKeys.MOVIE_FONT_SIZE));
-        bindConstant().annotatedWith(Names.named(PropertyFileKeys.USER_FONT_COLOR))
-                .to(getProperties().getString(PropertyFileKeys.USER_FONT_COLOR));
     }
 
     @Override

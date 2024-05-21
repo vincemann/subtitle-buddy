@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.RequestSubtitleUpdateEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
+import io.github.vincemann.subtitlebuddy.events.UpdateMovieFontSizeEvent;
 import io.github.vincemann.subtitlebuddy.events.UpdateSubtitlePosEvent;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.font.FontOptions;
@@ -83,8 +84,6 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     private SrtDisplayerOptions options;
 
-    private OptionsManager optionsManager;
-
     private Vector2D movieVBoxPos;
 
 
@@ -103,13 +102,11 @@ public class MovieStageController implements MovieSrtDisplayer {
     @Inject
     public MovieStageController(FontManager srtFontManager,
                                 EventBus eventBus,
-                                OptionsManager optionsManager,
                                 SrtDisplayerOptions options,
                                 FontOptions fontOptions) {
         this.fontManager = srtFontManager;
         this.eventBus = eventBus;
         this.options = options;
-        this.optionsManager = optionsManager;
         // make sure subtitles can be seen
         this.fontOptions = fontOptions;
         this.lastSubtitleText = new SubtitleText(new ArrayList<>(Collections.emptyList()));
@@ -234,9 +231,10 @@ public class MovieStageController implements MovieSrtDisplayer {
         movieVBox.setPrefHeight(h);
         movieVBox.setPrefWidth(w);
         int fontSize = ((int) (h + w) / 2) / 9;
+        log.debug("font size update by movie box size adjustments  : " + fontSize);
         // dont write to disk too often, this method is called often in a short time
         ExecutionLimiter.executeMaxEveryNMillis("fontResize", UPDATE_SLEEP_DURATION,
-                () -> optionsManager.updateMovieFontSize(fontSize));
+                () -> eventBus.post(new UpdateMovieFontSizeEvent(fontSize)));
     }
 
     private void registerEventHandlers() {

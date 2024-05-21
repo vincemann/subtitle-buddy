@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.gui.event.SrtDisplayerEventHandler;
+import io.github.vincemann.subtitlebuddy.options.OptionsEventHandler;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtParserEventHandler;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKeyEventHandler;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.MouseClickedEventHandler;
@@ -18,6 +19,8 @@ public class EventHandlerRegistrar {
     private HotKeyEventHandler hotKeyEventHandler;
     private SrtParserEventHandler srtParserEventHandler;
     private MouseClickedEventHandler mouseClickedEventHandler;
+
+    private OptionsEventHandler optionsEventHandler;
     private KeyListener keyListener;
     private MouseListener mouseListener;
 
@@ -27,13 +30,14 @@ public class EventHandlerRegistrar {
                                  HotKeyEventHandler hotKeyEventHandler,
                                  SrtParserEventHandler srtParserEventHandler,
                                  MouseClickedEventHandler mouseClickedEventHandler,
-                                 KeyListener keyListener,
+                                 OptionsEventHandler optionsEventHandler, KeyListener keyListener,
                                  MouseListener mouseListener) {
         this.eventBus = eventBus;
         this.srtDisplayerEventHandler = srtDisplayerEventHandler;
         this.hotKeyEventHandler = hotKeyEventHandler;
         this.srtParserEventHandler = srtParserEventHandler;
         this.mouseClickedEventHandler = mouseClickedEventHandler;
+        this.optionsEventHandler = optionsEventHandler;
         this.keyListener = keyListener;
         this.mouseListener = mouseListener;
     }
@@ -43,6 +47,7 @@ public class EventHandlerRegistrar {
         eventBus.unregister(mouseClickedEventHandler);
         eventBus.unregister(srtDisplayerEventHandler);
         eventBus.unregister(srtParserEventHandler);
+        eventBus.unregister(optionsEventHandler);
     }
 
     public void registerEventHandlers(){
@@ -50,5 +55,6 @@ public class EventHandlerRegistrar {
         eventBus.register(mouseClickedEventHandler);
         eventBus.register(srtDisplayerEventHandler);
         eventBus.register(srtParserEventHandler);
+        eventBus.register(optionsEventHandler);
     }
 }

@@ -16,7 +16,7 @@ import lombok.extern.log4j.Log4j2;
 
 /**
  * Starts and manages the background thread in which updates take place.
- * The background thread updates the ui in form of {@link SrtDisplayer} in a given update interval.
+ * The background thread updates the ui in form of {@link SrtDisplayer} in a given update interval and only when needed.
  */
 @Log4j2
 @Singleton
@@ -44,8 +44,8 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
             log.debug("updater started");
             updaterThread.start();
         } else {
-            log.error("UpdaterThread already startet!");
-            throw new IllegalStateException("UpdaterThread already startet!");
+            log.error("UpdaterThread already started!");
+            throw new IllegalStateException("UpdaterThread already started!");
         }
     }
 
@@ -81,18 +81,18 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
             if (lastSubtitleText != null) {
                 if (!lastSubtitleText.equals(currSubtitleText)) {
                     // update necessary
-                    log.debug("displaying subtitle " + currSubtitleText);
+                    log.trace("displaying subtitle " + currSubtitleText);
                     srtDisplayer.displaySubtitle(currSubtitleText);
                 } else {
-                    log.debug("subtitle is identical to last subtitle, no update neccassary");
+                    log.trace("subtitle is identical to last subtitle, no update neccassary");
                 }
             } else {
-                log.debug("no last subtitle found -> displaying subtitle " + currSubtitleText);
+                log.trace("no last subtitle found -> displaying subtitle " + currSubtitleText);
                 srtDisplayer.displaySubtitle(currSubtitleText);
             }
             lastSubtitleText = currSubtitleText;
         } catch (TimeStampOutOfBoundsException e) {
-            log.debug("received TimeStamp out of bounds exception -> doneParsing event triggered");
+            log.info("received TimeStamp out of bounds exception -> doneParsing event triggered");
             eventBus.post(new DoneParsingEvent());
         }
     }
@@ -100,6 +100,7 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
 
     @Override
     public void update() {
+        log.debug("manual update for srt parser");
         SrtDisplayer srtDisplayer = this.srtDisplayerProvider.get();
         SubtitleText currSubtitleText = srtParser.getCurrentSubtitleText();
         srtDisplayer.displaySubtitle(currSubtitleText);
