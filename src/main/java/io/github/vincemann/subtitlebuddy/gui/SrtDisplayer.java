@@ -11,6 +11,5 @@ public interface SrtDisplayer {
 
     void displaySubtitle(SubtitleText subtitleText);
 
-    void refreshSubtitle();
 
 }

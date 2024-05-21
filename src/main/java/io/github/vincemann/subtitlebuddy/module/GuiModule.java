@@ -5,6 +5,7 @@ import com.google.inject.name.Names;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.WindowManagerImpl;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
@@ -68,6 +69,7 @@ public class GuiModule extends PropertyFilesModule {
         Platform.setImplicitExit(false); // https://stackoverflow.com/questions/29302837/javafx-platform-runlater-never-running
         bind(WindowManager.class).to(WindowManagerImpl.class);
         bind(SettingsStageFactory.class).in(Singleton.class);
+        bind(SrtDisplayerOptions.class).in(Singleton.class);
         bind(SettingsSrtDisplayer.class).to(SettingsStageController.class);
         bind(MovieSrtDisplayer.class).to(MovieStageController.class);
         bind(SrtDisplayer.class).toProvider(SrtDisplayerProvider.class);

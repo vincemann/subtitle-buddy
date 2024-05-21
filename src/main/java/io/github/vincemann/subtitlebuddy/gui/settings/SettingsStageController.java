@@ -1,29 +1,25 @@
 package io.github.vincemann.subtitlebuddy.gui.settings;
 
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
+import io.github.vincemann.subtitlebuddy.events.RequestSubtitleUpdateEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
+import io.github.vincemann.subtitlebuddy.font.FontManager;
+import io.github.vincemann.subtitlebuddy.font.FontOptions;
 import io.github.vincemann.subtitlebuddy.gui.*;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.font.FontOptions;
 import io.github.vincemann.subtitlebuddy.srt.*;
-import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.srt.parser.InvalidTimestampFormatException;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
-import io.github.vincemann.subtitlebuddy.util.fx.FontUtils;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -33,13 +29,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.loadImageView;
@@ -81,8 +76,6 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
     private ImageView settingsClickWarning;
 
-    @Getter
-    private SubtitleText lastSubtitleText;
 
     private SrtParser srtParser;
 
@@ -108,7 +101,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
     private Stage stage;
 
-    private Table<Node, EventHandler, EventType> eventHandlers;
+    private List<EventHandlerRegistration<?>> eventHandlerRegistrations = new ArrayList<>();
 
 
     @Inject
@@ -136,7 +129,6 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         this.wrongTimeStampFormatText = wrongTimeStampFormatText;
         this.timestampJumpHintTextString = timestampJumpHintTextString;
         this.lastTimeStamp = Timestamp.ZERO();
-        this.lastSubtitleText = srtParser.getCurrentSubtitleText();
     }
 
     @FXML
@@ -160,6 +152,8 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                 "/images/finger.png",
                 new Vector2D(SETTINGS_CLICK_WARNING_SIZE, SETTINGS_CLICK_WARNING_SIZE));
         settingsClickWarning.setVisible(false);
+
+        eventBus.post(new RequestSubtitleUpdateEvent());
     }
 
     public void setStage(Stage stage) {
@@ -178,14 +172,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     }
 
     private void unregisterEventHandlers() {
-        Set<Table.Cell<Node, EventHandler, EventType>> cells = this.eventHandlers.cellSet();
-        for (Table.Cell<Node, EventHandler, EventType> cell : cells) {
-            Node node = cell.getRowKey();
-            EventHandler eventhandler = cell.getColumnKey();
-            EventType eventType = cell.getValue();
-
-            node.removeEventHandler(eventType,eventhandler);
-        }
+        eventHandlerRegistrations.forEach(EventHandlerRegistration::unregister);
     }
 
     private void loadUIStrings() {
@@ -236,25 +223,11 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                 log.error(e.getMessage());
             }
         };
-        //set Listener to wait until the scene&stage is initialized, then init the scene/stage specific stuff
-        //-> remains stateless
-        /*
-        settingsPane.sceneProperty().addListener((observableScene, oldScene, newScene) -> {
-            if (oldScene == null && newScene != null) {
-                // scene is set for the first time. Now its the time to listen stage changes.
-                newScene.windowProperty().addListener((observableWindow, oldWindow, newWindow) -> {
-                    if (oldWindow == null && newWindow != null) {
-                        // stage is set. now is the right time to do whatever we need to the stage in the controller.
-                        initStage();
-                    }
-                });
-            }
-        });*/
         EventHandler<ActionEvent> timeFieldActionHandler = event -> jumpToTimestamp();
 
         EventHandler<MouseEvent> movieModeButtonPressedHandler = event -> eventBus.post(new SwitchSrtDisplayerEvent(MovieSrtDisplayer.class));
 
-        EventHandler<MouseEvent> optionsButtonPressedHandler = event -> openOptionsWindow();
+        EventHandler<MouseEvent> optionsButtonPressedHandler = event -> Platform.runLater(this::openOptionsWindow);
 
 
         optionsButton.setOnMouseClicked(optionsButtonPressedHandler);
@@ -265,15 +238,13 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         fastBackwardButton.setOnMouseClicked(fastBackwardButtonClickedHandler);
         fastForwardButton.setOnMouseClicked(fastForwardButtonClickedHandler);
 
-        Table<Node, EventHandler, EventType> resultTable = HashBasedTable.create();
-        resultTable.put(optionsButton, optionsButtonPressedHandler, MouseEvent.MOUSE_CLICKED);
-        resultTable.put(stopButton, stopButtonPressedHandler, MouseEvent.MOUSE_CLICKED);
-        resultTable.put(startButton, startButtonPressedHandler, MouseEvent.MOUSE_CLICKED);
-        resultTable.put(timeField, timeFieldActionHandler, ActionEvent.ACTION);
-        resultTable.put(movieModeButton, movieModeButtonPressedHandler, MouseEvent.MOUSE_CLICKED);
-        resultTable.put(fastBackwardButton, fastBackwardButtonClickedHandler, MouseEvent.MOUSE_CLICKED);
-        resultTable.put(fastForwardButton, fastForwardButtonClickedHandler, MouseEvent.MOUSE_CLICKED);
-        this.eventHandlers = resultTable;
+        eventHandlerRegistrations.add(new EventHandlerRegistration<>(optionsButton, optionsButtonPressedHandler, MouseEvent.MOUSE_CLICKED));
+        eventHandlerRegistrations.add(new EventHandlerRegistration<>(stopButton, stopButtonPressedHandler, MouseEvent.MOUSE_CLICKED));
+        eventHandlerRegistrations.add(new EventHandlerRegistration<>(startButton, startButtonPressedHandler, MouseEvent.MOUSE_CLICKED));
+        eventHandlerRegistrations.add(new EventHandlerRegistration<>(timeField, timeFieldActionHandler, ActionEvent.ACTION));
+        eventHandlerRegistrations.add(new EventHandlerRegistration<>(movieModeButton, movieModeButtonPressedHandler, MouseEvent.MOUSE_CLICKED));
+        eventHandlerRegistrations.add(new EventHandlerRegistration<>(fastBackwardButton, fastBackwardButtonClickedHandler, MouseEvent.MOUSE_CLICKED));
+        eventHandlerRegistrations.add(new EventHandlerRegistration<>(fastForwardButton, fastForwardButtonClickedHandler, MouseEvent.MOUSE_CLICKED));
     }
 
     private void jumpToTimestamp(){
@@ -300,11 +271,6 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         windowManager.showWindowAtPos(Windows.OPTIONS, nextToSettingsWindow,false);
     }
 
-
-    @Override
-    public void refreshSubtitle() {
-        displaySubtitle(lastSubtitleText);
-    }
 
     @Override
     public void displayNextClickCounts() {
@@ -339,11 +305,6 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
     @Override
     public void displaySubtitle(@NonNull SubtitleText subtitleText) {
-        log.trace("asking javafx to display new subtitle in " + this.getClass().getSimpleName() + " : " + subtitleText);
-        lastSubtitleText = subtitleText;
-
-
-
         Platform.runLater(() -> {
             int fontSize = options.getSettingsFontSize();
             FontBundle currentFont = fontManager.getCurrentFont().withSize(fontSize);
@@ -369,9 +330,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                     }
 
                     text.setFill(fontColor);
-
-
-                    FontUtils.adjustTextSize(text, fontSize);
+//                    FontUtils.adjustTextSize(text, fontSize);
 
                     if (log.isTraceEnabled())
                         log.trace("displaying text: " + text + " in settings mode");
@@ -385,11 +344,12 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
     @Override
     public void setTime(@NonNull Timestamp time) {
-        Platform.runLater(() -> {
-            if (!lastTimeStamp.equalBySeconds(time)) {
+        // reduces the rate of ui updates
+        if (!lastTimeStamp.equalBySeconds(time)) {
+            Platform.runLater(() -> {
                 currentTimeStampText.setText(time.toAlarmClockString());
                 lastTimeStamp = new Timestamp(time);
-            }
-        });
+            });
+        }
     }
 }

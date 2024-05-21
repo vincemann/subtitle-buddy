@@ -18,21 +18,9 @@ public class UserInputHandlerModule extends AbstractModule {
 
     @Override
     protected void configure() {
-//        registerHook();
         bind(HotKeyEventHandler.class).to(UserInputEventHandler.class);
         bind(MouseClickedEventHandler.class).to(UserInputEventHandler.class);
         bind(KeyListener.class).to(GlobalHotKeyListener.class);
         bind(MouseListener.class).to(GlobalMouseListener.class);
     }
-
-
-    // this works for 2.0.2 patched
-//    private void registerHook(){
-//        try {
-//            GlobalScreen.registerNativeHook();
-//        }
-//        catch (NativeHookException ex) {
-//            log.error("could not register Native Hook, caused by: ",ex);
-//        }
-//    }
 }

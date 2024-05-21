@@ -1,29 +1,27 @@
 package io.github.vincemann.subtitlebuddy.gui.movie;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.github.vincemann.subtitlebuddy.events.RequestSubtitleUpdateEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 import io.github.vincemann.subtitlebuddy.events.UpdateSubtitlePosEvent;
-import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
+import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.font.FontOptions;
-import io.github.vincemann.subtitlebuddy.options.OptionsManager;
+import io.github.vincemann.subtitlebuddy.gui.EventHandlerRegistration;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
+import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
+import io.github.vincemann.subtitlebuddy.options.OptionsManager;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleSegment;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleType;
-import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.util.ExecutionLimiter;
 import io.github.vincemann.subtitlebuddy.util.fx.DragResizeMod;
-import io.github.vincemann.subtitlebuddy.util.fx.FontUtils;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import io.github.vincemann.subtitlebuddy.util.vec.VectorUtils;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
@@ -37,13 +35,11 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -97,7 +93,7 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     private DragResizeMod dragResizeMod;
 
-    private Table<Node, EventHandler, EventType> eventHandlers;
+    private List<EventHandlerRegistration<?>> eventHandlerRegistrations = new ArrayList<>();
 
     private FontOptions fontOptions;
 
@@ -141,11 +137,6 @@ public class MovieStageController implements MovieSrtDisplayer {
         }
     }
 
-    @Override
-    public void refreshSubtitle() {
-        displaySubtitle(lastSubtitleText);
-    }
-
 
     @Override
     public void displaySubtitle(SubtitleText subtitleText) {
@@ -156,14 +147,14 @@ public class MovieStageController implements MovieSrtDisplayer {
         Platform.runLater(() -> {
             Color fontColor = fontOptions.getFontColor();
             int fontSize = options.getMovieFontSize();
-            FontBundle currentFont = fontManager.getCurrentFont();
+            FontBundle currentFont = fontManager.getCurrentFont().withSize(fontSize);
 
-            if (log.isTraceEnabled()) {
-                log.trace("using text size: " + fontSize);
-                log.trace("setting fontcolor: " + fontColor);
-                log.trace("using font: " + currentFont.getRegularFont().getName());
+            if (log.isDebugEnabled()) {
+                log.debug("using text size: " + fontSize);
+                log.debug("setting fontcolor: " + fontColor);
+                log.debug("using font: " + currentFont.getRegularFont().getName());
 
-                log.trace("displaying new subtitle: " + subtitleText);
+                log.debug("displaying new subtitle: " + subtitleText);
             }
 
             movieTextFlow.getChildren().clear();
@@ -177,7 +168,7 @@ public class MovieStageController implements MovieSrtDisplayer {
                         text.setFont(currentFont.getRegularFont());
                     }
 
-                    FontUtils.adjustTextSize(text, fontSize);
+//                    FontUtils.adjustTextSize(text, fontSize);
                     text.setFill(fontColor);
                     text.setStyle(OUTLINED_TEXT_STYLE);
 
@@ -208,6 +199,7 @@ public class MovieStageController implements MovieSrtDisplayer {
                 "/images/finger.png",
                 new Vector2D(MOVIE_CLICK_WARNING_SIZE, MOVIE_CLICK_WARNING_SIZE));
         clickWarning.setVisible(false);
+        eventBus.post(new RequestSubtitleUpdateEvent());
     }
 
     public void setStage(Stage stage) {
@@ -215,7 +207,7 @@ public class MovieStageController implements MovieSrtDisplayer {
         registerEventHandlingStageListener();
     }
 
-    private void registerEventHandlingStageListener(){
+    private void registerEventHandlingStageListener() {
         stage.showingProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 registerEventHandlers();
@@ -226,14 +218,7 @@ public class MovieStageController implements MovieSrtDisplayer {
     }
 
     private void unregisterEventHandlers() {
-        Set<Table.Cell<Node, EventHandler, EventType>> cells = this.eventHandlers.cellSet();
-        for (Table.Cell<Node, EventHandler, EventType> cell : cells) {
-            Node node = cell.getRowKey();
-            EventHandler eventhandler = cell.getColumnKey();
-            EventType eventType = cell.getValue();
-
-            node.removeEventHandler(eventType,eventhandler);
-        }
+        eventHandlerRegistrations.forEach(EventHandlerRegistration::unregister);
         dragResizeMod.unregisterListeners();
     }
 
@@ -274,10 +259,8 @@ public class MovieStageController implements MovieSrtDisplayer {
                 .build();
         dragResizeMod.makeResizableAndDraggable();
 
-        Table<Node, EventHandler, EventType> resultTable = HashBasedTable.create();
-        resultTable.put(movieVBox, movieBoxMouseEnteredHandler, MouseEvent.MOUSE_ENTERED);
-        resultTable.put(movieVBox, movieBoxMouseExitedHandler, MouseEvent.MOUSE_EXITED);
-        this.eventHandlers = resultTable;
+        eventHandlerRegistrations.add(new EventHandlerRegistration<>(movieVBox, movieBoxMouseEnteredHandler, MouseEvent.MOUSE_ENTERED));
+        eventHandlerRegistrations.add(new EventHandlerRegistration<>(movieVBox, movieBoxMouseExitedHandler, MouseEvent.MOUSE_EXITED));
     }
 
 }

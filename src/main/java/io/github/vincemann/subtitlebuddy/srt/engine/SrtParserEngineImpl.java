@@ -20,10 +20,10 @@ import lombok.extern.log4j.Log4j2;
  */
 @Log4j2
 @Singleton
-public class SrtParserEngineImpl extends SrtParserEngine implements Runnable{
+public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
 
     private Thread updaterThread;
-    private boolean stopped=false;
+    private boolean stopped = false;
     private SrtParser srtParser;
     private Provider<SrtDisplayer> srtDisplayerProvider;
     private EventBus eventBus;
@@ -32,18 +32,18 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable{
     @Inject
     public SrtParserEngineImpl(@Named(PropertyFileKeys.UPDATER_DELAY) long updateDelay, SrtParser srtParser, Provider<SrtDisplayer> srtDisplayerProvider, EventBus eventBus) {
         super(updateDelay);
-        this.srtParser=srtParser;
+        this.srtParser = srtParser;
         this.srtDisplayerProvider = srtDisplayerProvider;
-        this.eventBus=eventBus;
+        this.eventBus = eventBus;
         this.updaterThread = new Thread(this);
     }
 
     @Override
     public void start() {
-        if(!updaterThread.isAlive()) {
+        if (!updaterThread.isAlive()) {
             log.debug("updater started");
             updaterThread.start();
-        }else {
+        } else {
             log.error("UpdaterThread already startet!");
             throw new IllegalStateException("UpdaterThread already startet!");
         }
@@ -51,12 +51,12 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable{
 
     @Override
     public void stop() {
-        this.stopped=true;
+        this.stopped = true;
     }
 
     @Override
     public void run() {
-        while (!stopped){
+        while (!stopped) {
             updateProgram();
             try {
                 Thread.sleep(getUpdateDelay());
@@ -66,33 +66,33 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable{
         }
     }
 
-    private void updateProgram(){
+    private void updateProgram() {
         SrtDisplayer srtDisplayer = this.srtDisplayerProvider.get();
-        if(srtDisplayer instanceof SettingsSrtDisplayer){
-            ((SettingsSrtDisplayer)srtDisplayer).setTime(srtParser.getTime());
+        if (srtDisplayer instanceof SettingsSrtDisplayer) {
+            ((SettingsSrtDisplayer) srtDisplayer).setTime(srtParser.getTime());
         }
 
         try {
-            log.trace( "updater updating current Subtitle");
+            log.trace("updater updating current Subtitle");
             srtParser.updateCurrentSubtitle();
             SubtitleText currSubtitleText = srtParser.getCurrentSubtitleText();
 
-                //log.trace("new subtitle is present: " + currSubtitleText);
-                if(lastSubtitleText !=null) {
-                    if (!lastSubtitleText.equals(currSubtitleText)) {
-                        // update necessary
-                        log.trace("displaying subtitle "+currSubtitleText);
-                        srtDisplayer.displaySubtitle(currSubtitleText);
-                    }else {
-                        log.trace("subtitle is identical to last subtitle, no update neccassary");
-                    }
-                }else {
-                    log.trace("no last subtitle found -> displaying subtitle "+ currSubtitleText);
+            //log.trace("new subtitle is present: " + currSubtitleText);
+            if (lastSubtitleText != null) {
+                if (!lastSubtitleText.equals(currSubtitleText)) {
+                    // update necessary
+                    log.debug("displaying subtitle " + currSubtitleText);
                     srtDisplayer.displaySubtitle(currSubtitleText);
+                } else {
+                    log.debug("subtitle is identical to last subtitle, no update neccassary");
                 }
-                lastSubtitleText =currSubtitleText;
+            } else {
+                log.debug("no last subtitle found -> displaying subtitle " + currSubtitleText);
+                srtDisplayer.displaySubtitle(currSubtitleText);
+            }
+            lastSubtitleText = currSubtitleText;
         } catch (TimeStampOutOfBoundsException e) {
-            log.debug("received TimeStampOutofboundsException -> doneParsing event triggered");
+            log.debug("received TimeStamp out of bounds exception -> doneParsing event triggered");
             eventBus.post(new DoneParsingEvent());
         }
     }
@@ -100,6 +100,8 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable{
 
     @Override
     public void update() {
-        updateProgram();
+        SrtDisplayer srtDisplayer = this.srtDisplayerProvider.get();
+        SubtitleText currSubtitleText = srtParser.getCurrentSubtitleText();
+        srtDisplayer.displaySubtitle(currSubtitleText);
     }
 }

@@ -1,5 +1,6 @@
 package io.github.vincemann.subtitlebuddy.module;
 
+import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.font.*;
@@ -28,5 +29,6 @@ public class FontModule extends PropertyFilesModule{
         bind(DefaultFontsInstaller.class).to(DefaultFontsInstallerImpl.class);
         bind(FontBundleLoader.class).to(FontBundleLoaderImpl.class);
         bind(FontManager.class).to(FontManagerImpl.class);
+        bind(FontOptions.class).in(Singleton.class);
     }
 }

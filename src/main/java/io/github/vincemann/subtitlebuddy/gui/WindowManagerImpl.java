@@ -1,7 +1,9 @@
 package io.github.vincemann.subtitlebuddy.gui;
 
 import com.google.inject.Singleton;
+import io.github.vincemann.subtitlebuddy.util.fx.FxThreadUtils;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 
@@ -11,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Log4j2
 @Singleton
-public class WindowManagerImpl implements WindowManager{
+public class WindowManagerImpl implements WindowManager {
 
     private List<Window> windows;
 
@@ -53,7 +55,7 @@ public class WindowManagerImpl implements WindowManager{
 
     @Override
     public Window showWindowAtPos(String name, Vector2D pos, boolean hideOther) {
-        Window window = showWindow(name,hideOther);
+        Window window = showWindow(name, hideOther);
         window.getStage().setX(pos.getX());
         window.getStage().setY(pos.getY());
         return window;
@@ -61,8 +63,8 @@ public class WindowManagerImpl implements WindowManager{
 
 
     @Override
-    public Window showWindow(String name){
-        return showWindow(name,true);
+    public Window showWindow(String name) {
+        return showWindow(name, true);
     }
 
     @Override

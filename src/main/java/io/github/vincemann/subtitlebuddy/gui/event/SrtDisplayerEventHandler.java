@@ -1,18 +1,17 @@
 package io.github.vincemann.subtitlebuddy.gui.event;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
-import io.github.vincemann.subtitlebuddy.events.UpdateCurrentFontEvent;
-import io.github.vincemann.subtitlebuddy.events.UpdateFontColorEvent;
-import io.github.vincemann.subtitlebuddy.events.UpdateSubtitlePosEvent;
+import io.github.vincemann.subtitlebuddy.events.*;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.options.OptionsManagerImpl;
+import javafx.application.Platform;
 import lombok.extern.log4j.Log4j2;
 
 
@@ -29,12 +28,15 @@ public class SrtDisplayerEventHandler {
 
     private FontManager fontManager;
 
+    private EventBus eventBus;
+
     @Inject
-    public SrtDisplayerEventHandler(SrtDisplayerProvider srtDisplayerProvider, OptionsManagerImpl optionsManager, WindowManager windowManager, FontManager fontManager) {
+    public SrtDisplayerEventHandler(SrtDisplayerProvider srtDisplayerProvider, OptionsManagerImpl optionsManager, WindowManager windowManager, FontManager fontManager, EventBus eventBus) {
         this.srtDisplayerProvider = srtDisplayerProvider;
         this.optionsManager = optionsManager;
         this.windowManager = windowManager;
         this.fontManager = fontManager;
+        this.eventBus = eventBus;
     }
 
     @Subscribe
@@ -42,7 +44,7 @@ public class SrtDisplayerEventHandler {
         log.info("UpdateFontColorEvent arrived ");
         log.debug("changing color to: " + event.getColor().toString());
         optionsManager.updateFontColor(event.getColor());
-        srtDisplayerProvider.get().refreshSubtitle();
+        eventBus.post(new RequestSubtitleUpdateEvent());
     }
 
     @Subscribe
@@ -50,7 +52,7 @@ public class SrtDisplayerEventHandler {
         log.info("UpdateCurrentFontEvent arrived ");
         optionsManager.updateCurrentFont(event.getFontPath());
         fontManager.reloadCurrentFont();
-        srtDisplayerProvider.get().refreshSubtitle();
+        eventBus.post(new RequestSubtitleUpdateEvent());
     }
 
 
@@ -62,9 +64,9 @@ public class SrtDisplayerEventHandler {
     @Subscribe
     public void handleSwitchSrtDisplayerEvent(SwitchSrtDisplayerEvent event){
         log.debug("switching srt displayer event arrived");
-        windowManager.showWindow(mapToWindow(event.getTarget()));
-        this.srtDisplayerProvider.setCurrentDisplayer(event.getTarget());
-        this.srtDisplayerProvider.get().refreshSubtitle();
+        Platform.runLater( () -> windowManager.showWindow(mapToWindow(event.getTarget())));
+        srtDisplayerProvider.setCurrentDisplayer(event.getTarget());
+        eventBus.post(new RequestSubtitleUpdateEvent());
     }
 
     private String mapToWindow(Class<? extends SrtDisplayer> displayer){

@@ -1,36 +1,31 @@
 package io.github.vincemann.subtitlebuddy.gui.options;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
 import io.github.vincemann.subtitlebuddy.events.UpdateCurrentFontEvent;
 import io.github.vincemann.subtitlebuddy.events.UpdateFontColorEvent;
-import io.github.vincemann.subtitlebuddy.listeners.key.HotKey;
-import io.github.vincemann.subtitlebuddy.options.OptionsManager;
-import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
-import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
+import io.github.vincemann.subtitlebuddy.gui.EventHandlerRegistration;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
+import io.github.vincemann.subtitlebuddy.listeners.key.HotKey;
+import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -52,13 +47,11 @@ public class OptionsStageController {
 
     private EventBus eventBus;
 
-    private OptionsManager optionsManager;
-
     private ChangeListener<FontBundle> fontChoiceBoxChangeListener;
     private ChangeListener<Boolean> nextClickChangeListener;
     private ChangeListener<Boolean> startStopChangeListener;
 
-    private Table<Node, EventHandler, EventType> eventHandlers;
+    private List<EventHandlerRegistration<?>> eventHandlerRegistrations = new ArrayList<>();
 
     private FontManager fontManager;
     private SrtDisplayerOptions options;
@@ -68,28 +61,25 @@ public class OptionsStageController {
 
     @Inject
     public OptionsStageController(EventBus eventBus,
-                                  OptionsManager optionsManager,
                                   FontManager fontManager,
                                   SrtDisplayerOptions options) {
-        this.optionsManager = optionsManager;
         this.eventBus = eventBus;
         this.fontManager = fontManager;
         this.options = options;
     }
 
 
-    private void updateCheckBoxes(boolean nextClickToggled, boolean startStopToggled) {
+    private void updateCheckBoxes(boolean nextClickHotkeyEnabled, boolean spaceHotkeyEnabled) {
         Platform.runLater(() -> {
-            this.nextClickCheckBox.setSelected(!nextClickToggled);
-            this.startStopCheckBox.setSelected(!startStopToggled);
+            this.nextClickCheckBox.setSelected(nextClickHotkeyEnabled);
+            this.startStopCheckBox.setSelected(spaceHotkeyEnabled);
         });
     }
 
     protected void registerEventHandlers() {
-        Table<Node, EventHandler, EventType> resultTable = HashBasedTable.create();
         EventHandler<ActionEvent> colorChooserEventHandler = event -> {
             //new color chosen
-            log.info("User selected new Color -> colorchange event fired");
+            log.info("User selected new Color -> color change event fired");
             eventBus.post(new UpdateFontColorEvent(colorChooser.getValue()));
             previewText.setFill(colorChooser.getValue());
         };
@@ -110,8 +100,9 @@ public class OptionsStageController {
         nextClickCheckBox.selectedProperty().addListener(nextClickChangeListener);
         startStopCheckBox.selectedProperty().addListener(startStopChangeListener);
 
-        resultTable.put(colorChooser, colorChooserEventHandler, ActionEvent.ACTION);
-        this.eventHandlers = resultTable;
+        eventHandlerRegistrations.add(
+                new EventHandlerRegistration<>(colorChooser, colorChooserEventHandler, ActionEvent.ACTION)
+        );
     }
 
     @FXML
@@ -124,7 +115,6 @@ public class OptionsStageController {
         checkNotNull(fontChoiceBox.getItems());
         checkNotNull(startStopCheckBox);
         checkNotNull(nextClickCheckBox);
-
 
         registerEventHandlers();
 
@@ -148,14 +138,7 @@ public class OptionsStageController {
     }
 
     private void unregisterEventHandlers() {
-        Set<Table.Cell<Node, EventHandler, EventType>> cells = this.eventHandlers.cellSet();
-        for (Table.Cell<Node, EventHandler, EventType> cell : cells) {
-            Node node = cell.getRowKey();
-            EventHandler eventhandler = cell.getColumnKey();
-            EventType eventType = cell.getValue();
-            node.removeEventHandler(eventType, eventhandler);
-        }
-
+        eventHandlerRegistrations.forEach(EventHandlerRegistration::unregister);
         fontChoiceBox.getSelectionModel().selectedItemProperty().removeListener(fontChoiceBoxChangeListener);
         startStopCheckBox.selectedProperty().removeListener(startStopChangeListener);
         nextClickCheckBox.selectedProperty().removeListener(nextClickChangeListener);

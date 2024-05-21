@@ -23,9 +23,6 @@ public class OptionsModule extends PropertyFilesModule {
     protected void configureClassBindings() {
         // Bind the OptionsManager as a singleton
         bind(OptionsManager.class).to(OptionsManagerImpl.class).in(Singleton.class);
-        bind(SrtOptions.class).in(Singleton.class);
-        bind(SrtDisplayerOptions.class).in(Singleton.class);
-        bind(FontOptions.class).in(Singleton.class);
     }
 
     @Provides

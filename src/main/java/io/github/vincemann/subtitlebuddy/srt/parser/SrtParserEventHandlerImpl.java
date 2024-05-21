@@ -2,7 +2,7 @@ package io.github.vincemann.subtitlebuddy.srt.parser;
 
 import com.google.common.eventbus.Subscribe;
 import io.github.vincemann.subtitlebuddy.events.DoneParsingEvent;
-import io.github.vincemann.subtitlebuddy.events.RequestSrtParserUpdateEvent;
+import io.github.vincemann.subtitlebuddy.events.RequestSubtitleUpdateEvent;
 import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngine;
 import lombok.extern.log4j.Log4j2;
 
@@ -32,7 +32,7 @@ public class SrtParserEventHandlerImpl implements SrtParserEventHandler {
 
     @Subscribe
     @Override
-    public void handleRequestUpdateEvent(RequestSrtParserUpdateEvent e) {
+    public void handleRequestUpdateEvent(RequestSubtitleUpdateEvent e) {
         srtParserEngine.update();
     }
 }

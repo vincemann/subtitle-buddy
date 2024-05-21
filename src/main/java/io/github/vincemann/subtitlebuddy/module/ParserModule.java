@@ -1,6 +1,7 @@
 package io.github.vincemann.subtitlebuddy.module;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.events.EventBusImpl;
@@ -8,6 +9,7 @@ import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.LastPathRegist
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.PropertiesFileLastPathRegistry;
 import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.srt.SrtOptions;
 import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngine;
 import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngineImpl;
 import io.github.vincemann.subtitlebuddy.srt.parser.*;
@@ -35,6 +37,7 @@ public class ParserModule extends PropertyFilesModule {
 
     @Override
     protected void configureClassBindings() {
+        bind(SrtOptions.class).in(Singleton.class);
         bind(LastPathRegistry.class).to(PropertiesFileLastPathRegistry.class);
         bind(SrtFileParser.class).to(SrtFileParserImpl.class);
         bind(StopWatch.class).to(StopWatchImpl.class);
