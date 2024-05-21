@@ -42,6 +42,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -190,8 +191,10 @@ public class Main extends Application {
             configDirectory.create();
             ClassPathFileExtractor classPathFileExtractor = new ClassPathFileExtractorImpl();
             ConfigFileLoader configFileLoader = new ConfigFileLoaderImpl(configDirectory, classPathFileExtractor);
-            PropertiesFile properties = new ApachePropertiesFile(configFileLoader.findOrCreateConfigFile(CONFIG_FILE_NAME));
-            UIStringsFile strings = new ApacheUIStringsFile(classPathFileExtractor.findOnClassPath(UI_STRINGS_FILE_PATH).getFile());
+            File configFile = configFileLoader.findOrCreateConfigFile(CONFIG_FILE_NAME);
+//            File stringsFile = classPathFileExtractor.findOnClassPath(UI_STRINGS_FILE_PATH).getFile();
+            PropertiesFile properties = new ApachePropertiesFile(configFile);
+            UIStringsFile strings = new ApacheUIStringsFile(UI_STRINGS_FILE_PATH);
 
 
             // use default modules

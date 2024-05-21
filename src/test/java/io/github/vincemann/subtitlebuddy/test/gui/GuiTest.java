@@ -244,7 +244,8 @@ public abstract class GuiTest extends ApplicationTest {
     public void start(Stage primaryStage) throws Exception {
         PropertiesFile properties = new ApachePropertiesFile(new File(TestFiles.TEST_PROPERTIES_FILE_PATH));
         // use original strings constants file
-        UIStringsFile strings = new ApacheUIStringsFile(new File(Main.UI_STRINGS_FILE_PATH));
+//        UIStringsFile strings = new ApacheUIStringsFile(new File(Main.UI_STRINGS_FILE_PATH));
+        UIStringsFile strings = new ApacheUIStringsFile(Main.UI_STRINGS_FILE_PATH);
         // set all modules for integration test, mock those that need to be mocked
         Injector testInjector = Guice.createInjector(Arrays.asList(
                 new ClassPathFileModule(new ClassPathFileExtractorImpl()),
