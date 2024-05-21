@@ -52,6 +52,7 @@ public class FontManagerImpl implements FontManager {
                             //dont load italic fonts, font manger already loads regular and italic fonts, if u give him the regular font path
                             if (!fileName.contains("italic")) {
                                 try {
+                                    log.debug("loading font: " + fileName);
                                     FontBundle fontBundle = fontBundleLoader.loadFontBundle(fontsDir, fileName);
                                     this.loadedFonts.add(fontBundle);
                                 } catch (FontBundleLoadingException e) {

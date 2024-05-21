@@ -26,7 +26,13 @@ public class DefaultFontsInstallerImpl implements DefaultFontsInstaller {
             "fonts/Aileron-Black.italic.otf",
             "fonts/Aileron-Black.otf",
             "fonts/Amaranth.ttf",
-            "fonts/Amaranth.italic.ttf"
+            "fonts/Amaranth.italic.ttf",
+            "fonts/Montserrat-Medium.otf",
+            "fonts/Montserrat-Medium.italic.otf",
+            "fonts/Quicksand.otf",
+            "fonts/Quicksand.italic.otf",
+            "fonts/Roboto-Black.ttf",
+            "fonts/Roboto-Black.italic.ttf"
     );
 
     private ClassPathFileExtractor classPathFileExtractor;

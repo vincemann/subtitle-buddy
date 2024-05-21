@@ -1,11 +1,8 @@
 package io.github.vincemann.subtitlebuddy.listeners.key;
 
 
-import io.github.vincemann.subtitlebuddy.events.HotKeyPressedEvent;
-
 /**
- * fires {@link HotKeyPressedEvent} when
- * {@link HotKey} is pressed
+ * This is only here to ensure implementing event handlers.
  */
 public interface KeyListener {
 

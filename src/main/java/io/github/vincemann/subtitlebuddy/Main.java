@@ -85,6 +85,7 @@ public class Main extends Application {
 
         injector = createInjector(properties,strings);
 
+
         initFonts();
 
         registerEventHandlers();
