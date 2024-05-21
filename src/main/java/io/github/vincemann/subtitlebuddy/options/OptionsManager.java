@@ -19,5 +19,5 @@ public interface OptionsManager {
 
     void updateMovieFontSize(int size);
 
-    void updateBackViaEsc(boolean value);
+    void updateEndMovieModeHotkeyEnabled(boolean value);
 }

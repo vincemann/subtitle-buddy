@@ -32,7 +32,7 @@ public class SrtDisplayerOptions {
 
 
     public boolean getBackViaEsc() {
-        return options.getBackViaEsc();
+        return options.getEndMovieModeHotkeyEnabled();
     }
 
     public Boolean getSpaceHotkeyEnabled() {
@@ -55,7 +55,7 @@ public class SrtDisplayerOptions {
         manager.updateNextClickHotkeyEnabled(value);
     }
 
-    public void updateBackViaEscape(boolean value){
-        manager.updateBackViaEsc(value);
+    public void updateEndMovieModeHotkeyEnabled(boolean value){
+        manager.updateEndMovieModeHotkeyEnabled(value);
     }
 }

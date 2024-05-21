@@ -126,11 +126,11 @@ public class OptionsManagerImpl implements OptionsManager {
     }
 
     @Override
-    public void updateBackViaEsc(boolean value) {
-        options.setBackViaEsc(value);
+    public void updateEndMovieModeHotkeyEnabled(boolean value) {
+        options.setEndMovieModeHotkeyEnabled(value);
 
         try {
-            properties.saveProperty(PropertyFileKeys.BACK_VIA_ESCAPE, String.valueOf(value));
+            properties.saveProperty(PropertyFileKeys.END_MOVIE_MODE_HOTKEY_ENABLED, String.valueOf(value));
         } catch (PropertyAccessException e) {
             log.error("could not save movie font size modification, " + e.getMessage());
         }

@@ -4,10 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.events.HotKeyPressedEvent;
-import io.github.vincemann.subtitlebuddy.events.MouseClickedEvent;
-import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
-import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
+import io.github.vincemann.subtitlebuddy.events.*;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
 import io.github.vincemann.subtitlebuddy.gui.event.SrtDisplayerProvider;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
@@ -53,28 +50,34 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
 
     @Override
     @Subscribe
-    public synchronized void handleHotKeyPressedEvent(HotKeyPressedEvent e) {
-        log.debug("hotKey event getting handled");
-        switch (e.getHotKey()) {
-            case NEXT_CLICK:
-                log.debug("next click hotkey event recognized");
-                handleNextClickHotKey();
-                break;
-            case START_STOP:
-                log.debug("start stop hotkey event received");
-                if (options.getSpaceHotkeyEnabled()) {
-                    switchParserRunningState();
-                } else {
-                    log.warn("space hotkey pressed but is disabled");
-                }
-                break;
-            case END_MOVIE_MODE:
-                log.debug("end movie mode hotkey event arrived");
-                // only switch if actually in movie mode
-                if (srtDisplayerProvider.getCurrentDisplayer().equals(MovieSrtDisplayer.class))
-                    eventBus.post(new SwitchSrtDisplayerEvent(SettingsSrtDisplayer.class));
+    public synchronized void handleNextClickHotKeyPressedEvent(NextClickHotkeyPressedEvent event) {
+        log.debug("next click hotkey event recognized");
+        handleNextClickHotKey();
+    }
+
+    @Override
+    @Subscribe
+    public synchronized void handleSpaceHotKeyPressedEvent(SpaceHotkeyPressedEvent event) {
+        log.debug("start stop hotkey event received");
+        if (options.getSpaceHotkeyEnabled()) {
+            switchParserRunningState();
+        } else {
+            log.warn("space hotkey pressed but is disabled");
         }
     }
+
+    @Override
+    @Subscribe
+    public synchronized void handleMovieModeHotKeyPressedEvent(EndMovieModeHotkeyPressedEvent event) {
+        log.debug("end movie mode hotkey event arrived");
+        // only switch if actually in movie mode
+        if (srtDisplayerProvider.getCurrentDisplayer().equals(MovieSrtDisplayer.class))
+            eventBus.post(new SwitchSrtDisplayerEvent(SettingsSrtDisplayer.class));
+        else
+            log.debug("not in movie mode - ignoring end movie mode action");
+    }
+
+
 
     private void handleNextClickHotKey() {
         if (options.getNextClickHotkeyEnabled()) {
@@ -96,18 +99,26 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
 
     @Override
     @Subscribe
-    public synchronized void handleToggleHotKeyEvent(ToggleHotKeyEvent event) {
+    public synchronized void handleToggleSpaceHotKeyEvent(ToggleSpaceHotkeyEvent event) {
         //todo toggle tests
-        log.debug("hot key toggled: " + event);
-        switch (event.getHotKey()) {
-            case START_STOP:
-                optionsManager.updateSpaceHotkeyEnabled(event.isEnabled());
-                break;
-            case NEXT_CLICK:
-                optionsManager.updateNextClickHotkeyEnabled(event.isEnabled());
-                break;
-        }
+        log.debug("toggle space hotkey event arrived:" + event);
+        optionsManager.updateSpaceHotkeyEnabled(event.isEnabled());
+    }
 
+    @Override
+    @Subscribe
+    public synchronized void handleToggleNextClickHotKeyEvent(ToggleNextClickHotkeyEvent event) {
+        //todo toggle tests
+        log.debug("toggle next click hotkey event arrived:" + event);
+        optionsManager.updateNextClickHotkeyEnabled(event.isEnabled());
+    }
+
+    @Override
+    @Subscribe
+    public synchronized void handleToggleBackViaEscEvent(ToggleEndMovieModeHotkeyEvent event) {
+        //todo toggle tests
+        log.debug("toggle end movie mode hotkey event arrived:" + event);
+        optionsManager.updateEndMovieModeHotkeyEnabled(event.isEnabled());
     }
 
     @Subscribe

@@ -1,6 +1,5 @@
 package io.github.vincemann.subtitlebuddy.options;
 
-import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.scene.paint.Color;
 
@@ -25,7 +24,7 @@ public class Options {
     private String defaultSubtitle;
     private String encoding;
 
-    private boolean backViaEsc;
+    private boolean endMovieModeHotkeyEnabled;
 
 
 
@@ -56,8 +55,8 @@ public class Options {
         return encoding;
     }
 
-    public boolean getBackViaEsc() {
-        return backViaEsc;
+    public boolean getEndMovieModeHotkeyEnabled() {
+        return endMovieModeHotkeyEnabled;
     }
 
     public Boolean getNextClickHotkeyEnabled() {
@@ -109,7 +108,7 @@ public class Options {
         this.currentFont = currentFont;
     }
 
-    void setBackViaEsc(boolean backViaEsc) {
-        this.backViaEsc = backViaEsc;
+    void setEndMovieModeHotkeyEnabled(boolean enabled) {
+        this.endMovieModeHotkeyEnabled = enabled;
     }
 }

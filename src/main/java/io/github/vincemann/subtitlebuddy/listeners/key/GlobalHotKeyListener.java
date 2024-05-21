@@ -1,14 +1,16 @@
 package io.github.vincemann.subtitlebuddy.listeners.key;
 
 
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.events.HotKeyPressedEvent;
+import io.github.vincemann.subtitlebuddy.events.EndMovieModeHotkeyPressedEvent;
+import io.github.vincemann.subtitlebuddy.events.NextClickHotkeyPressedEvent;
+import io.github.vincemann.subtitlebuddy.events.SpaceHotkeyPressedEvent;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
 import lombok.extern.log4j.Log4j2;
-import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
-import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 
 /**
  * Listens for global hotkeys and translates to respective events.
@@ -36,18 +38,18 @@ public class GlobalHotKeyListener implements NativeKeyListener, KeyListener {
         //todo let user change hotkeys
         if (e.getKeyCode() == NativeKeyEvent.VC_SPACE) {
             log.debug("space hotkey pressed");
-            eventBus.post(new HotKeyPressedEvent(HotKey.START_STOP));
+            eventBus.post(new SpaceHotkeyPressedEvent());
             //alt +n
         } else if (e.getKeyCode() == NativeKeyEvent.VC_N) {
             if (alt) {
                 log.debug("next click counts hotkey pressed (alt + n)");
-                eventBus.post(new HotKeyPressedEvent(HotKey.NEXT_CLICK));
+                eventBus.post(new NextClickHotkeyPressedEvent());
             }
             //alt + esc
         } else if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
             if (options.getBackViaEsc()){
                 log.debug("end movie mode hotkey pressed (escape)");
-                eventBus.post(new HotKeyPressedEvent(HotKey.END_MOVIE_MODE));
+                eventBus.post(new EndMovieModeHotkeyPressedEvent());
             }else{
                 log.debug("escape pressed, but ignored via config");
             }

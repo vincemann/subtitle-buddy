@@ -5,7 +5,7 @@ public abstract class PropertyFileKeys {
     public static final String LAST_PATH = "lastPath";
     public static final String ENCODING = "encoding";
     public static final String MOVIE_FONT_SIZE = "movieFontSize";
-    public static final String BACK_VIA_ESCAPE = "backViaEsc";
+    public static final String END_MOVIE_MODE_HOTKEY_ENABLED = "backViaEsc";
     public static final String UPDATER_DELAY = "updaterDelay";
     public static final String USER_FONT_COLOR = "userFontColor";
     public static final String SETTINGS_WINDOW_SIZE = "settingsStageSize";

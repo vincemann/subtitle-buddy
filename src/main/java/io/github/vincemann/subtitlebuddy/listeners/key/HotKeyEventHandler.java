@@ -1,10 +1,26 @@
 package io.github.vincemann.subtitlebuddy.listeners.key;
 
-import io.github.vincemann.subtitlebuddy.events.HotKeyPressedEvent;
-import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
+import com.google.common.eventbus.Subscribe;
+import io.github.vincemann.subtitlebuddy.events.*;
 
+/**
+ * This interface is only here to make sure someone implements the handlers.
+ */
 public interface HotKeyEventHandler {
 
-    void handleHotKeyPressedEvent(HotKeyPressedEvent e);
-    void handleToggleHotKeyEvent(ToggleHotKeyEvent e);
+
+    void handleNextClickHotKeyPressedEvent(NextClickHotkeyPressedEvent event);
+
+    void handleSpaceHotKeyPressedEvent(SpaceHotkeyPressedEvent event);
+
+    void handleMovieModeHotKeyPressedEvent(EndMovieModeHotkeyPressedEvent event);
+
+    @Subscribe
+    void handleToggleSpaceHotKeyEvent(ToggleSpaceHotkeyEvent event);
+
+    @Subscribe
+    void handleToggleNextClickHotKeyEvent(ToggleNextClickHotkeyEvent event);
+
+    @Subscribe
+    void handleToggleBackViaEscEvent(ToggleEndMovieModeHotkeyEvent event);
 }

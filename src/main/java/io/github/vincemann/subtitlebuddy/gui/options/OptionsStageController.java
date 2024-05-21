@@ -4,10 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
-import io.github.vincemann.subtitlebuddy.events.UpdateBackViaEscapeEvent;
-import io.github.vincemann.subtitlebuddy.events.UpdateCurrentFontEvent;
-import io.github.vincemann.subtitlebuddy.events.UpdateFontColorEvent;
+import io.github.vincemann.subtitlebuddy.events.*;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.font.FontOptions;
 import io.github.vincemann.subtitlebuddy.gui.EventHandlerRegistration;
@@ -105,9 +102,9 @@ public class OptionsStageController {
 
         fontChoiceBox.getSelectionModel().selectedItemProperty().addListener(fontChoiceBoxChangeListener);
 
-        nextClickChangeListener = (observable, oldValue, newValue) -> eventBus.post(new ToggleHotKeyEvent(HotKey.NEXT_CLICK, newValue));
-        startStopChangeListener = (observable, oldValue, newValue) -> eventBus.post(new ToggleHotKeyEvent(HotKey.START_STOP, newValue));
-        backViaEscapeChangeListener = (observable, oldValue, newValue) -> eventBus.post(new UpdateBackViaEscapeEvent(newValue));
+        nextClickChangeListener = (observable, oldValue, newValue) -> eventBus.post(new ToggleNextClickHotkeyEvent(newValue));
+        startStopChangeListener = (observable, oldValue, newValue) -> eventBus.post(new ToggleSpaceHotkeyEvent(newValue));
+        backViaEscapeChangeListener = (observable, oldValue, newValue) -> eventBus.post(new ToggleEndMovieModeHotkeyEvent(newValue));
 
         nextClickCheckBox.selectedProperty().addListener(nextClickChangeListener);
         startStopCheckBox.selectedProperty().addListener(startStopChangeListener);
