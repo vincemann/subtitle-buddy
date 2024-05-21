@@ -1,8 +1,6 @@
-package io.github.vincemann.subtitlebuddy.srt.font;
+package io.github.vincemann.subtitlebuddy.font;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
@@ -21,28 +19,33 @@ public class FontsDirectoryImpl implements FontsDirectory {
     // relative to config dir
     @Setter
     private String fontPath = "fonts";
-    private ConfigDirectory configDirectory;
+    private Path dir;
 
-    @Inject
-    public FontsDirectoryImpl(ConfigDirectory configDirectory) {
-        this.configDirectory = configDirectory;
-    }
 
     @Override
-    public Path findOrCreate() throws IOException {
-        Path configDir = configDirectory.find();
-        Path fontsDir = configDir.resolve(fontPath).toAbsolutePath();
+    public Path create(Path target) throws IOException {
+        Path fontsDir = target.resolve(fontPath).toAbsolutePath();
         if (!fontsDir.toFile().exists()) {
             log.warn("font directory" + fontsDir + " does not exist");
             log.debug("creating it for user");
-            Files.createDirectory(fontsDir);
+            dir = Files.createDirectory(fontsDir);
             log.debug("font dir successfully created");
         } else {
             log.debug("font dir already existing");
+            dir = fontsDir;
         }
         log.debug("selected fonts path: " + fontsDir.toString());
-        return fontsDir;
+        return dir;
     }
+
+    @Override
+    public Path find() throws IOException {
+       if (dir == null)
+           throw new IllegalStateException("Need to call create at least once before finding");
+
+       return dir;
+    }
+
 
 
 }

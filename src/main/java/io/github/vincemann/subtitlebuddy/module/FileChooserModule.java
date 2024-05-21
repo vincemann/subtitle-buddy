@@ -1,6 +1,5 @@
 package io.github.vincemann.subtitlebuddy.module;
 
-import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
@@ -28,9 +27,6 @@ public class FileChooserModule extends PropertyFilesModule {
                 .to(getStringsFile().getString(UIStringsKeys.EMPTY_FILE_MESSAGE));
         bindConstant().annotatedWith(Names.named(UIStringsKeys.CORRUPTED_FILE_MESSAGE))
                 .to(getStringsFile().getString(UIStringsKeys.CORRUPTED_FILE_MESSAGE));
-        bind(new TypeLiteral<String[]>(){})
-                .annotatedWith(Names.named(UIStringsKeys.SRT_FILE_TYPES))
-                .toInstance(new String[]{getStringsFile().getString(UIStringsKeys.SRT_FILE_TYPES)});
     }
 
     @Override

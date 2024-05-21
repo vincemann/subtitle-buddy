@@ -1,5 +1,6 @@
 package io.github.vincemann.subtitlebuddy.gui;
 
+import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Log4j2
+@Singleton
 public class WindowManager {
 
     private List<Window> windows;

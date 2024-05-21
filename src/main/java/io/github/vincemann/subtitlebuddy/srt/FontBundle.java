@@ -7,7 +7,6 @@ import lombok.*;
 import java.nio.file.Path;
 
 @Getter
-@ToString
 @EqualsAndHashCode
 public class FontBundle {
     private Font regularFont;

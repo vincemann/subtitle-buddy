@@ -1,5 +1,6 @@
 package io.github.vincemann.subtitlebuddy.options;
 
+import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.scene.paint.Color;
 

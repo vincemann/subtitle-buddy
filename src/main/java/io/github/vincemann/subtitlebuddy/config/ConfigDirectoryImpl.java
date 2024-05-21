@@ -1,24 +1,28 @@
 package io.github.vincemann.subtitlebuddy.config;
 
+import com.google.inject.Singleton;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@Singleton
 public class ConfigDirectoryImpl implements ConfigDirectory {
 
+    private Path configDir;
+
     @Override
-    public void create() throws IOException {
-        Files.createDirectories(getAppDataDirectory());
+    public Path create() throws IOException {
+        configDir = Files.createDirectories(getAppDataDirectory());
+        return configDir;
     }
 
     @Override
     public Path find() throws IOException {
-        Path appDirectoryPath = getAppDataDirectory();
-        // The Files.createDirectories method creates the directory only if it does not exist,
-        // and does nothing if the directory already exists, which removes the need for the existence check.
-        Files.createDirectories(appDirectoryPath);
-        return appDirectoryPath;
+        if (configDir == null)
+            configDir = create();
+        return configDir;
     }
 
     private Path getAppDataDirectory() {

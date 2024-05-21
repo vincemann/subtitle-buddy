@@ -5,7 +5,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 
 public class ScreenUtils {
-    public static Vector2D getScreenBoundsVector(){
+    public static Vector2D getScreenBounds(){
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         return new Vector2D(screenBounds.getWidth()-1,screenBounds.getHeight()-1);
     }

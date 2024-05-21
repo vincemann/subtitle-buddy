@@ -1,15 +1,14 @@
-package io.github.vincemann.subtitlebuddy.srt.font;
+package io.github.vincemann.subtitlebuddy.font;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
-import io.github.vincemann.subtitlebuddy.options.FontOptions;
+import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import javafx.scene.text.Font;
 import lombok.extern.log4j.Log4j2;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -19,6 +18,7 @@ import java.util.stream.Stream;
  * With respect to {@link FontOptions}.
  */
 @Log4j2
+@Singleton
 public class FontManagerImpl implements FontManager {
 
 
@@ -42,22 +42,20 @@ public class FontManagerImpl implements FontManager {
     public void loadFonts() {
         // load all fonts from within font dir and stores in fontsLoaded list
         try {
-            Path fontsDirPath = fontsDirectory.findOrCreate();
-            log.debug("loading fonts from dir: " + fontsDirPath.toString());
-            try (Stream<Path> paths = Files.walk(fontsDirPath)) {
+            Path fontsDir = fontsDirectory.find();
+            log.debug("loading fonts from dir: " + fontsDir.toString());
+            try (Stream<Path> paths = Files.walk(fontsDir)) {
                 paths
                         .filter(Files::isRegularFile)
-                        .forEach(path -> {
-                            // path is relative to fonts dir (config/fonts)
-                            String fontFileRelPath = path.toAbsolutePath().toString();
+                        .forEach(fontPath -> {
+                            String fileName = fontPath.getFileName().toString();
                             //dont load italic fonts, font manger already loads regular and italic fonts, if u give him the regular font path
-                            if (!Paths.get(fontFileRelPath).getFileName().toString().contains("italic")) {
+                            if (!fileName.contains("italic")) {
                                 try {
-                                    Path fontsDir = fontsDirectory.findOrCreate();
-                                    FontBundle fontBundle = fontBundleLoader.loadFontBundle(fontsDir, fontFileRelPath);
+                                    FontBundle fontBundle = fontBundleLoader.loadFontBundle(fontsDir, fileName);
                                     this.loadedFonts.add(fontBundle);
-                                } catch (FontBundleLoadingException | IOException e) {
-                                    log.error("could not load font (or respective italic font) with fontpath: " + fontFileRelPath + ", caused by: ", e);
+                                } catch (FontBundleLoadingException e) {
+                                    log.error("could not load font bundle at path: " + fontPath.toString() + ", caused by: ", e);
                                 }
                             }
                         });
@@ -65,11 +63,11 @@ public class FontManagerImpl implements FontManager {
         } catch (Exception e) {
             log.warn("could not load fonts from fonts dir", e);
         }
-        reloadCurrentFont();
+        loadCurrentFont();
     }
 
-    @Override
-    public void reloadCurrentFont() {
+    private void loadCurrentFont() {
+        log.debug("loading current font");
         List<FontBundle> matches = loadedFonts.stream()
                 .filter(font -> font.getRegularFileName().equals(fontOptions.getCurrentFont()))
                 .toList();
@@ -78,12 +76,20 @@ public class FontManagerImpl implements FontManager {
             log.error("using default");
             this.currentFont = new FontBundle(Font.getDefault(), Font.getDefault(), null, null);
         } else if (matches.size() == 1) {
-            log.debug("found current font");
+            log.debug("found current font: ");
             this.currentFont = matches.get(0);
         } else {
             log.error("found multiple current fonts, using first");
             this.currentFont = matches.get(0);
         }
+
+        Preconditions.checkNotNull(currentFont);
+        log.debug("found current font: " + currentFont.getRegularFont().getName());
+    }
+
+    @Override
+    public void reloadCurrentFont() {
+        loadCurrentFont();
     }
 
 

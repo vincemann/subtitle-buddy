@@ -1,7 +1,11 @@
-package io.github.vincemann.subtitlebuddy.options;
+package io.github.vincemann.subtitlebuddy.srt;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import io.github.vincemann.subtitlebuddy.options.Options;
+import io.github.vincemann.subtitlebuddy.options.OptionsManager;
 
+@Singleton
 public class SrtOptions {
 
     private Options options;

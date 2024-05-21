@@ -1,12 +1,22 @@
-package io.github.vincemann.subtitlebuddy.options;
+package io.github.vincemann.subtitlebuddy.gui;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import io.github.vincemann.subtitlebuddy.options.Options;
+import io.github.vincemann.subtitlebuddy.options.OptionsManager;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 
+@Singleton
 public class SrtDisplayerOptions {
 
     private Options options;
     private OptionsManager manager;
 
+    @Inject
+    public SrtDisplayerOptions(Options options, OptionsManager manager) {
+        this.options = options;
+        this.manager = manager;
+    }
 
     public Boolean getNextClickHotkeyEnabled() {
         return options.getNextClickHotkeyEnabled();

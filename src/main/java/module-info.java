@@ -21,7 +21,7 @@ open module io.github.vincemann.subtitlebuddy {
     exports io.github.vincemann.subtitlebuddy;
     exports io.github.vincemann.subtitlebuddy.srt;
     exports io.github.vincemann.subtitlebuddy.srt.engine;
-    exports io.github.vincemann.subtitlebuddy.srt.font;
+    exports io.github.vincemann.subtitlebuddy.font;
     exports io.github.vincemann.subtitlebuddy.srt.parser;
     exports io.github.vincemann.subtitlebuddy.srt.srtfile;
     exports io.github.vincemann.subtitlebuddy.srt.stopwatch;

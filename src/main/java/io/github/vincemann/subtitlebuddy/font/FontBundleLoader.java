@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.srt.font;
+package io.github.vincemann.subtitlebuddy.font;
 
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 

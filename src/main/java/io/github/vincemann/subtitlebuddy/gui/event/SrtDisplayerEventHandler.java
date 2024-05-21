@@ -12,7 +12,7 @@ import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.options.OptionsManagerImpl;
-import io.github.vincemann.subtitlebuddy.srt.font.FontManager;
+import io.github.vincemann.subtitlebuddy.font.FontManager;
 import lombok.extern.log4j.Log4j2;
 
 

@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.gui.dialog.AlertDialog;
-import io.github.vincemann.subtitlebuddy.options.SrtOptions;
+import io.github.vincemann.subtitlebuddy.srt.SrtOptions;
 import io.github.vincemann.subtitlebuddy.srt.*;
 import lombok.NonNull;
 

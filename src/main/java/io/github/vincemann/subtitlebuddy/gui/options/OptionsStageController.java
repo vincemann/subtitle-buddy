@@ -5,15 +5,14 @@ import com.google.common.collect.Table;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
 import io.github.vincemann.subtitlebuddy.events.UpdateCurrentFontEvent;
 import io.github.vincemann.subtitlebuddy.events.UpdateFontColorEvent;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKey;
 import io.github.vincemann.subtitlebuddy.options.OptionsManager;
-import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
-import io.github.vincemann.subtitlebuddy.srt.font.FontManager;
+import io.github.vincemann.subtitlebuddy.font.FontManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
@@ -59,21 +58,18 @@ public class OptionsStageController {
     private Table<Node, EventHandler, EventType> eventHandlers;
 
     private FontManager fontManager;
-    private boolean nextClickCountsToggled;
-    private boolean startStopHotKeyToggled;
+    private SrtDisplayerOptions options;
 
 
     @Inject
     public OptionsStageController(EventBus eventBus,
                                   OptionsManager optionsManager,
                                   FontManager fontManager,
-                                  @Named(PropertyFileKeys.NEXT_CLICK_HOT_KEY_ENABLED) boolean nextClickCountsToggled,
-                                  @Named(PropertyFileKeys.SPACE_HOTKEY_ENABLED) boolean startStopHotKeyToggled) {
+                                  SrtDisplayerOptions options) {
         this.optionsManager = optionsManager;
         this.eventBus = eventBus;
         this.fontManager = fontManager;
-        this.nextClickCountsToggled = nextClickCountsToggled;
-        this.startStopHotKeyToggled = startStopHotKeyToggled;
+        this.options = options;
     }
 
 
@@ -133,7 +129,7 @@ public class OptionsStageController {
         checkNotNull(nextClickCheckBox);
         eventHandlers = registerEventHandlers();
 
-        updateCheckBoxes(nextClickCountsToggled, startStopHotKeyToggled);
+        updateCheckBoxes(options.getNextClickHotkeyEnabled(), options.getSpaceHotkeyEnabled());
         populateFontChoiceBox();
     }
 

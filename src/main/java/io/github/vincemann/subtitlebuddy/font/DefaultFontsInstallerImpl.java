@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.srt.font;
+package io.github.vincemann.subtitlebuddy.font;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;

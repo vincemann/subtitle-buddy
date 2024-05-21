@@ -1,8 +1,12 @@
-package io.github.vincemann.subtitlebuddy.options;
+package io.github.vincemann.subtitlebuddy.font;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import io.github.vincemann.subtitlebuddy.options.Options;
+import io.github.vincemann.subtitlebuddy.options.OptionsManager;
 import javafx.scene.paint.Color;
 
+@Singleton
 public class FontOptions {
     private Options options;
     private OptionsManager manager;

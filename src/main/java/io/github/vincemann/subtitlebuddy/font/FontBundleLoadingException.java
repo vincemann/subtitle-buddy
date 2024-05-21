@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.srt.font;
+package io.github.vincemann.subtitlebuddy.font;
 
 public class FontBundleLoadingException extends Exception {
 

@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.srt.font;
+package io.github.vincemann.subtitlebuddy.font;
 
 
 import java.io.IOException;
@@ -10,5 +10,7 @@ import java.nio.file.Path;
 public interface FontsDirectory {
 
 
-    Path findOrCreate() throws IOException;
+    Path create(Path target) throws IOException;
+
+    Path find() throws IOException;
 }

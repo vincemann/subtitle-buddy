@@ -2,6 +2,7 @@ package io.github.vincemann.subtitlebuddy.options;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.scene.paint.Color;
 import lombok.extern.log4j.Log4j2;
@@ -12,6 +13,7 @@ import lombok.extern.log4j.Log4j2;
  */
 // todo should split this up into FontOptionsManager, SrtOptionsManager and so on - this is an acceptable middle way tho, bc at least each domain has own options
 @Log4j2
+@Singleton
 public class OptionsManagerImpl implements OptionsManager {
 
     private Options options;

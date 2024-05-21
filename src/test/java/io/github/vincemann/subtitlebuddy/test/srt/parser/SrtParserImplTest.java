@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.test.srt.parser;
 
-import io.github.vincemann.subtitlebuddy.options.SrtOptions;
+import io.github.vincemann.subtitlebuddy.srt.SrtOptions;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.Timestamp;

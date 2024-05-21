@@ -2,8 +2,7 @@ package io.github.vincemann.subtitlebuddy.srt.parser;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.events.RequestSrtParserUpdateEvent;
-import io.github.vincemann.subtitlebuddy.options.SrtOptions;
+import io.github.vincemann.subtitlebuddy.srt.SrtOptions;
 import io.github.vincemann.subtitlebuddy.srt.*;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFile;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;

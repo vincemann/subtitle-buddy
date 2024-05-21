@@ -31,7 +31,7 @@ public class MovieStageFactory {
         fxmlLoader.setController(controller);
         InputStream is = ClassLoader.getSystemResourceAsStream("movie-stage.fxml");
         Parent parent = fxmlLoader.load(is);
-        Vector2D screenVec = ScreenUtils.getScreenBoundsVector();
+        Vector2D screenVec = ScreenUtils.getScreenBounds();
         Stage stage = new Stage();
         stage.setScene(new Scene(parent,screenVec.getX(), screenVec.getY()));
         stage.setTitle("Movie Mode");

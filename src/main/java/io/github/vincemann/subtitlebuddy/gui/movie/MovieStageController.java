@@ -8,14 +8,14 @@ import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 import io.github.vincemann.subtitlebuddy.events.UpdateSubtitlePosEvent;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.options.FontOptions;
+import io.github.vincemann.subtitlebuddy.font.FontOptions;
 import io.github.vincemann.subtitlebuddy.options.OptionsManager;
-import io.github.vincemann.subtitlebuddy.options.SrtDisplayerOptions;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleSegment;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleType;
-import io.github.vincemann.subtitlebuddy.srt.font.FontManager;
+import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.util.ExecutionLimiter;
 import io.github.vincemann.subtitlebuddy.util.fx.DragResizeMod;
 import io.github.vincemann.subtitlebuddy.util.fx.FontUtils;
@@ -44,7 +44,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.github.vincemann.subtitlebuddy.util.ScreenUtils.getScreenBoundsVector;
+import static io.github.vincemann.subtitlebuddy.util.ScreenUtils.getScreenBounds;
 import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.loadImageView;
 
 /**
@@ -110,7 +110,6 @@ public class MovieStageController implements MovieSrtDisplayer {
         this.options = options;
         this.optionsManager = optionsManager;
         // make sure subtitles can be seen
-        this.movieVBoxPos = VectorUtils.getVecWithinBounds(options.getSubtitlePosition(), getScreenBoundsVector());
         this.fontOptions = fontOptions;
         this.lastSubtitleText = new SubtitleText(new ArrayList<>(Collections.emptyList()));
     }
@@ -187,6 +186,7 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     @FXML
     protected void fxmlInit() {
+        movieVBoxPos = VectorUtils.getVecWithinBounds(options.getSubtitlePosition(), getScreenBounds());
         checkNotNull(movieVBox);
         checkNotNull(movieTextFlow);
         checkNotNull(movieAnchorPane);

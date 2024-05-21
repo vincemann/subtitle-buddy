@@ -1,8 +1,12 @@
 package io.github.vincemann.subtitlebuddy.module;
 
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
+import io.github.vincemann.subtitlebuddy.font.FontOptions;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
 import io.github.vincemann.subtitlebuddy.options.*;
+import io.github.vincemann.subtitlebuddy.srt.SrtOptions;
 
 public class OptionsModule extends PropertyFilesModule {
 
@@ -19,18 +23,15 @@ public class OptionsModule extends PropertyFilesModule {
     protected void configureClassBindings() {
         // Bind the OptionsManager as a singleton
         bind(OptionsManager.class).to(OptionsManagerImpl.class).in(Singleton.class);
-
-        // Bind Options and other singletons
-        bind(Options.class).toInstance(createOptions());
         bind(SrtOptions.class).in(Singleton.class);
         bind(SrtDisplayerOptions.class).in(Singleton.class);
         bind(FontOptions.class).in(Singleton.class);
     }
 
-    private Options createOptions() {
-        // Ensure OptionsManagerImpl is a singleton and already bound
-        OptionsManager manager = getProvider(OptionsManager.class).get();
-        return manager.parseOptions();
+    @Provides
+    @Singleton
+    public Options provideOptions(OptionsManager optionsManager) {
+        return optionsManager.parseOptions();
     }
 
 }

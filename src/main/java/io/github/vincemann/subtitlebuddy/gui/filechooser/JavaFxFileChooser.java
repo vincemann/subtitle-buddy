@@ -22,17 +22,14 @@ import java.nio.file.Paths;
 @Log4j2
 @Singleton
 public class JavaFxFileChooser implements FileChooser {
-    private String[] fileTypes;
     private String description;
     private String dialogTitle;
     private LastPathRegistry lastPathRegistry;
 
     @Inject
-    public JavaFxFileChooser(@Named(UIStringsKeys.SRT_FILE_TYPES) String[] fileTypes,
-                             @Named(UIStringsKeys.SELECT_FILE_DESC) String description,
+    public JavaFxFileChooser(@Named(UIStringsKeys.SELECT_FILE_DESC) String description,
                              @Named(UIStringsKeys.SELECT_FILE_WINDOW_TITLE) String dialogTitle,
                              LastPathRegistry lastPathRegistry) {
-        this.fileTypes = fileTypes;
         this.description = description;
         this.dialogTitle = dialogTitle;
         this.lastPathRegistry = lastPathRegistry;
@@ -42,7 +39,7 @@ public class JavaFxFileChooser implements FileChooser {
     public File letUserChooseFile() throws UserQuitException {
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
         fileChooser.setTitle(dialogTitle);
-        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter(description, fileTypes));
+        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter(description, "*.srt"));
 
         try {
             String startingDir = lastPathRegistry.getSavedPath();

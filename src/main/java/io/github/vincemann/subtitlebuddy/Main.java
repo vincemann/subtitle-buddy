@@ -7,6 +7,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
+import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
 import io.github.vincemann.subtitlebuddy.config.ConfigDirectoryImpl;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileLoader;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileLoaderImpl;
@@ -18,27 +19,31 @@ import io.github.vincemann.subtitlebuddy.events.EventHandlerRegistrar;
 import io.github.vincemann.subtitlebuddy.gui.Window;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
-import io.github.vincemann.subtitlebuddy.gui.movie.MovieStageFactory;
-import io.github.vincemann.subtitlebuddy.gui.options.OptionsStageFactory;
-import io.github.vincemann.subtitlebuddy.gui.settings.SettingsStageFactory;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieStageController;
+import io.github.vincemann.subtitlebuddy.gui.movie.MovieStageFactory;
 import io.github.vincemann.subtitlebuddy.gui.options.OptionsStageController;
+import io.github.vincemann.subtitlebuddy.gui.options.OptionsStageFactory;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsStageController;
+import io.github.vincemann.subtitlebuddy.gui.settings.SettingsStageFactory;
 import io.github.vincemann.subtitlebuddy.listeners.JLinkJNativeLibraryLocator;
 import io.github.vincemann.subtitlebuddy.listeners.key.GlobalHotKeyListener;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.GlobalMouseListener;
 import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.options.ApachePropertiesFile;
-import io.github.vincemann.subtitlebuddy.options.OptionsManager;
 import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngine;
+import io.github.vincemann.subtitlebuddy.font.DefaultFontsInstaller;
+import io.github.vincemann.subtitlebuddy.font.FontManager;
+import io.github.vincemann.subtitlebuddy.font.FontsDirectory;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -70,46 +75,86 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // disable very verbose jnativehook logging
-        java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
-        logger.setLevel(java.util.logging.Level.OFF);
+        disableVerboseJNativeHookLogging();
 
-        ClassPathFileExtractor classPathFileExtractor = new ClassPathFileExtractorImpl();
-        ConfigFileLoader configFileLoader = new ConfigFileLoaderImpl(new ConfigDirectoryImpl(), classPathFileExtractor);
-        PropertiesFile propertiesManager = new ApachePropertiesFile(configFileLoader.findOrCreateConfigFile(CONFIG_FILE_NAME));
-        UIStringsFile stringConfiguration = new ApacheUIStringsFile(classPathFileExtractor.findOnClassPath(UI_STRINGS_FILE_PATH).getFile());
-        injector = createInjector(propertiesManager, stringConfiguration, classPathFileExtractor);
-        injector.getInstance(EventHandlerRegistrar.class).registerEventHandlers();
-        WindowManager windowManager = injector.getInstance(WindowManager.class);
-        createStages();
+        injector = createInjector();
+
+        initFonts();
+
+        registerEventHandlers();
+
+        WindowManager windowManager = createStagesAndWindows();
 
         // start by showing settings view
         windowManager.showWindow(Windows.SETTINGS);
 
-        // start parser
-        injector.getInstance(SrtParserEngine.class).start();
+        startParser();
+
+        registerJNativeHook();
+    }
+
+    private void registerJNativeHook(){
         // only for jnativehook 2.2.2:
         // needs to be run on diff thread, otherwise segfault
         Platform.runLater(this::registerHook);
     }
 
-    private void createStages() throws IOException {
+    private void startParser(){
+        injector.getInstance(SrtParserEngine.class).start();
+    }
+
+    private void registerEventHandlers(){
+        injector.getInstance(EventHandlerRegistrar.class).registerEventHandlers();
+    }
+
+    private void disableVerboseJNativeHookLogging() {
+        java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
+        logger.setLevel(java.util.logging.Level.OFF);
+    }
+
+
+    /**
+     * Create fonts dir relative to config dir
+     * Install default fonts
+     * Load all fonts from fonts dir and store in {@link FontManager}
+     */
+    private void initFonts() throws IOException {
+        ConfigDirectory configDirectory = injector.getInstance(ConfigDirectory.class);
+        Path configDir = configDirectory.find();
+
+        FontsDirectory fontsDirectory = injector.getInstance(FontsDirectory.class);
+        Path fontDir = fontsDirectory.create(configDir);
+
+        DefaultFontsInstaller fontsInstaller = injector.getInstance(DefaultFontsInstaller.class);
+        fontsInstaller.installIfNeeded(fontDir);
+
+        FontManager fontManager = injector.getInstance(FontManager.class);
+        fontManager.loadFonts();
+    }
+
+    /**
+     * Create settings, options and movie stage and register in {@link WindowManager}.
+     *
+     * @return
+     */
+    private WindowManager createStagesAndWindows() throws IOException {
         WindowManager windowManager = injector.getInstance(WindowManager.class);
         SettingsStageFactory settingsStageFactory = injector.getInstance(SettingsStageFactory.class);
         SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
         Stage settingsStage = settingsStageFactory.create();
-        windowManager.registerWindow(new Window(Windows.SETTINGS,settingsStage,settingsStageController));
+        windowManager.registerWindow(new Window(Windows.SETTINGS, settingsStage, settingsStageController));
 
         OptionsStageFactory optionsStageFactory = injector.getInstance(OptionsStageFactory.class);
         Stage optionsStage = optionsStageFactory.create();
         OptionsStageController optionsStageController = injector.getInstance(OptionsStageController.class);
-        windowManager.registerWindow(new Window(Windows.OPTIONS,optionsStage,optionsStageController));
+        windowManager.registerWindow(new Window(Windows.OPTIONS, optionsStage, optionsStageController));
 
         MovieStageFactory movieStageFactory = injector.getInstance(MovieStageFactory.class);
         Stage movieStage = movieStageFactory.create();
         MovieStageController movieStageController = injector.getInstance(MovieStageController.class);
-        windowManager.registerWindow(new Window(Windows.MOVIE,movieStage,movieStageController));
+        windowManager.registerWindow(new Window(Windows.MOVIE, movieStage, movieStageController));
 
+        return windowManager;
     }
 
     private void registerHook() {
@@ -137,18 +182,27 @@ public class Main extends Application {
     /**
      * Creates injector or use test injector created in GuiTest.
      */
-    private Injector createInjector(PropertiesFile propertiesManager,
-                                    UIStringsFile stringConfiguration,
-                                    ClassPathFileExtractor classPathFileExtractor) {
+    private Injector createInjector() throws IOException, ConfigurationException {
         if (injector == null) {
+
+            // init config dir and files
+            ConfigDirectory configDirectory = new ConfigDirectoryImpl();
+            configDirectory.create();
+            ClassPathFileExtractor classPathFileExtractor = new ClassPathFileExtractorImpl();
+            ConfigFileLoader configFileLoader = new ConfigFileLoaderImpl(configDirectory, classPathFileExtractor);
+            PropertiesFile properties = new ApachePropertiesFile(configFileLoader.findOrCreateConfigFile(CONFIG_FILE_NAME));
+            UIStringsFile strings = new ApacheUIStringsFile(classPathFileExtractor.findOnClassPath(UI_STRINGS_FILE_PATH).getFile());
+
+
             // use default modules
             List<Module> moduleList = Arrays.asList(
                     new ClassPathFileModule(classPathFileExtractor),
-                    new ConfigFileModule(propertiesManager, stringConfiguration),
-                    new FileChooserModule(stringConfiguration, propertiesManager),
-                    new FontModule(stringConfiguration,propertiesManager),
-                    new ParserModule(stringConfiguration, propertiesManager),
-                    new GuiModule(stringConfiguration, propertiesManager),
+                    new ConfigFileModule(properties, strings),
+                    new OptionsModule(strings, properties),
+                    new FileChooserModule(strings, properties),
+                    new FontModule(strings, properties),
+                    new ParserModule(strings, properties),
+                    new GuiModule(strings, properties),
                     new UserInputHandlerModule()
             );
             return Guice.createInjector(moduleList);
