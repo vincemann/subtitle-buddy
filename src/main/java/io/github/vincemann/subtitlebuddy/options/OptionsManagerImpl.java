@@ -75,7 +75,6 @@ public class OptionsManagerImpl implements OptionsManager {
         } catch (PropertyAccessException e) {
             log.error("could not save current font modification, " + e.getMessage());
         }
-        eventBus.post(new OptionsUpdatedEvent());
     }
 
     @Override
@@ -86,7 +85,6 @@ public class OptionsManagerImpl implements OptionsManager {
         } catch (PropertyAccessException e) {
             log.error("could not save font color modification, " + e.getMessage());
         }
-        eventBus.post(new OptionsUpdatedEvent());
     }
 
     @Override
@@ -97,8 +95,6 @@ public class OptionsManagerImpl implements OptionsManager {
         } catch (PropertyAccessException e) {
             log.error("could not save subtitle pos modification, " + e.getMessage());
         }
-        // give components that read options the chance to refresh
-        eventBus.post(new OptionsUpdatedEvent());
     }
 
     @Override
@@ -109,8 +105,6 @@ public class OptionsManagerImpl implements OptionsManager {
         } catch (PropertyAccessException e) {
             log.error("could not save space hotkey enabled modification, " + e.getMessage());
         }
-        // give components that read options the chance to refresh
-        eventBus.post(new OptionsUpdatedEvent());
     }
 
     @Override
@@ -121,8 +115,6 @@ public class OptionsManagerImpl implements OptionsManager {
         } catch (PropertyAccessException e) {
             log.error("could not save movie font size modification, " + e.getMessage());
         }
-        // give components that read options the chance to refresh
-        eventBus.post(new OptionsUpdatedEvent());
     }
 
     @Override
@@ -134,8 +126,6 @@ public class OptionsManagerImpl implements OptionsManager {
         } catch (PropertyAccessException e) {
             log.error("could not save movie font size modification, " + e.getMessage());
         }
-        // give components that read options the chance to refresh
-        eventBus.post(new OptionsUpdatedEvent());
     }
 
     @Override
@@ -146,8 +136,6 @@ public class OptionsManagerImpl implements OptionsManager {
         } catch (PropertyAccessException e) {
             log.error("could not save next click hotkey enabled modification, " + e.getMessage());
         }
-        // give components that read options the chance to refresh
-        eventBus.post(new OptionsUpdatedEvent());
     }
 
 

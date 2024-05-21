@@ -27,11 +27,6 @@ public class EventHandlerRegistrar {
     private KeyListener keyListener;
     private MouseListener mouseListener;
 
-    private OptionsStageController optionsStageController;
-
-    private MovieSrtDisplayer movieSrtDisplayer;
-
-    private SettingsSrtDisplayer settingsSrtDisplayer;
 
     @Inject
     public EventHandlerRegistrar(EventBus eventBus,
@@ -40,7 +35,7 @@ public class EventHandlerRegistrar {
                                  SrtParserEventHandler srtParserEventHandler,
                                  MouseClickedEventHandler mouseClickedEventHandler,
                                  OptionsEventHandler optionsEventHandler, KeyListener keyListener,
-                                 MouseListener mouseListener, OptionsStageController optionsStageController, MovieSrtDisplayer movieSrtDisplayer, SettingsSrtDisplayer settingsSrtDisplayer) {
+                                 MouseListener mouseListener) {
         this.eventBus = eventBus;
         this.srtDisplayerEventHandler = srtDisplayerEventHandler;
         this.hotKeyEventHandler = hotKeyEventHandler;
@@ -49,9 +44,6 @@ public class EventHandlerRegistrar {
         this.optionsEventHandler = optionsEventHandler;
         this.keyListener = keyListener;
         this.mouseListener = mouseListener;
-        this.optionsStageController = optionsStageController;
-        this.movieSrtDisplayer = movieSrtDisplayer;
-        this.settingsSrtDisplayer = settingsSrtDisplayer;
     }
 
     public void unregisterEventHandlers(){
@@ -68,6 +60,5 @@ public class EventHandlerRegistrar {
         eventBus.register(srtDisplayerEventHandler);
         eventBus.register(srtParserEventHandler);
         eventBus.register(optionsEventHandler);
-        eventBus.register(optionsStageController);
     }
 }

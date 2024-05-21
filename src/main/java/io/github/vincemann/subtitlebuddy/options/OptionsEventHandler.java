@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.*;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
+import io.github.vincemann.subtitlebuddy.gui.options.OptionsDisplayer;
 import lombok.extern.log4j.Log4j2;
 
 /**
@@ -23,11 +24,14 @@ public class OptionsEventHandler {
 
     private EventBus eventBus;
 
+    private OptionsDisplayer optionsDisplayer;
+
     @Inject
-    public OptionsEventHandler(FontManager fontManager, OptionsManager optionsManager, EventBus eventBus) {
+    public OptionsEventHandler(FontManager fontManager, OptionsManager optionsManager, EventBus eventBus, OptionsDisplayer optionsDisplayer) {
         this.fontManager = fontManager;
         this.optionsManager = optionsManager;
         this.eventBus = eventBus;
+        this.optionsDisplayer = optionsDisplayer;
     }
 
     @Subscribe
@@ -44,6 +48,7 @@ public class OptionsEventHandler {
         log.debug("changing color to: " + event.getColor().toString());
         optionsManager.updateFontColor(event.getColor());
         eventBus.post(new RequestSubtitleUpdateEvent());
+        optionsDisplayer.updatePreview();
     }
 
     @Subscribe
@@ -52,6 +57,7 @@ public class OptionsEventHandler {
         optionsManager.updateCurrentFont(event.getFontPath());
         fontManager.reloadCurrentFont();
         eventBus.post(new RequestSubtitleUpdateEvent());
+        optionsDisplayer.updatePreview();
     }
 
 

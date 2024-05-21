@@ -1,7 +1,6 @@
 package io.github.vincemann.subtitlebuddy.gui.options;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.*;
@@ -9,8 +8,6 @@ import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.font.FontOptions;
 import io.github.vincemann.subtitlebuddy.gui.EventHandlerRegistration;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
-import io.github.vincemann.subtitlebuddy.listeners.key.HotKey;
-import io.github.vincemann.subtitlebuddy.options.OptionsUpdatedEvent;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -20,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -34,7 +32,7 @@ import static io.github.vincemann.subtitlebuddy.gui.movie.MovieStageController.O
 @Log4j2
 @NoArgsConstructor
 @Singleton
-public class OptionsStageController {
+public class OptionsStageController implements OptionsDisplayer{
 
     @FXML
     private ColorPicker colorChooser;
@@ -115,17 +113,13 @@ public class OptionsStageController {
         );
     }
 
-    @Subscribe
-    public void handleOptionsUpdatedEvent(OptionsUpdatedEvent event){
-        updatePreviewText();
-    }
-
     @FXML
     public void initialize() {
         registerEventHandlers();
         updateCheckBoxes();
         populateFontChoiceBox();
         updatePreviewText();
+        updateColorChooser();
     }
 
     public void setStage(Stage stage) {
@@ -143,6 +137,11 @@ public class OptionsStageController {
         });
     }
 
+    @Override
+    public void updatePreview() {
+        updatePreviewText();
+    }
+
     private void updatePreviewText(){
         Font font = fontManager.getCurrentFont().withSize(options.getMovieFontSize()).getRegularFont();
         previewText.setFill(fontOptions.getFontColor());
@@ -158,6 +157,10 @@ public class OptionsStageController {
         backViaEscCheckBox.selectedProperty().removeListener(backViaEscapeChangeListener);
     }
 
+    private void updateColorChooser(){
+        Color currentColor = fontOptions.getFontColor();
+        colorChooser.setValue(currentColor);
+    }
 
     private void populateFontChoiceBox() {
         log.trace("populating font choice box from fonts dir");
@@ -166,6 +169,11 @@ public class OptionsStageController {
         for (FontBundle fontBundle : fonts) {
             fontChoiceBox.getItems().add(fontBundle);
         }
+
+        // Set the current font as the selected visible item
+        FontBundle currentFont = fontManager.getCurrentFont();
+        fontChoiceBox.setValue(currentFont);
+
     }
 
 }

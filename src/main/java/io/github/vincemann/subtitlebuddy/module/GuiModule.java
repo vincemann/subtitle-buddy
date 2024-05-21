@@ -10,6 +10,8 @@ import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.WindowManagerImpl;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieStageController;
+import io.github.vincemann.subtitlebuddy.gui.options.OptionsDisplayer;
+import io.github.vincemann.subtitlebuddy.gui.options.OptionsStageController;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsStageController;
 import io.github.vincemann.subtitlebuddy.gui.event.*;
@@ -74,6 +76,7 @@ public class GuiModule extends PropertyFilesModule {
         bind(MovieSrtDisplayer.class).to(MovieStageController.class);
         bind(SrtDisplayer.class).toProvider(SrtDisplayerProvider.class);
         bind(SrtDisplayerEventHandler.class).in(Singleton.class);
+        bind(OptionsDisplayer.class).to(OptionsStageController.class);
     }
 
 }
