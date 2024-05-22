@@ -21,7 +21,7 @@ public class SubtitleFileImplTest {
     @Before
     public void setUp() throws Exception {
         this.subtitleFile= new SubtitleFileImpl(
-                new SrtFileParserImpl().transformFileToSubtitles(
+                new SrtFileParserImpl().parseSrtFile(
                         new File(TestFiles.VALID_SRT_FILE_PATH))
         );
     }

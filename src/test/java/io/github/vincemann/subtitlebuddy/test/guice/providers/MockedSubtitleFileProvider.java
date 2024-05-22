@@ -26,7 +26,7 @@ public class MockedSubtitleFileProvider implements Provider<SubtitleFile> {
     @Override
     public SubtitleFile get() {
         try {
-            List<SubtitleParagraph> subtitles = srtFileParser.transformFileToSubtitles(validFile);
+            List<SubtitleParagraph> subtitles = srtFileParser.parseSrtFile(validFile);
             return new SubtitleFileImpl(subtitles);
         }catch (Exception e){
             throw new RuntimeException(e);

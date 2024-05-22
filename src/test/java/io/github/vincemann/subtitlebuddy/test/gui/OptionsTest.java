@@ -1,10 +1,10 @@
 package io.github.vincemann.subtitlebuddy.test.gui;
 
+import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
-import io.github.vincemann.subtitlebuddy.srt.font.SrtFontManager;
 import io.github.vincemann.subtitlebuddy.test.gui.pages.OptionsPage;
 import io.github.vincemann.subtitlebuddy.test.gui.pages.SettingsPage;
 import javafx.scene.paint.Color;
@@ -20,13 +20,13 @@ public class OptionsTest extends GuiTest {
 
 
     private SettingsPage settingsPage;
-    private SrtFontManager srtFontManager;
+    private FontManager fontManager;
 
     @Override
     public void beforeEach() throws Exception {
         super.beforeEach();
         this.settingsPage = new SettingsPage(this);
-        this.srtFontManager= getInstance(SrtFontManager.class);
+        this.fontManager = getInstance(FontManager.class);
     }
 
 
@@ -78,7 +78,7 @@ public class OptionsTest extends GuiTest {
         focusStage(Windows.SETTINGS);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(Windows.OPTIONS);
-        FontBundle firstFont = srtFontManager.loadDefaultFont();
+        FontBundle firstFont = fontManager.loadDefaultFont();
         findSrtDisplayer(SettingsSrtDisplayer.class).setCurrentFont(firstFont);
         FontBundle currFont = findSrtDisplayer(SettingsSrtDisplayer.class).getCurrentFont();
         Assert.assertEquals(currFont, firstFont);
@@ -98,7 +98,7 @@ public class OptionsTest extends GuiTest {
         focusStage(Windows.SETTINGS);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(Windows.OPTIONS);
-        FontBundle firstFont = srtFontManager.loadDefaultFont();
+        FontBundle firstFont = fontManager.loadDefaultFont();
         focusStage(Windows.SETTINGS);
         settingsPage.switchToMovieMode();
         findSrtDisplayer(MovieSrtDisplayer.class).setCurrentFont(firstFont);

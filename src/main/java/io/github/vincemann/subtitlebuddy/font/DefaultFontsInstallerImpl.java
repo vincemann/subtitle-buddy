@@ -67,6 +67,7 @@ public class DefaultFontsInstallerImpl implements DefaultFontsInstaller {
         log.debug("default fonts installed");
     }
 
+    // todo just read the default fonts as stream and write to font dir without using file objects
     private List<CopiedClassPathFile> extractDefaultFonts() throws IOException {
         List<CopiedClassPathFile> defaultFonts = Lists.newArrayList();
         for (String defaultFontFile : DEFAULT_FONT_FILES) {

@@ -15,21 +15,27 @@ import java.util.*;
 @Getter
 @Setter
 public class SubtitleParagraph {
-	private final Timestamp startTime, endTime;
+	private final SubtitleTimestamps timestamps;
 	private final SubtitleText text;
-	
+
 	/* Create a new Subtitle with the given start and end times. */
-	public SubtitleParagraph(Timestamp startTime, Timestamp endTime) {
-		this.startTime = startTime;
-		this.endTime = endTime;
+	public SubtitleParagraph(SubtitleTimestamps timestamps) {
+		this.timestamps = timestamps;
 		this.text = new SubtitleText(new ArrayList<>());
 	}
 
-    public SubtitleParagraph(Timestamp startTime, Timestamp endTime, SubtitleText text) {
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public SubtitleParagraph(SubtitleTimestamps timestamps, SubtitleText text) {
+        this.timestamps = timestamps;
         this.text = text;
     }
+
+	public Timestamp getStartTime(){
+		return timestamps.getStart();
+	}
+
+	public Timestamp getEndTime(){
+		return timestamps.getEnd();
+	}
 
     @Override
 	public String toString() {

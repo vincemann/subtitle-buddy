@@ -30,7 +30,7 @@ public class SrtParserImplTest {
     @Before
     public void setUp() throws Exception {
         SubtitleFile subtitleFile = new SubtitleFileImpl(
-                new SrtFileParserImpl().transformFileToSubtitles(
+                new SrtFileParserImpl().parseSrtFile(
                         new File(TestFiles.VALID_SRT_FILE_PATH)));
 
         SrtOptions options = mock(SrtOptions.class);
