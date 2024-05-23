@@ -58,26 +58,38 @@ public class RightSubtitleTest {
                         Arrays.asList(Subtitle.NEWLINE)},
                 // 9
                 {TEST_TEXT + "<i>"+TEST_TEXT2 + "</i>" + TEST_TEXT3,
-                        Arrays.asList(
-                                new Subtitle(SubtitleType.NORMAL, TEST_TEXT),
-                                new Subtitle(SubtitleType.ITALIC, TEST_TEXT2),
-                                new Subtitle(SubtitleType.NORMAL, TEST_TEXT3))},
+                        Arrays.asList(new Subtitle(SubtitleType.NORMAL, TEST_TEXT), new Subtitle(SubtitleType.ITALIC, TEST_TEXT2), new Subtitle(SubtitleType.NORMAL, TEST_TEXT3))},
                 // 10
-                {"<i>" + TEST_TEXT + "</i><n><n>",
-                        Arrays.asList(new Subtitle(SubtitleType.ITALIC, TEST_TEXT),Subtitle.NEWLINE,Subtitle.NEWLINE)},
+                {TEST_TEXT,
+                        Arrays.asList(new Subtitle(SubtitleType.NORMAL, TEST_TEXT))},
                 // 11
+                {TEST_TEXT + "<n>",
+                        Arrays.asList(new Subtitle(SubtitleType.NORMAL, TEST_TEXT),Subtitle.NEWLINE)},
+                // 12
+                {"<n>" + TEST_TEXT + "<n>",
+                        Arrays.asList(Subtitle.NEWLINE,new Subtitle(SubtitleType.NORMAL, TEST_TEXT),Subtitle.NEWLINE)},
+                // 13
+                {TEST_TEXT + "<n>" + TEST_TEXT2,
+                        Arrays.asList(new Subtitle(SubtitleType.NORMAL, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.NORMAL, TEST_TEXT2))},
+                // 14
+                {TEST_TEXT + "<n>" + TEST_TEXT2 + "<i>" + TEST_TEXT3 + "</i>",
+                        Arrays.asList(new Subtitle(SubtitleType.NORMAL, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.NORMAL, TEST_TEXT2),new Subtitle(SubtitleType.ITALIC, TEST_TEXT3))},
+                // 15
+                {"<i>" + TEST_TEXT + "</i><n><n>",
+                        Arrays.asList(new Subtitle(SubtitleType.ITALIC, TEST_TEXT), Subtitle.NEWLINE, Subtitle.NEWLINE)},
+                // 16
                 {"<i>" + TEST_TEXT + "<n>" + TEST_TEXT2 + "</i><n>",
                         Arrays.asList(new Subtitle(SubtitleType.ITALIC, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.ITALIC, TEST_TEXT2),Subtitle.NEWLINE)},
-                // 12
+                // 17
                 {TEST_TEXT + "<n>" + TEST_TEXT2 + "<n>",
                         Arrays.asList(new Subtitle(SubtitleType.NORMAL, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.NORMAL, TEST_TEXT2),Subtitle.NEWLINE)},
-                // 13
+                // 18
                 {TEST_TEXT + "<n>" + TEST_TEXT2 + "<n>",
                         Arrays.asList(new Subtitle(SubtitleType.NORMAL, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.NORMAL, TEST_TEXT2),Subtitle.NEWLINE)},
-                // 14
+                // 19
                 {"<i>" + TEST_TEXT + "<n>" + TEST_TEXT2 + "</i>" + TEST_TEXT3 + "<n>",
                         Arrays.asList(new Subtitle(SubtitleType.ITALIC, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.ITALIC, TEST_TEXT2), new Subtitle(SubtitleType.NORMAL, TEST_TEXT3),Subtitle.NEWLINE)},
-                // 15
+                // 20
                 {"<i><n><n><n>" + TEST_TEXT + "</i><n>",
                         Arrays.asList(Subtitle.NEWLINE,Subtitle.NEWLINE,Subtitle.NEWLINE,new Subtitle(SubtitleType.ITALIC, TEST_TEXT), Subtitle.NEWLINE)},
         });
