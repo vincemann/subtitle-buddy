@@ -2,9 +2,9 @@ package io.github.vincemann.subtitlebuddy.test.gui;
 
 
 import com.google.common.eventbus.EventBus;
-import io.github.vincemann.subtitlebuddy.events.ToggleHotKeyEvent;
+import io.github.vincemann.subtitlebuddy.events.ToggleNextClickHotkeyEvent;
+import io.github.vincemann.subtitlebuddy.events.ToggleSpaceHotkeyEvent;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
-import io.github.vincemann.subtitlebuddy.listeners.key.HotKey;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import io.github.vincemann.subtitlebuddy.test.gui.pages.SettingsPage;
@@ -35,7 +35,7 @@ public class ParserHotKeyTest extends GuiTest {
 
     @Test
     public void testStartParserBySpace() throws InterruptedException {
-        eventBus.post(new ToggleHotKeyEvent(HotKey.START_STOP,false));
+        eventBus.post(new ToggleSpaceHotkeyEvent(true));
         refreshGui();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtParser.getCurrentState());
         type(KeyCode.SPACE);
@@ -45,7 +45,7 @@ public class ParserHotKeyTest extends GuiTest {
 
     @Test
     public void testStartStopParserBySpace() throws InterruptedException {
-        eventBus.post(new ToggleHotKeyEvent(HotKey.START_STOP,false));
+        eventBus.post(new ToggleSpaceHotkeyEvent(true));
         refreshGui();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtParser.getCurrentState());
 
@@ -65,7 +65,7 @@ public class ParserHotKeyTest extends GuiTest {
 
     @Test
     public void testNextClickCountsSettingsMode() throws TimeoutException, InterruptedException {
-        eventBus.post(new ToggleHotKeyEvent(HotKey.NEXT_CLICK,false));
+        eventBus.post(new ToggleNextClickHotkeyEvent(true));
         refreshGui();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtParser.getCurrentState());
 
@@ -83,7 +83,7 @@ public class ParserHotKeyTest extends GuiTest {
 
     @Test
     public void testNextClickCountsMovieMode() throws TimeoutException, InterruptedException {
-        eventBus.post(new ToggleHotKeyEvent(HotKey.NEXT_CLICK,false));
+        eventBus.post(new ToggleNextClickHotkeyEvent(true));
         refreshGui();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtParser.getCurrentState());
         settingsPage.switchToMovieMode();

@@ -154,23 +154,21 @@ public class MovieStageController implements MovieSrtDisplayer {
             }
 
             movieTextFlow.getChildren().clear();
-            for (List<Subtitle> subtitles : subtitleText.getSubtitles()) {
-                for (Subtitle subtitle : subtitles) {
-                    Text text = new Text(subtitle.getText());
+            for (Subtitle subtitle : subtitleText.getSubtitles()) {
+                Text text = new Text(subtitle.getText());
 
-                    if (subtitle.getType().equals(SubtitleType.ITALIC)) {
-                        text.setFont(currentFont.getItalicFont());
-                    } else {
-                        text.setFont(currentFont.getRegularFont());
-                    }
+                if (subtitle.getType().equals(SubtitleType.ITALIC)) {
+                    text.setFont(currentFont.getItalicFont());
+                } else {
+                    text.setFont(currentFont.getRegularFont());
+                }
 
 //                    FontUtils.adjustTextSize(text, fontSize);
-                    text.setFill(fontColor);
-                    text.setStyle(OUTLINED_TEXT_STYLE);
+                text.setFill(fontColor);
+                text.setStyle(OUTLINED_TEXT_STYLE);
 
-                    movieTextFlow.getChildren().add(text);
-                    movieTextFlow.getChildren().add(new Text(System.lineSeparator()));
-                }
+                movieTextFlow.getChildren().add(text);
+                movieTextFlow.getChildren().add(new Text(System.lineSeparator()));
             }
         });
     }

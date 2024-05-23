@@ -87,6 +87,7 @@ public abstract class GuiTest extends ApplicationTest {
             focusStage(name);
     }
 
+
     @Before
     public void beforeEach() throws Exception {
         LoggingUtils.disableUtilLogger();

@@ -1,12 +1,10 @@
 package io.github.vincemann.subtitlebuddy.srt.parser;
 
-import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.gui.dialog.AlertDialog;
 import io.github.vincemann.subtitlebuddy.srt.SrtOptions;
 import io.github.vincemann.subtitlebuddy.srt.*;
-import lombok.NonNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,9 +22,6 @@ import java.util.regex.Pattern;
 @Singleton
 public class SrtFileParserImpl implements SrtFileParser {
 
-    private static final String ITALIC_START_DELIMITER = "<i>";
-    private static final String ITALIC_END_DELIMITER = "</i>";
-    private static final String NEW_LINE_DELIMITER = "<n>";
 
     private Charset encoding = StandardCharsets.UTF_8;
 
@@ -38,8 +33,11 @@ public class SrtFileParserImpl implements SrtFileParser {
 
     private List<SubtitleParagraph> subtitles = new ArrayList<>();
 
+    private SubtitleTextParser subtitleTextParser;
+
     @Inject
-    public SrtFileParserImpl(SrtOptions options, AlertDialog alertDialog) {
+    public SrtFileParserImpl(SrtOptions options, AlertDialog alertDialog, SubtitleTextParser subtitleTextParser) {
+        this.subtitleTextParser = subtitleTextParser;
         initUserDefinedEncoding(options.getEncoding(), alertDialog);
     }
 
@@ -94,7 +92,7 @@ public class SrtFileParserImpl implements SrtFileParser {
                  InvalidIdException e) {
             throw new CorruptedSrtFileException(linesRead, subtitles, e);
         } catch (EOFException e) {
-            if (timestamps != null && text != null){
+            if (timestamps != null && text != null) {
                 // subtitle is good enough add it and close parser
                 subtitles.add(new SubtitleParagraph(timestamps, text));
             }
@@ -105,15 +103,10 @@ public class SrtFileParserImpl implements SrtFileParser {
         return subtitles;
     }
 
-    private SubtitleText readSubtitleText(Scanner scanner) throws InvalidDelimiterException, EOFException {
-        StringBuilder subtitleString = new StringBuilder();
-        String line = readLine(scanner);
-        while (!isNextId(line)) {
-            if (!line.isEmpty()){
-                // dont add empty subtitle lines to avoid cluttering
-                // usually the last line is empty and not needed
-                // some kinda malformed srt files also have intermediate empty lines - skip those
-                // also by reading until the next id, I make sure these kinda malformed files are read correctly
+    // dont add empty subtitle lines to avoid cluttering
+    // usually the last line is empty and not needed
+    // some kinda malformed srt files also have intermediate empty lines - skip those
+    // also by reading until the next id, I make sure these kinda malformed files are read correctly
                 /*
                 example of proper
 
@@ -129,27 +122,28 @@ public class SrtFileParserImpl implements SrtFileParser {
                  *
                  * id+1
                  */
+    private SubtitleText readSubtitleText(Scanner scanner) throws InvalidDelimiterException, EOFException {
+        StringBuilder subtitleString = new StringBuilder();
+        String line = readLine(scanner);
+        while (!isNextId(line)) {
+            if (!line.isEmpty()) {
                 subtitleString.append(line);
-                subtitleString.append(NEW_LINE_DELIMITER);
+                subtitleString.append(SubtitleTextParser.NEW_LINE_DELIMITER);
             }
             line = readLine(scanner);
         }
         // we consumed the id line already, so store it for next iteration, for readIdLine to pick it up
         currentIdLine = line;
-
-
-        List<List<Subtitle>> subtitleSegments = createSubtitleSegments(subtitleString.toString());
-        return new SubtitleText(subtitleSegments);
+        return subtitleTextParser.parse(subtitleString.toString());
     }
 
     // sometimes we have encoding information in first line, so we need to do this a more robust way
     private String readUntilFirstId(Scanner scanner) throws EOFException {
-        while (true){
+        while (true) {
             String line = readLine(scanner);
-            if (line.contains("0")){
+            if (line.contains("0")) {
                 return "0";
-            }
-            else if (line.contains("1")){
+            } else if (line.contains("1")) {
                 return "1";
             }
         }
@@ -162,6 +156,7 @@ public class SrtFileParserImpl implements SrtFileParser {
         linesRead++;
         return line;
     }
+
     private boolean isNextId(String line) {
         try {
             int id = parseId(line);
@@ -207,8 +202,8 @@ public class SrtFileParserImpl implements SrtFileParser {
         if (matcher.find()) {
             try {
                 return Integer.parseInt(matcher.group(0));
-            }catch (NumberFormatException e){
-                throw new InvalidIdException("invalid id format at line: " + linesRead +" : " + line,e);
+            } catch (NumberFormatException e) {
+                throw new InvalidIdException("invalid id format at line: " + linesRead + " : " + line, e);
             }
         } else {
             throw new InvalidIdException("invalid id at line: " + linesRead + " : " + line);
@@ -226,81 +221,5 @@ public class SrtFileParserImpl implements SrtFileParser {
 //    }
 
 
-    public static List<List<Subtitle>> createSubtitleSegments(@NonNull String subtitleString) throws InvalidDelimiterException {
-        List<List<Subtitle>> result = new ArrayList<>();
-        List<Subtitle> currentLine = new ArrayList<>();
-        StringBuilder currentText = new StringBuilder();
-        SubtitleType currentSubtitleType = SubtitleType.NORMAL;
-
-        int amountCharsToSkip;
-        for (int i = 0; i < subtitleString.length(); i++) {
-            char currentChar = subtitleString.charAt(i);
-            if (currentChar == '<') {
-                SrtDelimiter srtDelimiter = findDelimiterType(subtitleString.substring(i));
-                switch (srtDelimiter) {
-                    case ITALIC_START_DELIMITER:
-                        amountCharsToSkip = ITALIC_START_DELIMITER.length();
-                        currentSubtitleType = SubtitleType.ITALIC;
-                        break;
-                    case NEW_LINE_DELIMITER:
-                        amountCharsToSkip = NEW_LINE_DELIMITER.length();
-                        //clone list
-                        if (currentText.length() != 0) {
-                            currentLine.add(new Subtitle(currentSubtitleType, currentText.toString()));
-                            currentText.setLength(0);
-                        }
-                        result.add(new ArrayList<>(currentLine));
-                        currentLine.clear();
-                        break;
-                    case ITALIC_END_DELIMITER:
-                        amountCharsToSkip = ITALIC_END_DELIMITER.length();
-                        Subtitle subtitle = new Subtitle(SubtitleType.ITALIC, currentText.toString());
-                        currentLine.add(subtitle);
-                        //clear string builder
-                        currentText.setLength(0);
-                        currentSubtitleType = SubtitleType.NORMAL;
-                        break;
-                    default:
-                        throw new InvalidDelimiterException(subtitleString.substring(i) + " is an invalid delimiter");
-                }
-                // -1 bc loop will increment 1
-                i += amountCharsToSkip - 1;
-            } else {
-                currentText.append(currentChar);
-            }
-        }
-        return result;
-    }
-
-    public static SrtDelimiter findDelimiterType(String subText) throws InvalidDelimiterException {
-        try {
-            Preconditions.checkState(subText != null);
-            Preconditions.checkState(!subText.isEmpty());
-            Preconditions.checkState(subText.charAt(0) == '<');
-            char currentChar = ' ';
-            StringBuilder delimiter = new StringBuilder();
-            int count = 0;
-            while (currentChar != '>') {
-                Preconditions.checkState(subText.length() > count);
-                currentChar = subText.charAt(count);
-                delimiter.append(currentChar);
-                count++;
-            }
-
-            Preconditions.checkState(delimiter.length() >= 3 && delimiter.length() <= 4);
-            switch (delimiter.toString()) {
-                case ITALIC_START_DELIMITER:
-                    return SrtDelimiter.ITALIC_START_DELIMITER;
-                case ITALIC_END_DELIMITER:
-                    return SrtDelimiter.ITALIC_END_DELIMITER;
-                case NEW_LINE_DELIMITER:
-                    return SrtDelimiter.NEW_LINE_DELIMITER;
-            }
-            //nichts davon eingetreten
-            throw new InvalidDelimiterException(delimiter + " is an invalid delimiter");
-        } catch (IllegalStateException e) {
-            throw new InvalidDelimiterException(e);
-        }
-    }
 
 }

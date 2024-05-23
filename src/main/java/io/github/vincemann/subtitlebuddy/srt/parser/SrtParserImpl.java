@@ -32,10 +32,9 @@ public class SrtParserImpl implements SrtParser {
         this.stopWatch = stopWatch;
         this.defaultSubtitleText = new SubtitleText(
                 Collections.singletonList(
-                        Collections.singletonList(
-                                new Subtitle(SubtitleType.NORMAL, options.getDefaultSubtitle())
-                        )
+                        new Subtitle(SubtitleType.NORMAL, options.getDefaultSubtitle())
                 )
+
         );
         this.currentSubtitleText = this.defaultSubtitleText;
     }

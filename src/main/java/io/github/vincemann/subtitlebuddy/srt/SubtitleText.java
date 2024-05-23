@@ -11,5 +11,5 @@ import java.util.List;
 public class SubtitleText {
 
     @NonNull
-    private final List<List<Subtitle>> subtitles;
+    private final List<Subtitle> subtitles;
 }

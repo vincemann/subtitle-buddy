@@ -1,9 +1,9 @@
 package io.github.vincemann.subtitlebuddy.test.srt.fileparser;
 
 import io.github.vincemann.subtitlebuddy.srt.Subtitle;
+import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleType;
-import io.github.vincemann.subtitlebuddy.srt.parser.InvalidDelimiterException;
-import io.github.vincemann.subtitlebuddy.srt.parser.SrtFileParserImpl;
+import io.github.vincemann.subtitlebuddy.srt.parser.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,64 +17,84 @@ import java.util.List;
 @RunWith(Parameterized.class)
 public class RightSubtitleTest {
 
-    private static final String TEST_TEXT =  "Hallo Frauke Co von radius";
-    private static final String TEST_TEXT2 =  "Was geht docccc";
-    private static final String TEST_TEXT3 =  "I bims 1 dritter Text";
+    private static final String TEST_TEXT = "Hallo Frauke Co von radius";
+    private static final String TEST_TEXT2 = "Was geht docccc";
+    private static final String TEST_TEXT3 = "I bims 1 dritter Text";
 
-    public RightSubtitleTest(String input, List<List<Subtitle>> expected) {
+    public RightSubtitleTest(String input, List<Subtitle> expected) {
         this.input = input;
         this.expected = expected;
     }
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                { "<i>"+TEST_TEXT+"</i><n>",
-                        Arrays.asList(Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT)))},
-                { TEST_TEXT+"<n>",
-                        Arrays.asList(Arrays.asList(new Subtitle(SubtitleType.NORMAL,TEST_TEXT)))},
-                { TEST_TEXT+"<n>"+TEST_TEXT2+"<n>",
-                        Arrays.asList(Arrays.asList(new Subtitle(SubtitleType.NORMAL,TEST_TEXT)),Arrays.asList(new Subtitle(SubtitleType.NORMAL,TEST_TEXT2)))},
-                { "<i>"+TEST_TEXT+"</i><n><i>"+TEST_TEXT2+"</i><n>",
-                        Arrays.asList(Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT)),Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT2)))},
-                { "<i>"+TEST_TEXT+"</i><n>"+TEST_TEXT2+"<n>",
-                        Arrays.asList(Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT)),Arrays.asList(new Subtitle(SubtitleType.NORMAL,TEST_TEXT2)))},
-                { "<i>"+TEST_TEXT+"</i><n>"+TEST_TEXT2+"<n>"+"<i>"+TEST_TEXT3+"</i><n>",
-                        Arrays.asList(Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT)),Arrays.asList(new Subtitle(SubtitleType.NORMAL,TEST_TEXT2)),Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT3)))},
-                {"<i><i>"+TEST_TEXT+"</i><n>",
-                        Arrays.asList(Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT)))},
+        return Arrays.asList(new Object[][]{
+                // 0
+                {"<i>" + TEST_TEXT + "</i><n>",
+                        Arrays.asList(new Subtitle(SubtitleType.ITALIC, TEST_TEXT),Subtitle.NEWLINE)},
+                // 1
+                {TEST_TEXT + "<n>",
+                        Arrays.asList(new Subtitle(SubtitleType.NORMAL, TEST_TEXT),Subtitle.NEWLINE)},
+                // 2
+                {TEST_TEXT + "<n>" + TEST_TEXT2 + "<n>",
+                        Arrays.asList(new Subtitle(SubtitleType.NORMAL, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.NORMAL, TEST_TEXT2),Subtitle.NEWLINE)},
+                // 3
+                {"<i>" + TEST_TEXT + "</i><n><i>" + TEST_TEXT2 + "</i><n>",
+                        Arrays.asList(new Subtitle(SubtitleType.ITALIC, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.ITALIC, TEST_TEXT2),Subtitle.NEWLINE)},
+                // 4
+                {"<i>" + TEST_TEXT + "</i><n>" + TEST_TEXT2 + "<n>",
+                        Arrays.asList(new Subtitle(SubtitleType.ITALIC, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.NORMAL, TEST_TEXT2),Subtitle.NEWLINE)},
+                // 5
+                {"<i>" + TEST_TEXT + "</i><n>" + TEST_TEXT2 + "<n>" + "<i>" + TEST_TEXT3 + "</i><n>",
+                        Arrays.asList(new Subtitle(SubtitleType.ITALIC, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.NORMAL, TEST_TEXT2),Subtitle.NEWLINE, new Subtitle(SubtitleType.ITALIC, TEST_TEXT3),Subtitle.NEWLINE)},
+                // 6
+                {"<i><i>" + TEST_TEXT + "</i><n>",
+                        Arrays.asList(new Subtitle(SubtitleType.ITALIC, TEST_TEXT),Subtitle.NEWLINE)},
+                // 7
                 {"<i></i><n>",
-                        Arrays.asList(Arrays.asList(new Subtitle(SubtitleType.ITALIC,"")))},
+                        Arrays.asList(Subtitle.NEWLINE)},
+                // 8
                 {"<n>",
-                        Arrays.asList(Collections.EMPTY_LIST)},
-                { "<i>"+TEST_TEXT+"</i><n><n>",
-                        Arrays.asList(Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT)),Collections.EMPTY_LIST)},
-                { "<i>"+TEST_TEXT+"<n>"+TEST_TEXT2+"</i><n>",
-                        Arrays.asList(Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT)),Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT2)))},
-                { TEST_TEXT+"<n>"+TEST_TEXT2+"<n>",
-                        Arrays.asList(Arrays.asList(new Subtitle(SubtitleType.NORMAL,TEST_TEXT)),Arrays.asList(new Subtitle(SubtitleType.NORMAL,TEST_TEXT2)))},
-                { "<i>"+TEST_TEXT+"<n>"+TEST_TEXT2+"</i>"+TEST_TEXT3+"<n>",
-                        Arrays.asList(Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT)),Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT2),new Subtitle(SubtitleType.NORMAL,TEST_TEXT3)))},
-                {"<i><n><n><n>"+TEST_TEXT+"</i><n>",
-                        Arrays.asList(Collections.EMPTY_LIST,Collections.EMPTY_LIST,Collections.EMPTY_LIST,Arrays.asList(new Subtitle(SubtitleType.ITALIC,TEST_TEXT)))},
+                        Arrays.asList(Subtitle.NEWLINE)},
+                // 9
+                {TEST_TEXT + "<i>"+TEST_TEXT2 + "</i>" + TEST_TEXT3,
+                        Arrays.asList(
+                                new Subtitle(SubtitleType.NORMAL, TEST_TEXT),
+                                new Subtitle(SubtitleType.ITALIC, TEST_TEXT2),
+                                new Subtitle(SubtitleType.NORMAL, TEST_TEXT3))},
+                // 10
+                {"<i>" + TEST_TEXT + "</i><n><n>",
+                        Arrays.asList(new Subtitle(SubtitleType.ITALIC, TEST_TEXT),Subtitle.NEWLINE,Subtitle.NEWLINE)},
+                // 11
+                {"<i>" + TEST_TEXT + "<n>" + TEST_TEXT2 + "</i><n>",
+                        Arrays.asList(new Subtitle(SubtitleType.ITALIC, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.ITALIC, TEST_TEXT2),Subtitle.NEWLINE)},
+                // 12
+                {TEST_TEXT + "<n>" + TEST_TEXT2 + "<n>",
+                        Arrays.asList(new Subtitle(SubtitleType.NORMAL, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.NORMAL, TEST_TEXT2),Subtitle.NEWLINE)},
+                // 13
+                {TEST_TEXT + "<n>" + TEST_TEXT2 + "<n>",
+                        Arrays.asList(new Subtitle(SubtitleType.NORMAL, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.NORMAL, TEST_TEXT2),Subtitle.NEWLINE)},
+                // 14
+                {"<i>" + TEST_TEXT + "<n>" + TEST_TEXT2 + "</i>" + TEST_TEXT3 + "<n>",
+                        Arrays.asList(new Subtitle(SubtitleType.ITALIC, TEST_TEXT),Subtitle.NEWLINE, new Subtitle(SubtitleType.ITALIC, TEST_TEXT2), new Subtitle(SubtitleType.NORMAL, TEST_TEXT3),Subtitle.NEWLINE)},
+                // 15
+                {"<i><n><n><n>" + TEST_TEXT + "</i><n>",
+                        Arrays.asList(Subtitle.NEWLINE,Subtitle.NEWLINE,Subtitle.NEWLINE,new Subtitle(SubtitleType.ITALIC, TEST_TEXT), Subtitle.NEWLINE)},
         });
     }
 
     private String input;
 
-    private List<List<Subtitle>> expected;
-
+    private List<Subtitle> expected;
 
 
     @Test
     public void testCreateSubtitleSegments() throws InvalidDelimiterException {
-        List<List<Subtitle>> result = SrtFileParserImpl.createSubtitleSegments(input);
-        Assert.assertEquals(expected.size(), result.size());
+        SubtitleText result = new SubtitleTextParserImpl().parse(input);
+        List<Subtitle> subs = result.getSubtitles();
+        Assert.assertEquals(expected.size(), subs.size());
         for (int i = 0; i < expected.size(); i++) {
-            Assert.assertEquals(expected.get(i).size(), result.get(i).size());
-            for (int j = 0; j < expected.get(i).size(); j++) {
-                Assert.assertEquals(expected.get(i).get(j), result.get(i).get(j));
-            }
+            Assert.assertEquals(expected.get(i), subs.get(i));
         }
     }
 }

@@ -40,10 +40,8 @@ public class SubtitleParagraph {
     @Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
-		for(List<Subtitle> subtitles : text.getSubtitles()){
-			for(Subtitle subtitle : subtitles){
-				result.append(subtitle.getText());
-			}
+		for(Subtitle subtitle : text.getSubtitles()){
+			result.append(subtitle.getText());
 			result.append(System.lineSeparator());
 		}
 		return result.toString();

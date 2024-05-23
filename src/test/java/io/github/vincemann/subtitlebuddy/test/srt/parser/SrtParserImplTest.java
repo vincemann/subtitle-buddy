@@ -45,7 +45,7 @@ public class SrtParserImplTest {
         this.parser.updateCurrentSubtitle();
         SubtitleText currentSubtitle = this.parser.getCurrentSubtitleText();
         Assert.assertNotNull(currentSubtitle);
-        Assert.assertEquals("Juice by Mary. Juice by Mary.",currentSubtitle.getSubtitles().get(0).get(0).getText());
+        Assert.assertEquals("Juice by Mary. Juice by Mary.",currentSubtitle.getSubtitles().get(0).getText());
     }
 
     @Test(expected = IllegalStateException.class)

@@ -52,7 +52,7 @@ public class SubtitleFileImplTest {
         Timestamp timestamp = new Timestamp(0,55,8,12);
         Optional<SubtitleParagraph> subtitle = subtitleFile.getSubtitleAtTimeStamp(timestamp);
         Assert.assertTrue(subtitle.isPresent());
-        Assert.assertEquals("We'll fill it up again.",subtitle.get().getText().getSubtitles().get(0).get(0).getText());
+        Assert.assertEquals("We'll fill it up again.",subtitle.get().getText().getSubtitles().get(0).getText());
     }
 
     @Test

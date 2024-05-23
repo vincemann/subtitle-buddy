@@ -161,7 +161,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         registerEventHandlingStageListener();
     }
 
-    private void registerEventHandlingStageListener(){
+    private void registerEventHandlingStageListener() {
         stage.showingProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 registerEventHandlers();
@@ -247,7 +247,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         eventHandlerRegistrations.add(new EventHandlerRegistration<>(fastForwardButton, fastForwardButtonClickedHandler, MouseEvent.MOUSE_CLICKED));
     }
 
-    private void jumpToTimestamp(){
+    private void jumpToTimestamp() {
         try {
             // put this into method of parser or own component
             log.debug("timestamp string entered: " + timeField.getText());
@@ -264,11 +264,11 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         timeField.clear();
     }
 
-    private void openOptionsWindow(){
+    private void openOptionsWindow() {
         //position options window right next settingsWindow, otherwise optionsWindow may be behind settingsWindow, bc they are both alwaysOnTop
         Window settingsWindow = windowManager.getOpened().get(0);
         Vector2D nextToSettingsWindow = new Vector2D(settingsWindow.getStage().getX() + settingsWindow.getStage().getWidth(), settingsWindow.getStage().getY());
-        windowManager.showWindowAtPos(Windows.OPTIONS, nextToSettingsWindow,false);
+        windowManager.showWindowAtPos(Windows.OPTIONS, nextToSettingsWindow, false);
     }
 
 
@@ -312,7 +312,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 //            Color fontColor = fontOptions.getFontColor();
             Color fontColor = Color.BLACK;
 
-            if (log.isTraceEnabled()){
+            if (log.isTraceEnabled()) {
                 log.trace("setting fontcolor: " + fontColor);
                 log.trace("setting font size: " + fontSize);
                 log.trace("using font: " + currentFont.getRegularFont().getName());
@@ -321,24 +321,23 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             }
 
             settingsTextFlow.getChildren().clear();
-            for (List<Subtitle> subtitles : subtitleText.getSubtitles()) {
-                for (Subtitle subtitle : subtitles) {
-                    Text text = new Text(subtitle.getText());
+            for (Subtitle subtitle : subtitleText.getSubtitles()) {
+                Text text = new Text(subtitle.getText());
 
-                    if (subtitle.getType().equals(SubtitleType.ITALIC)) {
-                        text.setFont(currentFont.getItalicFont());
-                    } else {
-                        text.setFont(currentFont.getRegularFont());
-                    }
+                if (subtitle.getType().equals(SubtitleType.ITALIC)) {
+                    text.setFont(currentFont.getItalicFont());
+                } else {
+                    text.setFont(currentFont.getRegularFont());
+                }
 
-                    text.setFill(fontColor);
+                text.setFill(fontColor);
 //                    FontUtils.adjustTextSize(text, fontSize);
 
-                    if (log.isTraceEnabled())
-                        log.trace("displaying text: " + text + " in settings mode");
-                    settingsTextFlow.getChildren().add(text);
-                    settingsTextFlow.getChildren().add(new Text(System.lineSeparator()));
-                }
+                if (log.isTraceEnabled())
+                    log.trace("displaying text: " + text + " in settings mode");
+                settingsTextFlow.getChildren().add(text);
+                settingsTextFlow.getChildren().add(new Text(System.lineSeparator()));
+
             }
         });
     }

@@ -1,8 +1,10 @@
 package io.github.vincemann.subtitlebuddy.test.gui;
 
+import com.google.common.eventbus.EventBus;
+import io.github.vincemann.subtitlebuddy.events.UpdateFontColorEvent;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
+import io.github.vincemann.subtitlebuddy.font.FontOptions;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
-import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.test.gui.pages.OptionsPage;
@@ -22,13 +24,36 @@ public class OptionsTest extends GuiTest {
     private SettingsPage settingsPage;
     private FontManager fontManager;
 
+    private EventBus eventBus;
+
+    private FontOptions fontOptions;
+
     @Override
     public void beforeEach() throws Exception {
         super.beforeEach();
         this.settingsPage = new SettingsPage(this);
         this.fontManager = getInstance(FontManager.class);
+        this.fontOptions = getInstance(FontOptions.class);
+        this.eventBus = getInstance(EventBus.class);
     }
 
+    private void setFontColor(Color color) {
+        // color is already set
+        if (fontOptions.getFontColor().equals(color))
+            return;
+        eventBus.post(new UpdateFontColorEvent(color));
+        // wait until color changed
+        while (true){
+            try {
+                Thread.sleep(50);
+                if (fontOptions.getFontColor().equals(color)){
+                    break;
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     @Test
     public void testNoColorChangeOnSettingsText() throws TimeoutException {
@@ -39,8 +64,8 @@ public class OptionsTest extends GuiTest {
         Color selectedColor = optionsPage.selectRandomColor(SettingsSrtDisplayer.DEFAULT_FONT_COLOR);
         Assert.assertNotEquals(SettingsSrtDisplayer.DEFAULT_FONT_COLOR, selectedColor);
         refreshGui();
-        //es darf keinen change gegeben haben
-        Assert.assertEquals(SettingsSrtDisplayer.DEFAULT_FONT_COLOR, findSrtDisplayer(SettingsSrtDisplayer.class).getFontColor());
+        // must not have changed
+        Assert.assertEquals(SettingsSrtDisplayer.DEFAULT_FONT_COLOR, fontOptions.getFontColor());
     }
 
 
@@ -60,32 +85,33 @@ public class OptionsTest extends GuiTest {
         String osName = System.getProperty("os.name").toLowerCase();
         Assume.assumeFalse(osName.contains("mac"));
 
+        setFontColor(Color.WHITE);
         focusStage(Windows.SETTINGS);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(Windows.SETTINGS);
         settingsPage.switchToMovieMode();
-        findSrtDisplayer(MovieSrtDisplayer.class).setFontColor(Color.WHITE);
+
+
         refreshGui();
         focusStage(Windows.OPTIONS);
         Color selectedColor = optionsPage.selectRandomColor(Color.WHITE);
         Assert.assertNotEquals(Color.WHITE, selectedColor);
         refreshGui();
-        Assert.assertEquals(selectedColor, findSrtDisplayer(MovieSrtDisplayer.class).getFontColor());
+        Assert.assertEquals(selectedColor, fontOptions.getFontColor());
     }
+
+
 
     @Test
     public void testChangeFontInSettingsMode() throws TimeoutException {
         focusStage(Windows.SETTINGS);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(Windows.OPTIONS);
-        FontBundle firstFont = fontManager.loadDefaultFont();
-        findSrtDisplayer(SettingsSrtDisplayer.class).setCurrentFont(firstFont);
-        FontBundle currFont = findSrtDisplayer(SettingsSrtDisplayer.class).getCurrentFont();
-        Assert.assertEquals(currFont, firstFont);
+        FontBundle currFont = fontManager.getCurrentFont();
         FontBundle newFont = optionsPage.selectNewFont(currFont);
         Assert.assertNotEquals(newFont, currFont);
         refreshGui();
-        Assert.assertEquals(findSrtDisplayer(SettingsSrtDisplayer.class).getCurrentFont(), newFont);
+        Assert.assertEquals(fontManager.getCurrentFont(), newFont);
     }
 
     @Test
@@ -98,16 +124,13 @@ public class OptionsTest extends GuiTest {
         focusStage(Windows.SETTINGS);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(Windows.OPTIONS);
-        FontBundle firstFont = fontManager.loadDefaultFont();
+        FontBundle currFont = fontManager.getCurrentFont();
         focusStage(Windows.SETTINGS);
         settingsPage.switchToMovieMode();
-        findSrtDisplayer(MovieSrtDisplayer.class).setCurrentFont(firstFont);
-        FontBundle currFont = findSrtDisplayer(MovieSrtDisplayer.class).getCurrentFont();
-        Assert.assertEquals(currFont, firstFont);
         focusStage(Windows.OPTIONS);
         FontBundle newFont = optionsPage.selectNewFont(currFont);
         Assert.assertNotEquals(newFont, currFont);
         refreshGui();
-        Assert.assertEquals(findSrtDisplayer(MovieSrtDisplayer.class).getCurrentFont(), newFont);
+        Assert.assertEquals(fontManager.getCurrentFont(), newFont);
     }
 }

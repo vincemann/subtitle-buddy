@@ -3,6 +3,7 @@ package io.github.vincemann.subtitlebuddy.test.srt.fileparser;
 import io.github.vincemann.subtitlebuddy.srt.SrtDelimiter;
 import io.github.vincemann.subtitlebuddy.srt.parser.InvalidDelimiterException;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtFileParserImpl;
+import io.github.vincemann.subtitlebuddy.srt.parser.SubtitleTextParserImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -33,6 +34,6 @@ public class WrongDelimiterTest {
 
     @Test(expected = InvalidDelimiterException.class)
     public void testWrongDelimter() throws InvalidDelimiterException{
-        SrtFileParserImpl.findDelimiterType(input);
+        new SubtitleTextParserImpl().findDelimiterType(input);
     }
 }
