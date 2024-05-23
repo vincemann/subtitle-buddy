@@ -321,11 +321,11 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             }
 
             settingsTextFlow.getChildren().clear();
-            for (List<SubtitleSegment> subtitleSegments : subtitleText.getSubtitleSegments()) {
-                for (SubtitleSegment subtitleSegment : subtitleSegments) {
-                    Text text = new Text(subtitleSegment.getText());
+            for (List<Subtitle> subtitles : subtitleText.getSubtitles()) {
+                for (Subtitle subtitle : subtitles) {
+                    Text text = new Text(subtitle.getText());
 
-                    if (subtitleSegment.getType().equals(SubtitleType.ITALIC)) {
+                    if (subtitle.getType().equals(SubtitleType.ITALIC)) {
                         text.setFont(currentFont.getItalicFont());
                     } else {
                         text.setFont(currentFont.getRegularFont());

@@ -12,9 +12,8 @@ import io.github.vincemann.subtitlebuddy.font.FontOptions;
 import io.github.vincemann.subtitlebuddy.gui.EventHandlerRegistration;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
-import io.github.vincemann.subtitlebuddy.options.OptionsManager;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
-import io.github.vincemann.subtitlebuddy.srt.SubtitleSegment;
+import io.github.vincemann.subtitlebuddy.srt.Subtitle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleType;
 import io.github.vincemann.subtitlebuddy.util.ExecutionLimiter;
@@ -155,11 +154,11 @@ public class MovieStageController implements MovieSrtDisplayer {
             }
 
             movieTextFlow.getChildren().clear();
-            for (List<SubtitleSegment> subtitleSegments : subtitleText.getSubtitleSegments()) {
-                for (SubtitleSegment subtitleSegment : subtitleSegments) {
-                    Text text = new Text(subtitleSegment.getText());
+            for (List<Subtitle> subtitles : subtitleText.getSubtitles()) {
+                for (Subtitle subtitle : subtitles) {
+                    Text text = new Text(subtitle.getText());
 
-                    if (subtitleSegment.getType().equals(SubtitleType.ITALIC)) {
+                    if (subtitle.getType().equals(SubtitleType.ITALIC)) {
                         text.setFont(currentFont.getItalicFont());
                     } else {
                         text.setFont(currentFont.getRegularFont());

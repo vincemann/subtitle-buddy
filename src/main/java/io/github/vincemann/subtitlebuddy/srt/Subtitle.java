@@ -7,7 +7,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubtitleSegment {
+public class Subtitle {
 
     /**
      * The type of the subtitle, e.g. normal, italic, bold, etc.

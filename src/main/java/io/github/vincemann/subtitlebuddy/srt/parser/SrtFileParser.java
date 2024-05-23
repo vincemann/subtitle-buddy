@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface SrtFileParser {
 
-    List<SubtitleParagraph> parseSrtFile(File srtFile) throws FileNotFoundException, CorruptedSrtFileException;
+    List<SubtitleParagraph> parseFile(File srtFile) throws FileNotFoundException, CorruptedSrtFileException;
 
 }

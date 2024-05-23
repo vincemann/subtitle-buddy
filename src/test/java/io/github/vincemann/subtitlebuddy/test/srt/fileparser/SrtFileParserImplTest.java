@@ -36,7 +36,7 @@ public class SrtFileParserImplTest {
     @Test
     public void testEmptyFile() throws FileNotFoundException, InvalidTimestampFormatException {
         try {
-            srtFileParser.parseSrtFile(invalidSrtFile);
+            srtFileParser.parseFile(invalidSrtFile);
             Assert.fail();
         } catch (CorruptedSrtFileException e) {
             Assert.assertEquals(0, e.getLinesRead());
@@ -46,7 +46,7 @@ public class SrtFileParserImplTest {
 
     @Test
     public void testValidFile() throws FileNotFoundException, CorruptedSrtFileException {
-        List<SubtitleParagraph> subtitles = srtFileParser.parseSrtFile(validSrtFile);
+        List<SubtitleParagraph> subtitles = srtFileParser.parseFile(validSrtFile);
         Assert.assertNotNull(subtitles);
         Assert.assertNotEquals(0, subtitles.size());
     }
@@ -54,7 +54,7 @@ public class SrtFileParserImplTest {
     @Test
     public void testEndCorruptedFile() throws FileNotFoundException, InvalidTimestampFormatException {
         try {
-            srtFileParser.parseSrtFile(endCorruptedSrtFile);
+            srtFileParser.parseFile(endCorruptedSrtFile);
             Assert.fail();
         } catch (CorruptedSrtFileException e) {
             Assert.assertEquals(2503, e.getLinesRead());
@@ -66,7 +66,7 @@ public class SrtFileParserImplTest {
 
     @Test(expected = CorruptedSrtFileException.class)
     public void testFullyCorruptedFile() throws FileNotFoundException, CorruptedSrtFileException {
-        srtFileParser.parseSrtFile(halfCorruptedSrtFile);
+        srtFileParser.parseFile(halfCorruptedSrtFile);
     }
 
 

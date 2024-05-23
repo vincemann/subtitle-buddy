@@ -21,9 +21,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Core component for parsing srt files.
- */
 @Singleton
 public class SrtFileParserImpl implements SrtFileParser {
 
@@ -56,14 +53,14 @@ public class SrtFileParserImpl implements SrtFileParser {
             }
         } catch (UnsupportedCharsetException e) {
             alertDialog.tellUser("Invalid encoding: " + encodingFromConfigFile +
-                    "\n Please change in applications.properties file - which is located in the folder of the executable (jar)." +
+                    "\n Please change in applications.properties file - which is located in %APPDATA%\\SubtitleBuddy or /home/user/.subtitlebuddy." +
                     "\n example: encoding=UTF-8 \n Using default encoding."
             );
         }
     }
 
     @Override
-    public List<SubtitleParagraph> parseSrtFile(File srtFile) throws CorruptedSrtFileException, FileNotFoundException {
+    public List<SubtitleParagraph> parseFile(File srtFile) throws CorruptedSrtFileException, FileNotFoundException {
 
         FileInputStream in = new FileInputStream(srtFile);
         Scanner scanner = new Scanner(in, this.encoding);
@@ -77,20 +74,20 @@ public class SrtFileParserImpl implements SrtFileParser {
             while (scanner.hasNextLine()) {
                 // read id
                 this.currentId = readIdLine(scanner);
-                System.err.println("read id: " + this.currentId);
+//                System.err.println("read id: " + this.currentId);
 
                 // read timestamps
                 timestamps = readTimestampsLine(scanner);
-                System.err.println("read timestamps: " + timestamps);
+//                System.err.println("read timestamps: " + timestamps);
 
                 // read subtitle -> read all lines until next id
                 text = readSubtitleText(scanner);
-                System.err.println("read text: " + text);
+//                System.err.println("read text: " + text);
 
                 // add finished paragraph
                 SubtitleParagraph paragraph = new SubtitleParagraph(timestamps, text);
                 subtitles.add(paragraph);
-                System.err.println("added new subtitle paragraph: " + paragraph);
+//                System.err.println("added new subtitle paragraph: " + paragraph);
             }
 
         } catch (NoSuchElementException | InvalidTimestampFormatException | InvalidDelimiterException |
@@ -123,14 +120,14 @@ public class SrtFileParserImpl implements SrtFileParser {
                 id
                 text
 
-                nextid
+                id+1
 
                  * example of kinda malformed:
                  * id
                  *
                  * text
                  *
-                 * nextid
+                 * id+1
                  */
                 subtitleString.append(line);
                 subtitleString.append(NEW_LINE_DELIMITER);
@@ -141,7 +138,7 @@ public class SrtFileParserImpl implements SrtFileParser {
         currentIdLine = line;
 
 
-        List<List<SubtitleSegment>> subtitleSegments = createSubtitleSegments(subtitleString.toString());
+        List<List<Subtitle>> subtitleSegments = createSubtitleSegments(subtitleString.toString());
         return new SubtitleText(subtitleSegments);
     }
 
@@ -198,8 +195,8 @@ public class SrtFileParserImpl implements SrtFileParser {
         } else {
             line = currentIdLine;
         }
-        System.err.println("parsing id line: " + line);
-        System.err.println("hex: " + toHexString(line));
+//        System.err.println("parsing id line: " + line);
+//        System.err.println("hex: " + toHexString(line));
         return parseId(line);
     }
 
@@ -219,19 +216,19 @@ public class SrtFileParserImpl implements SrtFileParser {
     }
 
 
-    public static String toHexString(String str) {
-        char[] chars = str.toCharArray();
-        StringBuilder hex = new StringBuilder();
-        for (char ch : chars) {
-            hex.append(Integer.toHexString((int) ch)).append(" ");
-        }
-        return hex.toString().trim();
-    }
+//    public static String toHexString(String str) {
+//        char[] chars = str.toCharArray();
+//        StringBuilder hex = new StringBuilder();
+//        for (char ch : chars) {
+//            hex.append(Integer.toHexString((int) ch)).append(" ");
+//        }
+//        return hex.toString().trim();
+//    }
 
 
-    public static List<List<SubtitleSegment>> createSubtitleSegments(@NonNull String subtitleString) throws InvalidDelimiterException {
-        List<List<SubtitleSegment>> result = new ArrayList<>();
-        List<SubtitleSegment> currentLine = new ArrayList<>();
+    public static List<List<Subtitle>> createSubtitleSegments(@NonNull String subtitleString) throws InvalidDelimiterException {
+        List<List<Subtitle>> result = new ArrayList<>();
+        List<Subtitle> currentLine = new ArrayList<>();
         StringBuilder currentText = new StringBuilder();
         SubtitleType currentSubtitleType = SubtitleType.NORMAL;
 
@@ -249,7 +246,7 @@ public class SrtFileParserImpl implements SrtFileParser {
                         amountCharsToSkip = NEW_LINE_DELIMITER.length();
                         //clone list
                         if (currentText.length() != 0) {
-                            currentLine.add(new SubtitleSegment(currentSubtitleType, currentText.toString()));
+                            currentLine.add(new Subtitle(currentSubtitleType, currentText.toString()));
                             currentText.setLength(0);
                         }
                         result.add(new ArrayList<>(currentLine));
@@ -257,8 +254,8 @@ public class SrtFileParserImpl implements SrtFileParser {
                         break;
                     case ITALIC_END_DELIMITER:
                         amountCharsToSkip = ITALIC_END_DELIMITER.length();
-                        SubtitleSegment subtitleSegment = new SubtitleSegment(SubtitleType.ITALIC, currentText.toString());
-                        currentLine.add(subtitleSegment);
+                        Subtitle subtitle = new Subtitle(SubtitleType.ITALIC, currentText.toString());
+                        currentLine.add(subtitle);
                         //clear string builder
                         currentText.setLength(0);
                         currentSubtitleType = SubtitleType.NORMAL;
@@ -266,7 +263,7 @@ public class SrtFileParserImpl implements SrtFileParser {
                     default:
                         throw new InvalidDelimiterException(subtitleString.substring(i) + " is an invalid delimiter");
                 }
-                //-1 weil die schleife ja noch i um 1 inkrementiert
+                // -1 bc loop will increment 1
                 i += amountCharsToSkip - 1;
             } else {
                 currentText.append(currentChar);

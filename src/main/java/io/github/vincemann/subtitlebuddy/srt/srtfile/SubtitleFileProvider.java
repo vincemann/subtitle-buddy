@@ -56,7 +56,7 @@ public class SubtitleFileProvider implements Provider<SubtitleFile> {
         try {
             try {
                 File file =  fileChooser.letUserChooseFile();
-                List<SubtitleParagraph> subtitles = srtFileParser.parseSrtFile(file);
+                List<SubtitleParagraph> subtitles = srtFileParser.parseFile(file);
                 this.chosenFile = new SubtitleFileImpl(subtitles);
                 return chosenFile;
 //                return new SubtitleFileImpl(subtitles);
