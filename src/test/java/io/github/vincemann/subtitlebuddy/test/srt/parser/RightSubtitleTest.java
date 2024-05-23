@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.test.srt.fileparser;
+package io.github.vincemann.subtitlebuddy.test.srt.parser;
 
 import io.github.vincemann.subtitlebuddy.srt.Subtitle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
@@ -11,7 +11,6 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @RunWith(Parameterized.class)
@@ -65,6 +64,15 @@ public class RightSubtitleTest {
                 // 11
                 {TEST_TEXT + "<n>",
                         Arrays.asList(new Subtitle(SubtitleType.NORMAL, TEST_TEXT),Subtitle.NEWLINE)},
+
+                {"<i><n>"+TEST_TEXT+"</i><n>"+TEST_TEXT2,
+                        Arrays.asList(
+                                Subtitle.NEWLINE,
+                                new Subtitle(SubtitleType.ITALIC, TEST_TEXT)
+                                ,Subtitle.NEWLINE,
+                                new Subtitle(SubtitleType.NORMAL, TEST_TEXT2)
+                        )
+                },
                 // 12
                 {"<n>" + TEST_TEXT + "<n>",
                         Arrays.asList(Subtitle.NEWLINE,new Subtitle(SubtitleType.NORMAL, TEST_TEXT),Subtitle.NEWLINE)},

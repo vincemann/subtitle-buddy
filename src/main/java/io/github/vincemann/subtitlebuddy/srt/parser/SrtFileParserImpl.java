@@ -12,16 +12,14 @@ import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Singleton
 public class SrtFileParserImpl implements SrtFileParser {
 
+    private static final int END_ID = 9999;
 
     private Charset encoding = StandardCharsets.UTF_8;
 
@@ -34,6 +32,8 @@ public class SrtFileParserImpl implements SrtFileParser {
     private List<SubtitleParagraph> subtitles = new ArrayList<>();
 
     private SubtitleTextParser subtitleTextParser;
+
+    private boolean eof = false;
 
     @Inject
     public SrtFileParserImpl(SrtOptions options, AlertDialog alertDialog, SubtitleTextParser subtitleTextParser) {
@@ -71,8 +71,13 @@ public class SrtFileParserImpl implements SrtFileParser {
         }
         try {
             while (scanner.hasNextLine()) {
+                if (eof)
+                    break;
                 // read id
                 this.currentId = readIdLine(scanner);
+                if (this.currentId == END_ID){
+                    break;
+                }
 //                System.err.println("read id: " + this.currentId);
 
                 // read timestamps
@@ -104,10 +109,21 @@ public class SrtFileParserImpl implements SrtFileParser {
         return subtitles;
     }
 
-    // dont add empty subtitle lines to avoid cluttering
-    // usually the last line is empty and not needed
-    // some kinda malformed srt files also have intermediate empty lines - skip those
-    // also by reading until the next id, I make sure these kinda malformed files are read correctly
+    private SubtitleText readSubtitleText(Scanner scanner) throws InvalidDelimiterException, EOFException {
+        String subtitleString = readAndFormatSubtitleString(scanner);
+        return subtitleTextParser.parse(subtitleString);
+    }
+
+    /**
+     * Read until next id is encountered.
+     * Also formats by replacing newlines with NEW_LINE_DELIMITER expected by subtitleTextParser.
+     * Makes sure no trailing NEW_LINE_DELIMITER are present.
+     */
+    private String readAndFormatSubtitleString(Scanner scanner) throws EOFException {
+        // dont add empty subtitle lines to avoid cluttering
+        // usually the last line is empty and not needed
+        // some kinda malformed srt files also have intermediate empty lines - skip those
+        // also by reading until the next id, I make sure these kinda malformed files are read correctly
                 /*
                 example of proper
 
@@ -123,19 +139,32 @@ public class SrtFileParserImpl implements SrtFileParser {
                  *
                  * id+1
                  */
-    private SubtitleText readSubtitleText(Scanner scanner) throws InvalidDelimiterException, EOFException {
         StringBuilder subtitleString = new StringBuilder();
-        String line = readLine(scanner);
-        while (!isNextId(line)) {
-            if (!line.isEmpty()) {
-                subtitleString.append(line);
-                subtitleString.append(SubtitleTextParser.NEW_LINE_DELIMITER);
+        try {
+            String line = readLine(scanner);
+            boolean firstLine = true;
+            while (!isNextId(line)) {
+                if (!line.isEmpty()) {
+                    if (!firstLine){
+                        subtitleString.append(SubtitleTextParser.NEW_LINE_DELIMITER);
+                    }
+                    subtitleString.append(line);
+                    firstLine = false;
+                }
+                line = readLine(scanner);
+                if (isEndId(line)){
+                    // end found
+                    this.eof = true;
+                    break;
+                }
             }
-            line = readLine(scanner);
+            // we consumed the id line already, so store it for next iteration, for readIdLine to pick it up
+            currentIdLine = line;
+            return subtitleString.toString();
+        }catch (EOFException e){
+            // save last subtitle
+            return subtitleString.toString();
         }
-        // we consumed the id line already, so store it for next iteration, for readIdLine to pick it up
-        currentIdLine = line;
-        return subtitleTextParser.parse(subtitleString.toString());
     }
 
     // sometimes we have encoding information in first line, so we need to do this a more robust way
@@ -151,11 +180,22 @@ public class SrtFileParserImpl implements SrtFileParser {
     }
 
     private String readLine(Scanner scanner) throws EOFException {
-        if (!scanner.hasNext())
+        if (!scanner.hasNext()){
+            eof = true;
             throw new EOFException();
+        }
         String line = scanner.nextLine();
         linesRead++;
         return line;
+    }
+
+    private boolean isEndId(String line) {
+        try {
+            int id = parseId(line);
+            return id == END_ID;
+        } catch (InvalidIdException e) {
+            return false;
+        }
     }
 
     private boolean isNextId(String line) {
@@ -220,7 +260,6 @@ public class SrtFileParserImpl implements SrtFileParser {
 //        }
 //        return hex.toString().trim();
 //    }
-
 
 
 }

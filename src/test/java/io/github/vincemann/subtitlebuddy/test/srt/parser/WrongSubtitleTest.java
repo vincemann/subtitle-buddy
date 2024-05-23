@@ -1,9 +1,7 @@
-package io.github.vincemann.subtitlebuddy.test.srt.fileparser;
+package io.github.vincemann.subtitlebuddy.test.srt.parser;
 
-import io.github.vincemann.subtitlebuddy.srt.Subtitle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.parser.InvalidDelimiterException;
-import io.github.vincemann.subtitlebuddy.srt.parser.SrtFileParserImpl;
 import io.github.vincemann.subtitlebuddy.srt.parser.SubtitleTextParserImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +9,6 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 @RunWith(Parameterized.class)
 public class WrongSubtitleTest {

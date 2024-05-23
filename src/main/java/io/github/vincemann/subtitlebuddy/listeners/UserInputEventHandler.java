@@ -12,7 +12,7 @@ import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKeyEventHandler;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.MouseClickedEventHandler;
 import io.github.vincemann.subtitlebuddy.options.*;
-import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
+import io.github.vincemann.subtitlebuddy.srt.parser.SrtPlayer;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import lombok.extern.log4j.Log4j2;
 
@@ -23,7 +23,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEventHandler {
 
-    private SrtParser srtParser;
+    private SrtPlayer srtPlayer;
     private boolean nextClickCounts;
     private SrtDisplayerProvider srtDisplayerProvider;
     private EventBus eventBus;
@@ -33,13 +33,13 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
 
 
     @Inject
-    public UserInputEventHandler(SrtParser srtParser,
+    public UserInputEventHandler(SrtPlayer srtPlayer,
                                  SrtDisplayerOptions options,
                                  SrtDisplayerProvider srtDisplayerProvider,
                                  EventBus eventBus,
                                  OptionsManager optionsManager
     ) {
-        this.srtParser = srtParser;
+        this.srtPlayer = srtPlayer;
         this.options = options;
         this.optionsManager = optionsManager;
         this.nextClickCounts = false;
@@ -139,16 +139,16 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
 
     private void switchParserRunningState() {
         log.debug("switching parsers running state");
-        synchronized (srtParser) {
-            log.debug("srt parser state: " + srtParser.getCurrentState());
-            if (srtParser.getCurrentState().equals(RunningState.STATE_RUNNING)) {
+        synchronized (srtPlayer) {
+            log.debug("srt parser state: " + srtPlayer.getCurrentState());
+            if (srtPlayer.getCurrentState().equals(RunningState.STATE_RUNNING)) {
                 log.trace("stopping srtParser");
-                srtParser.stop();
-            } else if (srtParser.getCurrentState().equals(RunningState.STATE_SUSPENDED) || srtParser.getCurrentState().equals(RunningState.STATE_UNSTARTED)) {
+                srtPlayer.stop();
+            } else if (srtPlayer.getCurrentState().equals(RunningState.STATE_SUSPENDED) || srtPlayer.getCurrentState().equals(RunningState.STATE_UNSTARTED)) {
                 log.trace("starting srtParser");
-                srtParser.start();
+                srtPlayer.start();
             } else {
-                log.error("invalid state for switching ParserState : " + srtParser.getCurrentState().toString());
+                log.error("invalid state for switching ParserState : " + srtPlayer.getCurrentState().toString());
             }
         }
     }

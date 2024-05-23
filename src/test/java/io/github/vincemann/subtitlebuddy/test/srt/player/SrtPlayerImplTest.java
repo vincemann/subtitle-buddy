@@ -1,12 +1,12 @@
-package io.github.vincemann.subtitlebuddy.test.srt.parser;
+package io.github.vincemann.subtitlebuddy.test.srt.player;
 
 import io.github.vincemann.subtitlebuddy.srt.SrtOptions;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.Timestamp;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtFileParserImpl;
-import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
-import io.github.vincemann.subtitlebuddy.srt.parser.SrtParserImpl;
+import io.github.vincemann.subtitlebuddy.srt.parser.SrtPlayer;
+import io.github.vincemann.subtitlebuddy.srt.parser.SrtPlayerImpl;
 import io.github.vincemann.subtitlebuddy.srt.parser.SubtitleTextParserImpl;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFile;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFileImpl;
@@ -24,9 +24,9 @@ import java.util.Optional;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SrtParserImplTest {
+public class SrtPlayerImplTest {
 
-    private SrtParser parser;
+    private SrtPlayer parser;
 
     @Before
     public void setUp() throws Exception {
@@ -37,7 +37,7 @@ public class SrtParserImplTest {
         SrtOptions options = mock(SrtOptions.class);
         when(options.getDefaultSubtitle())
                 .thenReturn("###");
-        this.parser= new SrtParserImpl(subtitleFile,new StopWatchImpl(),options);
+        this.parser= new SrtPlayerImpl(subtitleFile,new StopWatchImpl(),options);
     }
 
     @Test

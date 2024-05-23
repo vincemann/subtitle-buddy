@@ -7,6 +7,14 @@ public class StringUtils {
 
     private StringUtils(){}
 
+    public static void removeLastNChars(StringBuilder sb, int n){
+        if (n >= 0 && n <= sb.length()) {
+            sb.delete(sb.length() - n, sb.length());
+        } else {
+            throw new IllegalArgumentException("Invalid number of characters to remove.");
+        }
+    }
+
     public static String findFirstWord(String wordSequence){
         checkArgument(wordSequence!=null);
         String noPrefixSpacesWordSequence = eliminatePrefixSpaces(wordSequence);

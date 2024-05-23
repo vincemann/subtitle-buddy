@@ -9,7 +9,7 @@ import io.github.vincemann.subtitlebuddy.srt.Timestamp;
 import java.util.Optional;
 
 
-public interface SrtParser {
+public interface SrtPlayer {
 
     void start();
 

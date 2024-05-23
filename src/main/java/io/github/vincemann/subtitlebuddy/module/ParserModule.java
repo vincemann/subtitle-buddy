@@ -42,7 +42,7 @@ public class ParserModule extends PropertyFilesModule {
         bind(SrtFileParser.class).to(SrtFileParserImpl.class);
         bind(StopWatch.class).to(StopWatchImpl.class);
         bind(SubtitleFile.class).toProvider(SubtitleFileProvider.class);
-        bind(SrtParser.class).to(SrtParserImpl.class);
+        bind(SrtPlayer.class).to(SrtPlayerImpl.class);
         bind(EventBus.class).to(EventBusImpl.class);
         bind(SrtParserEngine.class).to(SrtParserEngineImpl.class);
 

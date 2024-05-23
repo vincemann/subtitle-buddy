@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Log4j2
 @Singleton
-public class SrtParserImpl implements SrtParser {
+public class SrtPlayerImpl implements SrtPlayer {
     private static final long NANO_2_MILLIS = 1000000L;
 
     private SubtitleText currentSubtitleText;
@@ -27,7 +27,7 @@ public class SrtParserImpl implements SrtParser {
     private Optional<SubtitleParagraph> currentSubtitle = Optional.empty();
 
     @Inject
-    public SrtParserImpl(SubtitleFile subtitleFile, StopWatch stopWatch, SrtOptions options) {
+    public SrtPlayerImpl(SubtitleFile subtitleFile, StopWatch stopWatch, SrtOptions options) {
         this.subtitleFile = subtitleFile;
         this.stopWatch = stopWatch;
         this.defaultSubtitleText = new SubtitleText(

@@ -6,7 +6,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
-import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
+import io.github.vincemann.subtitlebuddy.srt.parser.SrtPlayer;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
 import io.github.vincemann.subtitlebuddy.events.DoneParsingEvent;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
@@ -24,15 +24,15 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
 
     private Thread updaterThread;
     private boolean stopped = false;
-    private SrtParser srtParser;
+    private SrtPlayer srtPlayer;
     private Provider<SrtDisplayer> srtDisplayerProvider;
     private EventBus eventBus;
     private SubtitleText lastSubtitleText;
 
     @Inject
-    public SrtParserEngineImpl(@Named(PropertyFileKeys.UPDATER_DELAY) long updateDelay, SrtParser srtParser, Provider<SrtDisplayer> srtDisplayerProvider, EventBus eventBus) {
+    public SrtParserEngineImpl(@Named(PropertyFileKeys.UPDATER_DELAY) long updateDelay, SrtPlayer srtPlayer, Provider<SrtDisplayer> srtDisplayerProvider, EventBus eventBus) {
         super(updateDelay);
-        this.srtParser = srtParser;
+        this.srtPlayer = srtPlayer;
         this.srtDisplayerProvider = srtDisplayerProvider;
         this.eventBus = eventBus;
         this.updaterThread = new Thread(this);
@@ -69,13 +69,13 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
     private void updateProgram() {
         SrtDisplayer srtDisplayer = this.srtDisplayerProvider.get();
         if (srtDisplayer instanceof SettingsSrtDisplayer) {
-            ((SettingsSrtDisplayer) srtDisplayer).setTime(srtParser.getTime());
+            ((SettingsSrtDisplayer) srtDisplayer).setTime(srtPlayer.getTime());
         }
 
         try {
             log.trace("updater updating current Subtitle");
-            srtParser.updateCurrentSubtitle();
-            SubtitleText currSubtitleText = srtParser.getCurrentSubtitleText();
+            srtPlayer.updateCurrentSubtitle();
+            SubtitleText currSubtitleText = srtPlayer.getCurrentSubtitleText();
 
             //log.trace("new subtitle is present: " + currSubtitleText);
             if (lastSubtitleText != null) {
@@ -102,7 +102,7 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
     public void update() {
         log.debug("manual update for srt parser");
         SrtDisplayer srtDisplayer = this.srtDisplayerProvider.get();
-        SubtitleText currSubtitleText = srtParser.getCurrentSubtitleText();
+        SubtitleText currSubtitleText = srtPlayer.getCurrentSubtitleText();
         srtDisplayer.displaySubtitle(currSubtitleText);
     }
 }

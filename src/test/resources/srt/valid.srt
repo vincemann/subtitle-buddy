@@ -398,7 +398,7 @@ He's all I have.
 
 92
 00:08:32,429 --> 00:08:34,555
-Thank you, Mr. Rabinowitz.
+Thank you, <i>Mr. Rabinowitz.</i>
 
 93
 00:08:36,224 --> 00:08:39,560
@@ -4553,7 +4553,7 @@ Mrs. Goldfarb?
 
 1032
 01:28:50,038 --> 01:28:51,622
-You all right?
+You all right?<n>Whats Wrong?
 
 1033
 01:28:54,000 --> 01:28:58,962
@@ -4769,8 +4769,9 @@ with you New York dope fiends.
 
 1079
 01:31:43,586 --> 01:31:45,879
-You got a rotten attitude,
-you know that, man?
+<i>
+You got a rotten attitude,</i>
+you know that, man?<n>
 
 1080
 01:31:46,881 --> 01:31:50,092

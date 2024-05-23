@@ -14,12 +14,12 @@ import com.google.inject.Singleton;
 public class SrtParserEventHandlerImpl implements SrtParserEventHandler {
 
     private SrtParserEngine srtParserEngine;
-    private SrtParser srtParser;
+    private SrtPlayer srtPlayer;
 
     @Inject
-    public SrtParserEventHandlerImpl(SrtParserEngine srtParserEngine, SrtParser srtParser) {
+    public SrtParserEventHandlerImpl(SrtParserEngine srtParserEngine, SrtPlayer srtPlayer) {
         this.srtParserEngine = srtParserEngine;
-        this.srtParser = srtParser;
+        this.srtPlayer = srtPlayer;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class SrtParserEventHandlerImpl implements SrtParserEventHandler {
     public void handleDoneParsingEvent(DoneParsingEvent doneParsingEvent) {
         log.info("DoneParsingEvent arrived -> stopping srtParser und updater");
         srtParserEngine.stop();
-        srtParser.reset();
+        srtPlayer.reset();
     }
 
     @Subscribe

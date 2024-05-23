@@ -14,7 +14,7 @@ import io.github.vincemann.subtitlebuddy.gui.*;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.srt.*;
 import io.github.vincemann.subtitlebuddy.srt.parser.InvalidTimestampFormatException;
-import io.github.vincemann.subtitlebuddy.srt.parser.SrtParser;
+import io.github.vincemann.subtitlebuddy.srt.parser.SrtPlayer;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -77,7 +77,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     private ImageView settingsClickWarning;
 
 
-    private SrtParser srtParser;
+    private SrtPlayer srtPlayer;
 
     private Timestamp lastTimeStamp;
 
@@ -105,7 +105,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
 
     @Inject
-    public SettingsStageController(SrtParser srtParser,
+    public SettingsStageController(SrtPlayer srtPlayer,
                                    FontManager fontManager,
                                    WindowManager windowManager,
                                    SrtDisplayerOptions options, FontOptions fontOptions, EventBus eventBus,
@@ -116,7 +116,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                                    @Named(UIStringsKeys.WRONG_TIMESTAMP_FORMAT_TEXT) String wrongTimeStampFormatText,
                                    @Named(UIStringsKeys.TIMESTAMP_JUMP_HINT_TEXT) String timestampJumpHintTextString
     ) {
-        this.srtParser = srtParser;
+        this.srtPlayer = srtPlayer;
         this.options = options;
         this.fontOptions = fontOptions;
         this.eventBus = eventBus;
@@ -191,7 +191,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         EventHandler<MouseEvent> startButtonPressedHandler = event -> {
             try {
                 log.debug("start button pressed");
-                srtParser.start();
+                srtPlayer.start();
             } catch (IllegalStateException e) {
                 log.error(e.getMessage());
             }
@@ -200,7 +200,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         EventHandler<MouseEvent> stopButtonPressedHandler = event -> {
             try {
                 log.debug("stop button pressed");
-                srtParser.stop();
+                srtPlayer.stop();
             } catch (IllegalStateException e) {
                 log.error(e.getMessage());
             }
@@ -209,7 +209,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         EventHandler<MouseEvent> fastForwardButtonClickedHandler = event -> {
             try {
                 log.debug("fast forward pressed");
-                srtParser.forward(FORWARD_DELTA);
+                srtPlayer.forward(FORWARD_DELTA);
             } catch (IllegalStateException e) {
                 log.error(e.getMessage());
             }
@@ -218,7 +218,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         EventHandler<MouseEvent> fastBackwardButtonClickedHandler = event -> {
             try {
                 log.debug("fast backward pressed");
-                srtParser.forward(-FORWARD_DELTA);
+                srtPlayer.forward(-FORWARD_DELTA);
             } catch (IllegalStateException e) {
                 log.error(e.getMessage());
             }
@@ -253,7 +253,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             log.debug("timestamp string entered: " + timeField.getText());
             Timestamp timestamp = new Timestamp(timeField.getText() + ",000");
             log.debug("user set new timestamp: " + timestamp);
-            srtParser.jumpToTimestamp(timestamp);
+            srtPlayer.jumpToTimestamp(timestamp);
             setTime(timestamp);
         } catch (InvalidTimestampFormatException e) {
             log.error("Wrong timeStamp entered: " + e.getMessage());

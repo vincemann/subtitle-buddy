@@ -11,12 +11,20 @@ import java.util.List;
 
 public class SubtitleTextParserImpl implements SubtitleTextParser {
 
-    private List<Subtitle> result = new ArrayList<>();
-    private Subtitle currentSubtitle = null;
-    private StringBuilder currentText = new StringBuilder();
-    private SubtitleType currentSubtitleType = SubtitleType.NORMAL;
+    private List<Subtitle> result;
+    private Subtitle currentSubtitle;
+    private StringBuilder currentText;
+    private SubtitleType currentSubtitleType;
 
-    private int amountCharsToSkip;
+    private int amountCharsToSkip = 0;
+
+    public SubtitleTextParserImpl() {
+        initState();
+    }
+
+    private void initState(){
+        resetState();
+    }
 
     @Override
     public SubtitleText parse(String subtitleString) throws InvalidDelimiterException {
@@ -49,7 +57,17 @@ public class SubtitleTextParserImpl implements SubtitleTextParser {
             }
         }
         addCurrSubtitle();
-        return new SubtitleText(result);
+        SubtitleText result = new SubtitleText(this.result);
+        resetState();
+        return result;
+    }
+
+    private void resetState(){
+        result = new ArrayList<>();
+        currentSubtitle = null;
+        currentText = new StringBuilder();
+        currentSubtitleType = SubtitleType.NORMAL;
+        amountCharsToSkip = 0;
     }
 
     private void skipDelimiter(String del){
@@ -81,7 +99,9 @@ public class SubtitleTextParserImpl implements SubtitleTextParser {
                 count++;
             }
 
-            Preconditions.checkState(delimiter.length() >= 3 && delimiter.length() <= 4);
+            boolean delimiterValidLength = delimiter.length() >= 3 && delimiter.length() <= 4;
+            if (!delimiterValidLength)
+                throw new InvalidDelimiterException("invalid length delimiter: " + delimiter);
             switch (delimiter.toString()) {
                 case ITALIC_START_DELIMITER:
                     return SrtDelimiter.ITALIC_START_DELIMITER;
