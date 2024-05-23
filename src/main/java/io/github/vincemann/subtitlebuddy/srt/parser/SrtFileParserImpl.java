@@ -41,7 +41,8 @@ public class SrtFileParserImpl implements SrtFileParser {
         initUserDefinedEncoding(options.getEncoding(), alertDialog);
     }
 
-    public SrtFileParserImpl() {
+    public SrtFileParserImpl(SubtitleTextParser subtitleTextParser) {
+        this.subtitleTextParser = subtitleTextParser;
     }
 
     private void initUserDefinedEncoding(String encodingFromConfigFile, AlertDialog alertDialog) {
@@ -83,7 +84,7 @@ public class SrtFileParserImpl implements SrtFileParser {
 //                System.err.println("read text: " + text);
 
                 // add finished paragraph
-                SubtitleParagraph paragraph = new SubtitleParagraph(timestamps, text);
+                SubtitleParagraph paragraph = new SubtitleParagraph(currentId, timestamps, text);
                 subtitles.add(paragraph);
 //                System.err.println("added new subtitle paragraph: " + paragraph);
             }
@@ -94,7 +95,7 @@ public class SrtFileParserImpl implements SrtFileParser {
         } catch (EOFException e) {
             if (timestamps != null && text != null) {
                 // subtitle is good enough add it and close parser
-                subtitles.add(new SubtitleParagraph(timestamps, text));
+                subtitles.add(new SubtitleParagraph(currentId, timestamps, text));
             }
             // if subtitle is too broken, dont add
         } finally {

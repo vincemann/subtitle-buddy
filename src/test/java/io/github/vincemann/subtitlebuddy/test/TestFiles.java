@@ -2,7 +2,7 @@ package io.github.vincemann.subtitlebuddy.test;
 
 public class TestFiles {
 
-    public static final String CORRUPTED_SRT_FILE_PATH = "src/test/resources/srt/corrupted.srt";
+    public static final String CORRUPTED_END_SRT_FILE_PATH = "src/test/resources/srt/corrupted.srt";
     public static final String VALID_SRT_FILE_PATH = "src/test/resources/srt/valid.srt";
     public static final String INVALID_SRT_FILE_PATH = "src/test/resources/srt/invalid.srt";
     public static final String EMPTY_LINES_AT_END_SRT_FILE_PATH = "src/test/resources/srt/emptyLinesAtEnd.srt";

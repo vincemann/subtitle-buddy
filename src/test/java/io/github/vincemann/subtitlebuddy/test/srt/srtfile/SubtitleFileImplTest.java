@@ -3,6 +3,7 @@ package io.github.vincemann.subtitlebuddy.test.srt.srtfile;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 import io.github.vincemann.subtitlebuddy.srt.Timestamp;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtFileParserImpl;
+import io.github.vincemann.subtitlebuddy.srt.parser.SubtitleTextParserImpl;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFile;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFileImpl;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
@@ -21,7 +22,7 @@ public class SubtitleFileImplTest {
     @Before
     public void setUp() throws Exception {
         this.subtitleFile= new SubtitleFileImpl(
-                new SrtFileParserImpl().parseFile(
+                new SrtFileParserImpl(new SubtitleTextParserImpl()).parseFile(
                         new File(TestFiles.VALID_SRT_FILE_PATH))
         );
     }

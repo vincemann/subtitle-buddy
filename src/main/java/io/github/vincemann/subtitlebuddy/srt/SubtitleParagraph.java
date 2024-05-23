@@ -15,17 +15,20 @@ import java.util.*;
 @Getter
 @Setter
 public class SubtitleParagraph {
+	private final int id;
 	private final SubtitleTimestamps timestamps;
 	private final SubtitleText text;
 
 	/* Create a new Subtitle with the given start and end times. */
-	public SubtitleParagraph(SubtitleTimestamps timestamps) {
+	public SubtitleParagraph(int id, SubtitleTimestamps timestamps) {
+		this.id = id;
 		this.timestamps = timestamps;
 		this.text = new SubtitleText(new ArrayList<>());
 	}
 
-    public SubtitleParagraph(SubtitleTimestamps timestamps, SubtitleText text) {
-        this.timestamps = timestamps;
+    public SubtitleParagraph(int id, SubtitleTimestamps timestamps, SubtitleText text) {
+		this.id = id;
+		this.timestamps = timestamps;
         this.text = text;
     }
 
@@ -40,9 +43,23 @@ public class SubtitleParagraph {
     @Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
-		for(Subtitle subtitle : text.getSubtitles()){
-			result.append(subtitle.getText());
-			result.append(System.lineSeparator());
+		result.append("id:").append(id).append("\n");
+		result.append(timestamps.toString()).append("\n");
+		result.append("amount subs: ").append(text.getSubtitles().size()).append("\n");
+		result.append("text:\n");
+		if (text.getSubtitles().size() < 6){
+			for(Subtitle subtitle : text.getSubtitles()){
+				result.append(subtitle.getText());
+			}
+		}else{
+			int i = 0;
+			for(Subtitle subtitle : text.getSubtitles()){
+				if (i >= 6)
+					break;
+				result.append(subtitle.getText());
+				i++;
+			}
+			result.append("...");
 		}
 		return result.toString();
 	}
