@@ -192,7 +192,7 @@ public class SrtFileParserImpl implements SrtFileParser {
     private boolean isEndId(String line) {
         try {
             int id = parseId(line);
-            return id == END_ID;
+            return id == END_ID || (id == 0 && currentId > 10);
         } catch (InvalidIdException e) {
             return false;
         }

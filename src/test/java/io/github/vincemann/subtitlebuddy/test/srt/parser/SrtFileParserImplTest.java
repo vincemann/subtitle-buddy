@@ -211,6 +211,30 @@ public class SrtFileParserImplTest {
         performBasicChecks(subtitles,1217);
     }
 
+    @Test
+    public void testShutterIsland() throws CorruptedSrtFileException, FileNotFoundException {
+        List<SubtitleParagraph> subtitles = srtFileParser.parseFile(shutterIsland);
+        performBasicChecks(subtitles,1575);
+    }
+
+    @Test
+    public void testTitanic1() throws CorruptedSrtFileException, FileNotFoundException {
+        List<SubtitleParagraph> subtitles = srtFileParser.parseFile(titanicPart1);
+        performBasicChecks(subtitles,826);
+    }
+
+    @Test
+    public void testTitanic2() throws CorruptedSrtFileException, FileNotFoundException {
+        List<SubtitleParagraph> subtitles = srtFileParser.parseFile(titanicPart2);
+        performBasicChecks(subtitles,777);
+    }
+
+    @Test
+    public void testTitanic3() throws CorruptedSrtFileException, FileNotFoundException {
+        List<SubtitleParagraph> subtitles = srtFileParser.parseFile(titanicPart3);
+        performBasicChecks(subtitles,570);
+    }
+
     private void performBasicChecks(List<SubtitleParagraph> subtitles, int lastId, int... startsWith){
         int start;
         if (startsWith.length == 0)
@@ -222,9 +246,9 @@ public class SrtFileParserImplTest {
         Assert.assertEquals(start == 1 ? lastId : lastId+1, subtitles.size());
         Assert.assertEquals(start, subtitles.get(0).getId());
         for (int i = 1; i <= lastId; i++) {
-            SubtitleParagraph sub = subtitles.get(i - start);
-            System.err.println("checking sub at pos: " + String.valueOf(i-start));
-            System.err.println(sub);
+//            SubtitleParagraph sub = subtitles.get(i - start);
+//            System.err.println("checking sub at pos: " + String.valueOf(i-start));
+//            System.err.println(sub);
             Assert.assertEquals(i, subtitles.get(i - start).getId());
         }
     }
@@ -241,8 +265,8 @@ public class SrtFileParserImplTest {
 
     private void assertParagraphEqual(List<SubtitleParagraph> paragraphs, int pos, SubtitleParagraph expected) {
         SubtitleParagraph actual = paragraphs.get(pos);
-        System.err.println("expected paragraph at pos: " + pos + ": \n" + expected);
-        System.err.println("actual paragraph at pos: " + pos + ": \n" + actual);
+//        System.err.println("expected paragraph at pos: " + pos + ": \n" + expected);
+//        System.err.println("actual paragraph at pos: " + pos + ": \n" + actual);
         Assert.assertEquals(expected, actual);
     }
 
