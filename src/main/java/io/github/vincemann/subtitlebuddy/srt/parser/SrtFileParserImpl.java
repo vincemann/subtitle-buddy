@@ -75,9 +75,6 @@ public class SrtFileParserImpl implements SrtFileParser {
                     break;
                 // read id
                 this.currentId = readIdLine(scanner);
-                if (this.currentId == END_ID){
-                    break;
-                }
 //                System.err.println("read id: " + this.currentId);
 
                 // read timestamps
@@ -148,7 +145,7 @@ public class SrtFileParserImpl implements SrtFileParser {
                     if (!firstLine){
                         subtitleString.append(SubtitleTextParser.NEW_LINE_DELIMITER);
                     }
-                    subtitleString.append(line);
+                    subtitleString.append(removeUnsupportedTags(line));
                     firstLine = false;
                 }
                 line = readLine(scanner);
@@ -166,6 +163,31 @@ public class SrtFileParserImpl implements SrtFileParser {
             return subtitleString.toString();
         }
     }
+
+    /**
+     * example:
+     * line = "<font color="#808080">JAMES :</font> We're building a house on the cliff!"
+     *
+     * Not supported - remove meta information from line
+     * Only <i>...</i> and <n> is supported for now.
+     *
+     */
+    public String removeUnsupportedTags(String line){
+        // This regex matches tags that are not <i>...</i> or <n>
+        String regex = "<(?!/i>|i>|n>)[^>]+>";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(line);
+
+        // Remove all tags that are not <i>...</i> or <n>
+        StringBuilder result = new StringBuilder();
+        while (matcher.find()) {
+            matcher.appendReplacement(result, "");
+        }
+        matcher.appendTail(result);
+        return result.toString();
+    }
+
 
     // sometimes we have encoding information in first line, so we need to do this a more robust way
     private String readUntilFirstId(Scanner scanner) throws EOFException {

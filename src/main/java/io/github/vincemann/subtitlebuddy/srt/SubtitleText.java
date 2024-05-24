@@ -9,7 +9,5 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode
 public class SubtitleText {
-
-    @NonNull
     private final List<Subtitle> subtitles;
 }

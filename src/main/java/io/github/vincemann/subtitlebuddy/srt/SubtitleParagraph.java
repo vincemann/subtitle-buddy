@@ -1,9 +1,11 @@
 package io.github.vincemann.subtitlebuddy.srt;
 
+import javafx.scene.paint.Color;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.awt.*;
 import java.util.*;
 
 /**

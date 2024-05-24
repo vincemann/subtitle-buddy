@@ -30,6 +30,14 @@ public class SrtFileParserImplTest {
     private File titanicPart3;
     private File avatar;
 
+    private File badnaam;
+    private File fanny;
+    private File godzilla;
+    private File goodsam;
+    private File inception;
+    private File kgf;
+    private File potter2;
+
     @Before
     public void init() {
         this.srtFileParser = new SrtFileParserImpl(new SubtitleTextParserImpl());
@@ -49,6 +57,13 @@ public class SrtFileParserImplTest {
         this.titanicPart2 = new File("src/test/resources/srt/example/titanic-part2.srt");
         this.titanicPart3 = new File("src/test/resources/srt/example/titanic-part3.srt");
         this.avatar = new File("src/test/resources/srt/example/avatar.srt");
+        this.badnaam = new File("src/test/resources/srt/example/badnaam.srt");
+        this.fanny = new File("src/test/resources/srt/example/fanny.srt");
+        this.godzilla = new File("src/test/resources/srt/example/godzilla.srt");
+        this.goodsam = new File("src/test/resources/srt/example/goodsam.srt");
+        this.inception = new File("src/test/resources/srt/example/inception.srt");
+        this.kgf = new File("src/test/resources/srt/example/kgf.srt");
+        this.potter2 = new File("src/test/resources/srt/example/potter2.srt");
     }
 
 
@@ -234,6 +249,49 @@ public class SrtFileParserImplTest {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(titanicPart3);
         performBasicChecks(subtitles,570);
     }
+
+    @Test
+    public void testBaadnam() throws CorruptedSrtFileException, FileNotFoundException {
+        List<SubtitleParagraph> subtitles = srtFileParser.parseFile(badnaam);
+        performBasicChecks(subtitles,1514);
+    }
+
+    @Test
+    public void testFanny() throws CorruptedSrtFileException, FileNotFoundException {
+        List<SubtitleParagraph> subtitles = srtFileParser.parseFile(fanny);
+        performBasicChecks(subtitles,1577);
+    }
+
+    @Test
+    public void testGodzilla() throws CorruptedSrtFileException, FileNotFoundException {
+        List<SubtitleParagraph> subtitles = srtFileParser.parseFile(godzilla);
+        performBasicChecks(subtitles,902);
+    }
+
+    @Test
+    public void testGoodSam() throws CorruptedSrtFileException, FileNotFoundException {
+        List<SubtitleParagraph> subtitles = srtFileParser.parseFile(goodsam);
+        performBasicChecks(subtitles,1838);
+    }
+
+    @Test
+    public void testInception() throws CorruptedSrtFileException, FileNotFoundException {
+        List<SubtitleParagraph> subtitles = srtFileParser.parseFile(inception);
+        performBasicChecks(subtitles,1738);
+    }
+
+    @Test
+    public void testKgf() throws CorruptedSrtFileException, FileNotFoundException {
+        List<SubtitleParagraph> subtitles = srtFileParser.parseFile(kgf);
+        performBasicChecks(subtitles,2245);
+    }
+
+    @Test
+    public void testPotter2() throws CorruptedSrtFileException, FileNotFoundException {
+        List<SubtitleParagraph> subtitles = srtFileParser.parseFile(potter2);
+        performBasicChecks(subtitles,592);
+    }
+
 
     private void performBasicChecks(List<SubtitleParagraph> subtitles, int lastId, int... startsWith){
         int start;

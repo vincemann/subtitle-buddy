@@ -4,12 +4,12 @@ import io.github.vincemann.subtitlebuddy.srt.parser.InvalidTimestampFormatExcept
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+// todo replace with java.time or something
 @ToString
 @EqualsAndHashCode
 public class Timestamp implements Comparable<Timestamp> {
     private long hours, minutes, seconds, milliseconds;
 
-    /* Create a new timestamp at the given time. */
     public Timestamp(long hours, long minutes, long seconds, long milliseconds) {
         this.setHours(hours);
         this.setMinutes(minutes);
@@ -60,9 +60,7 @@ public class Timestamp implements Comparable<Timestamp> {
     public String toAlarmClockString(){
         return String.format("%02d", hours) + ":" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
     }
-    /**
-     * sorgt dafür dass seconds nicht über 60 usw
-     */
+
     private void adjustTimeStamp() {
         while(this.milliseconds>=1000) {
             this.seconds++;
@@ -77,7 +75,7 @@ public class Timestamp implements Comparable<Timestamp> {
             this.minutes-=60;
         }
         if(this.hours>=99) {
-            throw new IllegalArgumentException("Ein Timestamp mit über 99 Stunden wurde erzeugt");
+            throw new IllegalArgumentException();
         }
         if(this.isNegative()) {
             long[] backup = new long[]{this.milliseconds, this.seconds, this.minutes, this.hours};
