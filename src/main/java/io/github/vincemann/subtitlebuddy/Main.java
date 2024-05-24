@@ -18,7 +18,6 @@ import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.events.EventHandlerRegistrar;
 import io.github.vincemann.subtitlebuddy.gui.Window;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
-import io.github.vincemann.subtitlebuddy.gui.WindowManagerImpl;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieStageController;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieStageFactory;
@@ -83,16 +82,17 @@ public class Main extends Application {
         PropertiesFile properties = createPropertiesFile(configDir);
         UIStringsFile strings = readUIStrings();
 
-        injector = createInjector(properties,strings);
+        injector = createInjector(properties, strings);
 
-
-        initFonts();
+        createFontDir();
+        installDefaultFonts();
+        loadFonts();
 
         registerEventHandlers();
 
         WindowManager windowManager = createStages(primaryStage);
 
-        // start by showing settings view
+        // start by showing settings window
         windowManager.showWindow(Windows.SETTINGS);
 
         startParser();
@@ -100,22 +100,38 @@ public class Main extends Application {
         registerJNativeHook();
     }
 
+    private void installDefaultFonts() throws IOException {
+        log.debug("install default fonts");
+        Path fontDir = injector.getInstance(FontsDirectory.class).find();
+        DefaultFontsInstaller fontsInstaller = injector.getInstance(DefaultFontsInstaller.class);
+        fontsInstaller.installIfNeeded(fontDir);
+    }
+
+    private void createFontDir() throws IOException {
+        ConfigDirectory configDirectory = injector.getInstance(ConfigDirectory.class);
+        Path configDir = configDirectory.find();
+
+        log.debug("init font dir");
+        FontsDirectory fontsDirectory = injector.getInstance(FontsDirectory.class);
+        Path fontDir = fontsDirectory.create(configDir);
+    }
+
     private UIStringsFile readUIStrings() throws ConfigurationException {
         // reads from application.string.properties from within jar
         return new ApacheUIStringsFile(UI_STRINGS_FILE_PATH);
     }
 
-    private void registerJNativeHook(){
+    private void registerJNativeHook() {
         // only for jnativehook 2.2.2:
         // needs to be run on diff thread, otherwise segfault
         Platform.runLater(this::registerHook);
     }
 
-    private void startParser(){
+    private void startParser() {
         injector.getInstance(SrtParserEngine.class).start();
     }
 
-    private void registerEventHandlers(){
+    private void registerEventHandlers() {
         injector.getInstance(EventHandlerRegistrar.class).registerEventHandlers();
     }
 
@@ -124,22 +140,8 @@ public class Main extends Application {
         logger.setLevel(java.util.logging.Level.OFF);
     }
 
-
-    /**
-     * Create fonts dir relative to config dir
-     * Install default fonts
-     * Load all fonts from fonts dir and store in {@link FontManager}
-     */
-    private void initFonts() throws IOException {
-        ConfigDirectory configDirectory = injector.getInstance(ConfigDirectory.class);
-        Path configDir = configDirectory.find();
-
-        FontsDirectory fontsDirectory = injector.getInstance(FontsDirectory.class);
-        Path fontDir = fontsDirectory.create(configDir);
-
-        DefaultFontsInstaller fontsInstaller = injector.getInstance(DefaultFontsInstaller.class);
-        fontsInstaller.installIfNeeded(fontDir);
-
+    private void loadFonts() {
+        log.debug("loading fonts");
         FontManager fontManager = injector.getInstance(FontManager.class);
         fontManager.loadFonts();
     }
@@ -197,7 +199,7 @@ public class Main extends Application {
     private Injector createInjector(PropertiesFile properties, UIStringsFile strings) {
         if (injector == null) {
             // use default modules
-            return Guice.createInjector(withDefaultModules(properties,strings));
+            return Guice.createInjector(withDefaultModules(properties, strings));
         } else {
             // injector is already set via test, use it instead
             // use external modules
@@ -205,7 +207,7 @@ public class Main extends Application {
         }
     }
 
-    private List<Module> withDefaultModules(PropertiesFile properties, UIStringsFile strings){
+    private List<Module> withDefaultModules(PropertiesFile properties, UIStringsFile strings) {
         return Arrays.asList(
                 new ClassPathFileModule(),
                 new ConfigFileModule(properties, strings),

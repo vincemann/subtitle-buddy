@@ -109,12 +109,6 @@ public abstract class GuiTest extends ApplicationTest {
         // only needed for jnativehook 2.2.2
         // Use a polling mechanism to wait for ready property to become true
         WaitForAsyncUtils.waitFor(10, TimeUnit.SECONDS, application::isReady);
-
-        // Wait for the stage to be shown
-        interact(() -> {
-            Stage primaryStage = (Stage) listWindows().get(0);
-            primaryStage.show();
-        });
     }
 
 
@@ -269,8 +263,6 @@ public abstract class GuiTest extends ApplicationTest {
                 new UserInputHandlerModule())
         );
         Main.setInjector(testInjector);
-
-        primaryStage.show();
     }
 
     /**
@@ -306,6 +298,13 @@ public abstract class GuiTest extends ApplicationTest {
         release(new KeyCode[]{});
         release(new MouseButton[]{});
         app.unregisterListeners();
+        closeWindows();
+    }
+
+    private void closeWindows(){
+        runOnFxThreadAndWait(() -> {
+            windowManager.closeAll();
+        });
     }
 
     /**

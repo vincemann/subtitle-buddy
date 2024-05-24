@@ -97,6 +97,7 @@ public class WindowManagerImpl implements WindowManager {
         // avoid comod exception
         List<Window> copiedWindows = new ArrayList<>(opened);
         copiedWindows.forEach(this::close);
+        assert opened.size() == 0;
     }
 
 

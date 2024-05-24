@@ -5,7 +5,6 @@ import io.github.vincemann.subtitlebuddy.events.UpdateFontColorEvent;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.font.FontOptions;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
-import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.test.gui.pages.OptionsPage;
 import io.github.vincemann.subtitlebuddy.test.gui.pages.SettingsPage;
@@ -19,13 +18,9 @@ import java.util.concurrent.TimeoutException;
 
 public class OptionsTest extends GuiTest {
 
-
-
     private SettingsPage settingsPage;
     private FontManager fontManager;
-
     private EventBus eventBus;
-
     private FontOptions fontOptions;
 
     @Override
@@ -56,16 +51,17 @@ public class OptionsTest extends GuiTest {
     }
 
     @Test
-    public void testNoColorChangeOnSettingsText() throws TimeoutException {
+    public void testChangeColorOnSettingsMode() throws TimeoutException {
+        setFontColor(Color.WHITE);
         focusStage(Windows.SETTINGS);
+        System.err.println("settings stage focused");
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         refreshGui();
         focusStage(Windows.OPTIONS);
-        Color selectedColor = optionsPage.selectRandomColor(SettingsSrtDisplayer.DEFAULT_FONT_COLOR);
-        Assert.assertNotEquals(SettingsSrtDisplayer.DEFAULT_FONT_COLOR, selectedColor);
+        Color selectedColor = optionsPage.selectRandomColorThatIsNot(Color.WHITE);
+        Assert.assertNotEquals(Color.WHITE, selectedColor);
         refreshGui();
-        // must not have changed
-        Assert.assertEquals(SettingsSrtDisplayer.DEFAULT_FONT_COLOR, fontOptions.getFontColor());
+        Assert.assertEquals(selectedColor, fontOptions.getFontColor());
     }
 
 
@@ -94,13 +90,11 @@ public class OptionsTest extends GuiTest {
 
         refreshGui();
         focusStage(Windows.OPTIONS);
-        Color selectedColor = optionsPage.selectRandomColor(Color.WHITE);
+        Color selectedColor = optionsPage.selectRandomColorThatIsNot(Color.WHITE);
         Assert.assertNotEquals(Color.WHITE, selectedColor);
         refreshGui();
         Assert.assertEquals(selectedColor, fontOptions.getFontColor());
     }
-
-
 
     @Test
     public void testChangeFontInSettingsMode() throws TimeoutException {

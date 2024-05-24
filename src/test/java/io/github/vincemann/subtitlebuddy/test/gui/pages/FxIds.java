@@ -12,7 +12,7 @@ class FxIds {
       static final String MOVIE_MODE_BUTTON_ID = "#movieModeButton";
       static final String MOVIE_VBOX_ID = "#movieVBox";
       static final String OPTIONS_BUTTON_ID = "#optionsButton";
-      static final String COLOR_CHOOSE_ID = "#colorChooser";
+      static final String COLOR_CHOOSER_ID = "#colorChooser";
       static final String SETTINGS_PANE_ID = "#settingsPane";
       static final String FONT_CHOICE_BOX_ID = "#fontChoiceBox";
 
