@@ -7,7 +7,6 @@ import com.google.inject.Key;
 import io.github.vincemann.subtitlebuddy.Main;
 import io.github.vincemann.subtitlebuddy.config.strings.ApacheUIStringsFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
-import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
@@ -33,10 +32,7 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
-import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -45,7 +41,6 @@ import java.util.concurrent.TimeoutException;
 
 import static io.github.vincemann.subtitlebuddy.util.fx.FxThreadUtils.runOnFxThreadAndWait;
 import static org.testfx.api.FxToolkit.registerPrimaryStage;
-import static org.testfx.api.FxToolkit.registerStage;
 
 public abstract class GuiTest extends ApplicationTest {
 
@@ -205,8 +200,6 @@ public abstract class GuiTest extends ApplicationTest {
 
 
     public boolean isStageShowing(String name) {
-//        AbstractStageController abstractStageController = getInstance(AbstractStageController.class, a);
-//        return abstractStageController.getStageState().equals(StageState.OPEN);
         Stage stage = findStage(name);
         return stage.isShowing();
     }
@@ -228,17 +221,14 @@ public abstract class GuiTest extends ApplicationTest {
         };
         runOnFxThreadAndWait(toFrontTask);
         refreshGui();
+
         if (!stage.isFocused()) {
             throw new IllegalStateException("Stage is not focused");
         }
     }
 
     public Stage findStage(String name){
-        return windowManager.findWindow(name).getStage();
-    }
-
-    public SrtDisplayer findSrtDisplayer(Class<? extends SrtDisplayer> modeAnnotation) {
-        return getInstance(modeAnnotation);
+        return windowManager.find(name).getStage();
     }
 
     public void refreshGui() {
@@ -274,19 +264,6 @@ public abstract class GuiTest extends ApplicationTest {
      */
     <T> T getInstance(Class<T> type) {
         final Key<T> key = Key.get(type);
-        return Main.getInjector().getInstance(key);
-    }
-
-    /**
-     * uses application injector to find an instance annotated with @param option
-     *
-     * @param type
-     * @param option
-     * @param <T>
-     * @return
-     */
-    <T> T getInstance(Class<T> type, Class<? extends Annotation> option) {
-        final Key<T> key = Key.get(type, option);
         return Main.getInjector().getInstance(key);
     }
 

@@ -93,7 +93,7 @@ public class Main extends Application {
         WindowManager windowManager = createStages(primaryStage);
 
         // start by showing settings window
-        windowManager.showWindow(Windows.SETTINGS);
+        windowManager.open(Windows.SETTINGS);
 
         startParser();
 

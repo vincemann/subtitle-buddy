@@ -1,15 +1,12 @@
 package io.github.vincemann.subtitlebuddy.gui;
 
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.util.fx.FxThreadUtils;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Log4j2
 @Singleton
@@ -32,7 +29,7 @@ public class WindowManagerImpl implements WindowManager {
         this.windows.add(window);
     }
 
-    private Window find(String name) {
+    private Window findWindow(String name) {
         List<Window> windows = this.windows.stream()
                 .filter(w -> w.getName().equals(name))
                 .toList();
@@ -49,36 +46,32 @@ public class WindowManagerImpl implements WindowManager {
     }
 
     @Override
-    public Window findWindow(String name) {
-        return find(name);
+    public void close(String name) {
+        close(find(name));
     }
 
     @Override
-    public Window showWindowAtPos(String name, Vector2D pos, boolean hideOther) {
-        Window window = showWindow(name, hideOther);
+    public Window find(String name) {
+        return findWindow(name);
+    }
+
+    @Override
+    public Window openAtPos(String name, Vector2D pos) {
+        Window window = open(name);
         window.getStage().setX(pos.getX());
         window.getStage().setY(pos.getY());
         return window;
     }
 
-
     @Override
-    public Window showWindow(String name) {
-        return showWindow(name, true);
-    }
-
-    @Override
-    public Window showWindow(String name, boolean hideOther) {
-        Window window = find(name);
+    public Window open(String name) {
+        Window window = findWindow(name);
         if (!opened.isEmpty()) {
             // if already showing this window, put to the front
             if (opened.contains(window)) {
                 log.debug("already showing window: " + name + " - focusing");
                 window.getStage().toFront();
             }
-            // hide other open windows?
-            if (hideOther)
-                closeAll();
         }
 
         open(window);

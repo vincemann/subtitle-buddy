@@ -54,7 +54,6 @@ public class OptionsTest extends GuiTest {
     public void testChangeColorOnSettingsMode() throws TimeoutException {
         setFontColor(Color.WHITE);
         focusStage(Windows.SETTINGS);
-        System.err.println("settings stage focused");
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         refreshGui();
         focusStage(Windows.OPTIONS);

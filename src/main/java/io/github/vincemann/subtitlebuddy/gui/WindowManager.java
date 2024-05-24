@@ -7,15 +7,15 @@ import java.util.List;
 public interface WindowManager {
     void registerWindow(Window window);
 
-    Window findWindow(String name);
+    Window find(String name);
 
-    Window showWindowAtPos(String name, Vector2D pos, boolean hideOther);
+    Window openAtPos(String name, Vector2D pos);
 
-    Window showWindow(String name);
-
-    Window showWindow(String name, boolean hideOther);
+    Window open(String name);
 
     void closeAll();
+
+    void close(String name);
 
     void close(Window window);
 
