@@ -52,6 +52,7 @@ public class StageSwitchingTest extends GuiTest {
         settingsPage.pressStart();
         settingsPage.enterTimeStamp("00:12:13");
         WaitForAsyncUtils.waitForFxEvents();
+        sleep(400); // wait until event is handled and sub updated
         String settingsText = settingsPage.findDisplayedSubtitleText();
         Assert.assertEquals("But I don't get it." + System.lineSeparator(), settingsText);
         MoviePage moviePage = settingsPage.switchToMovieMode();

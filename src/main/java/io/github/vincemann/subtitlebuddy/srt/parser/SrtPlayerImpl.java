@@ -26,17 +26,21 @@ public class SrtPlayerImpl implements SrtPlayer {
     @Getter
     private Optional<SubtitleParagraph> currentSubtitle = Optional.empty();
 
-    @Inject
-    public SrtPlayerImpl(SubtitleFile subtitleFile, StopWatch stopWatch, SrtOptions options) {
+    // this is only used for testing
+    public SrtPlayerImpl(SubtitleFile subtitleFile, StopWatch stopWatch, String defaultSubtitle){
         this.subtitleFile = subtitleFile;
         this.stopWatch = stopWatch;
         this.defaultSubtitleText = new SubtitleText(
                 Collections.singletonList(
-                        new Subtitle(SubtitleType.NORMAL, options.getDefaultSubtitle())
+                        new Subtitle(SubtitleType.NORMAL, defaultSubtitle)
                 )
 
         );
         this.currentSubtitleText = this.defaultSubtitleText;
+    }
+    @Inject
+    public SrtPlayerImpl(SubtitleFile subtitleFile, StopWatch stopWatch, SrtOptions options) {
+       this(subtitleFile,stopWatch,options.getDefaultSubtitle());
     }
 
     @Override

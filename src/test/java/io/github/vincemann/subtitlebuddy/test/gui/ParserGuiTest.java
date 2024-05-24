@@ -12,8 +12,6 @@ public class ParserGuiTest extends GuiTest {
     private SrtPlayer applicationSrtPlayer;
     private SettingsPage settingsPage;
 
-
-
     @Override
     public void beforeEach() throws Exception {
         super.beforeEach();

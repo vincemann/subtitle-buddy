@@ -34,7 +34,6 @@ public class SrtDisplayerEventHandler {
     public void handleSwitchSrtDisplayerEvent(SwitchSrtDisplayerEvent event){
         log.debug("switching srt displayer event arrived");
         String target = windowOf(event.getTarget());
-        // I do this in a clumsy way, bc I dont want to close all other windows when switching - options should stay open
         if (target.equals(Windows.SETTINGS)){
             Platform.runLater(() -> {
                 windowManager.close(Windows.MOVIE);

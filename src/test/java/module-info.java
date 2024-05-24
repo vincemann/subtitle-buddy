@@ -17,5 +17,4 @@ open module io.github.vincemann.subtitlebuddy.test {
     requires junit;
     requires org.testfx;
     requires org.testfx.junit;
-    requires org.mockito;
 }

@@ -105,14 +105,14 @@ public class ParserHotKeyTest extends GuiTest {
     }
 
     @Test
-    public void testNavigateBackToSettingsModeViaAltEscape() throws TimeoutException, InterruptedException {
+    public void testNavigateBackToSettingsModeViaEscape() throws TimeoutException, InterruptedException {
         settingsPage.switchToMovieMode();
         refreshGui();
 
         focusStage(Windows.MOVIE);
         refreshGui();
 
-        typeAltEscape();
+        typeEscape();
         refreshGui();
 
         Assert.assertTrue(isStageShowing(Windows.SETTINGS));

@@ -7,7 +7,6 @@ import com.google.inject.Key;
 import io.github.vincemann.subtitlebuddy.Main;
 import io.github.vincemann.subtitlebuddy.config.strings.ApacheUIStringsFile;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
-import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.WindowManagerImpl;
@@ -32,7 +31,6 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
-import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -129,28 +127,17 @@ public abstract class GuiTest extends ApplicationTest {
         return osName.contains("mac");
     }
 
-    public void typeAltEscape(){
+    public void typeEscape(){
         if (runningOnMac()){
-            typeNativeAltEscape();
+            typeNativeEscape();
         }
         else {
-            press(KeyCode.ALT).type(KeyCode.ESCAPE).release(KeyCode.ALT);
+            type(KeyCode.ESCAPE);
         }
     }
 
-    private void typeNativeAltEscape(){
+    private void typeNativeEscape(){
         GlobalHotKeyListener hotKeyListener = getInstance(GlobalHotKeyListener.class);
-        // Simulate pressing Alt
-        NativeKeyEvent altPressed = new NativeKeyEvent(
-                NativeKeyEvent.NATIVE_KEY_PRESSED,
-                0,  // Modifiers (none)
-                0, // Raw code can be left as 0 if not specifically handled
-                NativeKeyEvent.VC_ALT,
-                NativeKeyEvent.CHAR_UNDEFINED,
-                NativeKeyEvent.KEY_LOCATION_LEFT
-        );
-        hotKeyListener.nativeKeyPressed(altPressed);
-
         // Simulate pressing N
         NativeKeyEvent escapePressed = new NativeKeyEvent(
                 NativeKeyEvent.NATIVE_KEY_PRESSED,
@@ -161,9 +148,7 @@ public abstract class GuiTest extends ApplicationTest {
                 NativeKeyEvent.KEY_LOCATION_STANDARD
         );
         hotKeyListener.nativeKeyPressed(escapePressed);
-
-        // Optionally release keys...
-        hotKeyListener.nativeKeyReleased(altPressed);
+        sleep(100);
         hotKeyListener.nativeKeyReleased(escapePressed);
     }
 

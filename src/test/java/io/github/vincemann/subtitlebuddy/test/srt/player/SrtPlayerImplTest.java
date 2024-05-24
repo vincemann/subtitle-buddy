@@ -1,6 +1,5 @@
 package io.github.vincemann.subtitlebuddy.test.srt.player;
 
-import io.github.vincemann.subtitlebuddy.srt.SrtOptions;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.Timestamp;
@@ -21,9 +20,6 @@ import org.junit.Test;
 import java.io.File;
 import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 public class SrtPlayerImplTest {
 
     private SrtPlayer parser;
@@ -34,10 +30,7 @@ public class SrtPlayerImplTest {
                 new SrtFileParserImpl(new SubtitleTextParserImpl()).parseFile(
                         new File(TestFiles.VALID_SRT_FILE_PATH)));
 
-        SrtOptions options = mock(SrtOptions.class);
-        when(options.getDefaultSubtitle())
-                .thenReturn("###");
-        this.parser= new SrtPlayerImpl(subtitleFile,new StopWatchImpl(),options);
+        this.parser= new SrtPlayerImpl(subtitleFile,new StopWatchImpl(),"###");
     }
 
     @Test
