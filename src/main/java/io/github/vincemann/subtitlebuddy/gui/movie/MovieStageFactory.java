@@ -29,7 +29,10 @@ public class MovieStageFactory {
         // thats why I do it the less clean way
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setController(controller);
-        InputStream is = ClassLoader.getSystemResourceAsStream("movie-stage.fxml");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("movie-stage.fxml");
+        if (is == null) {
+            throw new IOException("Cannot find settings-stage.fxml file");
+        }
         Parent parent = fxmlLoader.load(is);
         Vector2D screenVec = ScreenUtils.getScreenBounds();
         Stage stage = new Stage();

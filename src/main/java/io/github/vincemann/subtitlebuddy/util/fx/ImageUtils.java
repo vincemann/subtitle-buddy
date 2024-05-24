@@ -12,7 +12,7 @@ public class ImageUtils {
 
     public static ImageView loadImageView(Pane parent, String resourcePath, Vector2D size) {
         ImageView imageView = null;
-        try (InputStream is = ImageUtils.class.getResourceAsStream(resourcePath)) {
+        try (InputStream is = ImageUtils.class.getClassLoader().getResourceAsStream(resourcePath)) {
             if (is == null) {
                 throw new FileNotFoundException("Resource not found: " + resourcePath);
             }

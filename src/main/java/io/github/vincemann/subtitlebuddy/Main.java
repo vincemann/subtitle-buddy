@@ -90,7 +90,7 @@ public class Main extends Application {
 
         registerEventHandlers();
 
-        WindowManager windowManager = createStages();
+        WindowManager windowManager = createStages(primaryStage);
 
         // start by showing settings view
         windowManager.showWindow(Windows.SETTINGS);
@@ -149,11 +149,11 @@ public class Main extends Application {
      *
      * @return
      */
-    private WindowManager createStages() throws IOException {
+    private WindowManager createStages(Stage primaryStage) throws IOException {
         WindowManager windowManager = injector.getInstance(WindowManager.class);
         SettingsStageFactory settingsStageFactory = injector.getInstance(SettingsStageFactory.class);
         SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
-        Stage settingsStage = settingsStageFactory.create();
+        Stage settingsStage = settingsStageFactory.create(primaryStage);
         windowManager.registerWindow(new Window(Windows.SETTINGS, settingsStage, settingsStageController));
 
         OptionsStageFactory optionsStageFactory = injector.getInstance(OptionsStageFactory.class);

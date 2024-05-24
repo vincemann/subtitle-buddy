@@ -29,7 +29,7 @@ public class SubtitleFileImplTest {
 
     @Test(expected = TimeStampOutOfBoundsException.class)
     public void testTooHighTimeStamp() throws TimeStampOutOfBoundsException {
-        //knapp außerhalb der bounds
+        // closely out of bounds
         Timestamp invalidTimeStamp = new Timestamp(1,38,0,0);
         subtitleFile.getSubtitleAtTimeStamp(invalidTimeStamp);
     }
@@ -42,7 +42,7 @@ public class SubtitleFileImplTest {
 
     @Test
     public void testEarlyTimeStamp() throws TimeStampOutOfBoundsException {
-        //timestamp der vor dem ersten Timestamp kommt
+        // timestamp is before fist recorded
         Timestamp earlyTimeStamp = new Timestamp(0,0,3,12);
         Optional<SubtitleParagraph> subtitle = subtitleFile.getSubtitleAtTimeStamp(earlyTimeStamp);
         Assert.assertFalse(subtitle.isPresent());

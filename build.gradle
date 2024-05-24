@@ -76,6 +76,7 @@ test {
     }
 }
 
+
 // copies native jnativehook libraries into the image, which can be picked up by JLinkJNativeLibraryLocator
 tasks.register("copyNativeLibs", Copy) {
     mustRunAfter "jlink"

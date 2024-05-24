@@ -30,7 +30,6 @@ public class GuavaEventTest {
         public void testCascadeEvent(TestEvent e){
             Assert.assertFalse(arrived);
             eventBus.post(new DoneParsingEvent());
-            //doneparsingevent wird erst behandelt werden wenn wir durch sind
             Assert.assertFalse(arrived);
         }
     }
@@ -60,7 +59,6 @@ public class GuavaEventTest {
     @Test
     public void testEventCascade(){
         eventBus.post(new TestEvent());
-        //folgeEvent wurde aber letztlich doch ausgeführt
         Assert.assertTrue(arrived);
     }
 

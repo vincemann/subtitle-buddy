@@ -26,7 +26,10 @@ public class OptionsStageFactory {
         // thats why I do it the less clean way
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setController(controller);
-        InputStream is = ClassLoader.getSystemResourceAsStream("options-stage.fxml");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("options-stage.fxml");
+        if (is == null) {
+            throw new IOException("Cannot find settings-stage.fxml file");
+        }
         Parent parent = fxmlLoader.load(is);
         Stage stage = new Stage();
         stage.setScene(new Scene(parent, 450, 200));

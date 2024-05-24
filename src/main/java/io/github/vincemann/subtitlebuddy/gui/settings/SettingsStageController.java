@@ -74,7 +74,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     @FXML
     private HBox imageHBox;
 
-    private ImageView settingsClickWarning;
+    private ImageView clickWarning;
 
 
     private SrtPlayer srtPlayer;
@@ -148,10 +148,10 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
         loadUIStrings();
 
-        settingsClickWarning = loadImageView(imageHBox,
-                "/images/finger.png",
+        clickWarning = loadImageView(imageHBox,
+                "images/finger.png",
                 new Vector2D(SETTINGS_CLICK_WARNING_SIZE, SETTINGS_CLICK_WARNING_SIZE));
-        settingsClickWarning.setVisible(false);
+        clickWarning.setVisible(false);
 
         eventBus.post(new RequestSubtitleUpdateEvent());
     }
@@ -276,7 +276,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     public void displayNextClickCounts() {
         Platform.runLater(() -> {
             log.debug("showing next click counts image now");
-            settingsClickWarning.setVisible(true);
+            clickWarning.setVisible(true);
         });
 
     }
@@ -285,7 +285,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     public void hideNextClickCounts() {
         Platform.runLater(() -> {
             log.debug("hiding next click counts image now");
-            settingsClickWarning.setVisible(false);
+            clickWarning.setVisible(false);
         });
     }
 

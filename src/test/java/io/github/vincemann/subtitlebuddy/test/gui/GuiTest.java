@@ -33,7 +33,10 @@ import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.File;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -42,6 +45,7 @@ import java.util.concurrent.TimeoutException;
 
 import static io.github.vincemann.subtitlebuddy.util.fx.FxThreadUtils.runOnFxThreadAndWait;
 import static org.testfx.api.FxToolkit.registerPrimaryStage;
+import static org.testfx.api.FxToolkit.registerStage;
 
 public abstract class GuiTest extends ApplicationTest {
 
@@ -93,7 +97,6 @@ public abstract class GuiTest extends ApplicationTest {
         LoggingUtils.disableUtilLogger();
 
         windowManager = getInstance(WindowManager.class);
-
         Main application = (Main) ApplicationTest.launch(Main.class);
 
         // Explicitly wait for the application to be ready
@@ -102,10 +105,16 @@ public abstract class GuiTest extends ApplicationTest {
     }
 
 
-    // only needed for jnativehook 2.2.2
     private void waitUntilApplicationReady(Main application) throws TimeoutException {
+        // only needed for jnativehook 2.2.2
         // Use a polling mechanism to wait for ready property to become true
         WaitForAsyncUtils.waitFor(10, TimeUnit.SECONDS, application::isReady);
+
+        // Wait for the stage to be shown
+        interact(() -> {
+            Stage primaryStage = (Stage) listWindows().get(0);
+            primaryStage.show();
+        });
     }
 
 

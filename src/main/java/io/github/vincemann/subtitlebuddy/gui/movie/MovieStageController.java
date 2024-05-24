@@ -192,7 +192,7 @@ public class MovieStageController implements MovieSrtDisplayer {
         registerEventHandlers();
 
         clickWarning = loadImageView(movieVBox,
-                "/images/finger.png",
+                "images/finger.png",
                 new Vector2D(MOVIE_CLICK_WARNING_SIZE, MOVIE_CLICK_WARNING_SIZE));
         clickWarning.setVisible(false);
         eventBus.post(new RequestSubtitleUpdateEvent());
