@@ -49,6 +49,7 @@ public class SrtPlayerImplTest {
         Assert.assertEquals("Juice by Mary. Juice by Mary.",currentSubtitle.getSubtitles().get(0).getText());
     }
 
+
     @Test(expected = IllegalStateException.class)
     public void testMultipleStarting(){
         try {

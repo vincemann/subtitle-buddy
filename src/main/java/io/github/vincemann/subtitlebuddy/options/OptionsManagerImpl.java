@@ -44,6 +44,9 @@ public class OptionsManagerImpl implements OptionsManager {
         Vector2D pos = new Vector2D(subtitlePos);
         options.setSubtitlePosition(pos);
 
+        boolean endMovieModeHotkeyEnabled = properties.getBoolean(PropertyFileKeys.END_MOVIE_MODE_HOTKEY_ENABLED);
+        options.setEndMovieModeHotkeyEnabled(endMovieModeHotkeyEnabled);
+
         boolean spaceHotkeyEnabled = properties.getBoolean(PropertyFileKeys.SPACE_HOTKEY_ENABLED);
         options.setSpaceHotkeyEnabled(spaceHotkeyEnabled);
 

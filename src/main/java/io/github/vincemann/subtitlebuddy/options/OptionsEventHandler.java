@@ -36,16 +36,14 @@ public class OptionsEventHandler {
 
     @Subscribe
     public void handleUpdateMovieFontSizeEvent(UpdateMovieFontSizeEvent event) {
-        log.info("UpdateFontColorEvent arrived ");
-        log.debug("updating movie font size to: " + event.getFontSize());
+        log.debug("UpdateFontColorEvent arrived: " + event.getFontSize());
         optionsManager.updateMovieFontSize(event.getFontSize());
         eventBus.post(new RequestSubtitleUpdateEvent());
     }
 
     @Subscribe
     public void handleUpdateFontColorEvent(UpdateFontColorEvent event) {
-        log.info("UpdateFontColorEvent arrived ");
-        log.debug("changing color to: " + event.getColor().toString());
+        log.debug("UpdateFontColorEvent arrived: " + event.getColor().toString());
         optionsManager.updateFontColor(event.getColor());
         eventBus.post(new RequestSubtitleUpdateEvent());
         optionsDisplayer.updatePreview();
@@ -53,7 +51,7 @@ public class OptionsEventHandler {
 
     @Subscribe
     public void handleUpdateCurrentFontEvent(UpdateCurrentFontEvent event) {
-        log.info("UpdateCurrentFontEvent arrived ");
+        log.debug("UpdateCurrentFontEvent arrived: " + event.getFontPath());
         optionsManager.updateCurrentFont(event.getFontPath());
         fontManager.reloadCurrentFont();
         eventBus.post(new RequestSubtitleUpdateEvent());
@@ -63,6 +61,7 @@ public class OptionsEventHandler {
 
     @Subscribe
     public void handleUpdateSubtitlePosEvent(UpdateSubtitlePosEvent event) {
+        log.debug("UpdateSubtitlePosEvent arrived: " + event.getNewPos());
         optionsManager.updateSubtitlePos(event.getNewPos());
     }
 }

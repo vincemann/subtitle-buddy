@@ -136,7 +136,7 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     @Override
     public void displaySubtitle(SubtitleText subtitleText) {
-        log.debug("asking javafx to display new subtitle on MovieStageController : " + subtitleText);
+        log.debug("display new subtitle in movie mode: " + subtitleText);
         lastSubtitleText = subtitleText;
 
 
@@ -145,12 +145,12 @@ public class MovieStageController implements MovieSrtDisplayer {
             int fontSize = options.getMovieFontSize();
             FontBundle currentFont = fontManager.getCurrentFont().withSize(fontSize);
 
-            if (log.isDebugEnabled()) {
-                log.debug("using text size: " + fontSize);
-                log.debug("setting fontcolor: " + fontColor);
-                log.debug("using font: " + currentFont.getRegularFont().getName());
+            if (log.isTraceEnabled()) {
+                log.trace("using text size: " + fontSize);
+                log.trace("setting fontcolor: " + fontColor);
+                log.trace("using font: " + currentFont.getRegularFont().getName());
 
-                log.debug("displaying new subtitle: " + subtitleText);
+                log.trace("displaying new subtitle: " + subtitleText);
             }
 
             movieTextFlow.getChildren().clear();
@@ -167,6 +167,8 @@ public class MovieStageController implements MovieSrtDisplayer {
                 text.setFill(fontColor);
                 text.setStyle(OUTLINED_TEXT_STYLE);
 
+                if (log.isTraceEnabled())
+                    log.trace("displaying text: " + text + " in movie mode");
                 movieTextFlow.getChildren().add(text);
                 movieTextFlow.getChildren().add(new Text(System.lineSeparator()));
             }
@@ -228,7 +230,6 @@ public class MovieStageController implements MovieSrtDisplayer {
         movieVBox.setPrefHeight(h);
         movieVBox.setPrefWidth(w);
         int fontSize = ((int) (h + w) / 2) / 9;
-        log.debug("font size update by movie box size adjustments  : " + fontSize);
         // dont write to disk too often, this method is called often in a short time
         ExecutionLimiter.executeMaxEveryNMillis("fontResize", UPDATE_SLEEP_DURATION,
                 () -> eventBus.post(new UpdateMovieFontSizeEvent(fontSize)));

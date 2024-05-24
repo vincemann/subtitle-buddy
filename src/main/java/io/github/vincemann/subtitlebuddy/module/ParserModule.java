@@ -39,6 +39,7 @@ public class ParserModule extends PropertyFilesModule {
     protected void configureClassBindings() {
         bind(SrtOptions.class).in(Singleton.class);
         bind(LastPathRegistry.class).to(PropertiesFileLastPathRegistry.class);
+        bind(SubtitleTextParser.class).to(SubtitleTextParserImpl.class);
         bind(SrtFileParser.class).to(SrtFileParserImpl.class);
         bind(StopWatch.class).to(StopWatchImpl.class);
         bind(SubtitleFile.class).toProvider(SubtitleFileProvider.class);

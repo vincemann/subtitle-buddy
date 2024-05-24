@@ -44,7 +44,7 @@ public class SrtFileParserImplTest {
         loadFiles();
     }
 
-    private void loadFiles(){
+    private void loadFiles() {
         this.endIdSrtFile = new File(TestFiles.CORRUPTED_END_SRT_FILE_PATH);
         this.emptyLinesAtEndFile = new File(TestFiles.EMPTY_LINES_AT_END_SRT_FILE_PATH);
         this.invalidSrtFile = new File(TestFiles.INVALID_SRT_FILE_PATH);
@@ -81,7 +81,7 @@ public class SrtFileParserImplTest {
     @Test
     public void testValidFile() throws FileNotFoundException, CorruptedSrtFileException, InvalidTimestampFormatException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(validSrtFile);
-        performBasicChecks(subtitles,1123);
+        performBasicChecks(subtitles, 1123);
 
         int id = 5;
         SubtitleParagraph paragraph = createParagraph(id, "00:00:41,916", "00:00:44,084",
@@ -149,7 +149,7 @@ public class SrtFileParserImplTest {
     public void testCorruptedEndFile() throws FileNotFoundException, InvalidTimestampFormatException, CorruptedSrtFileException {
         // when only the end is corrupted the parser usually can deal with that
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(endIdSrtFile);
-        performBasicChecks(subtitles,560);
+        performBasicChecks(subtitles, 560);
 
         /*
         557
@@ -193,7 +193,7 @@ public class SrtFileParserImplTest {
     public void testEmptyLinesAtAnd() throws FileNotFoundException, CorruptedSrtFileException, InvalidTimestampFormatException {
         // parser can deal with it
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(emptyLinesAtEndFile);
-        performBasicChecks(subtitles,1123);
+        performBasicChecks(subtitles, 1123);
 
         /*
         1123
@@ -211,89 +211,95 @@ public class SrtFileParserImplTest {
     @Test
     public void testMatrix() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(matrix);
-        performBasicChecks(subtitles,1341,0);
+        performBasicChecks(subtitles, 1341, 0);
     }
 
     @Test
     public void testAvengers() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(avengers);
-        performBasicChecks(subtitles,1760);
+        performBasicChecks(subtitles, 1760);
     }
 
     @Test
     public void testAvatar() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(avatar);
-        performBasicChecks(subtitles,1217);
+        performBasicChecks(subtitles, 1217);
     }
 
     @Test
     public void testShutterIsland() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(shutterIsland);
-        performBasicChecks(subtitles,1575);
+        performBasicChecks(subtitles, 1575);
     }
 
     @Test
     public void testTitanic1() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(titanicPart1);
-        performBasicChecks(subtitles,826);
+        performBasicChecks(subtitles, 826);
     }
 
     @Test
     public void testTitanic2() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(titanicPart2);
-        performBasicChecks(subtitles,777);
+        performBasicChecks(subtitles, 777);
     }
 
     @Test
     public void testTitanic3() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(titanicPart3);
-        performBasicChecks(subtitles,570);
+        performBasicChecks(subtitles, 570);
     }
 
     @Test
     public void testBaadnam() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(badnaam);
-        performBasicChecks(subtitles,1514);
+        performBasicChecks(subtitles, 1514);
     }
 
     @Test
     public void testFanny() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(fanny);
-        performBasicChecks(subtitles,1577);
+        performBasicChecks(subtitles, 1577);
     }
 
     @Test
     public void testGodzilla() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(godzilla);
-        performBasicChecks(subtitles,902);
+        performBasicChecks(subtitles, 902);
     }
 
     @Test
     public void testGoodSam() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(goodsam);
-        performBasicChecks(subtitles,1838);
+        performBasicChecks(subtitles, 1838);
     }
 
     @Test
     public void testInception() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(inception);
-        performBasicChecks(subtitles,1738);
+        performBasicChecks(subtitles, 1738);
     }
 
     @Test
-    public void testKgf() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testKgf() throws CorruptedSrtFileException, FileNotFoundException, InvalidTimestampFormatException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(kgf);
-        performBasicChecks(subtitles,2245);
+        performBasicChecks(subtitles, 2245);
+
+        int id = 2229;
+        SubtitleParagraph paragraph = createParagraph(id, "02:30:34,105", "02:30:38,485",
+                new Subtitle(SubtitleType.NORMAL, "Si 400 personnes armées étaient prêtes à tuer comme l'avait ordonné Vanaram,")
+        );
+        assertParagraphEqual(subtitles, paragraph);
     }
 
     @Test
     public void testPotter2() throws CorruptedSrtFileException, FileNotFoundException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(potter2);
-        performBasicChecks(subtitles,592);
+        performBasicChecks(subtitles, 592);
     }
 
 
-    private void performBasicChecks(List<SubtitleParagraph> subtitles, int lastId, int... startsWith){
+    private void performBasicChecks(List<SubtitleParagraph> subtitles, int lastId, int... startsWith) {
         int start;
         if (startsWith.length == 0)
             start = 1;
@@ -301,12 +307,12 @@ public class SrtFileParserImplTest {
             start = startsWith[0];
 
         Assert.assertNotNull(subtitles);
-        Assert.assertEquals(start == 1 ? lastId : lastId+1, subtitles.size());
+        Assert.assertEquals(start == 1 ? lastId : lastId + 1, subtitles.size());
         Assert.assertEquals(start, subtitles.get(0).getId());
         for (int i = 1; i <= lastId; i++) {
-//            SubtitleParagraph sub = subtitles.get(i - start);
-//            System.err.println("checking sub at pos: " + String.valueOf(i-start));
-//            System.err.println(sub);
+            SubtitleParagraph sub = subtitles.get(i - start);
+            // maybe need to adjust this value in the future - when paragraphs are found with many subs, its a sign that it failed
+            Assert.assertTrue(sub.getText().getSubtitles().size() <= 8);
             Assert.assertEquals(i, subtitles.get(i - start).getId());
         }
     }
@@ -318,7 +324,7 @@ public class SrtFileParserImplTest {
     }
 
     private void assertParagraphEqual(List<SubtitleParagraph> paragraphs, SubtitleParagraph expected) {
-        assertParagraphEqual(paragraphs, expected.getId()-1, expected);
+        assertParagraphEqual(paragraphs, expected.getId() - 1, expected);
     }
 
     private void assertParagraphEqual(List<SubtitleParagraph> paragraphs, int pos, SubtitleParagraph expected) {
