@@ -18,11 +18,14 @@ public class SrtFileParserImplTest {
 
     private File validSrtFile;
 
+    private File idInPayload;
+
     // fully corrupted
     private File emptyFile;
     private File invalidTimestampFile;
     private File missingTimestampFile;
     private File missingIdFile;
+    private File missingEmptyLineFile;
 
 
     // special meta information
@@ -63,6 +66,7 @@ public class SrtFileParserImplTest {
 
         // valid
         this.validSrtFile = new File(TestFiles.VALID_SRT_FILE_PATH);
+        this.idInPayload = new File("src/test/resources/srt/id-in-payload.srt");
 
         // kinda corrupted but still acceptable
         this.lenientTimestampFile = new File("src/test/resources/srt/lenient-timestamp.srt");
@@ -74,6 +78,7 @@ public class SrtFileParserImplTest {
         this.invalidTimestampFile = new File("src/test/resources/srt/invalid/invalid-timestamp.srt");
         this.missingTimestampFile = new File("src/test/resources/srt/invalid/missing-timestamp.srt");
         this.missingIdFile = new File("src/test/resources/srt/invalid/missing-id.srt");
+        this.missingEmptyLineFile = new File("src/test/resources/srt/invalid/missing-empty-line.srt");
 
         // example
         this.matrix = new File("src/test/resources/srt/example/matrix.srt");
@@ -110,7 +115,7 @@ public class SrtFileParserImplTest {
     @Test
     public void testLenientTimestampPolicy() throws FileNotFoundException, InvalidTimestampFormatException, CorruptedSrtFileException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(lenientTimestampFile);
-        performBasicChecks(subtitles,1123);
+        performBasicChecks(subtitles, 1123);
 
         int id = 63;
         SubtitleParagraph paragraph = createParagraph(id, "00:06:16,459", "00:06:19,253",
@@ -151,6 +156,49 @@ public class SrtFileParserImplTest {
             Assert.assertEquals(663, e.getReadSubtitles().size());
         }
     }
+
+    @Test
+    public void testMissingEmptyLine() throws FileNotFoundException {
+        try {
+            srtFileParser.parseFile(missingEmptyLineFile);
+        } catch (CorruptedSrtFileException e) {
+            Assert.assertEquals(InvalidTimestampFormatException.class, e.getCause().getClass());
+            Assert.assertEquals(3140, e.getLinesRead());
+            Assert.assertEquals(709, e.getReadSubtitles().size());
+        }
+    }
+
+    @Test
+    public void testNextIdInPayloadGetsIgnored() throws FileNotFoundException, CorruptedSrtFileException, InvalidTimestampFormatException {
+        List<SubtitleParagraph> subtitles =srtFileParser.parseFile(idInPayload);
+        performBasicChecks(subtitles, 1123);
+
+        /*
+        3
+        00:00:37,203 --> 00:00:38,245
+        Juice by Tappy.
+        4
+         */
+        int id = 3;
+        SubtitleParagraph paragraph = createParagraph(id, "00:00:37,203", "00:00:38,245",
+                new Subtitle(SubtitleType.NORMAL, "Juice by Tappy."),
+                Subtitle.NEWLINE,
+                new Subtitle(SubtitleType.NORMAL, "4")
+        );
+        assertParagraphEqual(subtitles, paragraph);
+
+        /*
+        4
+        00:00:39,330 --> 00:00:41,749
+        Tappy got juice. Tappy got juice.
+         */
+        id = 4;
+        paragraph = createParagraph(id, "00:00:39,330", "00:00:41,749",
+                new Subtitle(SubtitleType.NORMAL, "Tappy got juice. Tappy got juice.")
+        );
+        assertParagraphEqual(subtitles, paragraph);
+    }
+
 
     @Test
     public void testValidFile() throws FileNotFoundException, CorruptedSrtFileException, InvalidTimestampFormatException {
