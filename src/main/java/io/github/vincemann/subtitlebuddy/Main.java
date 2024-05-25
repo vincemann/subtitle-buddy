@@ -11,8 +11,8 @@ import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
 import io.github.vincemann.subtitlebuddy.config.ConfigDirectoryImpl;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileLoader;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileLoaderImpl;
-import io.github.vincemann.subtitlebuddy.config.strings.ApacheUIStringsFile;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
+import io.github.vincemann.subtitlebuddy.config.strings.ApacheMessageSource;
+import io.github.vincemann.subtitlebuddy.config.strings.MessageSource;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
 import io.github.vincemann.subtitlebuddy.events.EventHandlerRegistrar;
@@ -80,7 +80,7 @@ public class Main extends Application {
 
         ConfigDirectory configDir = createConfigDir();
         PropertiesFile properties = createPropertiesFile(configDir);
-        UIStringsFile strings = readUIStrings();
+        MessageSource strings = readUIStrings();
 
         injector = createInjector(properties, strings);
 
@@ -116,9 +116,9 @@ public class Main extends Application {
         Path fontDir = fontsDirectory.create(configDir);
     }
 
-    private UIStringsFile readUIStrings() throws ConfigurationException {
+    private MessageSource readUIStrings() throws ConfigurationException {
         // reads from application.string.properties from within jar
-        return new ApacheUIStringsFile(UI_STRINGS_FILE_PATH);
+        return new ApacheMessageSource(UI_STRINGS_FILE_PATH);
     }
 
     private void registerJNativeHook() {
@@ -196,10 +196,10 @@ public class Main extends Application {
     /**
      * Creates injector or use test injector created in GuiTest.
      */
-    private Injector createInjector(PropertiesFile properties, UIStringsFile strings) {
+    private Injector createInjector(PropertiesFile properties, MessageSource strings) {
         if (injector == null) {
             // use default modules
-            return Guice.createInjector(withDefaultModules(properties, strings));
+            return Guice.createInjector(createDefaultModules(properties, strings));
         } else {
             // injector is already set via test, use it instead
             // use external modules
@@ -207,7 +207,7 @@ public class Main extends Application {
         }
     }
 
-    private List<Module> withDefaultModules(PropertiesFile properties, UIStringsFile strings) {
+    private List<Module> createDefaultModules(PropertiesFile properties, MessageSource strings) {
         return Arrays.asList(
                 new ClassPathFileModule(),
                 new ConfigFileModule(properties, strings),

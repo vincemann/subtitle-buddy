@@ -1,7 +1,8 @@
 package io.github.vincemann.subtitlebuddy.test.gui;
 
 
-import com.google.common.eventbus.EventBus;
+import io.github.vincemann.subtitlebuddy.events.EventBus;
+import io.github.vincemann.subtitlebuddy.events.ToggleEndMovieModeHotkeyEvent;
 import io.github.vincemann.subtitlebuddy.events.ToggleNextClickHotkeyEvent;
 import io.github.vincemann.subtitlebuddy.events.ToggleSpaceHotkeyEvent;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
@@ -106,6 +107,7 @@ public class ParserHotKeyTest extends GuiTest {
 
     @Test
     public void testNavigateBackToSettingsModeViaEscape() throws TimeoutException, InterruptedException {
+        eventBus.post(new ToggleEndMovieModeHotkeyEvent(true));
         settingsPage.switchToMovieMode();
         refreshGui();
 

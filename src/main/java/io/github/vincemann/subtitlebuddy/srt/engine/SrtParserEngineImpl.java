@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.srt.engine;
 
-import com.google.common.eventbus.EventBus;
+import io.github.vincemann.subtitlebuddy.events.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -69,7 +69,7 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
     private void updateProgram() {
         SrtDisplayer srtDisplayer = this.srtDisplayerProvider.get();
         if (srtDisplayer instanceof SettingsSrtDisplayer) {
-            ((SettingsSrtDisplayer) srtDisplayer).setTime(srtPlayer.getTime());
+            ((SettingsSrtDisplayer) srtDisplayer).displayTime(srtPlayer.getTime());
         }
 
         try {

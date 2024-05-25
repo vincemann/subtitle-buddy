@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.options;
 
-import com.google.common.eventbus.EventBus;
+import io.github.vincemann.subtitlebuddy.events.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

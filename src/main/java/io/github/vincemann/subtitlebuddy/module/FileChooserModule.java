@@ -1,7 +1,7 @@
 package io.github.vincemann.subtitlebuddy.module;
 
 import com.google.inject.name.Names;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
+import io.github.vincemann.subtitlebuddy.config.strings.MessageSource;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.gui.dialog.AlertDialog;
 import io.github.vincemann.subtitlebuddy.gui.dialog.ContinueDialog;
@@ -13,7 +13,7 @@ import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
 
 public class FileChooserModule extends PropertyFilesModule {
 
-    public FileChooserModule(UIStringsFile stringConfiguration, PropertiesFile propertiesConfiguration) {
+    public FileChooserModule(MessageSource stringConfiguration, PropertiesFile propertiesConfiguration) {
         super(stringConfiguration, propertiesConfiguration);
     }
 

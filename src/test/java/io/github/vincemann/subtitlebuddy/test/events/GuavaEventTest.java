@@ -1,9 +1,10 @@
 package io.github.vincemann.subtitlebuddy.test.events;
 
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import io.github.vincemann.subtitlebuddy.events.DoneParsingEvent;
+import io.github.vincemann.subtitlebuddy.events.EventBus;
+import io.github.vincemann.subtitlebuddy.events.EventBusImpl;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,7 +38,7 @@ public class GuavaEventTest {
     private class TestEvent{ }
     @Before
     public void init(){
-        this.eventBus = new EventBus();
+        this.eventBus = new EventBusImpl();
         eventBus.register(new TestListener());
     }
 

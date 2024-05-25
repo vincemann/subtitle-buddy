@@ -3,7 +3,7 @@ package io.github.vincemann.subtitlebuddy.listeners.key;
 
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
-import com.google.common.eventbus.EventBus;
+import io.github.vincemann.subtitlebuddy.events.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.EndMovieModeHotkeyPressedEvent;

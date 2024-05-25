@@ -2,23 +2,18 @@ package io.github.vincemann.subtitlebuddy.config.strings;
 
 import com.google.inject.Singleton;
 import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Configurations;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
 @Singleton
-public class ApacheUIStringsFile implements UIStringsFile {
+public class ApacheMessageSource implements MessageSource {
 
     private PropertiesConfiguration propertiesConfiguration;
 
-    public ApacheUIStringsFile(String resourceName) throws ConfigurationException {
+    public ApacheMessageSource(String resourceName) throws ConfigurationException {
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceName);
             if (inputStream == null) {

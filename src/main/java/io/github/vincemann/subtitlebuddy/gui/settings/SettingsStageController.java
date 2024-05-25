@@ -1,7 +1,7 @@
 package io.github.vincemann.subtitlebuddy.gui.settings;
 
 
-import com.google.common.eventbus.EventBus;
+import io.github.vincemann.subtitlebuddy.events.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -192,6 +192,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             try {
                 log.debug("start button pressed");
                 srtPlayer.start();
+                eventBus.post(new RequestSubtitleUpdateEvent());
             } catch (IllegalStateException e) {
                 log.error(e.getMessage());
             }
@@ -210,6 +211,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             try {
                 log.debug("fast forward pressed");
                 srtPlayer.forward(FORWARD_DELTA);
+                eventBus.post(new RequestSubtitleUpdateEvent());
             } catch (IllegalStateException e) {
                 log.error(e.getMessage());
             }
@@ -219,6 +221,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             try {
                 log.debug("fast backward pressed");
                 srtPlayer.forward(-FORWARD_DELTA);
+                eventBus.post(new RequestSubtitleUpdateEvent());
             } catch (IllegalStateException e) {
                 log.error(e.getMessage());
             }
@@ -254,7 +257,8 @@ public class SettingsStageController implements SettingsSrtDisplayer {
             Timestamp timestamp = new Timestamp(timeField.getText() + ",000");
             log.debug("user set new timestamp: " + timestamp);
             srtPlayer.jumpToTimestamp(timestamp);
-            setTime(timestamp);
+            displayTime(timestamp);
+            eventBus.post(new RequestSubtitleUpdateEvent());
         } catch (InvalidTimestampFormatException e) {
             log.error("Wrong timeStamp entered: " + e.getMessage());
             displayWrongTimeStampWarning();
@@ -336,15 +340,14 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                 if (log.isTraceEnabled())
                     log.trace("displaying text: " + text + " in settings mode");
                 settingsTextFlow.getChildren().add(text);
-                settingsTextFlow.getChildren().add(new Text(System.lineSeparator()));
-
+//                settingsTextFlow.getChildren().add(new Text(System.lineSeparator()));
             }
         });
     }
 
 
     @Override
-    public void setTime(@NonNull Timestamp time) {
+    public void displayTime(@NonNull Timestamp time) {
         // reduces the rate of ui updates
         if (!lastTimeStamp.equalBySeconds(time)) {
             Platform.runLater(() -> {

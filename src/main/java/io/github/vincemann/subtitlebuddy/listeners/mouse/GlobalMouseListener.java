@@ -1,7 +1,7 @@
 package io.github.vincemann.subtitlebuddy.listeners.mouse;
 
 
-import com.google.common.eventbus.EventBus;
+import io.github.vincemann.subtitlebuddy.events.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.MouseClickedEvent;

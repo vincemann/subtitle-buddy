@@ -1,7 +1,7 @@
 package io.github.vincemann.subtitlebuddy.test.guice;
 
 import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
+import io.github.vincemann.subtitlebuddy.config.strings.MessageSource;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.FileChooser;
 import io.github.vincemann.subtitlebuddy.gui.dialog.AlertDialog;
 import io.github.vincemann.subtitlebuddy.gui.dialog.ContinueDialog;
@@ -12,7 +12,7 @@ import io.github.vincemann.subtitlebuddy.module.FileChooserModule;
 public class MockFileChooserModule extends FileChooserModule {
 
 
-    public MockFileChooserModule(UIStringsFile stringConfiguration, PropertiesFile propertiesConfiguration) {
+    public MockFileChooserModule(MessageSource stringConfiguration, PropertiesFile propertiesConfiguration) {
         super(stringConfiguration, propertiesConfiguration);
     }
 

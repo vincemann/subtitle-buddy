@@ -1,13 +1,13 @@
 package io.github.vincemann.subtitlebuddy.module;
 
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
+import io.github.vincemann.subtitlebuddy.config.strings.MessageSource;
 import io.github.vincemann.subtitlebuddy.font.*;
 import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
 
 public class FontModule extends PropertyFilesModule{
 
-    public FontModule(UIStringsFile stringsFile, PropertiesFile propertiesFile) {
+    public FontModule(MessageSource stringsFile, PropertiesFile propertiesFile) {
         super(stringsFile, propertiesFile);
     }
 

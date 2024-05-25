@@ -2,14 +2,14 @@ package io.github.vincemann.subtitlebuddy.module;
 
 import com.google.inject.AbstractModule;
 import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
+import io.github.vincemann.subtitlebuddy.config.strings.MessageSource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
 public abstract class PropertyFilesModule extends AbstractModule {
-    private UIStringsFile stringsFile;
+    private MessageSource stringsFile;
     private PropertiesFile properties;
 
 

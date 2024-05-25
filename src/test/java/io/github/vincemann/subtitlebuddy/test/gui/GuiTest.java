@@ -5,8 +5,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import io.github.vincemann.subtitlebuddy.Main;
-import io.github.vincemann.subtitlebuddy.config.strings.ApacheUIStringsFile;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
+import io.github.vincemann.subtitlebuddy.config.strings.ApacheMessageSource;
+import io.github.vincemann.subtitlebuddy.config.strings.MessageSource;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
 import io.github.vincemann.subtitlebuddy.gui.WindowManagerImpl;
@@ -225,7 +225,7 @@ public abstract class GuiTest extends ApplicationTest {
         PropertiesFile properties = new ApachePropertiesFile(new File(TestFiles.TEST_PROPERTIES_FILE_PATH));
         // use original strings constants file
 //        UIStringsFile strings = new ApacheUIStringsFile(new File(Main.UI_STRINGS_FILE_PATH));
-        UIStringsFile strings = new ApacheUIStringsFile(Main.UI_STRINGS_FILE_PATH);
+        MessageSource strings = new ApacheMessageSource(Main.UI_STRINGS_FILE_PATH);
         // set all modules for integration test, mock those that need to be mocked
         Injector testInjector = Guice.createInjector(Arrays.asList(
                 new ClassPathFileModule(),

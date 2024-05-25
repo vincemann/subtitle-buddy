@@ -2,7 +2,7 @@ package io.github.vincemann.subtitlebuddy.module;
 
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
+import io.github.vincemann.subtitlebuddy.config.strings.MessageSource;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
@@ -27,7 +27,7 @@ import java.util.List;
 public class GuiModule extends PropertyFilesModule {
 
 
-    public GuiModule(UIStringsFile stringConfiguration, PropertiesFile propertiesConfiguration) {
+    public GuiModule(MessageSource stringConfiguration, PropertiesFile propertiesConfiguration) {
         super(stringConfiguration, propertiesConfiguration);
     }
 

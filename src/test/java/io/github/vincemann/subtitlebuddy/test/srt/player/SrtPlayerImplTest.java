@@ -1,5 +1,6 @@
 package io.github.vincemann.subtitlebuddy.test.srt.player;
 
+import io.github.vincemann.subtitlebuddy.events.EventBusImpl;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.Timestamp;

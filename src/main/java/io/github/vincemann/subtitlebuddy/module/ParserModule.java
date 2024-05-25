@@ -1,9 +1,9 @@
 package io.github.vincemann.subtitlebuddy.module;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsFile;
+import io.github.vincemann.subtitlebuddy.config.strings.MessageSource;
+import io.github.vincemann.subtitlebuddy.events.EventBus;
 import io.github.vincemann.subtitlebuddy.events.EventBusImpl;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.LastPathRegistry;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.PropertiesFileLastPathRegistry;
@@ -20,7 +20,7 @@ import io.github.vincemann.subtitlebuddy.srt.stopwatch.StopWatchImpl;
 
 public class ParserModule extends PropertyFilesModule {
 
-    public ParserModule(UIStringsFile stringConfiguration, PropertiesFile propertiesConfiguration) {
+    public ParserModule(MessageSource stringConfiguration, PropertiesFile propertiesConfiguration) {
         super(stringConfiguration, propertiesConfiguration);
     }
 

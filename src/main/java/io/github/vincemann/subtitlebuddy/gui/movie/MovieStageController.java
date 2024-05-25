@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.gui.movie;
 
-import com.google.common.eventbus.EventBus;
+import io.github.vincemann.subtitlebuddy.events.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.RequestSubtitleUpdateEvent;
@@ -170,7 +170,7 @@ public class MovieStageController implements MovieSrtDisplayer {
                 if (log.isTraceEnabled())
                     log.trace("displaying text: " + text + " in movie mode");
                 movieTextFlow.getChildren().add(text);
-                movieTextFlow.getChildren().add(new Text(System.lineSeparator()));
+//                movieTextFlow.getChildren().add(new Text(System.lineSeparator()));
             }
         });
     }

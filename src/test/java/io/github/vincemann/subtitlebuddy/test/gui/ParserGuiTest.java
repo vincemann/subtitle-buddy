@@ -38,8 +38,9 @@ public class ParserGuiTest extends GuiTest {
         settingsPage.enterTimeStamp(timeStampInput);
         WaitForAsyncUtils.waitForFxEvents();
         Assert.assertEquals(RunningState.STATE_SUSPENDED, applicationSrtPlayer.getCurrentState());
+        sleep(500); // wait for update subtitle event to be handled
 
-        Assert.assertEquals("But I don't get it."+System.lineSeparator(),settingsPage.findDisplayedSubtitleText());
+        Assert.assertEquals("But I don't get it.",settingsPage.findDisplayedSubtitleText());
         Assert.assertEquals(timeStampInput,settingsPage.findDisplayedTimeStamp());
     }
 
@@ -52,10 +53,11 @@ public class ParserGuiTest extends GuiTest {
         String timeStampInput = "00:12:13";
         settingsPage.enterTimeStamp(timeStampInput);
         WaitForAsyncUtils.waitForFxEvents();
+        sleep(500);  // wait for update subtitle event to be handled
 
         Assert.assertEquals(RunningState.STATE_SUSPENDED, applicationSrtPlayer.getCurrentState());
 
-        Assert.assertEquals("But I don't get it."+System.lineSeparator(),settingsPage.findDisplayedSubtitleText());
+        Assert.assertEquals("But I don't get it.",settingsPage.findDisplayedSubtitleText());
         Assert.assertEquals(timeStampInput,settingsPage.findDisplayedTimeStamp());
     }
 

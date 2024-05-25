@@ -1,5 +1,6 @@
 package io.github.vincemann.subtitlebuddy.srt.parser;
 
+import io.github.vincemann.subtitlebuddy.events.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.srt.SrtOptions;
@@ -26,6 +27,7 @@ public class SrtPlayerImpl implements SrtPlayer {
     @Getter
     private Optional<SubtitleParagraph> currentSubtitle = Optional.empty();
 
+
     // this is only used for testing
     public SrtPlayerImpl(SubtitleFile subtitleFile, StopWatch stopWatch, String defaultSubtitle){
         this.subtitleFile = subtitleFile;
@@ -49,6 +51,7 @@ public class SrtPlayerImpl implements SrtPlayer {
             stop();
         }
         setTime(timestamp);
+
     }
 
     @Override
@@ -96,8 +99,8 @@ public class SrtPlayerImpl implements SrtPlayer {
             stopWatch.suspend();
         } else {
             //invalid
-            log.warn("Invalid Access. Time can only be set when io.github.vincemann.srtParser is either unstarted or suspended");
-            throw new IllegalStateException("Invalid Access. Time can only be set when io.github.vincemann.srtParser is either unstarted or suspended");
+            log.warn("Invalid Access. Time can only be set when srtParser is either unstarted or suspended");
+            throw new IllegalStateException("Invalid Access. Time can only be set when srtParser is either unstarted or suspended");
         }
     }
 

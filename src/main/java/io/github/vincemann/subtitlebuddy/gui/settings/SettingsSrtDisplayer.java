@@ -11,5 +11,5 @@ import javafx.scene.paint.Color;
 public interface SettingsSrtDisplayer extends SrtDisplayer {
     Color DEFAULT_FONT_COLOR = Color.BLACK;
 
-    void setTime(Timestamp time);
+    void displayTime(Timestamp time);
 }

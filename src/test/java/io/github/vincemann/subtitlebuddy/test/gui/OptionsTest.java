@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.test.gui;
 
-import com.google.common.eventbus.EventBus;
+import io.github.vincemann.subtitlebuddy.events.EventBus;
 import io.github.vincemann.subtitlebuddy.events.UpdateFontColorEvent;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.font.FontOptions;
