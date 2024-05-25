@@ -21,4 +21,5 @@ public class CorruptedSrtFileException extends Exception{
         this.linesRead = linesRead;
         this.readSubtitles = readSubtitles;
     }
+
 }

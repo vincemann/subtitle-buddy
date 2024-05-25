@@ -19,7 +19,7 @@ public abstract class AbstractApacheConfigFileTest {
 
     @Before
     public void init() throws ConfigurationException {
-        this.emptyTestPropertiesFile = new ApachePropertiesFile(new File(TestFiles.EMPTY_TEST_CONFIG_FILE_PATH));
+        this.emptyTestPropertiesFile = new ApachePropertiesFile(new File("src/test/resources/test-application-empty.properties"));
         cleanUp();
     }
 

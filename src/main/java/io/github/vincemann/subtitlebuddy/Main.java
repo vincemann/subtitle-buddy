@@ -80,7 +80,7 @@ public class Main extends Application {
 
         ConfigDirectory configDir = createConfigDir();
         PropertiesFile properties = createPropertiesFile(configDir);
-        MessageSource strings = readUIStrings();
+        MessageSource strings = readStrings();
 
         injector = createInjector(properties, strings);
 
@@ -116,7 +116,7 @@ public class Main extends Application {
         Path fontDir = fontsDirectory.create(configDir);
     }
 
-    private MessageSource readUIStrings() throws ConfigurationException {
+    private MessageSource readStrings() throws ConfigurationException {
         // reads from application.string.properties from within jar
         return new ApacheMessageSource(UI_STRINGS_FILE_PATH);
     }

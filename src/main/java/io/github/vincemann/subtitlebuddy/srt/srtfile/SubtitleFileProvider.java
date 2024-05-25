@@ -55,8 +55,10 @@ public class SubtitleFileProvider implements Provider<SubtitleFile> {
         }
         try {
             try {
+                log.info("asking user to choose file");
                 File file =  fileChooser.letUserChooseFile();
                 List<SubtitleParagraph> subtitles = srtFileParser.parseFile(file);
+                log.info("file was parsed and valid");
                 this.chosenFile = new SubtitleFileImpl(subtitles);
                 return chosenFile;
 //                return new SubtitleFileImpl(subtitles);
@@ -67,9 +69,10 @@ public class SubtitleFileProvider implements Provider<SubtitleFile> {
             }catch (CorruptedSrtFileException e) {
                 log.error("corrupted file",e);
                 if (e.getLinesRead() > 0) {
-                    boolean goOn = continueDialog.askUserToContinue(corruptedFileMessage + ", Details: " + e.getMessage());
-                    if (!goOn) {
+                    boolean stillContinue = continueDialog.askUserToContinue(composeCorruptedFileMsg(e));
+                    if (!stillContinue) {
                         log.debug("user does not want to continue with a broken file");
+                        // open file chooser again
                         return get();
                     } else {
                         log.debug("user chose to continue anyways");
@@ -91,5 +94,18 @@ public class SubtitleFileProvider implements Provider<SubtitleFile> {
             alertDialog.tellUser(emptyFileMessage);
             return get();
         }
+    }
+
+    private String composeCorruptedFileMsg(CorruptedSrtFileException exception){
+        List<SubtitleParagraph> readSubtitles = exception.getReadSubtitles();
+        int linesRead = exception.getLinesRead();
+        String msg = corruptedFileMessage + "\n.";
+        msg += "Lines read: " + linesRead + ". Subtitles read: " + readSubtitles.size() + ".\n";
+        if (!readSubtitles.isEmpty()){
+            SubtitleParagraph last = readSubtitles.get(readSubtitles.size() - 1);
+            msg += "Read until: " + last.getEndTime().toString()+ ".";
+        }
+        msg += "Details: " + exception.getMessage();
+        return msg;
     }
 }

@@ -222,7 +222,7 @@ public abstract class GuiTest extends ApplicationTest {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        PropertiesFile properties = new ApachePropertiesFile(new File(TestFiles.TEST_PROPERTIES_FILE_PATH));
+        PropertiesFile properties = new ApachePropertiesFile(new File("src/test/resources/test-application.properties"));
         // use original strings constants file
 //        UIStringsFile strings = new ApacheUIStringsFile(new File(Main.UI_STRINGS_FILE_PATH));
         MessageSource strings = new ApacheMessageSource(Main.UI_STRINGS_FILE_PATH);

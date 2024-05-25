@@ -62,7 +62,7 @@ public class SrtFileParserImplTest {
 
     private void loadFiles() {
         // meta data
-        this.endIdSrtFile = new File(TestFiles.CORRUPTED_END_SRT_FILE_PATH);
+        this.endIdSrtFile = new File("src/test/resources/srt/end-id.srt");
 
         // valid
         this.validSrtFile = new File(TestFiles.VALID_SRT_FILE_PATH);
@@ -70,7 +70,7 @@ public class SrtFileParserImplTest {
 
         // kinda corrupted but still acceptable
         this.lenientTimestampFile = new File("src/test/resources/srt/lenient-timestamp.srt");
-        this.emptyLinesAtEndFile = new File(TestFiles.EMPTY_LINES_AT_END_SRT_FILE_PATH);
+        this.emptyLinesAtEndFile = new File("src/test/resources/srt/empty-lines-at-end.srt");
         this.emptyLinesInBetweenFile = new File("src/test/resources/srt/empty-lines-in-between.srt");
 
         // invalid

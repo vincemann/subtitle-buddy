@@ -19,11 +19,7 @@ public class SubtitleFileImpl implements SubtitleFile {
     private SubtitleParagraph firstSubtitle;
     private SubtitleParagraph lastSubtitle;
 
-    /**
-     * geordnete Liste an Subtitles
-     *
-     * @param subtitles
-     */
+
     public SubtitleFileImpl(List<SubtitleParagraph> subtitles) throws EmptySubtitleListException {
         this.subtitles = subtitles;
         this.firstSubtitle = subtitles.get(0);
