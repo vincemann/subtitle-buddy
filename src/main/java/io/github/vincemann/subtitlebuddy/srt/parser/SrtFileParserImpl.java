@@ -140,16 +140,20 @@ public class SrtFileParserImpl implements SrtFileParser {
         try {
             String line = readLine(scanner);
             boolean firstLine = true;
-            while (!isNextId(line)) {
+            boolean lastLineEmpty = false;
+            while (!isNextId(line,lastLineEmpty)) {
                 if (!line.isEmpty()) {
                     if (!firstLine){
                         subtitleString.append(SubtitleTextParser.NEW_LINE_DELIMITER);
                     }
                     subtitleString.append(removeUnsupportedTags(line));
                     firstLine = false;
+                    lastLineEmpty = false;
+                }else {
+                    lastLineEmpty = true;
                 }
                 line = readLine(scanner);
-                if (isEndId(line)){
+                if (isEndId(line,lastLineEmpty)){
                     // end found
                     this.eof = true;
                     break;
@@ -207,11 +211,16 @@ public class SrtFileParserImpl implements SrtFileParser {
             throw new EOFException();
         }
         String line = scanner.nextLine();
+//        System.err.println("reading line: " + linesRead);
+//        System.err.println(line);
         linesRead++;
         return line;
     }
 
-    private boolean isEndId(String line) {
+    private boolean isEndId(String line, boolean lastLineEmpty) {
+        // avoid false positive id detection by requiring empty line before id
+        if (!lastLineEmpty)
+            return false;
         try {
             int id = parseId(line);
             return id == END_ID || (id == 0 && currentId > 10);
@@ -220,7 +229,10 @@ public class SrtFileParserImpl implements SrtFileParser {
         }
     }
 
-    private boolean isNextId(String line) {
+    private boolean isNextId(String line, boolean lastLineEmpty) {
+        // avoid false positive id detection by requiring empty line before id
+        if (!lastLineEmpty)
+            return false;
         try {
             int id = parseId(line);
             return id == currentId + 1;
@@ -231,9 +243,12 @@ public class SrtFileParserImpl implements SrtFileParser {
 
     private SubtitleTimestamps readTimestampsLine(Scanner scanner) throws InvalidTimestampFormatException, EOFException {
         String line = readLine(scanner);
+        if (!line.contains("-->")){
+            // missing timestamp
+            throw new InvalidTimestampFormatException("Missing timestamp or malformed: " + line);
+        }
         String[] timestamps = line.split(" --> ");
-        linesRead++;
-        if (timestamps.length != 2) throw new InvalidTimestampFormatException("line: " + linesRead + " was invalid");
+        if (timestamps.length != 2) throw new InvalidTimestampFormatException("line: " + line + " was invalid timestamp");
 
         Timestamp startTime = new Timestamp(timestamps[0]);
         Timestamp endTime = new Timestamp(timestamps[1]);
