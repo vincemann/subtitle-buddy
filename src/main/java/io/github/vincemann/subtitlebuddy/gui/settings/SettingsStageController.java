@@ -79,8 +79,6 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
     private SrtPlayer srtPlayer;
 
-    private Timestamp lastTimeStamp;
-
 
     private FontManager fontManager;
 
@@ -126,7 +124,6 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         this.movieModeButtonText = movieModeButtonText;
         this.wrongTimeStampFormatText = wrongTimeStampFormatText;
         this.timestampJumpHintTextString = timestampJumpHintTextString;
-        this.lastTimeStamp = Timestamp.ZERO();
     }
 
     @FXML
@@ -332,12 +329,8 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
     @Override
     public void displayTime(@NonNull Timestamp time) {
-        // reduces the rate of ui updates
-        if (!lastTimeStamp.equalBySeconds(time)) {
-            Platform.runLater(() -> {
-                currentTimeStampText.setText(time.toAlarmClockString());
-                lastTimeStamp = new Timestamp(time);
-            });
-        }
+        Platform.runLater(() -> {
+            currentTimeStampText.setText(time.toAlarmClockString());
+        });
     }
 }

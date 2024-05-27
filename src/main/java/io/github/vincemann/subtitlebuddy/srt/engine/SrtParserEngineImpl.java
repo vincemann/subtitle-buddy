@@ -6,12 +6,14 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.options.PropertyFileKeys;
+import io.github.vincemann.subtitlebuddy.srt.Timestamp;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtPlayer;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
 import io.github.vincemann.subtitlebuddy.events.DoneParsingEvent;
 import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
+import javafx.application.Platform;
 import lombok.extern.log4j.Log4j2;
 
 /**
@@ -29,6 +31,8 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
     private EventBus eventBus;
     private SubtitleText lastSubtitleText;
 
+    private Timestamp lastTimeStamp;
+
     @Inject
     public SrtParserEngineImpl(@Named(PropertyFileKeys.UPDATER_DELAY) long updateDelay, SrtPlayer srtPlayer, Provider<SrtDisplayer> srtDisplayerProvider, EventBus eventBus) {
         super(updateDelay);
@@ -36,6 +40,7 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
         this.srtDisplayerProvider = srtDisplayerProvider;
         this.eventBus = eventBus;
         this.updaterThread = new Thread(this);
+        this.lastTimeStamp = Timestamp.ZERO();
     }
 
     @Override
@@ -68,9 +73,7 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
 
     private void updateProgram() {
         SrtDisplayer srtDisplayer = this.srtDisplayerProvider.get();
-        if (srtDisplayer instanceof SettingsSrtDisplayer) {
-            ((SettingsSrtDisplayer) srtDisplayer).displayTime(srtPlayer.getTime());
-        }
+        updateTime(srtDisplayer);
 
         try {
             log.trace("updater updating current Subtitle");
@@ -94,6 +97,19 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
         } catch (TimeStampOutOfBoundsException e) {
             log.info("received TimeStamp out of bounds exception -> doneParsing event triggered");
             eventBus.post(new DoneParsingEvent());
+        }
+    }
+
+    /**
+     * Only update UI when new second reached
+     */
+    private void updateTime(SrtDisplayer displayer){
+        Timestamp time = srtPlayer.getTime();
+        if (!lastTimeStamp.equalBySeconds(time)) {
+            if (displayer instanceof SettingsSrtDisplayer) {
+                ((SettingsSrtDisplayer) displayer).displayTime(time);
+                lastTimeStamp = new Timestamp(time);
+            }
         }
     }
 
