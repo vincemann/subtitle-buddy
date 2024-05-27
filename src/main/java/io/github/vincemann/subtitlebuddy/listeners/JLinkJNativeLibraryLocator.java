@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Use this class for loading jnativehook native libs from within the image.
  * Expects the libs in the same format as within the jar (usually the libs are extracted from within the jar).
- * Libs must be "mounted" at $pwd/lib/jnativehook.
+ * Libs must be present at $pwd/lib/jnativehook.
  * Just copy them from the extracted jar into the image.
  * Must ensure that the appLauncher script of the jlink image always has its current working dir set to the root of the image!
  */

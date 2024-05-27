@@ -9,6 +9,7 @@ import io.github.vincemann.subtitlebuddy.srt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
@@ -32,6 +33,8 @@ public class SrtFileParserImpl implements SrtFileParser {
     private List<SubtitleParagraph> subtitles = new ArrayList<>();
 
     private SubtitleTextParser subtitleTextParser;
+
+    private FileEncodingConverter fileEncodingConverter = new FileEncodingConverterImpl();
 
     private boolean eof = false;
 
@@ -59,9 +62,9 @@ public class SrtFileParserImpl implements SrtFileParser {
     }
 
     @Override
-    public List<SubtitleParagraph> parseFile(File srtFile) throws CorruptedSrtFileException, FileNotFoundException {
+    public List<SubtitleParagraph> parseFile(File srtFile) throws CorruptedSrtFileException, IOException {
 
-        FileInputStream in = new FileInputStream(srtFile);
+        FileInputStream in = fileEncodingConverter.loadWithEncoding(encoding,srtFile);
         Scanner scanner = new Scanner(in, this.encoding);
         SubtitleTimestamps timestamps = null;
         SubtitleText text = null;

@@ -88,8 +88,6 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
     private SrtDisplayerOptions options;
 
-    private FontOptions fontOptions;
-
     private EventBus eventBus;
 
     private String startButtonText;
@@ -108,7 +106,8 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     public SettingsStageController(SrtPlayer srtPlayer,
                                    FontManager fontManager,
                                    WindowManager windowManager,
-                                   SrtDisplayerOptions options, FontOptions fontOptions, EventBus eventBus,
+                                   SrtDisplayerOptions options,
+                                   EventBus eventBus,
                                    @Named(UIStringsKeys.START_BUTTON_TEXT) String startButtonText,
                                    @Named(UIStringsKeys.STOP_BUTTON_TEXT) String stopButtonText,
                                    @Named(UIStringsKeys.MOVIE_MODE_BUTTON_TEXT) String movieModeButtonText,
@@ -118,7 +117,6 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     ) {
         this.srtPlayer = srtPlayer;
         this.options = options;
-        this.fontOptions = fontOptions;
         this.eventBus = eventBus;
         this.fontManager = fontManager;
         this.windowManager = windowManager;
@@ -133,26 +131,12 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
     @FXML
     public void initialize() {
-        checkNotNull(optionsButton);
-        checkNotNull(timeField);
-        checkNotNull(startButton);
-        checkNotNull(stopButton);
-        checkNotNull(settingsTextFlow);
-        checkNotNull(settingsTextFlow.getChildren());
-        checkNotNull(currentTimeStampText);
-        checkNotNull(wrongFormatText);
-        checkNotNull(fastBackwardButton);
-        checkNotNull(fastForwardButton);
-
         registerEventHandlers();
-
         loadUIStrings();
-
         clickWarning = loadImageView(imageHBox,
                 "images/finger.png",
                 new Vector2D(SETTINGS_CLICK_WARNING_SIZE, SETTINGS_CLICK_WARNING_SIZE));
         clickWarning.setVisible(false);
-
         eventBus.post(new RequestSubtitleUpdateEvent());
     }
 

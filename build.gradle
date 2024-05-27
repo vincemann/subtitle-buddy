@@ -558,7 +558,8 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
 
-
+    // detect encoding
+    implementation 'com.ibm.icu:icu4j:75.1'
     // testing
     testImplementation('org.testfx:testfx-core:4.0.18') {
         exclude module: 'hamcrest-all'

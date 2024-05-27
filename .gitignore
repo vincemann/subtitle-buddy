@@ -4,6 +4,7 @@ out/
 *.exe
 *.AppImage
 testing/
+ci
 old/
 brew
 lib/javafx/osx/sdk

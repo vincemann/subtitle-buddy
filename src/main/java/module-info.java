@@ -17,6 +17,7 @@ open module io.github.vincemann.subtitlebuddy {
     requires org.apache.commons.io;
     requires com.google.guice;
     requires com.google.common;
+    requires com.ibm.icu;
 
     exports io.github.vincemann.subtitlebuddy;
     exports io.github.vincemann.subtitlebuddy.srt;

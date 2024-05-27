@@ -4,6 +4,7 @@ import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -11,6 +12,6 @@ import java.util.List;
  */
 public interface SrtFileParser {
 
-    List<SubtitleParagraph> parseFile(File srtFile) throws FileNotFoundException, CorruptedSrtFileException;
+    List<SubtitleParagraph> parseFile(File srtFile) throws IOException, CorruptedSrtFileException;
 
 }

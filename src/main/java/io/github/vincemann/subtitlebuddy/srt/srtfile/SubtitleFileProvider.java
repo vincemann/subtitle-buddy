@@ -5,6 +5,8 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
+import io.github.vincemann.subtitlebuddy.srt.FileEncodingConverter;
+import io.github.vincemann.subtitlebuddy.srt.FileEncodingConverterImpl;
 import io.github.vincemann.subtitlebuddy.srt.parser.CorruptedSrtFileException;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.FileChooser;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.UserQuitException;
@@ -16,6 +18,9 @@ import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.List;
 
 
@@ -31,6 +36,7 @@ public class SubtitleFileProvider implements Provider<SubtitleFile> {
     private String fileNotFoundMessage;
     private String invalidFileFormatMessage;
     private String emptyFileMessage;
+
 
 
     private SubtitleFile chosenFile;
@@ -58,8 +64,9 @@ public class SubtitleFileProvider implements Provider<SubtitleFile> {
                 log.info("asking user to choose file");
                 File file =  fileChooser.letUserChooseFile();
                 List<SubtitleParagraph> subtitles = srtFileParser.parseFile(file);
-                log.info("file was parsed and valid");
+                log.info("file was parsed and valid, amount subtitles: " + subtitles.size());
                 this.chosenFile = new SubtitleFileImpl(subtitles);
+                log.debug("last subtitle: " + subtitles.get(subtitles.size()-1));
                 return chosenFile;
 //                return new SubtitleFileImpl(subtitles);
             }catch (FileNotFoundException e){
@@ -90,6 +97,10 @@ public class SubtitleFileProvider implements Provider<SubtitleFile> {
                 System.exit(0);
                 return null;
             }
+            catch (IOException e){
+                alertDialog.tellUser("Error while loading file: " + e.getMessage());
+                return get();
+            }
         }catch (EmptySubtitleListException e){
             alertDialog.tellUser(emptyFileMessage);
             return get();
@@ -99,11 +110,11 @@ public class SubtitleFileProvider implements Provider<SubtitleFile> {
     private String composeCorruptedFileMsg(CorruptedSrtFileException exception){
         List<SubtitleParagraph> readSubtitles = exception.getReadSubtitles();
         int linesRead = exception.getLinesRead();
-        String msg = corruptedFileMessage + "\n.";
+        String msg = corruptedFileMessage + "\n";
         msg += "Lines read: " + linesRead + ". Subtitles read: " + readSubtitles.size() + ".\n";
         if (!readSubtitles.isEmpty()){
             SubtitleParagraph last = readSubtitles.get(readSubtitles.size() - 1);
-            msg += "Read until: " + last.getEndTime().toString()+ ".";
+            msg += "Read until: " + last.getEndTime().toString()+ ".\n";
         }
         msg += "Details: " + exception.getMessage();
         return msg;

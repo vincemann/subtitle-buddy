@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 public class SrtFileParserImplTest {
@@ -99,7 +99,7 @@ public class SrtFileParserImplTest {
 
 
     @Test
-    public void testEmptyFile() throws FileNotFoundException, InvalidTimestampFormatException {
+    public void testEmptyFile() throws IOException, InvalidTimestampFormatException {
         try {
             srtFileParser.parseFile(emptyFile);
             Assert.fail();
@@ -113,7 +113,7 @@ public class SrtFileParserImplTest {
     0:6:12 will also work not only 00:06:12
      */
     @Test
-    public void testLenientTimestampPolicy() throws FileNotFoundException, InvalidTimestampFormatException, CorruptedSrtFileException {
+    public void testLenientTimestampPolicy() throws IOException, InvalidTimestampFormatException, CorruptedSrtFileException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(lenientTimestampFile);
         performBasicChecks(subtitles, 1123);
 
@@ -125,7 +125,7 @@ public class SrtFileParserImplTest {
     }
 
     @Test
-    public void testInvalidTimestamp() throws FileNotFoundException {
+    public void testInvalidTimestamp() throws IOException {
         try {
             srtFileParser.parseFile(invalidTimestampFile);
         } catch (CorruptedSrtFileException e) {
@@ -136,7 +136,7 @@ public class SrtFileParserImplTest {
     }
 
     @Test
-    public void testMissingTimestamp() throws FileNotFoundException {
+    public void testMissingTimestamp() throws IOException {
         try {
             srtFileParser.parseFile(missingTimestampFile);
         } catch (CorruptedSrtFileException e) {
@@ -147,7 +147,7 @@ public class SrtFileParserImplTest {
     }
 
     @Test
-    public void testMissingId() throws FileNotFoundException {
+    public void testMissingId() throws IOException {
         try {
             srtFileParser.parseFile(missingIdFile);
         } catch (CorruptedSrtFileException e) {
@@ -158,7 +158,7 @@ public class SrtFileParserImplTest {
     }
 
     @Test
-    public void testMissingEmptyLine() throws FileNotFoundException {
+    public void testMissingEmptyLine() throws IOException {
         try {
             srtFileParser.parseFile(missingEmptyLineFile);
         } catch (CorruptedSrtFileException e) {
@@ -169,7 +169,7 @@ public class SrtFileParserImplTest {
     }
 
     @Test
-    public void testNextIdInPayloadGetsIgnored() throws FileNotFoundException, CorruptedSrtFileException, InvalidTimestampFormatException {
+    public void testNextIdInPayloadGetsIgnored() throws IOException, CorruptedSrtFileException, InvalidTimestampFormatException {
         List<SubtitleParagraph> subtitles =srtFileParser.parseFile(idInPayload);
         performBasicChecks(subtitles, 1123);
 
@@ -201,7 +201,7 @@ public class SrtFileParserImplTest {
 
 
     @Test
-    public void testValidFile() throws FileNotFoundException, CorruptedSrtFileException, InvalidTimestampFormatException {
+    public void testValidFile() throws IOException, CorruptedSrtFileException, InvalidTimestampFormatException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(validSrtFile);
         performBasicChecks(subtitles, 1123);
 
@@ -268,7 +268,7 @@ public class SrtFileParserImplTest {
     }
 
     @Test
-    public void testEndMetadataTagFile() throws FileNotFoundException, InvalidTimestampFormatException, CorruptedSrtFileException {
+    public void testEndMetadataTagFile() throws IOException, InvalidTimestampFormatException, CorruptedSrtFileException {
         // when only the end is corrupted the parser usually can deal with that
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(endIdSrtFile);
         performBasicChecks(subtitles, 560);
@@ -312,7 +312,7 @@ public class SrtFileParserImplTest {
 
 
     @Test
-    public void testEmptyLinesAtAndShouldWork() throws FileNotFoundException, CorruptedSrtFileException, InvalidTimestampFormatException {
+    public void testEmptyLinesAtAndShouldWork() throws IOException, CorruptedSrtFileException, InvalidTimestampFormatException {
         // parser can deal with it
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(emptyLinesAtEndFile);
         performBasicChecks(subtitles, 1123);
@@ -331,7 +331,7 @@ public class SrtFileParserImplTest {
     }
 
     @Test
-    public void testEmptyInBetweenShouldWork() throws FileNotFoundException, CorruptedSrtFileException, InvalidTimestampFormatException {
+    public void testEmptyInBetweenShouldWork() throws IOException, CorruptedSrtFileException, InvalidTimestampFormatException {
         // parser can deal with it
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(emptyLinesInBetweenFile);
         performBasicChecks(subtitles, 1123);
@@ -377,79 +377,79 @@ public class SrtFileParserImplTest {
     }
 
     @Test
-    public void testMatrix() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testMatrix() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(matrix);
         performBasicChecks(subtitles, 1341, 0);
     }
 
     @Test
-    public void testAvengers() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testAvengers() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(avengers);
         performBasicChecks(subtitles, 1760);
     }
 
     @Test
-    public void testAvatar() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testAvatar() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(avatar);
         performBasicChecks(subtitles, 1217);
     }
 
     @Test
-    public void testShutterIsland() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testShutterIsland() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(shutterIsland);
         performBasicChecks(subtitles, 1575);
     }
 
     @Test
-    public void testTitanic1() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testTitanic1() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(titanicPart1);
         performBasicChecks(subtitles, 826);
     }
 
     @Test
-    public void testTitanic2() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testTitanic2() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(titanicPart2);
         performBasicChecks(subtitles, 777);
     }
 
     @Test
-    public void testTitanic3() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testTitanic3() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(titanicPart3);
         performBasicChecks(subtitles, 570);
     }
 
     @Test
-    public void testBaadnam() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testBaadnam() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(badnaam);
         performBasicChecks(subtitles, 1514);
     }
 
     @Test
-    public void testFanny() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testFanny() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(fanny);
         performBasicChecks(subtitles, 1577);
     }
 
     @Test
-    public void testGodzilla() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testGodzilla() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(godzilla);
         performBasicChecks(subtitles, 902);
     }
 
     @Test
-    public void testGoodSam() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testGoodSam() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(goodsam);
         performBasicChecks(subtitles, 1838);
     }
 
     @Test
-    public void testInception() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testInception() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(inception);
         performBasicChecks(subtitles, 1738);
     }
 
     @Test
-    public void testKgf() throws CorruptedSrtFileException, FileNotFoundException, InvalidTimestampFormatException {
+    public void testKgf() throws CorruptedSrtFileException, IOException, InvalidTimestampFormatException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(kgf);
         performBasicChecks(subtitles, 2245);
 
@@ -461,7 +461,7 @@ public class SrtFileParserImplTest {
     }
 
     @Test
-    public void testPotter2() throws CorruptedSrtFileException, FileNotFoundException {
+    public void testPotter2() throws CorruptedSrtFileException, IOException {
         List<SubtitleParagraph> subtitles = srtFileParser.parseFile(potter2);
         performBasicChecks(subtitles, 592);
     }

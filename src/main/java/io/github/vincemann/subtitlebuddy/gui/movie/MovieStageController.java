@@ -83,7 +83,6 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     private SrtDisplayerOptions options;
 
-    private Vector2D movieVBoxPos;
 
 
     @Getter
@@ -178,10 +177,7 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     @FXML
     public void initialize() {
-        movieVBoxPos = VectorUtils.getVecWithinBounds(options.getSubtitlePosition(), getScreenBounds());
-        checkNotNull(movieVBox);
-        checkNotNull(movieTextFlow);
-        checkNotNull(movieAnchorPane);
+        Vector2D movieVBoxPos = VectorUtils.getVecWithinBounds(options.getSubtitlePosition(), getScreenBounds());
         movieAnchorPane.setBackground(Background.EMPTY);
         movieTextFlow.setBackground(Background.EMPTY);
         movieTextFlow.setPickOnBounds(true);

@@ -14,7 +14,6 @@ import io.github.vincemann.subtitlebuddy.listeners.key.GlobalHotKeyListener;
 import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.options.ApachePropertiesFile;
 import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
-import io.github.vincemann.subtitlebuddy.test.TestFiles;
 import io.github.vincemann.subtitlebuddy.test.guice.MockFileChooserModule;
 import io.github.vincemann.subtitlebuddy.util.LoggingUtils;
 import javafx.application.Platform;
@@ -225,7 +224,7 @@ public abstract class GuiTest extends ApplicationTest {
         PropertiesFile properties = new ApachePropertiesFile(new File("src/test/resources/test-application.properties"));
         // use original strings constants file
 //        UIStringsFile strings = new ApacheUIStringsFile(new File(Main.UI_STRINGS_FILE_PATH));
-        MessageSource strings = new ApacheMessageSource(Main.UI_STRINGS_FILE_PATH);
+        MessageSource strings = new ApacheMessageSource(Main.STRINGS_FILE_NAME);
         // set all modules for integration test, mock those that need to be mocked
         Injector testInjector = Guice.createInjector(Arrays.asList(
                 new ClassPathFileModule(),

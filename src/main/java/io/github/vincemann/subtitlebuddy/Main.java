@@ -15,7 +15,9 @@ import io.github.vincemann.subtitlebuddy.config.strings.ApacheMessageSource;
 import io.github.vincemann.subtitlebuddy.config.strings.MessageSource;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractor;
 import io.github.vincemann.subtitlebuddy.cp.ClassPathFileExtractorImpl;
+import io.github.vincemann.subtitlebuddy.events.EventBus;
 import io.github.vincemann.subtitlebuddy.events.EventHandlerRegistrar;
+import io.github.vincemann.subtitlebuddy.events.RequestSubtitleUpdateEvent;
 import io.github.vincemann.subtitlebuddy.gui.Window;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
 import io.github.vincemann.subtitlebuddy.gui.Windows;
@@ -65,7 +67,7 @@ public class Main extends Application {
     }
 
     public static final String CONFIG_FILE_NAME = "application.properties";
-    public static final String UI_STRINGS_FILE_PATH = "application.string.properties";
+    public static final String STRINGS_FILE_NAME = "application.string.properties";
 
     private static Injector injector;
 
@@ -98,10 +100,16 @@ public class Main extends Application {
         startParser();
 
         registerJNativeHook();
+
+        displayFirstSubtitle();
+    }
+
+    private void displayFirstSubtitle(){
+        injector.getInstance(EventBus.class).post(new RequestSubtitleUpdateEvent());
     }
 
     private void installDefaultFonts() throws IOException {
-        log.debug("install default fonts");
+        log.debug("installing default fonts");
         Path fontDir = injector.getInstance(FontsDirectory.class).find();
         DefaultFontsInstaller fontsInstaller = injector.getInstance(DefaultFontsInstaller.class);
         fontsInstaller.installIfNeeded(fontDir);
@@ -118,7 +126,7 @@ public class Main extends Application {
 
     private MessageSource readStrings() throws ConfigurationException {
         // reads from application.string.properties from within jar
-        return new ApacheMessageSource(UI_STRINGS_FILE_PATH);
+        return new ApacheMessageSource(STRINGS_FILE_NAME);
     }
 
     private void registerJNativeHook() {
@@ -153,6 +161,7 @@ public class Main extends Application {
      */
     private WindowManager createStages(Stage primaryStage) throws IOException {
         WindowManager windowManager = injector.getInstance(WindowManager.class);
+
         SettingsStageFactory settingsStageFactory = injector.getInstance(SettingsStageFactory.class);
         SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
         Stage settingsStage = settingsStageFactory.create(primaryStage);
