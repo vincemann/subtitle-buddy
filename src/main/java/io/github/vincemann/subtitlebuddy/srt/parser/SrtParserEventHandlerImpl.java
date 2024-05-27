@@ -25,8 +25,9 @@ public class SrtParserEventHandlerImpl implements SrtParserEventHandler {
     @Override
     @Subscribe
     public void handleDoneParsingEvent(DoneParsingEvent doneParsingEvent) {
-        log.info("DoneParsingEvent arrived -> stopping srtParser und updater");
-        srtParserEngine.stop();
+        log.info("DoneParsingEvent arrived -> resetting srt player and stopping");
+        // dont stop engine just pause player and reset clock to beginning
+//        srtParserEngine.stop();
         srtPlayer.reset();
     }
 

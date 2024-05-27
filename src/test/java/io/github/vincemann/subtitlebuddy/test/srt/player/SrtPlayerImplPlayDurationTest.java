@@ -1,7 +1,5 @@
 package io.github.vincemann.subtitlebuddy.test.srt.player;
 
-import io.github.vincemann.subtitlebuddy.events.EventBus;
-import io.github.vincemann.subtitlebuddy.events.EventBusImpl;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.Timestamp;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtFileParserImpl;
@@ -11,6 +9,7 @@ import io.github.vincemann.subtitlebuddy.srt.parser.SubtitleTextParserImpl;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFile;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFileImpl;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
+import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.StopWatchImpl;
 import io.github.vincemann.subtitlebuddy.test.TestFiles;
 import org.junit.Assert;
@@ -24,14 +23,14 @@ import java.io.File;
  */
 public class SrtPlayerImplPlayDurationTest {
 
-    private SrtPlayer parser;
+    private SrtPlayer player;
 
     @Before
     public void setUp() throws Exception {
         SubtitleFile subtitleFile = new SubtitleFileImpl(
                 new SrtFileParserImpl(new SubtitleTextParserImpl()).parseFile(
                         new File(TestFiles.VALID_SRT_FILE_PATH)));
-        this.parser= new SrtPlayerImpl(subtitleFile,new StopWatchImpl(),"###");
+        this.player = new SrtPlayerImpl(subtitleFile,new StopWatchImpl(),"###");
     }
 
     @Test
@@ -41,7 +40,7 @@ public class SrtPlayerImplPlayDurationTest {
         assertSubtitleIs("I'm sure he'll be here soon.");
 
         // when
-        parser.start();
+        player.start();
         waitFor(1800);
 
         // then
@@ -55,7 +54,7 @@ public class SrtPlayerImplPlayDurationTest {
         assertSubtitleIs("I hope you're in love.");
 
         // when
-        parser.start();
+        player.start();
         waitFor(2000);
 
         // then
@@ -68,15 +67,15 @@ public class SrtPlayerImplPlayDurationTest {
     public void testSwitchBeforeAndBack() throws TimeStampOutOfBoundsException, InterruptedException {
         setTime(new Timestamp(1,5,29,100));
         assertSubtitleIs("Man, we got nothing to lose.");
-        parser.start();
+        player.start();
         waitFor(1500);
-        parser.stop();
+        player.stop();
         assertSubtitleIs("It's wide open,");
         setTime(new Timestamp(1,5,29,100));
         assertSubtitleIs("Man, we got nothing to lose.");
-        parser.start();
+        player.start();
         waitFor(1500);
-        parser.stop();
+        player.stop();
         assertSubtitleIs("It's wide open,");
     }
 
@@ -94,27 +93,27 @@ public class SrtPlayerImplPlayDurationTest {
         // given
         setTime(new Timestamp(1,10,4,750));
         assertSubtitleIs("It's almost that time. Are you ready?");
-        parser.start();
+        player.start();
         waitFor(1100);
         assertSubtitleIs("It's almost that time. Are you ready?");
-        parser.stop();
+        player.stop();
         assertSubtitleIs("It's almost that time. Are you ready?");
 
-        parser.start();
+        player.start();
         waitFor(2100);
         assertSubtitleIs("I'm ready, Tappy.");
 
     }
 
     private void assertSubtitleIs(String expectedSub) throws TimeStampOutOfBoundsException {
-        this.parser.updateCurrentSubtitle();
-        SubtitleText currentSubtitle = this.parser.getCurrentSubtitleText();
+        this.player.updateCurrentSubtitle();
+        SubtitleText currentSubtitle = this.player.getCurrentSubtitleText();
         Assert.assertNotNull(currentSubtitle);
         Assert.assertEquals(expectedSub,currentSubtitle.getSubtitles().get(0).getText());
     }
 
     private void setTime(Timestamp timestamp) {
-        this.parser.setTime(timestamp);
+        this.player.setTime(timestamp);
     }
 
     private void waitFor(long millis){

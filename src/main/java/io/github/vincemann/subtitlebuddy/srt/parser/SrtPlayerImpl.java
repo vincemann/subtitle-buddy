@@ -51,12 +51,11 @@ public class SrtPlayerImpl implements SrtPlayer {
             stop();
         }
         setTime(timestamp);
-
     }
 
     @Override
     public synchronized void start() throws IllegalStateException {
-        log.debug("srt parser start called");
+        log.debug("srt player start called");
         if (stopWatch.getCurrentState() == RunningState.STATE_UNSTARTED) {
             stopWatch.start();
         } else if (stopWatch.getCurrentState() == RunningState.STATE_SUSPENDED) {
