@@ -11,6 +11,6 @@ set "DIR=%DIR:~0,-1%"
 set "JAVA_EXEC=%DIR%\\image\\bin\\java"
 
 :: Change to the directory where the script resides, then into image root dir
-cd /d "%DIR%\image"
+cd /d "%DIR%\\image"
 
 start "" "%JAVA_EXEC%" %CDS_JVM_OPTS% ${jvmArgs} -p "%~dp0/../app" -m ${moduleName}/${mainClassName}  %*
