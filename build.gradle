@@ -207,7 +207,7 @@ jlink {
                     imageName = "subtitle-buddy"
                     installerName = "subtitle-buddy"
                     vendor = "vincemann"
-                    installerOptions = ['--win-console', '--win-menu', '--win-shortcut']
+                    installerOptions = ['--win-menu', '--win-shortcut']
                     installerType = 'msi'
                 }
             }
