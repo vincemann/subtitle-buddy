@@ -41,11 +41,11 @@ mv "$TEMP_FILE" "$FORMULA_FILE"
 
 echo "Updated SHA256 checksum for $PLATFORM in $FORMULA_FILE"
 
-# echo "pushing to github"
-# cd ./brew/homebrew-repo
-# git add -A
-# git commit -m "update hash"
-# git push
+echo "pushing to github"
+cd ./brew/homebrew-repo
+git add -A
+git commit -m "update hash"
+git push
 
-# cd ../..
+cd ../..
 

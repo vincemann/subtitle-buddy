@@ -6,6 +6,7 @@ out/
 testing/
 ci/linux/update-homebrew-formular.sh
 ci/win/test-win-installation.sh
+ci/ftp-config
 old/
 brew
 lib/javafx/osx/sdk
