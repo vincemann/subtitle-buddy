@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Check if the correct number of arguments is provided
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <file-path>"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <filename> <dir-of-file>"
     exit 1
 fi
 
-FILE_PATH=$1
-
+FILE_NAME=$1
+DIR=$2
 DST_IP="192.168.178.69"
 FTP_USER="vince"
 # Prompt the user for FTP details
@@ -15,7 +15,7 @@ read -sp "Enter FTP password: " FTP_PASS
 echo
 
 # Check if the file exists
-if [ ! -f "$FILE_PATH" ]; then
+if [ ! -f "$DIR/$FILE_NAME" ]; then
     echo "Error: File not found!"
     exit 1
 fi
@@ -23,8 +23,9 @@ fi
 # Use ftp to send the file
 ftp -inv $DST_IP <<EOF
 user $FTP_USER $FTP_PASS
+cd "$DIR"
 binary
-put "$FILE_PATH"
+put "$FILE_NAME"
 bye
 EOF
 
