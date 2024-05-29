@@ -14,10 +14,14 @@ FTP_USER="vince"
 read -sp "Enter FTP password: " FTP_PASS
 echo
 
+FILE_PATH="$DIR/$FILE_NAME"
+
 echo "dir: $DIR"
 echo "filename: $FILE_NAME"
+echo "filepath: $FILE_PATH"
+
 # Check if the file exists
-if [ ! -f "$DIR/$FILE_NAME" ]; then
+if [ ! -f $FILE_PATH ]; then
     echo "Error: File not found!"
     exit 1
 fi
