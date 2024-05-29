@@ -5,7 +5,7 @@
 
 brew update --force
 
-brew uninstall --force subtitle-buddy-mac
+brew uninstall --force subtitle-buddy
 
 # remove possible previous installation
 sudo rm -rf /opt/subtitle-buddy
@@ -14,14 +14,14 @@ rm -f /usr/local/bin/subtitle-buddy
 rm -f ~/Library/Caches/Homebrew/downloads/*subtitle-buddy*.tar.gz
 
 # remove all cached stuff
-rm -rf /usr/local/Cellar/subtitle-buddy-mac
+rm -rf /usr/local/Cellar/subtitle-buddy
 
 # remove start symlink
 rm /usr/local/bin/subtitle-buddy
 
 brew tap vincemann/homebrew-repo
 
-brew install subtitle-buddy-mac --verbose
+brew install subtitle-buddy --verbose
 
 # start
 subtitle-buddy
