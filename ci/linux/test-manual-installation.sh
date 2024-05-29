@@ -14,6 +14,6 @@ mkdir temp
 
 tar --extract --file *.tar.gz --directory temp
 
-ln -s temp/image/bin/appLauncher /usr/local/bin/subtitle-buddy
+ln -s $(pwd)/temp/image/bin/appLauncher /usr/local/bin/subtitle-buddy
 
 subtitle-buddy
