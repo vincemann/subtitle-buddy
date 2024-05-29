@@ -1,8 +1,10 @@
 #!/bin/bash
 # always execute from project root
 # this script builds new mac release for homebrew and sets everything up
-# need to build image on macos before and send to this pc
-# file is expected to be in build/releases
+# need to build image on macos before and send to this pc (./ci/osx/ftp-upload-image.sh)
+# file is expected to be in ~/subtitle-buddy-releases
+
+cp ~/subtitle-buddy-releases/*mac*.tar.gz build/releases
 
 ./ci/update-formular-hash.sh "mac"
 

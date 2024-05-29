@@ -22,15 +22,22 @@ fi
 NEW_SHA256=$(sha256sum build/releases/*$PLATFORM*.tar.gz | awk '{ print $1 }')
 echo "new hash: $NEW_SHA256"
 
-# Update the appropriate SHA256 checksum in the formula file
+# Create a temporary file
+TEMP_FILE=$(mktemp)
+
+# Update the appropriate SHA256 checksum in the formula file and write to the temporary file
 if [ "$PLATFORM" == "linux" ]; then
-    sed -i.bak "/^ *url \".*linux.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE"
+    sed "/^ *url \".*linux.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
 elif [ "$PLATFORM" == "mac" ]; then
-    sed -i.bak "/^ *url \".*mac.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE"
+    sed "/^ *url \".*mac.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
 else
     echo "Error: First argument must be 'linux' or 'mac'"
+    rm "$TEMP_FILE"
     exit 1
 fi
+
+# Move the temporary file to the original formula file
+mv "$TEMP_FILE" "$FORMULA_FILE"
 
 echo "Updated SHA256 checksum for $PLATFORM in $FORMULA_FILE"
 
