@@ -10,7 +10,7 @@ brew uninstall --force subtitle-buddy-dev-linux
 sudo rm -rf /opt/subtitle-buddy
 rm -f /usr/local/bin/subtitle-buddy
 
-rm -f /home/vince/.cache/Homebrew/downloads/*subtitle-buddy*.tar.gz
+rm -f ~/.cache/Homebrew/downloads/*subtitle-buddy*.tar.gz
 
 # remove all cached stuff
 rm -rf /home/linuxbrew/.linuxbrew/Cellar/subtitle-buddy-dev-linux
