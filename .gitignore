@@ -4,7 +4,8 @@ out/
 *.exe
 *.AppImage
 testing/
-ci
+ci/linux/update-homebrew-formular.sh
+ci/win/test-win-installation.sh
 old/
 brew
 lib/javafx/osx/sdk
