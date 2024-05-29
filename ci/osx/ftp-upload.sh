@@ -29,7 +29,7 @@ fi
 # Use ftp to send the file
 ftp -inv $DST_IP <<EOF
 user $FTP_USER $FTP_PASS
-cd "$DIR"
+lcd "$DIR"
 binary
 put "$FILE_NAME"
 bye
