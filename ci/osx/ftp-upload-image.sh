@@ -3,4 +3,5 @@
 
 ./gradlew clean tarJlink
 dir="build/releases"
-./ci/osx/ftp-upload.sh $dir *.tar.gz
+file=$(ls "$dir"/*.tar.gz 2> /dev/null | head -n 1)
+./ci/osx/ftp-upload.sh $dir $file
