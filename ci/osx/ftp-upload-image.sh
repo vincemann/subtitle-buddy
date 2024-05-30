@@ -1,9 +1,9 @@
 #!/bin/bash
 # build homebrew mac tar ball and send via ftp
 
-./gradlew clean tarJlink
-dir="build/releases"
-file=$(ls "$dir"/*.tar.gz 2> /dev/null | head -n 1)
+./gradlew clean jlinkZip
+dir="build"
+file=$(ls "$dir"/*.zip 2> /dev/null | head -n 1)
 # Check if a file was found
 if [ -z "$file" ]; then
     echo "No .tar.gz files found in $directory"

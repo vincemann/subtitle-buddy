@@ -19,7 +19,7 @@ if [ ! -f "$FORMULA_FILE" ]; then
     exit 1
 fi
 
-NEW_SHA256=$(sha256sum build/releases/*$PLATFORM*.tar.gz | awk '{ print $1 }')
+NEW_SHA256=$(sha256sum build/*$PLATFORM*.zip | awk '{ print $1 }')
 echo "new hash: $NEW_SHA256"
 
 # Create a temporary file

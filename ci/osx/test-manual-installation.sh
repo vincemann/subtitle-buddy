@@ -6,13 +6,13 @@ sudo rm -rf /opt/subtitle-buddy
 rm -f /usr/local/bin/subtitle-buddy
 
 
-./gradlew clean tarJlink
+./gradlew clean jlinkZip
 
-cd build/releases
+cd build
 
 mkdir temp
 
-tar --extract --file *.tar.gz --directory temp
+unzip *.zip -d temp
 
 ln -s $(pwd)/temp/bin/appLauncher /usr/local/bin/subtitle-buddy
 

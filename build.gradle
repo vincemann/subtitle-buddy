@@ -335,37 +335,10 @@ tasks.named('jpackage').configure {
     finalizedBy 'repackageDeb'
 }
 
-// creates tarball for jlink image and stores in build dir
-// execute with -PtargetPlatform=[linux|win|mac]
-// this can then be shipped via homebrew
-// NOTE: for mac this only works, when building on mac for whatever reason - otherwise the app will segfault when run
-tasks.register('tarJlink', Exec) {
-    dependsOn 'jlink'
+// creates ./build/image-platform.zip
+tasks.named('jlinkZip').configure {
     dependsOn 'copyNativeLibs'
     dependsOn 'copyWinStartScript'
-
-    // Set the working directory and define the tarball path outside the doFirst
-    workingDir "${projectDir}/build/image/appLauncher-${targetPlatform}"
-    def tarballPath = "${releaseDir}/subtitle-buddy-${version}-${targetPlatform}x64.tar.gz"
-
-    doFirst {
-        // Ensure any previous tarball is deleted before creating a new one
-        delete tarballPath
-        mkdir releaseDir
-    }
-
-    if (project.targetPlatform == 'linux') {
-        commandLine 'tar', '-czvf', "${tarballPath}", '.', '--transform=s,^./,image/,'
-    }else if (project.targetPlatform == 'mac') {
-        commandLine 'tar', '-czvf', "${tarballPath}", '.'
-    }
-    // Capture and print the output
-    standardOutput = new ByteArrayOutputStream()
-    errorOutput = new ByteArrayOutputStream()
-    doLast {
-        println("STDOUT: ${standardOutput.toString()}")
-        println("STDERR: ${errorOutput.toString()}")
-    }
 }
 
 
