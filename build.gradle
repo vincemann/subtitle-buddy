@@ -91,7 +91,10 @@ tasks.register("copyNativeLibs", Copy) {
     }
 }
 
+// creates ./build/image-platform.zip
 tasks.named('jlinkZip').configure {
+    dependsOn 'jlink'
+    dependsOn 'copyWinStartScript'
     dependsOn 'copyNativeLibs'
 }
 
@@ -333,12 +336,6 @@ tasks.named('jpackageImage').configure {
 
 tasks.named('jpackage').configure {
     finalizedBy 'repackageDeb'
-}
-
-// creates ./build/image-platform.zip
-tasks.named('jlinkZip').configure {
-    dependsOn 'copyNativeLibs'
-    dependsOn 'copyWinStartScript'
 }
 
 

@@ -10,7 +10,7 @@ brew cleanup
 sudo rm -rf /opt/subtitle-buddy
 rm -f /usr/local/bin/subtitle-buddy
 
-rm -f ~/.cache/Homebrew/downloads/*subtitle-buddy*.zip
+rm -f ~/.cache/Homebrew/downloads/*subtitle-buddy*
 
 # remove all cached stuff
 rm -rf /home/linuxbrew/.linuxbrew/Cellar/subtitle-buddy
