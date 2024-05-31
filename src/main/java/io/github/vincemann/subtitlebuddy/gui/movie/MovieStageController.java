@@ -208,6 +208,10 @@ public class MovieStageController implements MovieSrtDisplayer {
             adjustStagePos();
         });
 
+        adjustStageSizeAndPos();
+    }
+
+    private void adjustStageSizeAndPos(){
         Platform.runLater(this::adjustStageSize);
         Platform.runLater(this::adjustStagePos);
     }
@@ -215,8 +219,8 @@ public class MovieStageController implements MovieSrtDisplayer {
     // stage should always just have the size of the movie box, bc mac does not support click through
     private void adjustStageSize() {
         if (stage != null) {
-            double width = movieVBox.getWidth()*2;
-            double height = movieVBox.getHeight()*2;
+            double width = movieVBox.getWidth()*3;
+            double height = movieVBox.getHeight()*3;
             if (width != 0 && height != 0){
                 log.info("adjusting stage size to: w/h: " + width + "/" + height);
 
@@ -248,6 +252,7 @@ public class MovieStageController implements MovieSrtDisplayer {
     private void registerEventHandlingStageListener() {
         stage.showingProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
+                adjustStageSizeAndPos();
                 registerEventHandlers();
             } else {
                 unregisterEventHandlers();
