@@ -39,6 +39,9 @@ fi
 # Move the temporary file to the original formula file
 mv "$TEMP_FILE" "$FORMULA_FILE"
 
+# move artifact to server dir so it can be downloaded
+cp build/*$PLATFORM*.zip server
+
 echo "Updated SHA256 checksum for $PLATFORM in $FORMULA_FILE"
 
 echo "pushing to github"

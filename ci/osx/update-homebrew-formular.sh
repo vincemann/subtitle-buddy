@@ -10,7 +10,7 @@ cp ~/subtitle-buddy-releases/*mac*.zip build
 
 # start file server 
 PORT=8000
-cd build
+cd server
 
 # Check if the port is already in use
 if ! lsof -i:$PORT &> /dev/null; then

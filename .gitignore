@@ -9,6 +9,7 @@ ci/win/test-win-installation.sh
 ci/ftp-config
 old/
 brew
+server
 lib/javafx/osx/sdk
 releases/macos/x64/SubtitleBuddy.app/Contents/Java/image
 releases/windows/x64/inno/image
