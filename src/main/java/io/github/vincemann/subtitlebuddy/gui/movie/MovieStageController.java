@@ -205,42 +205,44 @@ public class MovieStageController implements MovieSrtDisplayer {
 
         // Ensure layout is complete before setting position
         movieVBox.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
-            adjustStagePos();
+            adjustStage();
         });
 
-        adjustStageSizeAndPos();
+        adjustStage();
     }
 
-    private void adjustStageSizeAndPos(){
-        Platform.runLater(this::adjustStageSize);
-        Platform.runLater(this::adjustStagePos);
+    private void adjustStage(){
+        Platform.runLater(() -> {
+            Point2D screenPos = movieVBox.localToScreen(0, 0);
+            if (screenPos != null && !Double.isNaN(screenPos.getX()) && !Double.isNaN(screenPos.getY())) {
+                stage.setX(screenPos.getX());
+                stage.setY(screenPos.getY());
+                log.info("Setting stage position to: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
+                // only adjust size when pos works to avoid size is already adjusted so pos of vbox cant be determined properly
+                adjustStageSize();
+            } else {
+                log.warn("Invalid screen coordinates: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
+            }
+        });
+
     }
 
     // stage should always just have the size of the movie box, bc mac does not support click through
     private void adjustStageSize() {
         if (stage != null) {
-            double width = movieVBox.getWidth()*3;
-            double height = movieVBox.getHeight()*3;
-            if (width != 0 && height != 0){
-                log.info("adjusting stage size to: w/h: " + width + "/" + height);
+            Platform.runLater(() -> {
+                double width = movieVBox.getWidth()*3;
+                double height = movieVBox.getHeight()*3;
+                if (width != 0 && height != 0){
+                    log.info("adjusting stage size to: w/h: " + width + "/" + height);
+                    stage.setWidth(width);
+                    stage.setHeight(height);
+                }
+                else {
+                    log.info("invalid size of movie box, ignoring");
+                }
+            });
 
-                stage.setWidth(width);
-                stage.setHeight(height);
-            }
-            else {
-                log.info("invalid size of movie box, ignoring");
-            }
-        }
-    }
-
-    private void adjustStagePos(){
-        Point2D screenPos = movieVBox.localToScreen(0, 0);
-        if (screenPos != null && !Double.isNaN(screenPos.getX()) && !Double.isNaN(screenPos.getY())) {
-            stage.setX(screenPos.getX());
-            stage.setY(screenPos.getY());
-            log.info("Setting stage position to: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
-        } else {
-            log.warn("Invalid screen coordinates: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
         }
     }
 
@@ -252,7 +254,6 @@ public class MovieStageController implements MovieSrtDisplayer {
     private void registerEventHandlingStageListener() {
         stage.showingProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                adjustStageSizeAndPos();
                 registerEventHandlers();
             } else {
                 unregisterEventHandlers();
