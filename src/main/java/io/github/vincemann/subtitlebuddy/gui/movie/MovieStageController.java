@@ -200,18 +200,23 @@ public class MovieStageController implements MovieSrtDisplayer {
         eventBus.post(new RequestSubtitleUpdateEvent());
 
         // Add size listeners to the VBox
-        movieVBox.widthProperty().addListener((obs, oldVal, newVal) -> adjustStageSize());
-        movieVBox.heightProperty().addListener((obs, oldVal, newVal) -> adjustStageSize());
+//        movieVBox.widthProperty().addListener((obs, oldVal, newVal) -> adjustStageSize());
+//        movieVBox.heightProperty().addListener((obs, oldVal, newVal) -> adjustStageSize());
 
         // Ensure layout is complete before setting position
         movieVBox.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
-            adjustStage();
+            adjustStagePos();
         });
 
-        adjustStage();
+        adjustStagePos();
     }
 
-    private void adjustStage(){
+    private void adjustStageSizeAndPos(){
+//        adjustStageSize();
+        adjustStagePos();
+    }
+
+    private void adjustStagePos(){
         Platform.runLater(() -> {
             Point2D screenPos = movieVBox.localToScreen(0, 0);
             if (screenPos != null && !Double.isNaN(screenPos.getX()) && !Double.isNaN(screenPos.getY())) {
@@ -219,7 +224,6 @@ public class MovieStageController implements MovieSrtDisplayer {
                 stage.setY(screenPos.getY());
                 log.info("Setting stage position to: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
                 // only adjust size when pos works to avoid size is already adjusted so pos of vbox cant be determined properly
-                adjustStageSize();
             } else {
                 log.warn("Invalid screen coordinates: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
             }
@@ -270,7 +274,7 @@ public class MovieStageController implements MovieSrtDisplayer {
         // is called when user selected a new position for the movieVBox
         Vector2D nodePos = new Vector2D(movieVBox.getLayoutX(), movieVBox.getLayoutY());
         eventBus.post(new UpdateSubtitlePosEvent(nodePos));
-        adjustStageSize();
+        adjustStagePos();
     }
 
     private void onMovieBoxResize(Node node, double h, double w, double deltaH, double deltaW) {
