@@ -210,17 +210,35 @@ public class MovieStageController implements MovieSrtDisplayer {
             double width = movieVBox.getWidth()*2;
             double height = movieVBox.getHeight()*2;
 
-            // Convert the local coordinates of the VBox to screen coordinates
-            Point2D screenPos = movieVBox.localToScreen(0, 0);
-            if (screenPos != null) {
-                stage.setX(screenPos.getX());
-                stage.setY(screenPos.getY());
-                log.info("updating pos to: x/y: " + screenPos.getX() + "/" + screenPos.getY());
-            }
-            log.info("adjusting stage size to: w/h: " + width + "/" + height);
 
-            stage.setWidth(width);
-            stage.setHeight(height);
+            // Ensure layout is complete before setting position
+            movieVBox.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
+                Point2D screenPos = movieVBox.localToScreen(0, 0);
+                if (screenPos != null && !Double.isNaN(screenPos.getX()) && !Double.isNaN(screenPos.getY())) {
+                    stage.setX(screenPos.getX());
+                    stage.setY(screenPos.getY());
+                    log.info("Setting stage position to: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
+                } else {
+                    log.warn("Invalid screen coordinates: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
+                }
+            });
+
+//            // Convert the local coordinates of the VBox to screen coordinates
+//            Point2D screenPos = movieVBox.localToScreen(0, 0);
+//            if (screenPos != null) {
+//                stage.setX(screenPos.getX());
+//                stage.setY(screenPos.getY());
+//                log.info("updating pos to: x/y: " + screenPos.getX() + "/" + screenPos.getY());
+//            }
+            if (width != 0 && height != 0){
+                log.info("adjusting stage size to: w/h: " + width + "/" + height);
+
+                stage.setWidth(width);
+                stage.setHeight(height);
+            }
+            else {
+                log.info("invalid size of movie box, ignoring");
+            }
 
         }
     }
