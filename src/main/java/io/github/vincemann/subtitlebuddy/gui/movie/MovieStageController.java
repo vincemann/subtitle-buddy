@@ -23,13 +23,13 @@ import io.github.vincemann.subtitlebuddy.util.vec.VectorUtils;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -178,8 +178,14 @@ public class MovieStageController implements MovieSrtDisplayer {
     @FXML
     public void initialize() {
         Vector2D movieVBoxPos = VectorUtils.getVecWithinBounds(options.getSubtitlePosition(), getScreenBounds());
-        movieAnchorPane.setBackground(Background.EMPTY);
-        movieTextFlow.setBackground(Background.EMPTY);
+
+        // todo change back - visualize for debugging
+        movieAnchorPane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+        movieVBox.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+//        movieAnchorPane.setBackground(Background.EMPTY);
+//        movieTextFlow.setBackground(Background.EMPTY);
+
+
         movieTextFlow.setPickOnBounds(true);
 
         movieVBox.setLayoutX(movieVBoxPos.getX());
@@ -201,8 +207,21 @@ public class MovieStageController implements MovieSrtDisplayer {
     // stage should always just have the size of the movie box, bc mac does not support click through
     private void adjustStageSize() {
         if (stage != null) {
-            stage.setWidth(movieVBox.getWidth());
-            stage.setHeight(movieVBox.getHeight());
+            double width = movieVBox.getWidth()*2;
+            double height = movieVBox.getHeight()*2;
+
+            // Convert the local coordinates of the VBox to screen coordinates
+            Point2D screenPos = movieVBox.localToScreen(0, 0);
+            if (screenPos != null) {
+                stage.setX(screenPos.getX());
+                stage.setY(screenPos.getY());
+                log.info("updating pos to: x/y: " + screenPos.getX() + "/" + screenPos.getY());
+            }
+            log.info("adjusting stage size to: w/h: " + width + "/" + height);
+
+            stage.setWidth(width);
+            stage.setHeight(height);
+
         }
     }
 
@@ -231,11 +250,13 @@ public class MovieStageController implements MovieSrtDisplayer {
         // is called when user selected a new position for the movieVBox
         Vector2D nodePos = new Vector2D(movieVBox.getLayoutX(), movieVBox.getLayoutY());
         eventBus.post(new UpdateSubtitlePosEvent(nodePos));
+        adjustStageSize();
     }
 
     private void onMovieBoxResize(Node node, double h, double w, double deltaH, double deltaW) {
         checkArgument(node == movieVBox);
-        movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
+        // todo change back
+//        movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
         movieVBox.setPrefHeight(h);
         movieVBox.setPrefWidth(w);
         int fontSize = ((int) (h + w) / 2) / 9;
@@ -246,10 +267,16 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     private void registerEventHandlers() {
         EventHandler<MouseEvent> movieBoxMouseEnteredHandler =
-                event -> movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
+                event -> {
+            // todo change back
+//                    movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
+                };
 
         EventHandler<MouseEvent> movieBoxMouseExitedHandler =
-                event -> movieVBox.setStyle(TRANSPARENT_BACKGROUND_STYLE);
+                event -> {
+            // todo change back
+//            movieVBox.setStyle(TRANSPARENT_BACKGROUND_STYLE);
+                };
 
         movieVBox.setOnMouseEntered(movieBoxMouseEnteredHandler);
         movieVBox.setOnMouseExited(movieBoxMouseExitedHandler);
