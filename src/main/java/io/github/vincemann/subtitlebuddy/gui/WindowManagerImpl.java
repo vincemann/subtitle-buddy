@@ -2,6 +2,7 @@ package io.github.vincemann.subtitlebuddy.gui;
 
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 

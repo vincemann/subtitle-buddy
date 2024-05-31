@@ -192,11 +192,24 @@ public class MovieStageController implements MovieSrtDisplayer {
                 new Vector2D(MOVIE_CLICK_WARNING_SIZE, MOVIE_CLICK_WARNING_SIZE));
         clickWarning.setVisible(false);
         eventBus.post(new RequestSubtitleUpdateEvent());
+
+        // Add size listeners to the VBox
+        movieVBox.widthProperty().addListener((obs, oldVal, newVal) -> adjustStageSize());
+        movieVBox.heightProperty().addListener((obs, oldVal, newVal) -> adjustStageSize());
+    }
+
+    // stage should always just have the size of the movie box, bc mac does not support click through
+    private void adjustStageSize() {
+        if (stage != null) {
+            stage.setWidth(movieVBox.getWidth());
+            stage.setHeight(movieVBox.getHeight());
+        }
     }
 
     public void setStage(Stage stage) {
         this.stage = stage;
         registerEventHandlingStageListener();
+        adjustStageSize();
     }
 
     private void registerEventHandlingStageListener() {
