@@ -17,6 +17,7 @@ import io.github.vincemann.subtitlebuddy.srt.Subtitle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleType;
 import io.github.vincemann.subtitlebuddy.util.ExecutionLimiter;
+import io.github.vincemann.subtitlebuddy.util.ScreenUtils;
 import io.github.vincemann.subtitlebuddy.util.fx.DragResizeMod;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import io.github.vincemann.subtitlebuddy.util.vec.VectorUtils;
@@ -208,11 +209,11 @@ public class MovieStageController implements MovieSrtDisplayer {
             adjustStagePos();
         });
 
-        adjustStagePos();
+        adjustStageSizeAndPos();
     }
 
     private void adjustStageSizeAndPos(){
-//        adjustStageSize();
+        adjustStageSize();
         adjustStagePos();
     }
 
@@ -220,8 +221,10 @@ public class MovieStageController implements MovieSrtDisplayer {
         Platform.runLater(() -> {
             Point2D screenPos = movieVBox.localToScreen(0, 0);
             if (screenPos != null && !Double.isNaN(screenPos.getX()) && !Double.isNaN(screenPos.getY())) {
-                stage.setX(screenPos.getX());
-                stage.setY(screenPos.getY());
+//                stage.setX(screenPos.getX());
+//                stage.setY(screenPos.getY());
+                stage.setX(ScreenUtils.getScreenBounds().getX()/2);
+                stage.setX(ScreenUtils.getScreenBounds().getY()/2);
                 log.info("Setting stage position to: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
                 // only adjust size when pos works to avoid size is already adjusted so pos of vbox cant be determined properly
             } else {
