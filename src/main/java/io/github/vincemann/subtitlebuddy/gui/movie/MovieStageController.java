@@ -202,6 +202,8 @@ public class MovieStageController implements MovieSrtDisplayer {
         // Add size listeners to the VBox
         movieVBox.widthProperty().addListener((obs, oldVal, newVal) -> adjustStageSize());
         movieVBox.heightProperty().addListener((obs, oldVal, newVal) -> adjustStageSize());
+
+        adjustStageSize();
     }
 
     // stage should always just have the size of the movie box, bc mac does not support click through
@@ -246,7 +248,6 @@ public class MovieStageController implements MovieSrtDisplayer {
     public void setStage(Stage stage) {
         this.stage = stage;
         registerEventHandlingStageListener();
-        adjustStageSize();
     }
 
     private void registerEventHandlingStageListener() {
