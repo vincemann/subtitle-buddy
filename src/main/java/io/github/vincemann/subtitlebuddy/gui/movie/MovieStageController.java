@@ -1,12 +1,8 @@
 package io.github.vincemann.subtitlebuddy.gui.movie;
 
-import io.github.vincemann.subtitlebuddy.events.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.events.RequestSubtitleUpdateEvent;
-import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
-import io.github.vincemann.subtitlebuddy.events.UpdateMovieFontSizeEvent;
-import io.github.vincemann.subtitlebuddy.events.UpdateSubtitlePosEvent;
+import io.github.vincemann.subtitlebuddy.events.*;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.font.FontOptions;
 import io.github.vincemann.subtitlebuddy.gui.EventHandlerRegistration;
@@ -17,7 +13,6 @@ import io.github.vincemann.subtitlebuddy.srt.Subtitle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleType;
 import io.github.vincemann.subtitlebuddy.util.ExecutionLimiter;
-import io.github.vincemann.subtitlebuddy.util.ScreenUtils;
 import io.github.vincemann.subtitlebuddy.util.fx.DragResizeMod;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import io.github.vincemann.subtitlebuddy.util.vec.VectorUtils;
@@ -43,7 +38,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static io.github.vincemann.subtitlebuddy.util.ScreenUtils.getScreenBounds;
 import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.loadImageView;
 
@@ -96,6 +90,8 @@ public class MovieStageController implements MovieSrtDisplayer {
     private FontOptions fontOptions;
 
     private Stage stage;
+
+    private StageResizer stageResizer;
 
 
     @Inject
@@ -178,7 +174,10 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     @FXML
     public void initialize() {
-        Vector2D movieVBoxPos = VectorUtils.getVecWithinBounds(options.getSubtitlePosition(), getScreenBounds());
+        // should always be absolute pos
+        Vector2D stagePos = options.getSubtitlePosition();
+//        Vector2D stagePos = VectorUtils.getVecWithinBounds(options.getSubtitlePosition(), getScreenBounds());
+        Vector2D stageSize = evalStageSize();
 
         // todo change back - visualize for debugging
         movieAnchorPane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -189,8 +188,10 @@ public class MovieStageController implements MovieSrtDisplayer {
 
         movieTextFlow.setPickOnBounds(true);
 
-        movieVBox.setLayoutX(movieVBoxPos.getX());
-        movieVBox.setLayoutY(movieVBoxPos.getY());
+
+
+//        movieVBox.setLayoutX(stagePos.getX());
+//        movieVBox.setLayoutY(stagePos.getY());
 
         registerEventHandlers();
 
@@ -200,62 +201,74 @@ public class MovieStageController implements MovieSrtDisplayer {
         clickWarning.setVisible(false);
         eventBus.post(new RequestSubtitleUpdateEvent());
 
+
+        this.stageResizer = new StageResizer(stagePos, stageSize, movieVBox);
+
         // Add size listeners to the VBox
 //        movieVBox.widthProperty().addListener((obs, oldVal, newVal) -> adjustStageSize());
 //        movieVBox.heightProperty().addListener((obs, oldVal, newVal) -> adjustStageSize());
 
         // Ensure layout is complete before setting position
         movieVBox.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
-            adjustStagePos();
+//            adjustStagePos();
         });
 
-        adjustStageSizeAndPos();
+//        adjustStageSizeAndPos();
     }
 
-    private void adjustStageSizeAndPos(){
-        adjustStageSize();
-        adjustStagePos();
+    private Vector2D evalStageSize() {
+        int fontSize = options.getMovieFontSize();
+        double y = fontSize*5;
+        double x = fontSize*20;
+        return new Vector2D(x,y);
     }
 
-    private void adjustStagePos(){
-        Platform.runLater(() -> {
-            Point2D screenPos = movieVBox.localToScreen(0, 0);
-            if (screenPos != null && !Double.isNaN(screenPos.getX()) && !Double.isNaN(screenPos.getY())) {
-//                stage.setX(screenPos.getX());
-//                stage.setY(screenPos.getY());
-                stage.setX(ScreenUtils.getScreenBounds().getX()/2);
-                stage.setX(ScreenUtils.getScreenBounds().getY()/2);
-                log.info("Setting stage position to: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
-                // only adjust size when pos works to avoid size is already adjusted so pos of vbox cant be determined properly
-            } else {
-                log.warn("Invalid screen coordinates: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
-            }
-        });
+//    private void adjustStageSizeAndPos(){
+//        adjustStageSize();
+//        adjustStagePos();
+//    }
 
-    }
+//    private void adjustStagePos(){
+//        Platform.runLater(() -> {
+//            Point2D screenPos = movieVBox.localToScreen(0, 0);
+//            if (screenPos != null && !Double.isNaN(screenPos.getX()) && !Double.isNaN(screenPos.getY())) {
+////                stage.setX(screenPos.getX());
+////                stage.setY(screenPos.getY());
+//                stage.setX(ScreenUtils.getScreenBounds().getX()/2);
+//                stage.setX(ScreenUtils.getScreenBounds().getY()/2);
+//                log.info("Setting stage position to: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
+//                // only adjust size when pos works to avoid size is already adjusted so pos of vbox cant be determined properly
+//            } else {
+//                log.warn("Invalid screen coordinates: (x/y) " + screenPos.getX() + "/" + screenPos.getY());
+//            }
+//        });
+//
+//    }
 
     // stage should always just have the size of the movie box, bc mac does not support click through
-    private void adjustStageSize() {
-        if (stage != null) {
-            Platform.runLater(() -> {
-                double width = movieVBox.getWidth()*3;
-                double height = movieVBox.getHeight()*3;
-                if (width != 0 && height != 0){
-                    log.info("adjusting stage size to: w/h: " + width + "/" + height);
-                    stage.setWidth(width);
-                    stage.setHeight(height);
-                }
-                else {
-                    log.info("invalid size of movie box, ignoring");
-                }
-            });
-
-        }
-    }
+//    private void adjustStageSize() {
+//        if (stage != null) {
+//            Platform.runLater(() -> {
+//                double width = movieVBox.getWidth()*3;
+//                double height = movieVBox.getHeight()*3;
+//                if (width != 0 && height != 0){
+//                    log.info("adjusting stage size to: w/h: " + width + "/" + height);
+//                    stage.setWidth(width);
+//                    stage.setHeight(height);
+//                }
+//                else {
+//                    log.info("invalid size of movie box, ignoring");
+//                }
+//            });
+//
+//        }
+//    }
 
     public void setStage(Stage stage) {
         this.stage = stage;
+        this.stageResizer.setStage(stage);
         registerEventHandlingStageListener();
+        Platform.runLater(() -> stageResizer.adjust());
     }
 
     private void registerEventHandlingStageListener() {
@@ -275,21 +288,22 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     private void onDraggedInPosition(MouseEvent mouseEvent) {
         // is called when user selected a new position for the movieVBox
-        Vector2D nodePos = new Vector2D(movieVBox.getLayoutX(), movieVBox.getLayoutY());
+        Point2D absPos = movieVBox.localToScreen(0, 0);
+        Vector2D nodePos = new Vector2D(absPos.getX(), absPos.getY());
         eventBus.post(new UpdateSubtitlePosEvent(nodePos));
-        adjustStagePos();
+        stageResizer.updatePos(nodePos);
     }
 
     private void onMovieBoxResize(Node node, double h, double w, double deltaH, double deltaW) {
-        checkArgument(node == movieVBox);
-        // todo change back
-//        movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
-        movieVBox.setPrefHeight(h);
-        movieVBox.setPrefWidth(w);
-        int fontSize = ((int) (h + w) / 2) / 9;
-        // dont write to disk too often, this method is called often in a short time
-        ExecutionLimiter.executeMaxEveryNMillis("fontResize", UPDATE_SLEEP_DURATION,
-                () -> eventBus.post(new UpdateMovieFontSizeEvent(fontSize)));
+//        checkArgument(node == movieVBox);
+//        // todo change back
+////        movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
+//        movieVBox.setPrefHeight(h);
+//        movieVBox.setPrefWidth(w);
+//        int fontSize = ((int) (h + w) / 2) / 9;
+//        // dont write to disk too often, this method is called often in a short time
+//        ExecutionLimiter.executeMaxEveryNMillis("fontResize", UPDATE_SLEEP_DURATION,
+//                () -> eventBus.post(new UpdateMovieFontSizeEvent(fontSize)));
     }
 
     private void registerEventHandlers() {
