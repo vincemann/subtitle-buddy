@@ -36,7 +36,7 @@ public class OptionsEventHandler {
 
     @Subscribe
     public void handleUpdateMovieFontSizeEvent(UpdateMovieFontSizeEvent event) {
-        log.debug("UpdateFontColorEvent arrived: " + event.getFontSize());
+        log.debug("UpdateMovieFontSizeEvent arrived: " + event.getFontSize());
         optionsManager.updateMovieFontSize(event.getFontSize());
         eventBus.post(new RequestSubtitleUpdateEvent());
     }

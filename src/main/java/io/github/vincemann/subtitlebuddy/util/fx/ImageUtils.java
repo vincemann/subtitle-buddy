@@ -21,6 +21,7 @@ public class ImageUtils {
             imageView.setFitHeight(size.getX());
             imageView.setFitWidth(size.getY());
             imageView.setCache(true);
+            imageView.setPreserveRatio(true);
             parent.getChildren().add(imageView);
         } catch (IOException e) {
             // Handle IO exceptions or other issues here

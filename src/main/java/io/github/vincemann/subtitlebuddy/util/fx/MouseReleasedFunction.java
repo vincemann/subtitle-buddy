@@ -5,5 +5,5 @@ import javafx.scene.input.MouseEvent;
 @FunctionalInterface
 public interface MouseReleasedFunction {
 
-    void handleMouseEvent(MouseEvent mouseEvent, double deltaX, double deltaY);
+    void handleMouseEvent(MouseEvent mouseEvent, double deltaX, double deltaY, boolean resize);
 }

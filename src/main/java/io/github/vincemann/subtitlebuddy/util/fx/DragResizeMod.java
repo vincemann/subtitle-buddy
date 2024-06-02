@@ -113,7 +113,7 @@ public class DragResizeMod {
     private double nodeH;
 
     @Builder
-    public DragResizeMod(@NonNull Node node, OnDragResizeEventListener listener, MouseEventFunction mouseClickedFunction, MouseEventFunction mouseDraggedFunction, MouseEventFunction mouseMovedFunction, MouseReleasedFunction mouseReleasedFunction, ResizeFunction resizeFunction, @NonNull Double nodeWidth,@NonNull Double nodeHeight) {
+    public DragResizeMod(@NonNull Node node, OnDragResizeEventListener listener, MouseEventFunction mouseClickedFunction, MouseEventFunction mouseDraggedFunction, MouseEventFunction mouseMovedFunction, MouseReleasedFunction mouseReleasedFunction, ResizeFunction resizeFunction) {
         this.node=node;
         this.registeredEventHandlers = new HashMap<>();
         if(listener!=null)
@@ -166,12 +166,13 @@ public class DragResizeMod {
         EventHandler<MouseEvent> mouseReleasedHandler  = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                boolean resize = isResize();
                 mouseReleased(event);
                 if(mouseReleasedFunction!=null) {
                     double deltaX = event.getScreenX() - screenClickX;
                     double deltaY = event.getScreenY() - screenClickY;
                     event.consume();
-                    mouseReleasedFunction.handleMouseEvent(event, deltaX, deltaY); // Pass delta values
+                    mouseReleasedFunction.handleMouseEvent(event, deltaX, deltaY,resize); // Pass delta values
                 }
             }
         };
@@ -185,6 +186,13 @@ public class DragResizeMod {
         this.registeredEventHandlers.put(mouseDraggedHandler,MouseEvent.MOUSE_DRAGGED);
         this.registeredEventHandlers.put(mouseMovedHandler,MouseEvent.MOUSE_MOVED);
         this.registeredEventHandlers.put(mouseReleasedHandler,MouseEvent.MOUSE_RELEASED);
+    }
+
+    private boolean isResize(){
+        return state.equals(S.NW_RESIZE) || state.equals(S.E_RESIZE)
+                || state.equals(S.N_RESIZE) || state.equals(S.S_RESIZE)
+                || state.equals(S.NE_RESIZE) || state.equals(S.SE_RESIZE)
+                || state.equals(S.W_RESIZE) || state.equals(S.SW_RESIZE);
     }
 
     protected void mouseReleased(MouseEvent event) {

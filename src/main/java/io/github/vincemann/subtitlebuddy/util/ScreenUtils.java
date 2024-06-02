@@ -9,4 +9,5 @@ public class ScreenUtils {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         return new Vector2D(screenBounds.getWidth()-1,screenBounds.getHeight()-1);
     }
+
 }
