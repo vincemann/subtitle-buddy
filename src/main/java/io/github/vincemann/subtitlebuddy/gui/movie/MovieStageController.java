@@ -12,16 +12,17 @@ import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.srt.Subtitle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleType;
-import io.github.vincemann.subtitlebuddy.util.ExecutionLimiter;
+import io.github.vincemann.subtitlebuddy.util.ScreenUtils;
 import io.github.vincemann.subtitlebuddy.util.fx.DragResizeMod;
+import io.github.vincemann.subtitlebuddy.util.fx.DrawingUtil;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
-import io.github.vincemann.subtitlebuddy.util.vec.VectorUtils;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -33,12 +34,12 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static io.github.vincemann.subtitlebuddy.util.ScreenUtils.getScreenBounds;
 import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.loadImageView;
 
 /**
@@ -104,7 +105,7 @@ public class MovieStageController implements MovieSrtDisplayer {
         this.options = options;
         // make sure subtitles can be seen
         this.fontOptions = fontOptions;
-        this.lastSubtitleText = new SubtitleText(new ArrayList<>(Collections.emptyList()));
+        this.lastSubtitleText = SubtitleText.empty();
     }
 
 
@@ -135,6 +136,8 @@ public class MovieStageController implements MovieSrtDisplayer {
         log.debug("display new subtitle in movie mode: " + subtitleText);
         lastSubtitleText = subtitleText;
 
+        if (true)
+            return;
 
         Platform.runLater(() -> {
             Color fontColor = fontOptions.getFontColor();
@@ -175,9 +178,12 @@ public class MovieStageController implements MovieSrtDisplayer {
     @FXML
     public void initialize() {
         // should always be absolute pos
-        Vector2D stagePos = options.getSubtitlePosition();
 //        Vector2D stagePos = VectorUtils.getVecWithinBounds(options.getSubtitlePosition(), getScreenBounds());
         Vector2D stageSize = evalStageSize();
+        stageSize = new Vector2D(1000,300);
+
+        Vector2D stagePos = options.getSubtitlePosition();
+        stagePos = new Vector2D(ScreenUtils.getScreenBounds().getX()/2-stageSize.getX()/2,ScreenUtils.getScreenBounds().getY()/2-stageSize.getY()/2);
 
         // todo change back - visualize for debugging
         movieAnchorPane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -202,16 +208,11 @@ public class MovieStageController implements MovieSrtDisplayer {
         eventBus.post(new RequestSubtitleUpdateEvent());
 
 
-        this.stageResizer = new StageResizer(stagePos, stageSize, movieVBox);
+        this.stageResizer = new StageResizer(stagePos, stageSize, movieVBox, movieAnchorPane);
 
         // Add size listeners to the VBox
 //        movieVBox.widthProperty().addListener((obs, oldVal, newVal) -> adjustStageSize());
 //        movieVBox.heightProperty().addListener((obs, oldVal, newVal) -> adjustStageSize());
-
-        // Ensure layout is complete before setting position
-        movieVBox.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
-//            adjustStagePos();
-        });
 
 //        adjustStageSizeAndPos();
     }
@@ -268,13 +269,14 @@ public class MovieStageController implements MovieSrtDisplayer {
         this.stage = stage;
         this.stageResizer.setStage(stage);
         registerEventHandlingStageListener();
-        Platform.runLater(() -> stageResizer.adjust());
+        stageResizer.adjust();
     }
 
     private void registerEventHandlingStageListener() {
         stage.showingProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 registerEventHandlers();
+                stageResizer.adjust();
             } else {
                 unregisterEventHandlers();
             }
@@ -286,10 +288,14 @@ public class MovieStageController implements MovieSrtDisplayer {
         dragResizeMod.unregisterListeners();
     }
 
-    private void onDraggedInPosition(MouseEvent mouseEvent) {
+    private void onDraggedInPosition(MouseEvent mouseEvent, double deltaX, double deltaY) {
+        log.debug("old stage pos: " +stage.getX() +" " + stage.getY());
         // is called when user selected a new position for the movieVBox
-        Point2D absPos = movieVBox.localToScreen(0, 0);
-        Vector2D nodePos = new Vector2D(absPos.getX(), absPos.getY());
+        double newX = stage.getX() + deltaX;
+        double newY = stage.getY() + deltaY;
+        log.debug("new stage pos: " + newX + " " + newY);
+//        Point2D absPos = movieAnchorPane.localToScreen(0, 0);
+        Vector2D nodePos = new Vector2D(newX, newY);
         eventBus.post(new UpdateSubtitlePosEvent(nodePos));
         stageResizer.updatePos(nodePos);
     }
@@ -323,12 +329,12 @@ public class MovieStageController implements MovieSrtDisplayer {
         movieVBox.setOnMouseExited(movieBoxMouseExitedHandler);
 
         dragResizeMod = DragResizeMod.builder()
-                .node(movieVBox)
+                .node(movieAnchorPane)
                 .mouseReleasedFunction(this::onDraggedInPosition)
                 .mouseClickedFunction(this::onVBoxClicked)
                 .resizeFunction(this::onMovieBoxResize)
-                .nodeHeight(movieVBox.getHeight())
-                .nodeWidth(movieVBox.getWidth())
+                .nodeHeight(movieAnchorPane.getHeight())
+                .nodeWidth(movieAnchorPane.getWidth())
                 .build();
         dragResizeMod.makeResizableAndDraggable();
 

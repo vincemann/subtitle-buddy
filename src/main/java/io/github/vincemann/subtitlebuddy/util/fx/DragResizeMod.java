@@ -26,14 +26,14 @@ import java.util.*;
  * ************* OnDragResizeEventListener **********
  *
  * You need to override OnDragResizeEventListener and
- * 1) preform out of main field bounds check
+ * 1) perform out of main field bounds check
  * 2) make changes to the node
  * (this class will not change anything in node coordinates)
  *
- * There is defaultListener and it works only with Canvas nad Rectangle
+ * There is defaultListener and it works only with Canvas and Rectangle
  *
  * original author : Peter Varren
- * modified by io.github.vincemann
+ * modified by vincemann
  */
 
 public class DragResizeMod {
@@ -74,7 +74,7 @@ public class DragResizeMod {
             node.setLayoutX(x);
             node.setLayoutY(y);
             // TODO find generic way to set width and height of any node
-            // here we cant set height and width to node directly.
+            // here we can't set height and width to node directly.
             resizeFunction.onResize(node,h,w, deltaH, deltaW);
         }
     };
@@ -92,9 +92,8 @@ public class DragResizeMod {
         S_RESIZE;
     }
 
-
     private double clickX, clickY, nodeX, nodeY;
-
+    private double screenClickX, screenClickY;
     private S state = S.DEFAULT;
 
     private Node node;
@@ -102,7 +101,7 @@ public class DragResizeMod {
     private MouseEventFunction mouseClickedFunction;
     private MouseEventFunction mouseDraggedFunction;
     private MouseEventFunction mouseMovedFunction;
-    private MouseEventFunction mouseReleasedFunction;
+    private MouseReleasedFunction mouseReleasedFunction;
     private ResizeFunction resizeFunction;
 
     private Map<EventHandler<MouseEvent>,EventType<MouseEvent>> registeredEventHandlers;
@@ -114,7 +113,7 @@ public class DragResizeMod {
     private double nodeH;
 
     @Builder
-    public DragResizeMod(@NonNull Node node, OnDragResizeEventListener listener, MouseEventFunction mouseClickedFunction, MouseEventFunction mouseDraggedFunction, MouseEventFunction mouseMovedFunction, MouseEventFunction mouseReleasedFunction, ResizeFunction resizeFunction, @NonNull Double nodeWidth,@NonNull Double nodeHeight) {
+    public DragResizeMod(@NonNull Node node, OnDragResizeEventListener listener, MouseEventFunction mouseClickedFunction, MouseEventFunction mouseDraggedFunction, MouseEventFunction mouseMovedFunction, MouseReleasedFunction mouseReleasedFunction, ResizeFunction resizeFunction, @NonNull Double nodeWidth,@NonNull Double nodeHeight) {
         this.node=node;
         this.registeredEventHandlers = new HashMap<>();
         if(listener!=null)
@@ -126,16 +125,14 @@ public class DragResizeMod {
         this.resizeFunction=resizeFunction;
     }
 
-
     public void unregisterListeners(){
         for(Map.Entry<EventHandler<MouseEvent>,EventType<MouseEvent>> entry : registeredEventHandlers.entrySet()){
             node.removeEventHandler(entry.getValue(),entry.getKey());
         }
     }
 
-
     /**
-     * registers the listeners
+     * Registers the listeners
      */
     public void makeResizableAndDraggable() {
 
@@ -170,8 +167,12 @@ public class DragResizeMod {
             @Override
             public void handle(MouseEvent event) {
                 mouseReleased(event);
-                if(mouseReleasedFunction!=null)
-                    mouseReleasedFunction.handleMouseEvent(event);
+                if(mouseReleasedFunction!=null) {
+                    double deltaX = event.getScreenX() - screenClickX;
+                    double deltaY = event.getScreenY() - screenClickY;
+                    event.consume();
+                    mouseReleasedFunction.handleMouseEvent(event, deltaX, deltaY); // Pass delta values
+                }
             }
         };
 
@@ -240,9 +241,7 @@ public class DragResizeMod {
         }
     }
 
-
     protected void mouseDragged(MouseEvent event) {
-
         if (listener != null) {
             double mouseX = parentX(event.getX());
             double mouseY = parentY(event.getY());
@@ -298,12 +297,11 @@ public class DragResizeMod {
     }
 
     protected void mousePressed(MouseEvent event) {
+        setNewInitialEventCoordinates(event);
 
         if (isInResizeZone(event)) {
-            setNewInitialEventCoordinates(event);
             state = currentMouseState(event);
         } else if (isInDragZone(event)) {
-            setNewInitialEventCoordinates(event);
             state = S.DRAG;
         } else {
             state = S.DEFAULT;
@@ -317,6 +315,8 @@ public class DragResizeMod {
         nodeW = nodeW();
         clickX = event.getX();
         clickY = event.getY();
+        screenClickX = event.getScreenX();
+        screenClickY = event.getScreenY();
     }
 
     private boolean isInResizeZone(MouseEvent event) {
