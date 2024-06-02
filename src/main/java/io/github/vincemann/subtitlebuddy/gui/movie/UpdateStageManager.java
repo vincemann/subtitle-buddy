@@ -33,7 +33,8 @@ public class UpdateStageManager {
 
 
     public void updateSize(Vector2D stageSize){
-        log.debug("settings stage size: w/h " + stageSize.getX() +" " + stageSize.getY());
+        if (log.isTraceEnabled())
+            log.trace("setting stage size: w/h " + stageSize.getX() +" " + stageSize.getY());
         stage.setWidth(stageSize.getX());
         stage.setHeight(stageSize.getY());
         updateAnchorPane();
@@ -41,7 +42,8 @@ public class UpdateStageManager {
     }
 
     public void updatePos(Vector2D stagePos){
-        log.debug("settings stage pos: x/y " + stagePos.getX() +" " + stagePos.getY());
+        if (log.isTraceEnabled())
+            log.trace("setting stage pos: x/y " + stagePos.getX() +" " + stagePos.getY());
         stage.setX(stagePos.getX());
         stage.setY(stagePos.getY());
         updateAnchorPane();

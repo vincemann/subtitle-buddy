@@ -269,14 +269,10 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     private void registerEventHandlers() {
         EventHandler<MouseEvent> movieBoxMouseEnteredHandler =
-                event -> {
-                    movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
-                };
+                event -> movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
 
         EventHandler<MouseEvent> movieBoxMouseExitedHandler =
-                event -> {
-                    movieVBox.setStyle(TRANSPARENT_BACKGROUND_STYLE);
-                };
+                event -> movieVBox.setStyle(TRANSPARENT_BACKGROUND_STYLE);
 
         movieVBox.setOnMouseEntered(movieBoxMouseEnteredHandler);
         movieVBox.setOnMouseExited(movieBoxMouseExitedHandler);

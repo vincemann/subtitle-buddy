@@ -1,12 +1,13 @@
 package io.github.vincemann.subtitlebuddy.util.fx;
 
-import io.github.vincemann.subtitlebuddy.Main;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class ImageUtils {
 
