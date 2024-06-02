@@ -83,7 +83,7 @@ public class MovieStageMod {
     }
 
     // set stages min width and height the user manually set, if he set anything
-    public void init(){
+    public void initUserDefinedBounds(){
         if (USER_MIN_HEIGHT != null)
             stage.setMinHeight(USER_MIN_HEIGHT);
         if (USER_MIN_WIDTH != null)

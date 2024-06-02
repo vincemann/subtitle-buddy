@@ -246,7 +246,9 @@ public class MovieStageController implements MovieSrtDisplayer {
         boolean onScreen = VectorUtils.isVecWithinBounds(centerOfSubs, getScreenBounds());
         movieStageMod.updatePos(onScreen ? subtitlePos : VectorUtils.getCenterPos(ScreenUtils.getScreenBounds(),stageSize));
         movieStageMod.updateSize(stageSize);
-        movieStageMod.init();
+        // if user defined some bounds for the box, they are restored as min values
+        // for example high definition pc needs a larger box then 1/3 of the screen -> he only needs to adjust the box once per program execution
+        movieStageMod.initUserDefinedBounds();
     }
 
     private void registerEventHandlingStageListener() {
