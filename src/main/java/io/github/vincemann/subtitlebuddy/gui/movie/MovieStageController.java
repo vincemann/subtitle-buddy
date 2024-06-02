@@ -244,14 +244,11 @@ public class MovieStageController implements MovieSrtDisplayer {
     private void onDraggedInPosition(MouseEvent mouseEvent, double deltaX, double deltaY, boolean resize) {
         if (resize)
             return;
-        log.debug("old stage pos: " + stage.getX() + " " + stage.getY());
         // is called when user selected a new position for the movieVBox
         double newX = stage.getX() + deltaX;
         double newY = stage.getY() + deltaY;
-        log.debug("new stage pos: " + newX + " " + newY);
         Vector2D nodePos = new Vector2D(newX, newY);
         updateStageManager.updatePos(nodePos);
-//        updateStageManager.updateSize(evalStageSize());
         eventBus.post(new UpdateSubtitlePosEvent(nodePos));
     }
 
@@ -262,9 +259,7 @@ public class MovieStageController implements MovieSrtDisplayer {
         updateStageManager.updateSize(newSize);
 
         int fontSize = evalFontSize();
-        log.debug("font size: " + fontSize);
         if (fontSize == options.getMovieFontSize()){
-            log.debug("font size still same done change");
             return;
         }
         // dont write to disk too often, this method is called often in a short time

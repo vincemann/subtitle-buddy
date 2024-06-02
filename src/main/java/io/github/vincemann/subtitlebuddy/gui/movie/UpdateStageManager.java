@@ -28,7 +28,6 @@ public class UpdateStageManager {
         this.stage = stage;
         this.vbox = vbox;
         this.anchorPane = anchorPane;
-        log.debug("bind anchor pane and vbox to stage");
         bindComponentsToStageSize();
     }
 
@@ -84,8 +83,8 @@ public class UpdateStageManager {
             double anchorWidth = newVal.doubleValue();
             double vboxWidth = anchorWidth;
             double textFlowWidth = vboxWidth;
-            log.debug("setting anchor width to: " + anchorWidth);
-            log.debug("setting vbox width to: " + vboxWidth);
+//            log.debug("setting anchor width to: " + anchorWidth);
+//            log.debug("setting vbox width to: " + vboxWidth);
             anchorPane.setPrefWidth(anchorWidth);
             vbox.setPrefWidth(vboxWidth);
             textFlow.setPrefWidth(textFlowWidth);
@@ -95,8 +94,8 @@ public class UpdateStageManager {
             double anchorHeight = newVal.doubleValue();
             double vboxHeight = anchorHeight;
             double textFlowHeight = vboxHeight;
-            log.debug("setting anchor height to: " + anchorHeight);
-            log.debug("setting vbox height to: " + vboxHeight);
+//            log.debug("setting anchor height to: " + anchorHeight);
+//            log.debug("setting vbox height to: " + vboxHeight);
             anchorPane.setPrefHeight(anchorHeight);
             vbox.setPrefHeight(vboxHeight);
             textFlow.setPrefHeight(textFlowHeight);
