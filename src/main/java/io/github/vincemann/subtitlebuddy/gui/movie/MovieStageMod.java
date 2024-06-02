@@ -13,7 +13,7 @@ import lombok.extern.log4j.Log4j2;
  * and keep all components in sync in terms of size and position.
  */
 @Log4j2
-public class UpdateStageManager {
+public class MovieStageMod {
     private Stage stage;
     private VBox vbox;
 
@@ -21,7 +21,15 @@ public class UpdateStageManager {
 
     private TextFlow textFlow;
 
-    public UpdateStageManager(Stage stage, VBox vbox, AnchorPane anchorPane, TextFlow textFlow) {
+    // the mind width and height the stage must have to support displaying the texts
+    private double textMinWidth;
+    private double textMinHeight;
+
+    // min width and height of box manually set by user
+    private static Double USER_MIN_WIDTH = null;
+    private static Double USER_MIN_HEIGHT = null;
+
+    public MovieStageMod(Stage stage, VBox vbox, AnchorPane anchorPane, TextFlow textFlow) {
         this.textFlow = textFlow;
         if (stage == null)
             throw new IllegalStateException("stage cannot be null");
@@ -31,12 +39,65 @@ public class UpdateStageManager {
         bindComponentsToStageSize();
     }
 
+    // these two are called when manually resizing only the box
+    public void updateWidth(double width){
+        if (width > textMinWidth){
+            USER_MIN_WIDTH = width;
+            stage.setMinWidth(width);
+            stage.setWidth(width);
+        }
+    }
+
+    public void updateHeight(double height){
+        if (height > textMinHeight){
+            USER_MIN_HEIGHT = height;
+            stage.setMinWidth(height);
+            stage.setHeight(height);
+        }
+    }
+
+    /**
+     * This method is only used to set the minimum size possible.
+     * Manual adjustments via {@link this#updateWidth(double)} and {@link this#updateHeight(double)} or {@link this#updateSize(Vector2D)} wont be able to go below that.
+     */
+    public void updateMinimumSize(Vector2D stageSize){
+        if (log.isTraceEnabled())
+            log.trace("setting min stage size: w/h " + stageSize.getX() +" " + stageSize.getY());
+//        double minWidth = stage.getMinWidth();
+//        double minHeight = stage.getMinHeight();
+
+        stage.setMinWidth(stageSize.getX());
+        stage.setMinHeight(stageSize.getY());
+        textMinWidth = stageSize.getX();
+        textMinHeight = stageSize.getY();
+//        // if its getting smaller but not too small, downscale
+//        if (stageSize.getX() < stage.getX() && stageSize.getX() >= minWidth){
+//            stage.setWidth(stageSize.getX());
+//        }
+//        if (stageSize.getY() < stage.getY() && stageSize.getY() >= minHeight){
+//            stage.setHeight(stageSize.getY());
+//        }
+
+        updateAnchorPane();
+        Platform.runLater(this::centerVBoxInPane);
+    }
+
+    // set stages min width and height the user manually set, if he set anything
+    public void init(){
+        if (USER_MIN_HEIGHT != null)
+            stage.setMinHeight(USER_MIN_HEIGHT);
+        if (USER_MIN_WIDTH != null)
+            stage.setMinWidth(USER_MIN_WIDTH);
+    }
 
     public void updateSize(Vector2D stageSize){
         if (log.isTraceEnabled())
             log.trace("setting stage size: w/h " + stageSize.getX() +" " + stageSize.getY());
-        stage.setWidth(stageSize.getX());
-        stage.setHeight(stageSize.getY());
+        if (stageSize.getX() > textMinWidth)
+            stage.setWidth(stageSize.getX());
+        if (stageSize.getY() > textMinHeight)
+            stage.setHeight(stageSize.getY());
+
         updateAnchorPane();
         Platform.runLater(this::centerVBoxInPane);
     }
@@ -89,7 +150,7 @@ public class UpdateStageManager {
 //            log.debug("setting vbox width to: " + vboxWidth);
             anchorPane.setPrefWidth(anchorWidth);
             vbox.setPrefWidth(vboxWidth);
-            textFlow.setPrefWidth(textFlowWidth);
+//            textFlow.setPrefWidth(textFlowWidth);
         });
 
         stage.heightProperty().addListener((obs, oldVal, newVal) -> {
@@ -100,7 +161,7 @@ public class UpdateStageManager {
 //            log.debug("setting vbox height to: " + vboxHeight);
             anchorPane.setPrefHeight(anchorHeight);
             vbox.setPrefHeight(vboxHeight);
-            textFlow.setPrefHeight(textFlowHeight);
+//            textFlow.setPrefHeight(textFlowHeight);
         });
     }
 }

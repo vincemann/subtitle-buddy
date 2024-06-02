@@ -12,7 +12,6 @@ import io.github.vincemann.subtitlebuddy.srt.FontBundle;
 import io.github.vincemann.subtitlebuddy.srt.Subtitle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleType;
-import io.github.vincemann.subtitlebuddy.util.ExecutionLimiter;
 import io.github.vincemann.subtitlebuddy.util.ScreenUtils;
 import io.github.vincemann.subtitlebuddy.util.fx.DragResizeMod;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
@@ -28,6 +27,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
@@ -47,8 +47,6 @@ import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.loadImageView
 @Singleton
 public class MovieStageController implements MovieSrtDisplayer {
 
-    private static final int FONT_SIZE_TO_WIDTH = 17;
-    private static final int FONT_SIZE_TO_HEIGHT = 4;
     private static final int MOVIE_CLICK_WARNING_SIZE = 60;
 
     private static final String BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE = "-fx-background-color: rgba(0, 100, 100, 0.51); -fx-background-radius: 10;";
@@ -89,7 +87,9 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     private Stage stage;
 
-    private UpdateStageManager updateStageManager;
+    private MovieStageMod movieStageMod;
+
+    private double currentFontSize;
 
 
     @Inject
@@ -102,6 +102,7 @@ public class MovieStageController implements MovieSrtDisplayer {
         this.options = options;
         this.fontOptions = fontOptions;
         this.lastSubtitleText = SubtitleText.empty();
+        this.currentFontSize = options.getMovieFontSize();
     }
 
 
@@ -163,7 +164,36 @@ public class MovieStageController implements MovieSrtDisplayer {
                     log.trace("displaying text: " + text + " in movie mode");
                 movieTextFlow.getChildren().add(text);
             }
+            adjustStageSizeToText();
         });
+    }
+
+    // make sure stage is only as big as needed
+    // also make sure subtitles are formatted properly (min width)
+    private void adjustStageSizeToText(){
+        Vector2D stageSize = evalStageSize(movieTextFlow);
+        movieStageMod.updateMinimumSize(stageSize);
+    }
+
+    private Vector2D evalStageSize(TextFlow textFlow) {
+        double maxWidth = textFlow.getPrefWidth();
+        double totalHeight = 0;
+
+        for (javafx.scene.Node node : textFlow.getChildren()) {
+            if (node instanceof Text) {
+                Text text = (Text) node;
+                text.applyCss();
+                double textHeight = text.getBoundsInLocal().getHeight();
+                totalHeight += textHeight * Math.ceil(text.getBoundsInLocal().getWidth() / maxWidth);
+            }
+        }
+
+        // Optionally, add some padding
+        double padding = 20;
+        double stageWidth = maxWidth + padding * 2;
+        double stageHeight = totalHeight + padding * 2;
+
+        return new Vector2D(stageWidth, stageHeight);
     }
 
 
@@ -176,6 +206,7 @@ public class MovieStageController implements MovieSrtDisplayer {
 
 
         movieTextFlow.setPickOnBounds(true);
+        movieTextFlow.setPrefWidth(ScreenUtils.getScreenBounds().getX()/2.5);
 
         registerEventHandlers();
         initClickWarning();
@@ -194,26 +225,11 @@ public class MovieStageController implements MovieSrtDisplayer {
         AnchorPane.setRightAnchor(clickWarning, 10.0);
     }
 
-    private Vector2D evalStageSize() {
-        int fontSize = options.getMovieFontSize();
-        return evalStageSize(fontSize);
-    }
-
-    private Vector2D evalStageSize(int fontSize) {
-        double x = fontSize * FONT_SIZE_TO_WIDTH;
-        double y = fontSize * FONT_SIZE_TO_HEIGHT;
-        return new Vector2D(x, y);
-    }
-
-    private int evalFontSize() {
-        double width = movieAnchorPane.getWidth();
-        return (int) (width / FONT_SIZE_TO_WIDTH);
-    }
 
     public void setStage(Stage stage) {
         this.stage = stage;
         // should always be absolute pos
-        this.updateStageManager = new UpdateStageManager(stage, movieVBox, movieAnchorPane, movieTextFlow);
+        this.movieStageMod = new MovieStageMod(stage, movieVBox, movieAnchorPane, movieTextFlow);
         registerEventHandlingStageListener();
     }
 
@@ -223,13 +239,14 @@ public class MovieStageController implements MovieSrtDisplayer {
      * If subtitles are not visible on screen, display in center.
      */
     private void initStage(){
-        Vector2D stageSize = evalStageSize();
+        Vector2D stageSize = evalStageSize(movieTextFlow);
         Vector2D subtitlePos = options.getSubtitlePosition(); // top left of subtitle vbox
         // stage is as big as subtitle box, so its ok to work with stage size for calculating center
         Vector2D centerOfSubs = new Vector2D(subtitlePos.getX()+stageSize.getX()/2,subtitlePos.getY()+stageSize.getY()/2);
         boolean onScreen = VectorUtils.isVecWithinBounds(centerOfSubs, getScreenBounds());
-        updateStageManager.updatePos(onScreen ? subtitlePos : VectorUtils.getCenterPos(ScreenUtils.getScreenBounds(),stageSize));
-        updateStageManager.updateSize(stageSize);
+        movieStageMod.updatePos(onScreen ? subtitlePos : VectorUtils.getCenterPos(ScreenUtils.getScreenBounds(),stageSize));
+        movieStageMod.updateSize(stageSize);
+        movieStageMod.init();
     }
 
     private void registerEventHandlingStageListener() {
@@ -255,22 +272,51 @@ public class MovieStageController implements MovieSrtDisplayer {
         double newX = stage.getX() + deltaX;
         double newY = stage.getY() + deltaY;
         Vector2D nodePos = new Vector2D(newX, newY);
-        updateStageManager.updatePos(nodePos);
+        movieStageMod.updatePos(nodePos);
         eventBus.post(new UpdateSubtitlePosEvent(nodePos));
     }
 
     private void onAnchorPaneResize(Node node, double h, double w, double deltaH, double deltaW) {
         movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
 
-        Vector2D newSize = new Vector2D(w,h);
-        updateStageManager.updateSize(newSize);
-
-        int fontSize = evalFontSize();
-        // dont write to disk too often, this method is called often in a short time
-        if (fontSize == options.getMovieFontSize()){
-            return;
+        // if resizing via corner only scale font size
+        // is resizing via edge only scale box
+        if (deltaW != 0 && deltaH != 0) {
+            // Adjust font size based on new width and height
+            double fontSize = calculateFontSize(deltaW, deltaH);
+            updateTextsFontSize(fontSize);
+            // dont write to disk too often, this method is called often in a short time
+            if (fontSize == options.getMovieFontSize()){
+                return;
+            }
+            eventBus.post(new UpdateMovieFontSizeEvent((int) fontSize));
+        } else {
+            // Resizing in one direction only
+            if (deltaW != 0) {
+                movieStageMod.updateWidth(w);
+            }
+            if (deltaH != 0) {
+                movieStageMod.updateHeight(h);
+            }
         }
-        eventBus.post(new UpdateMovieFontSizeEvent(fontSize));
+    }
+
+    private void updateTextsFontSize(double fontSize) {
+        for (javafx.scene.Node node : movieTextFlow.getChildren()) {
+            if (node instanceof Text) {
+                Text text = (Text) node;
+                Font currentFont = text.getFont();
+                text.setFont(Font.font(currentFont.getFamily(), fontSize));
+            }
+        }
+    }
+
+    private double calculateFontSize(double deltaW, double deltaH) {
+        // Simple heuristic for font size adjustment
+        // Adjust the font size proportionally to the change in width and height
+        double adjustmentFactor = (-deltaW + -deltaH) / 100; // Adjust the factor as needed
+        currentFontSize = Math.min(100,Math.max(30, currentFontSize + adjustmentFactor)); // Ensure bounds for font size
+        return currentFontSize;
     }
 
     private void registerEventHandlers() {
