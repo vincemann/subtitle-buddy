@@ -50,8 +50,6 @@ public class MovieStageController implements MovieSrtDisplayer {
     private static final int FONT_SIZE_TO_WIDTH = 17;
     private static final int FONT_SIZE_TO_HEIGHT = 4;
     private static final int MOVIE_CLICK_WARNING_SIZE = 60;
-    //200 millis in nano
-    private static final long UPDATE_SLEEP_DURATION = 200000000L;
 
     private static final String BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE = "-fx-background-color: rgba(0, 100, 100, 0.51); -fx-background-radius: 10;";
     private static final String TRANSPARENT_BACKGROUND_STYLE = "-fx-background-color: transparent;";
@@ -268,12 +266,11 @@ public class MovieStageController implements MovieSrtDisplayer {
         updateStageManager.updateSize(newSize);
 
         int fontSize = evalFontSize();
+        // dont write to disk too often, this method is called often in a short time
         if (fontSize == options.getMovieFontSize()){
             return;
         }
-        // dont write to disk too often, this method is called often in a short time
-        ExecutionLimiter.executeMaxEveryNMillis("fontResize", UPDATE_SLEEP_DURATION,
-                () -> eventBus.post(new UpdateMovieFontSizeEvent(fontSize)));
+        eventBus.post(new UpdateMovieFontSizeEvent(fontSize));
     }
 
     private void registerEventHandlers() {
