@@ -13,6 +13,7 @@ import io.github.vincemann.subtitlebuddy.srt.Subtitle;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleType;
 import io.github.vincemann.subtitlebuddy.util.ExecutionLimiter;
+import io.github.vincemann.subtitlebuddy.util.ScreenUtils;
 import io.github.vincemann.subtitlebuddy.util.fx.DragResizeMod;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import io.github.vincemann.subtitlebuddy.util.vec.VectorUtils;
@@ -46,7 +47,7 @@ import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.loadImageView
 @Singleton
 public class MovieStageController implements MovieSrtDisplayer {
 
-    private static final int FONT_SIZE_TO_WIDTH = 15;
+    private static final int FONT_SIZE_TO_WIDTH = 17;
     private static final int FONT_SIZE_TO_HEIGHT = 4;
     private static final int MOVIE_CLICK_WARNING_SIZE = 60;
     //200 millis in nano
@@ -218,10 +219,18 @@ public class MovieStageController implements MovieSrtDisplayer {
         registerEventHandlingStageListener();
     }
 
+    /**
+     * Init stage pos and size.
+     * Take values from config (pos and font size).
+     * If subtitles are not visible on screen, display in center.
+     */
     private void initStage(){
         Vector2D stageSize = evalStageSize();
-        Vector2D stagePos = VectorUtils.getVecWithinBounds(options.getSubtitlePosition(), getScreenBounds(), stageSize);
-        updateStageManager.updatePos(stagePos);
+        Vector2D subtitlePos = options.getSubtitlePosition(); // top left of subtitle vbox
+        // stage is as big as subtitle box, so its ok to work with stage size for calculating center
+        Vector2D centerOfSubs = new Vector2D(subtitlePos.getX()+stageSize.getX()/2,subtitlePos.getY()+stageSize.getY()/2);
+        boolean onScreen = VectorUtils.isVecWithinBounds(centerOfSubs, getScreenBounds());
+        updateStageManager.updatePos(onScreen ? subtitlePos : VectorUtils.getCenterPos(ScreenUtils.getScreenBounds(),stageSize));
         updateStageManager.updateSize(stageSize);
     }
 
