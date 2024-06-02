@@ -39,8 +39,6 @@ public class StageResizer {
         adjustPos();
     }
 
-
-
     public void adjustSize(){
         asserInitialized();
         log.debug("settings stage size: w/h " + stageSize.getX() +" " + stageSize.getY());
@@ -94,18 +92,18 @@ public class StageResizer {
             double anchorWidth = newVal.doubleValue();
             double vboxWidth = anchorWidth - anchorWidth/3;
             log.debug("setting anchor width to: " + anchorWidth);
-//            log.debug("setting vbox width to: " + vboxWidth);
+            log.debug("setting vbox width to: " + vboxWidth);
             anchorPane.setPrefWidth(anchorWidth);
-//            vbox.setPrefWidth(vboxWidth);
+            vbox.setPrefWidth(vboxWidth);
         });
 
         stage.heightProperty().addListener((obs, oldVal, newVal) -> {
             double anchorHeight = newVal.doubleValue();
             double vboxHeight = anchorHeight - anchorHeight/3;
             log.debug("setting anchor height to: " + anchorHeight);
-//            log.debug("setting vbox height to: " + vboxHeight);
+            log.debug("setting vbox height to: " + vboxHeight);
             anchorPane.setPrefHeight(anchorHeight);
-//            vbox.setPrefHeight(vboxHeight);
+            vbox.setPrefHeight(vboxHeight);
         });
     }
 
@@ -120,5 +118,10 @@ public class StageResizer {
         anchorPane.setLayoutX(0);
         anchorPane.setLayoutY(0);
         adjustPos();
+    }
+
+    public void updateSize(Vector2D size) {
+        stageSize = size;
+        adjustSize();
     }
 }
