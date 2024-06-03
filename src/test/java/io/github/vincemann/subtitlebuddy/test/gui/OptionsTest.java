@@ -75,11 +75,6 @@ public class OptionsTest extends GuiTest {
 
     @Test
     public void testChangeColorOnMovieMode() throws TimeoutException {
-        // Assume that the OS is not Mac OS X
-        // this test wont work on osx, because when in movie mode it cannot focus back on options
-        String osName = System.getProperty("os.name").toLowerCase();
-        Assume.assumeFalse(osName.contains("mac"));
-
         setFontColor(Color.WHITE);
         focusStage(Windows.SETTINGS);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
@@ -109,11 +104,6 @@ public class OptionsTest extends GuiTest {
 
     @Test
     public void testChangeFontInMovieMode() throws TimeoutException {
-        // Assume that the OS is not Mac OS X
-        // this test wont work on osx, because when in movie mode it cannot focus back on options
-        String osName = System.getProperty("os.name").toLowerCase();
-        Assume.assumeFalse(osName.contains("mac"));
-
         focusStage(Windows.SETTINGS);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
         focusStage(Windows.OPTIONS);
