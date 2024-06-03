@@ -9,14 +9,11 @@ import io.github.vincemann.subtitlebuddy.srt.parser.SubtitleTextParserImpl;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFile;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFileImpl;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
-import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.StopWatchImpl;
-import io.github.vincemann.subtitlebuddy.test.LongTest;
 import io.github.vincemann.subtitlebuddy.test.TestFiles;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.File;
 
