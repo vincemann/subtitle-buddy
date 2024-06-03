@@ -258,7 +258,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
     private void openOptionsWindow() {
         //position options window right next settingsWindow, otherwise optionsWindow may be behind settingsWindow, bc they are both alwaysOnTop
-        Window settingsWindow = windowManager.getOpened().get(0);
+        Window settingsWindow = windowManager.find(Windows.SETTINGS);
         Vector2D nextToSettingsWindow = new Vector2D(settingsWindow.getStage().getX() + settingsWindow.getStage().getWidth(), settingsWindow.getStage().getY());
         windowManager.openAtPos(Windows.OPTIONS, nextToSettingsWindow);
     }
