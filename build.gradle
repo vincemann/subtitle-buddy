@@ -232,6 +232,7 @@ jlink {
                     targetPlatformName = "mac"
                     imageName = "subtitle-buddy"
                     installerName = "subtitle-buddy"
+                    installerName = "subtitle-buddy"
                     icon = "${projectDir}/icon.icns"
                     vendor = "vincemann"
                 }
