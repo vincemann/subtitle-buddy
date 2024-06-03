@@ -1,11 +1,9 @@
 package io.github.vincemann.subtitlebuddy.gui.movie;
 
-import io.github.vincemann.subtitlebuddy.util.ScreenUtils;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.application.Platform;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 
@@ -20,8 +18,6 @@ public class MovieStageMod {
 
     private AnchorPane anchorPane;
 
-    private TextFlow textFlow;
-
     // the mind width and height the stage must have to support displaying the texts
     private double textMinWidth;
     private double textMinHeight;
@@ -30,8 +26,7 @@ public class MovieStageMod {
     private static Double USER_MIN_WIDTH = null;
     private static Double USER_MIN_HEIGHT = null;
 
-    public MovieStageMod(Stage stage, VBox vbox, AnchorPane anchorPane, TextFlow textFlow) {
-        this.textFlow = textFlow;
+    public MovieStageMod(Stage stage, VBox vbox, AnchorPane anchorPane) {
         if (stage == null)
             throw new IllegalStateException("stage cannot be null");
         this.stage = stage;
@@ -66,21 +61,10 @@ public class MovieStageMod {
     public void updateMinimumSize(Vector2D stageSize){
         if (log.isTraceEnabled())
             log.trace("setting min stage size: w/h " + stageSize.getX() +" " + stageSize.getY());
-//        double minWidth = stage.getMinWidth();
-//        double minHeight = stage.getMinHeight();
-
         stage.setMinWidth(stageSize.getX());
         stage.setMinHeight(stageSize.getY());
         textMinWidth = stageSize.getX();
         textMinHeight = stageSize.getY();
-//        // if its getting smaller but not too small, downscale
-//        if (stageSize.getX() < stage.getX() && stageSize.getX() >= minWidth){
-//            stage.setWidth(stageSize.getX());
-//        }
-//        if (stageSize.getY() < stage.getY() && stageSize.getY() >= minHeight){
-//            stage.setHeight(stageSize.getY());
-//        }
-
         updateInnerComponents();
     }
 
@@ -123,6 +107,8 @@ public class MovieStageMod {
     }
 
 
+    // on i3 the subtitle box wont be movable, bc the vbox will always be centered in the stage
+    // and the stage will always be the whole screen
     private void centerVBoxInPane() {
         // Log dimensions
 //        log.trace("AnchorPane height: " + anchorPane.getHeight());

@@ -221,7 +221,7 @@ public class MovieStageController implements MovieSrtDisplayer {
     public void setStage(Stage stage) {
         this.stage = stage;
         // should always be absolute pos
-        this.movieStageMod = new MovieStageMod(stage, movieVBox, movieAnchorPane, movieTextFlow);
+        this.movieStageMod = new MovieStageMod(stage, movieVBox, movieAnchorPane);
         addShowStageListener();
     }
 
@@ -318,6 +318,11 @@ public class MovieStageController implements MovieSrtDisplayer {
         // need to use the delta values bc the mouse x,y are relative or something
         double newX = stage.getX() + deltaX;
         double newY = stage.getY() + deltaY;
+        double screenX = mouseEvent.getScreenX();
+        double screenY = mouseEvent.getScreenY();
+
+        log.debug("old pos of stage: " + stage.getX() + " " + stage.getY());
+        log.debug("mouse screen x/y " + screenX + " " + screenY);
         Vector2D nodePos = new Vector2D(newX, newY);
         movieStageMod.updatePos(nodePos);
         eventBus.post(new UpdateSubtitlePosEvent(nodePos));
