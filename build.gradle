@@ -32,9 +32,9 @@ static def detectOS() {
     } else if (os.isMacOsX()) {
         def arch = System.getProperty("os.arch")
         if (arch.contains("aarch64") || arch.contains("arm64")) {
-            return "mac-arm"
+            return "mac-aarch64"
         } else {
-            return "mac-x86"
+            return "mac"
         }
     }
     throw new GradleException("Cannot evaluate current OS")
@@ -221,13 +221,13 @@ jlink {
                 }
             }
             break
-        case 'mac-x86':
+        case 'mac':
             targetPlatform("mac") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_mac_hotspot_2021-05-06-23-30.tar.gz')
                 addExtraModulePath("${projectDir}/lib/javafx/osx/x86/jmods")
             }
             // use jpackage to build dmg and app files, only works when also building on mac
-            if (detectOS() == 'mac-x86') {
+            if (detectOS() == 'mac') {
                 jpackage {
                     targetPlatformName = "mac"
                     imageName = "subtitle-buddy"
@@ -237,13 +237,13 @@ jlink {
                 }
             }
             break
-        case 'mac-arm':
+        case 'mac-aarch64':
             targetPlatform("mac") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_arm64_mac_hotspot_2021-05-06-23-30.tar.gz')
                 addExtraModulePath("${projectDir}/lib/javafx/osx/arm/jmods")
             }
             // use jpackage to build dmg and app files, only works when also building on mac
-            if (detectOS() == 'mac-arm') {
+            if (detectOS() == 'mac-aarch64') {
                 jpackage {
                     targetPlatformName = "mac"
                     imageName = "subtitle-buddy"
@@ -507,7 +507,7 @@ run {
         }
         // for whatever reason I cant get this to work on mac - always fails with FindException Module javafx.controls not found
         // even when specifying path to javafx jmods or javafx sdk/lib
-        else if (project.targetPlatform == 'mac-x86') {
+        else if (project.targetPlatform == 'mac') {
             println("adding osx javafx modules to module path")
             args += ['--module-path', "${projectDir}/lib/javafx/osx/x86/jmods"]
         }
