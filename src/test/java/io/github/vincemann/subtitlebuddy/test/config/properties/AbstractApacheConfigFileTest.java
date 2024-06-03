@@ -3,7 +3,6 @@ package io.github.vincemann.subtitlebuddy.test.config.properties;
 import io.github.vincemann.subtitlebuddy.options.ApachePropertiesFile;
 import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.options.PropertyNotFoundException;
-import io.github.vincemann.subtitlebuddy.test.TestFiles;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.junit.After;
 import org.junit.Assert;

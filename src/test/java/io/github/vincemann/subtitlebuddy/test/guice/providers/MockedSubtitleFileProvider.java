@@ -3,7 +3,7 @@ package io.github.vincemann.subtitlebuddy.test.guice.providers;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.srt.parser.SubtitleTextParserImpl;
-import io.github.vincemann.subtitlebuddy.test.TestFiles;
+import io.github.vincemann.subtitlebuddy.test.SrtFiles;
 import io.github.vincemann.subtitlebuddy.srt.SubtitleParagraph;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFile;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFileImpl;
@@ -20,7 +20,7 @@ public class MockedSubtitleFileProvider implements Provider<SubtitleFile> {
     private SrtFileParser srtFileParser;
 
     public MockedSubtitleFileProvider() {
-        this.validFile= new File(TestFiles.VALID_SRT_FILE_PATH);
+        this.validFile= new File(SrtFiles.VALID);
         this.srtFileParser = new SrtFileParserImpl(new SubtitleTextParserImpl());
     }
 

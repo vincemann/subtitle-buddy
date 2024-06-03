@@ -3,7 +3,7 @@ package io.github.vincemann.subtitlebuddy.test.srt.parser;
 import com.google.common.collect.Lists;
 import io.github.vincemann.subtitlebuddy.srt.*;
 import io.github.vincemann.subtitlebuddy.srt.parser.*;
-import io.github.vincemann.subtitlebuddy.test.TestFiles;
+import io.github.vincemann.subtitlebuddy.test.SrtFiles;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,7 +65,7 @@ public class SrtFileParserImplTest {
         this.endIdSrtFile = new File("src/test/resources/srt/end-id.srt");
 
         // valid
-        this.validSrtFile = new File(TestFiles.VALID_SRT_FILE_PATH);
+        this.validSrtFile = new File(SrtFiles.VALID);
         this.idInPayload = new File("src/test/resources/srt/id-in-payload.srt");
 
         // kinda corrupted but still acceptable
