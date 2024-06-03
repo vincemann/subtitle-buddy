@@ -1,5 +1,5 @@
 #!/bin/bash
-./gradlew clean
+./gradlew clean jpackage
 ./gradlew jpackage
 cd build/jpackage
 zip -r subtitle-buddy-app.zip subtite-buddy.app
