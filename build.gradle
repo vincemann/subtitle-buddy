@@ -29,9 +29,14 @@ static def detectOS() {
     } else if (os.isLinux()) {
         return "linux"
     } else if (os.isMacOsX()) {
-        return "mac"
+        def arch = System.getProperty("os.arch")
+        if (arch.contains("aarch64") || arch.contains("arm64")) {
+            return "mac-arm"
+        } else {
+            return "mac-x86"
+        }
     }
-    throw new GradleException("cant eval current os")
+    throw new GradleException("Cannot evaluate current OS")
 }
 
 
@@ -128,13 +133,13 @@ tasks.named('jlink').configure {
 }
 
 tasks.register('repackageMacApp', Exec) {
-    onlyIf { project.targetPlatform == 'mac' }
+    onlyIf { project.targetPlatform.startsWith('mac') }
     mustRunAfter 'jpackage'
     def originalAppPath = "${jpackage.getJpackageData().installerOutputDir}/subtitle-buddy.app"
     println("Original app path: ${originalAppPath}")
 
     doFirst {
-        if (project.targetPlatform != 'mac') {
+        if (!project.targetPlatform.startsWith('mac')) {
             logger.lifecycle("Skipping repackageMacApp as the target platform is not macOS.")
             return
         }
@@ -215,13 +220,29 @@ jlink {
                 }
             }
             break
-        case 'mac':
+        case 'mac-x86':
             targetPlatform("mac") {
                 jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_x64_mac_hotspot_2021-05-06-23-30.tar.gz')
-                addExtraModulePath("${projectDir}/lib/javafx/osx/jmods")
+                addExtraModulePath("${projectDir}/lib/javafx/osx/x86/jmods")
             }
             // use jpackage to build dmg and app files, only works when also building on mac
-            if (detectOS() == 'mac') {
+            if (detectOS() == 'mac-x86') {
+                jpackage {
+                    targetPlatformName = "mac"
+                    imageName = "subtitle-buddy"
+                    installerName = "subtitle-buddy"
+                    icon = "${projectDir}/icon.icns"
+                    vendor = "vincemann"
+                }
+            }
+            break
+        case 'mac-arm':
+            targetPlatform("mac") {
+                jdkHome = jdkDownload('https://github.com/AdoptOpenJDK/openjdk17-binaries/releases/download/jdk-2021-05-07-13-31/OpenJDK-jdk_arm64_mac_hotspot_2021-05-06-23-30.tar.gz')
+                addExtraModulePath("${projectDir}/lib/javafx/osx/arm/jmods")
+            }
+            // use jpackage to build dmg and app files, only works when also building on mac
+            if (detectOS() == 'mac-arm') {
                 jpackage {
                     targetPlatformName = "mac"
                     imageName = "subtitle-buddy"
@@ -447,7 +468,7 @@ java {
 // in windows and macos jmods of javafx need to be shipped and declared in modulepath anyways
 // after building, jar can be launched like that (when jdk17 is installed):
 // linux:   java --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
-// osx:     java --module-path lib/javafx/osx/sdk/lib --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
+// osx:     java --module-path lib/javafx/osx/x86/sdk/lib --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 // win:     java --module-path lib/javafx/win/jmods --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 // ( note that osx seems to need sdk jars and not jmods )
 shadowJar {
@@ -485,7 +506,7 @@ run {
         }
         // for whatever reason I cant get this to work on mac - always fails with FindException Module javafx.controls not found
         // even when specifying path to javafx jmods or javafx sdk/lib
-        else if (project.targetPlatform == 'mac') {
+        else if (project.targetPlatform.startsWith('mac')) {
             println("adding osx javafx modules to module path")
             args += ['--module-path', "${projectDir}/lib/javafx/osx/jmods"]
         }
