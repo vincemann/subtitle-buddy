@@ -51,11 +51,10 @@ public class ResizeableNode {
     private MouseEventFunction mouseMovedFunction;
 
 
-
     @Builder
-    private ResizeableNode(Region region, int resizeMargin, MouseEventFunction mouseDraggedFunction,MouseEventFunction mousePressedFunction, MouseEventFunction mouseReleasedFunction,MouseEventFunction mouseMovedFunction) {
-        this.region=region;
-        this.resizeMargin=resizeMargin;
+    private ResizeableNode(Region region, int resizeMargin, MouseEventFunction mouseDraggedFunction, MouseEventFunction mousePressedFunction, MouseEventFunction mouseReleasedFunction, MouseEventFunction mouseMovedFunction) {
+        this.region = region;
+        this.resizeMargin = resizeMargin;
         this.mouseDraggedFunction = mouseDraggedFunction;
         this.mousePressedFunction = mousePressedFunction;
         this.mouseReleasedFunction = mouseReleasedFunction;
@@ -66,18 +65,18 @@ public class ResizeableNode {
     public void makeResizable() {
         region.setOnMousePressed(event -> {
             mousePressed(event);
-            if(mousePressedFunction !=null)
+            if (mousePressedFunction != null)
                 mousePressedFunction.handleMouseEvent(event);
         });
         region.setOnMouseDragged(event -> mouseDragged(event));
         region.setOnMouseMoved(event -> {
             mouseOver(event);
-            if(mouseMovedFunction!=null)
+            if (mouseMovedFunction != null)
                 mouseMovedFunction.handleMouseEvent(event);
         });
         region.setOnMouseReleased(event -> {
             mouseReleased(event);
-            if(mouseReleasedFunction!=null)
+            if (mouseReleasedFunction != null)
                 mouseReleasedFunction.handleMouseEvent(event);
         });
     }
@@ -106,14 +105,14 @@ public class ResizeableNode {
 
     //had to use 2 variables for the controll, tried without, had unexpected behaviour (going big was ok, going small nope.)
     protected boolean isInDraggableZone(MouseEvent event) {
-        draggableZoneY = (boolean)(event.getY() > (region.getHeight() - resizeMargin));
-        draggableZoneX = (boolean)(event.getX() > (region.getWidth() - resizeMargin));
+        draggableZoneY = (boolean) (event.getY() > (region.getHeight() - resizeMargin));
+        draggableZoneX = (boolean) (event.getX() > (region.getWidth() - resizeMargin));
         return (draggableZoneY || draggableZoneX);
     }
 
     protected void mouseDragged(MouseEvent event) {
         if (!dragging) {
-            if(mouseDraggedFunction!=null)
+            if (mouseDraggedFunction != null)
                 mouseDraggedFunction.handleMouseEvent(event);
             return;
         }

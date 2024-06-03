@@ -119,16 +119,6 @@ public class MovieStageController implements MovieSrtDisplayer {
     }
 
 
-    private void onVBoxClicked(MouseEvent event) {
-        if (event.getButton().equals(MouseButton.PRIMARY)) {
-            if (event.getClickCount() == 2) {
-                // double click
-                log.debug("user double clicked movieText -> switching to settings srt displayer");
-                eventBus.post(new SwitchSrtDisplayerEvent(SettingsSrtDisplayer.class));
-            }
-        }
-    }
-
 
     @Override
     public void displaySubtitle(SubtitleText subtitleText) {
@@ -171,7 +161,6 @@ public class MovieStageController implements MovieSrtDisplayer {
     }
 
     // make sure stage is only as big as needed
-    // also make sure subtitles are formatted properly (min width)
     private void adjustStageSizeToText(){
         Vector2D minStageSize = evalMinStageSize(movieTextFlow);
         movieStageMod.updateMinimumSize(minStageSize);
@@ -193,7 +182,7 @@ public class MovieStageController implements MovieSrtDisplayer {
             }
         }
 
-        // Optionally, add some padding
+        // add some padding
         double padding = 20;
         double stageWidth = maxWidth + padding * 2;
         double stageHeight = totalHeight + padding * 2;
@@ -215,8 +204,6 @@ public class MovieStageController implements MovieSrtDisplayer {
 
         registerEventHandlers();
         initClickWarning();
-
-        eventBus.post(new RequestSubtitleUpdateEvent());
     }
 
     private void initClickWarning(){
@@ -235,7 +222,7 @@ public class MovieStageController implements MovieSrtDisplayer {
         this.stage = stage;
         // should always be absolute pos
         this.movieStageMod = new MovieStageMod(stage, movieVBox, movieAnchorPane, movieTextFlow);
-        registerEventHandlingStageListener();
+        addShowStageListener();
     }
 
     /**
@@ -254,15 +241,24 @@ public class MovieStageController implements MovieSrtDisplayer {
         movieStageMod.initUserDefinedBounds();
     }
 
-    private void registerEventHandlingStageListener() {
+    private void addShowStageListener() {
         stage.showingProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                registerEventHandlers();
-                initStage(); // needs to be called when stage is shown, for proper init values
+                onShowStage();
             } else {
-                unregisterEventHandlers();
+                onHideStage();
             }
         });
+    }
+
+    private void onShowStage(){
+        registerEventHandlers();
+        initStage(); // needs to be called when stage is shown, for proper init values
+        eventBus.post(new RequestSubtitleUpdateEvent());
+    }
+
+    private void onHideStage(){
+        unregisterEventHandlers();
     }
 
     private void unregisterEventHandlers() {
@@ -270,42 +266,9 @@ public class MovieStageController implements MovieSrtDisplayer {
         dragResizeMod.unregisterListeners();
     }
 
-    private void onDraggedInPosition(MouseEvent mouseEvent, double deltaX, double deltaY, boolean resize) {
-        if (resize)
-            return;
-        // is called when user selected a new position for the movieVBox
-        double newX = stage.getX() + deltaX;
-        double newY = stage.getY() + deltaY;
-        Vector2D nodePos = new Vector2D(newX, newY);
-        movieStageMod.updatePos(nodePos);
-        eventBus.post(new UpdateSubtitlePosEvent(nodePos));
-    }
-
-    private void onAnchorPaneResize(Node node, double h, double w, double deltaH, double deltaW) {
-        movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
-
-        // if resizing via corner only scale font size
-        // if resizing via edge only scale box
-        if (deltaW != 0 && deltaH != 0) {
-            // Adjust font size based on new width and height
-            double fontSize = calculateFontSize(deltaW, deltaH);
-            updateTextsFontSize(fontSize); // update ui as often as possible to create fluent animation
-            // dont write to disk too often, this method is called often in a short time
-            if (fontSize == options.getMovieFontSize()){
-                return;
-            }
-            eventBus.post(new UpdateMovieFontSizeEvent((int) fontSize));
-        } else {
-            // Resizing in one direction only
-            if (deltaW != 0) {
-                movieStageMod.userUpdateWidth(w);
-            }
-            if (deltaH != 0) {
-                movieStageMod.userUpdateHeight(h);
-            }
-        }
-    }
-
+    /**
+     * Update font size of currently displayed subs.
+     */
     private void updateTextsFontSize(double fontSize) {
         for (javafx.scene.Node node : movieTextFlow.getChildren()) {
             if (node instanceof Text) {
@@ -338,8 +301,8 @@ public class MovieStageController implements MovieSrtDisplayer {
 
         dragResizeMod = DragResizeMod.builder()
                 .node(movieAnchorPane)
-                .mouseReleasedFunction(this::onDraggedInPosition)
-                .mouseClickedFunction(this::onVBoxClicked)
+                .mouseReleasedFunction(this::onAnchorPaneDraggedInPosition)
+                .mouseClickedFunction(this::onAnchorPaneClicked)
                 .resizeFunction(this::onAnchorPaneResize)
                 .build();
         dragResizeMod.makeResizableAndDraggable();
@@ -348,5 +311,50 @@ public class MovieStageController implements MovieSrtDisplayer {
         eventHandlerRegistrations.add(new EventHandlerRegistration<>(movieVBox, movieBoxMouseExitedHandler, MouseEvent.MOUSE_EXITED));
     }
 
+    private void onAnchorPaneDraggedInPosition(MouseEvent mouseEvent, double deltaX, double deltaY, boolean resize) {
+        if (resize)
+            return;
+        // is called when user selected a new position for the anchor pane
+        // need to use the delta values bc the mouse x,y are relative or something
+        double newX = stage.getX() + deltaX;
+        double newY = stage.getY() + deltaY;
+        Vector2D nodePos = new Vector2D(newX, newY);
+        movieStageMod.updatePos(nodePos);
+        eventBus.post(new UpdateSubtitlePosEvent(nodePos));
+    }
 
+    private void onAnchorPaneResize(Node node, double h, double w, double deltaH, double deltaW) {
+        movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
+
+        // if resizing via corner only scale font size
+        // if resizing via edge only scale box
+        if (deltaW != 0 && deltaH != 0) {
+            // Adjust font size based on new width and height
+            double fontSize = calculateFontSize(deltaW, deltaH);
+            updateTextsFontSize(fontSize); // update ui as often as possible to create fluent animation
+            // dont write to disk too often, this method is called often in a short time
+            if (fontSize == options.getMovieFontSize()){
+                return;
+            }
+            eventBus.post(new UpdateMovieFontSizeEvent((int) fontSize));
+        } else {
+            // Resizing in one direction only
+            if (deltaW != 0) {
+                movieStageMod.userUpdateWidth(w);
+            }
+            if (deltaH != 0) {
+                movieStageMod.userUpdateHeight(h);
+            }
+        }
+    }
+
+    private void onAnchorPaneClicked(MouseEvent event) {
+        if (event.getButton().equals(MouseButton.PRIMARY)) {
+            if (event.getClickCount() == 2) {
+                // double click
+                log.debug("user double clicked movieText -> switching to settings srt displayer");
+                eventBus.post(new SwitchSrtDisplayerEvent(SettingsSrtDisplayer.class));
+            }
+        }
+    }
 }

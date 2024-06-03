@@ -9,7 +9,6 @@ import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
 import io.github.vincemann.subtitlebuddy.events.RequestSubtitleUpdateEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
-import io.github.vincemann.subtitlebuddy.font.FontOptions;
 import io.github.vincemann.subtitlebuddy.gui.*;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.srt.*;
@@ -129,34 +128,42 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     @FXML
     public void initialize() {
         registerEventHandlers();
-        loadUIStrings();
+        loadStrings();
         clickWarning = loadImageView(imageHBox,
                 "images/finger.png",
                 new Vector2D(SETTINGS_CLICK_WARNING_SIZE, SETTINGS_CLICK_WARNING_SIZE));
         clickWarning.setVisible(false);
-        eventBus.post(new RequestSubtitleUpdateEvent());
     }
 
     public void setStage(Stage stage) {
         this.stage = stage;
-        registerEventHandlingStageListener();
+        addShowStageListener();
     }
 
-    private void registerEventHandlingStageListener() {
+    private void addShowStageListener() {
         stage.showingProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                registerEventHandlers();
+                onShowStage();
             } else {
-                unregisterEventHandlers();
+                onHideStage();
             }
         });
+    }
+
+    private void onShowStage(){
+        registerEventHandlers();
+        eventBus.post(new RequestSubtitleUpdateEvent());
+    }
+
+    private void onHideStage(){
+        unregisterEventHandlers();
     }
 
     private void unregisterEventHandlers() {
         eventHandlerRegistrations.forEach(EventHandlerRegistration::unregister);
     }
 
-    private void loadUIStrings() {
+    private void loadStrings() {
         Platform.runLater(() -> {
             startButton.setText(startButtonText);
             stopButton.setText(stopButtonText);
@@ -171,7 +178,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     private void registerEventHandlers() {
         EventHandler<MouseEvent> startButtonPressedHandler = event -> {
             try {
-                log.debug("start button pressed");
+                log.info("start button pressed");
                 srtPlayer.start();
                 eventBus.post(new RequestSubtitleUpdateEvent());
             } catch (IllegalStateException e) {
@@ -181,7 +188,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
         EventHandler<MouseEvent> stopButtonPressedHandler = event -> {
             try {
-                log.debug("stop button pressed");
+                log.info("stop button pressed");
                 srtPlayer.stop();
             } catch (IllegalStateException e) {
                 log.error(e.getMessage());
@@ -190,7 +197,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
         EventHandler<MouseEvent> fastForwardButtonClickedHandler = event -> {
             try {
-                log.debug("fast forward pressed");
+                log.info("fast forward pressed");
                 srtPlayer.forward(FORWARD_DELTA);
                 eventBus.post(new RequestSubtitleUpdateEvent());
             } catch (IllegalStateException e) {
@@ -200,7 +207,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
 
         EventHandler<MouseEvent> fastBackwardButtonClickedHandler = event -> {
             try {
-                log.debug("fast backward pressed");
+                log.info("fast backward pressed");
                 srtPlayer.forward(-FORWARD_DELTA);
                 eventBus.post(new RequestSubtitleUpdateEvent());
             } catch (IllegalStateException e) {
@@ -281,7 +288,6 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                 Thread.sleep(TIME_STAMP_WARNING_DURATION);
             } catch (InterruptedException e) {
                 log.error("display timestamp Warning Thread interrupted");
-                timeField.setVisible(false);
             }
             wrongFormatText.setVisible(false);
         }).start();
@@ -316,12 +322,10 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                 }
 
                 text.setFill(fontColor);
-//                    FontUtils.adjustTextSize(text, fontSize);
 
                 if (log.isTraceEnabled())
                     log.trace("displaying text: " + text + " in settings mode");
                 settingsTextFlow.getChildren().add(text);
-//                settingsTextFlow.getChildren().add(new Text(System.lineSeparator()));
             }
         });
     }

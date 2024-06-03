@@ -11,15 +11,18 @@ import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFileImpl;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.StopWatchImpl;
+import io.github.vincemann.subtitlebuddy.test.LongTest;
 import io.github.vincemann.subtitlebuddy.test.TestFiles;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 
 /**
- * this test is very slow
+ * Component test.
+ * Very slow.
  */
 public class SrtPlayerImplPlayDurationTest {
 
@@ -61,6 +64,20 @@ public class SrtPlayerImplPlayDurationTest {
         assertSubtitleIs("Please come and see me.");
         waitFor(2500);
         assertSubtitleIs("And bring Marion, won't you?");
+    }
+
+    @Test
+    public void testPlayUntilNNewSubs() throws TimeStampOutOfBoundsException, InterruptedException {
+        // given
+        setTime(new Timestamp(1,20,48,0));
+        assertSubtitleIs("Oh, I know it's pretty, baby.");
+
+        // when
+        player.start();
+        waitFor(13700);
+
+        // then
+        assertSubtitleIs("Yeah.");
     }
 
     @Test

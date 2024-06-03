@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.events.*;
+import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
 import io.github.vincemann.subtitlebuddy.gui.event.SrtDisplayerProvider;
 import io.github.vincemann.subtitlebuddy.gui.movie.MovieSrtDisplayer;
@@ -27,7 +28,6 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
     private boolean nextClickCounts;
     private SrtDisplayerProvider srtDisplayerProvider;
     private EventBus eventBus;
-
     private OptionsManager optionsManager;
     private SrtDisplayerOptions options;
 
@@ -78,18 +78,15 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
     }
 
 
-
     private void handleNextClickHotKey() {
         if (options.getNextClickHotkeyEnabled()) {
             if (nextClickCounts) {
                 log.trace("next click counts was active, disabling now");
                 nextClickCounts = false;
-                srtDisplayerProvider.get(MovieSrtDisplayer.class).hideNextClickCounts();
-                srtDisplayerProvider.get(SettingsSrtDisplayer.class).hideNextClickCounts();
+                srtDisplayerProvider.all().forEach(SrtDisplayer::hideNextClickCounts);
             } else {
                 log.trace("next click counts was not active, enabling now");
-                srtDisplayerProvider.get(MovieSrtDisplayer.class).displayNextClickCounts();
-                srtDisplayerProvider.get(SettingsSrtDisplayer.class).displayNextClickCounts();
+                srtDisplayerProvider.all().forEach(SrtDisplayer::displayNextClickCounts);
                 nextClickCounts = true;
             }
         } else {
@@ -130,8 +127,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
                 if (nextClickCounts) {
                     switchParserRunningState();
                     nextClickCounts = false;
-                    srtDisplayerProvider.get(MovieSrtDisplayer.class).hideNextClickCounts();
-                    srtDisplayerProvider.get(SettingsSrtDisplayer.class).hideNextClickCounts();
+                    srtDisplayerProvider.all().forEach(SrtDisplayer::hideNextClickCounts);
                 }
                 break;
         }
