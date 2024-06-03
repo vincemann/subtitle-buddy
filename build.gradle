@@ -19,6 +19,7 @@ application {
 ext {
     // Use the provided targetPlatform property if available, otherwise use the detected OS
     targetPlatform = project.hasProperty('targetPlatform') ? project.targetPlatform : detectOS()
+    println("target platform detected: " + targetPlatform)
     releaseDir = "${projectDir}/build/releases"
 }
 
@@ -506,9 +507,13 @@ run {
         }
         // for whatever reason I cant get this to work on mac - always fails with FindException Module javafx.controls not found
         // even when specifying path to javafx jmods or javafx sdk/lib
-        else if (project.targetPlatform.startsWith('mac')) {
+        else if (project.targetPlatform == 'mac-x86') {
             println("adding osx javafx modules to module path")
-            args += ['--module-path', "${projectDir}/lib/javafx/osx/jmods"]
+            args += ['--module-path', "${projectDir}/lib/javafx/osx/x86/jmods"]
+        }
+        else if (project.targetPlatform == 'mac-arm') {
+            println("adding osx javafx modules to module path")
+            args += ['--module-path', "${projectDir}/lib/javafx/osx/arm/jmods"]
         }
 
         jvmArgs = args
