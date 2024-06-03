@@ -1,7 +1,9 @@
 #!/bin/bash
-./gradlew clean jpackage
+./gradlew clean
+./gradlew jpackage
 cd build/jpackage
 zip -r subtitle-buddy-app.zip subtite-buddy.app
 mkdir temp
 unzip subtitle-buddy-app.zip -d temp
-open -a temp/subtitle-buddy.app
+cd temp
+open -a subtitle-buddy.app
