@@ -1,5 +1,6 @@
 package io.github.vincemann.subtitlebuddy.gui.movie;
 
+import io.github.vincemann.subtitlebuddy.util.ScreenUtils;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.application.Platform;
 import javafx.scene.layout.AnchorPane;
@@ -9,8 +10,8 @@ import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * Component used for adjusting size and pos of vbox within anchor pane within stage
- * and keep all components in sync in terms of size and position.
+ * Component used for adjusting size and pos of stage and components within it.
+ * Keeps all components in sync in terms of size and position.
  */
 @Log4j2
 public class MovieStageMod {
@@ -36,29 +37,31 @@ public class MovieStageMod {
         this.stage = stage;
         this.vbox = vbox;
         this.anchorPane = anchorPane;
-        bindComponentsToStageSize();
+        bindInnerComponentsToStageSize();
     }
 
     // these two are called when manually resizing only the box
-    public void updateWidth(double width){
+    public void userUpdateWidth(double width){
         if (width > textMinWidth){
             USER_MIN_WIDTH = width;
             stage.setMinWidth(width);
             stage.setWidth(width);
+            updateInnerComponents();
         }
     }
 
-    public void updateHeight(double height){
+    public void userUpdateHeight(double height){
         if (height > textMinHeight){
             USER_MIN_HEIGHT = height;
             stage.setMinWidth(height);
             stage.setHeight(height);
+            updateInnerComponents();
         }
     }
 
     /**
      * This method is only used to set the minimum size possible.
-     * Manual adjustments via {@link this#updateWidth(double)} and {@link this#updateHeight(double)} or {@link this#updateSize(Vector2D)} wont be able to go below that.
+     * Manual adjustments via {@link this#userUpdateWidth(double)} and {@link this#userUpdateHeight(double)} or {@link this#updateSize(Vector2D)} wont be able to go below that.
      */
     public void updateMinimumSize(Vector2D stageSize){
         if (log.isTraceEnabled())
@@ -78,9 +81,9 @@ public class MovieStageMod {
 //            stage.setHeight(stageSize.getY());
 //        }
 
-        updateAnchorPane();
-        Platform.runLater(this::centerVBoxInPane);
+        updateInnerComponents();
     }
+
 
     // set stages min width and height the user manually set, if he set anything
     public void initUserDefinedBounds(){
@@ -98,8 +101,7 @@ public class MovieStageMod {
         if (stageSize.getY() > textMinHeight)
             stage.setHeight(stageSize.getY());
 
-        updateAnchorPane();
-        Platform.runLater(this::centerVBoxInPane);
+        updateInnerComponents();
     }
 
     public void updatePos(Vector2D stagePos){
@@ -107,10 +109,13 @@ public class MovieStageMod {
             log.trace("setting stage pos: x/y " + stagePos.getX() +" " + stagePos.getY());
         stage.setX(stagePos.getX());
         stage.setY(stagePos.getY());
+        updateInnerComponents();
+    }
+
+    private void updateInnerComponents(){
         updateAnchorPane();
         Platform.runLater(this::centerVBoxInPane);
     }
-
 
     private void updateAnchorPane(){
         anchorPane.setLayoutX(0);
@@ -136,16 +141,17 @@ public class MovieStageMod {
             AnchorPane.setTopAnchor(vbox, anchorTop);
             AnchorPane.setLeftAnchor(vbox, anchorLeft);
         } else {
-            log.error("Calculated anchors are out of bounds: Top=" + anchorTop + ", Left=" + anchorLeft);
+            log.debug("Calculated anchors are out of bounds: Top=" + anchorTop + ", Left=" + anchorLeft);
         }
     }
-    private void bindComponentsToStageSize(){
+
+    private void bindInnerComponentsToStageSize(){
         if (stage == null)
             throw new IllegalStateException("stage not set");
         stage.widthProperty().addListener((obs, oldVal, newVal) -> {
             double anchorWidth = newVal.doubleValue();
             double vboxWidth = anchorWidth;
-            double textFlowWidth = vboxWidth;
+//            double textFlowWidth = vboxWidth;
 //            log.debug("setting anchor width to: " + anchorWidth);
 //            log.debug("setting vbox width to: " + vboxWidth);
             anchorPane.setPrefWidth(anchorWidth);
@@ -156,7 +162,7 @@ public class MovieStageMod {
         stage.heightProperty().addListener((obs, oldVal, newVal) -> {
             double anchorHeight = newVal.doubleValue();
             double vboxHeight = anchorHeight;
-            double textFlowHeight = vboxHeight;
+//            double textFlowHeight = vboxHeight;
 //            log.debug("setting anchor height to: " + anchorHeight);
 //            log.debug("setting vbox height to: " + vboxHeight);
             anchorPane.setPrefHeight(anchorHeight);

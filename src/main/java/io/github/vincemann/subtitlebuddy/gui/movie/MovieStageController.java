@@ -47,6 +47,8 @@ import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.loadImageView
 @Singleton
 public class MovieStageController implements MovieSrtDisplayer {
 
+    private static final int MIN_FONT_SIZE = 20;
+    private static final int MAX_FONT_SIZE = 90;
     private static final int MOVIE_CLICK_WARNING_SIZE = 60;
 
     private static final String BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE = "-fx-background-color: rgba(0, 100, 100, 0.51); -fx-background-radius: 10;";
@@ -171,11 +173,14 @@ public class MovieStageController implements MovieSrtDisplayer {
     // make sure stage is only as big as needed
     // also make sure subtitles are formatted properly (min width)
     private void adjustStageSizeToText(){
-        Vector2D stageSize = evalStageSize(movieTextFlow);
-        movieStageMod.updateMinimumSize(stageSize);
+        Vector2D minStageSize = evalMinStageSize(movieTextFlow);
+        movieStageMod.updateMinimumSize(minStageSize);
     }
 
-    private Vector2D evalStageSize(TextFlow textFlow) {
+    /**
+     * Find out minimum stage size required to display subtitles.
+     */
+    private Vector2D evalMinStageSize(TextFlow textFlow) {
         double maxWidth = textFlow.getPrefWidth();
         double totalHeight = 0;
 
@@ -199,13 +204,13 @@ public class MovieStageController implements MovieSrtDisplayer {
 
     @FXML
     public void initialize() {
-//        movieAnchorPane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
-//        movieVBox.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
         movieAnchorPane.setBackground(Background.EMPTY);
         movieTextFlow.setBackground(Background.EMPTY);
 
 
         movieTextFlow.setPickOnBounds(true);
+        // needs a fixed width so the subtitles are not displayed awkwardly word under word
+        // user can still adjust the box manually by dragging the edges
         movieTextFlow.setPrefWidth(ScreenUtils.getScreenBounds().getX()/2.5);
 
         registerEventHandlers();
@@ -239,15 +244,13 @@ public class MovieStageController implements MovieSrtDisplayer {
      * If subtitles are not visible on screen, display in center.
      */
     private void initStage(){
-        Vector2D stageSize = evalStageSize(movieTextFlow);
+        Vector2D stageSize = evalMinStageSize(movieTextFlow);
         Vector2D subtitlePos = options.getSubtitlePosition(); // top left of subtitle vbox
         // stage is as big as subtitle box, so its ok to work with stage size for calculating center
         Vector2D centerOfSubs = new Vector2D(subtitlePos.getX()+stageSize.getX()/2,subtitlePos.getY()+stageSize.getY()/2);
         boolean onScreen = VectorUtils.isVecWithinBounds(centerOfSubs, getScreenBounds());
         movieStageMod.updatePos(onScreen ? subtitlePos : VectorUtils.getCenterPos(ScreenUtils.getScreenBounds(),stageSize));
         movieStageMod.updateSize(stageSize);
-        // if user defined some bounds for the box, they are restored as min values
-        // for example high definition pc needs a larger box then 1/3 of the screen -> he only needs to adjust the box once per program execution
         movieStageMod.initUserDefinedBounds();
     }
 
@@ -255,7 +258,7 @@ public class MovieStageController implements MovieSrtDisplayer {
         stage.showingProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 registerEventHandlers();
-                initStage();
+                initStage(); // needs to be called when stage is shown, for proper init values
             } else {
                 unregisterEventHandlers();
             }
@@ -282,11 +285,11 @@ public class MovieStageController implements MovieSrtDisplayer {
         movieVBox.setStyle(BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE);
 
         // if resizing via corner only scale font size
-        // is resizing via edge only scale box
+        // if resizing via edge only scale box
         if (deltaW != 0 && deltaH != 0) {
             // Adjust font size based on new width and height
             double fontSize = calculateFontSize(deltaW, deltaH);
-            updateTextsFontSize(fontSize);
+            updateTextsFontSize(fontSize); // update ui as often as possible to create fluent animation
             // dont write to disk too often, this method is called often in a short time
             if (fontSize == options.getMovieFontSize()){
                 return;
@@ -295,10 +298,10 @@ public class MovieStageController implements MovieSrtDisplayer {
         } else {
             // Resizing in one direction only
             if (deltaW != 0) {
-                movieStageMod.updateWidth(w);
+                movieStageMod.userUpdateWidth(w);
             }
             if (deltaH != 0) {
-                movieStageMod.updateHeight(h);
+                movieStageMod.userUpdateHeight(h);
             }
         }
     }
@@ -316,8 +319,10 @@ public class MovieStageController implements MovieSrtDisplayer {
     private double calculateFontSize(double deltaW, double deltaH) {
         // Simple heuristic for font size adjustment
         // Adjust the font size proportionally to the change in width and height
-        double adjustmentFactor = (-deltaW + -deltaH) / 100; // Adjust the factor as needed
-        currentFontSize = Math.min(100,Math.max(30, currentFontSize + adjustmentFactor)); // Ensure bounds for font size
+        double adjustmentFactor = (-deltaW + -deltaH) / 100;
+        double selectedFontSize = currentFontSize + adjustmentFactor;
+        // Ensure bounds for font size
+        currentFontSize = Math.min(MAX_FONT_SIZE,Math.max(MIN_FONT_SIZE,selectedFontSize));
         return currentFontSize;
     }
 
