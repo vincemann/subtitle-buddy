@@ -97,8 +97,6 @@ public class ParserHotKeyTest extends GuiTest {
         refreshGui();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtPlayer.getCurrentState());
         refreshGui();
-        focusStage(Windows.MOVIE);
-        refreshGui();
         typeAltN();
         clickOn(middleOfScreen);
         refreshGui();
