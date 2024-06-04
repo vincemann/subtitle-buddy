@@ -7,16 +7,16 @@ OutputDir=output
 OutputBaseFilename=subtitle-buddy-installer
 Compression=lzma
 SolidCompression=yes
-SetupIconFile=icon.ico
+SetupIconFile=icon.icns
 
 [Files]
 Source: "image/*"; DestDir: "{app}\image"; Flags: recursesubdirs ignoreversion
 Source: "start.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion  ; Ensure the icon file is included
+Source: "icon.icns"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Subtitle Buddy"; Filename: "{app}\start.bat"; IconFilename: "{app}\icon.ico"
-Name: "{userdesktop}\Subtitle Buddy"; Filename: "{app}\start.bat"; IconFilename: "{app}\icon.ico"; Tasks: desktopicon
+Name: "{group}\Subtitle Buddy"; Filename: "{app}\start.bat"; IconFilename: "{app}\icon.icns"
+Name: "{userdesktop}\Subtitle Buddy"; Filename: "{app}\start.bat"; IconFilename: "{app}\icon.icns"; Tasks: desktopicon
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"

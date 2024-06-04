@@ -32,8 +32,10 @@ public class StageSwitchingTest extends GuiTest {
         MoviePage moviePage = settingsPage.switchToMovieMode();
         refreshGui();
         focusStage(Windows.MOVIE);
+        sleep(400);
         moviePage.switchToSettingsPage();
         refreshGui();
+        sleep(400);
         Assert.assertTrue(isStageShowing(Windows.SETTINGS));
         Assert.assertFalse(isStageShowing(Windows.MOVIE));
     }

@@ -439,6 +439,7 @@ tasks.register('buildWindowsInstaller') {
         }
         println "Deployed jlink runtime image to installer directory"
 
+
         // Building the installer using Inno Setup within a Docker container
         println "Building installer"
         exec {
