@@ -149,24 +149,24 @@ tasks.register('repackageMacApp', Exec) {
         def binaryPath = new File(originalAppPath, "Contents/MacOS/subtitle-buddy")
         def targetPath = "../runtime/Contents/Home/bin/appLauncher" // Relative path from the binary location
 
-        // Remove the original binary
+        // Remove the original binary if it exists
         if (binaryPath.exists()) {
             binaryPath.delete() // Delete the original binary
+            println "Original binary deleted."
         }
 
-        // Create the symlink
-        exec {
-            workingDir = binaryPath.parentFile
-            commandLine 'ln', '-s', targetPath, binaryPath.name
-        }
+        // Create the symlink command
+        commandLine 'ln', '-s', targetPath, binaryPath.name
+        workingDir = binaryPath.parentFile
 
-        println "Symlink created replacing the original binary."
+        println "Symlink command set up to replace the original binary."
     }
 
     doLast {
         println "Repackaging of macOS app completed."
     }
 }
+
 
 
 // builds platform specific jlink images in build/images
