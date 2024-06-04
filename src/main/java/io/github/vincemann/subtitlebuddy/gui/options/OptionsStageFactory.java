@@ -2,12 +2,14 @@ package io.github.vincemann.subtitlebuddy.gui.options;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.github.vincemann.subtitlebuddy.util.fx.IconUtil;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -28,7 +30,7 @@ public class OptionsStageFactory {
         fxmlLoader.setController(controller);
         InputStream is = getClass().getClassLoader().getResourceAsStream("options-stage.fxml");
         if (is == null) {
-            throw new IOException("Cannot find settings-stage.fxml file");
+            throw new FileNotFoundException("Cannot find options-stage.fxml file");
         }
         Parent parent = fxmlLoader.load(is);
         Stage stage = new Stage();
@@ -40,6 +42,7 @@ public class OptionsStageFactory {
             stage.hide();
         });
         controller.setStage(stage);
+        IconUtil.attachApplicationIconTo(stage);
         return stage;
     }
 }

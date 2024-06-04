@@ -3,6 +3,7 @@ package io.github.vincemann.subtitlebuddy.gui.movie;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.util.ScreenUtils;
+import io.github.vincemann.subtitlebuddy.util.fx.IconUtil;
 import io.github.vincemann.subtitlebuddy.util.vec.Vector2D;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -31,7 +33,7 @@ public class MovieStageFactory {
         fxmlLoader.setController(controller);
         InputStream is = getClass().getClassLoader().getResourceAsStream("movie-stage.fxml");
         if (is == null) {
-            throw new IOException("Cannot find settings-stage.fxml file");
+            throw new FileNotFoundException("Cannot find movie-stage.fxml file");
         }
         Parent parent = fxmlLoader.load(is);
         Vector2D screenVec = ScreenUtils.getScreenBounds();
@@ -45,6 +47,7 @@ public class MovieStageFactory {
             stage.hide();
         });
         controller.setStage(stage);
+        IconUtil.attachApplicationIconTo(stage);
         return stage;
     }
 }
