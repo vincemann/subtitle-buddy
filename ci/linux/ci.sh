@@ -25,14 +25,14 @@ mv build/*.zip server/${name}-image.zip
 rm -rf ~/.subtitle-buddy
 echo "jar installation"
 ./ci/linux/test-jar-installation.sh
-mv build/libs/*.jar server/${name}-jar.zip
+mv build/libs/*linux*.jar server/${name}-jar.zip
 
 
 rm -rf ~/.subtitle-buddy
 echo "homebrew installation"
 ./ci/linux/update-homebrew-formular.sh
 ./ci/linux/test-homebrew-installation.sh
-rm server/linux-image.zip # remove this bc the manual installation already deployed the proper zip to server
+rm server/image-linux.zip # remove this bc the manual installation already deployed the proper zip to server
 
 
 rm -rf ~/.subtitle-buddy

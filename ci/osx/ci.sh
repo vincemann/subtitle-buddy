@@ -4,6 +4,11 @@
 # also uploads all artifacts (.app and image.zip) via ftp to linux host
 name="subtitle-buddy-1.1.0-mac"
 
+server_dir="~/projekte/important/Subtitle-Buddy/server"
+ftp_dir="~/subtitle-buddy-releases"
+ssh_host="vince@192.168.178.69"
+ci_scripts_dir="~/projekte/important/Subtitle-Buddy/ci/osx"
+
 ./gradlew clean
 
 echo "running tests"
@@ -23,14 +28,14 @@ echo "manual installation x86"
 rm -rf ~/.subtitle-buddy
 echo "homebrew installation x86"
 ./ci/osx/ftp-upload-image.sh
-ssh vince@192.168.178.69 ~/projekte/important/Subtitle-Buddy/ci/osx/update-homebrew-formular.sh
+ssh $ssh_host ${ci_scripts_dir}/update-homebrew-formular.sh
 ./ci/osx/test-homebrew-installation.sh
-ssh vince@192.168.178.69 "mv ~/subtitle-buddy-releases/*.zip ~/projekte/important/Subtitle-Buddy/server/${name}-x86-image.zip"
+ssh $ssh_host "mv ${ftp_dir}/*.zip ${server_dir}/${name}-x86-image.zip"
 
 
 rm -rf ~/.subtitle-buddy
 echo ".app installation x86"
 ./ci/osx/test-app-installation.sh
 ./ci/osx/ftp-upload-app.sh
-ssh vince@192.168.178.69 "mv ~/subtitle-buddy-releases/*.zip ~/projekte/important/Subtitle-Buddy/server/${name}-x86-app.zip"
+ssh $ssh_host "mv ${ftp_dir}/*.zip ${server_dir}/${name}-x86-app.zip"
 
