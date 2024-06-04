@@ -6,7 +6,7 @@
 app="subtitle-buddy.app"
 archive="subtitle-buddy-app.zip"
 
-./gradlew clean jpackage
+./gradlew jpackage
 cd build/jpackage
 zip -r "$archive" "$app"
 mkdir temp

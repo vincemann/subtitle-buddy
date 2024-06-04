@@ -4,7 +4,6 @@
 # remove possible installation
 rm -f /usr/local/bin/subtitle-buddy
 
-./gradlew clean jlinkZip
 ./gradlew jlinkZip
 
 cd build

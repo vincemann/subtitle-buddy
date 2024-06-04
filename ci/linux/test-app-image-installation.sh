@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./gradlew clean buildLinuxAppImage
+./gradlew buildLinuxAppImage
 ./build/releases/*.AppImage

@@ -65,7 +65,7 @@ public abstract class GuiTest extends ApplicationTest {
         Stage settingsStage = findStage(Windows.SETTINGS);
         Point2D nextToSettingsStage = new Point2D(settingsStage.getX() + settingsStage.getWidth() + 10, settingsStage.getY() + 10);
         clickOn(nextToSettingsStage);
-        refreshGui();
+        waitForGuiEvents();
     }
 
     public void clickOnStage(String name){
@@ -92,7 +92,7 @@ public abstract class GuiTest extends ApplicationTest {
         Main application = (Main) ApplicationTest.launch(Main.class);
 
         // Explicitly wait for the application to be ready
-        WaitForAsyncUtils.waitForFxEvents();
+        waitForGuiEvents();
         waitUntilApplicationReady(application);
     }
 
@@ -108,7 +108,7 @@ public abstract class GuiTest extends ApplicationTest {
         Node node = find(query);
         Runnable runnable = node::requestFocus;
         runOnFxThreadAndWait(runnable);
-        refreshGui();
+        waitForGuiEvents();
     }
 
     // needs to be pressed natively, bc robot works on a more abstract layer of keystrokes in javafx
@@ -204,7 +204,7 @@ public abstract class GuiTest extends ApplicationTest {
             stage.requestFocus();
         };
         runOnFxThreadAndWait(toFrontTask);
-        refreshGui();
+        waitForGuiEvents();
 
         if (!stage.isFocused()) {
             throw new IllegalStateException("Stage is not focused");
@@ -215,7 +215,7 @@ public abstract class GuiTest extends ApplicationTest {
         return windowManager.find(name).getStage();
     }
 
-    public void refreshGui() {
+    public void waitForGuiEvents() {
         WaitForAsyncUtils.waitForFxEvents();
     }
 

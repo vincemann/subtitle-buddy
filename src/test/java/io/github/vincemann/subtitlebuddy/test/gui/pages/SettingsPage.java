@@ -58,9 +58,9 @@ public class SettingsPage extends AbstractPage {
 
     public OptionsPage openOptionsWindow() throws TimeoutException {
         getDriver().focusNode(FxIds.OPTIONS_BUTTON_ID);
-        getDriver().refreshGui();
+        getDriver().waitForGuiEvents();
         getDriver().clickOn(FxIds.OPTIONS_BUTTON_ID);
-        getDriver().refreshGui();
+        getDriver().waitForGuiEvents();
         /*Stage settingsStage = getDriver().findStageController(SettingsStageController.class).getStage();
         Stage optionsStage = getDriver().findStageController(OptionsStageController.class).getStage();
         //open options window next to settingswindow -> no overlap, that tempers with tests

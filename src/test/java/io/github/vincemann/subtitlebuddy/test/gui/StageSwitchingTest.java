@@ -30,11 +30,11 @@ public class StageSwitchingTest extends GuiTest {
     @Test
     public void testSwitchToMovieModeAndBack() throws TimeoutException {
         MoviePage moviePage = settingsPage.switchToMovieMode();
-        refreshGui();
+        waitForGuiEvents();
         focusStage(Windows.MOVIE);
         sleep(400);
         moviePage.switchToSettingsPage();
-        refreshGui();
+        waitForGuiEvents();
         sleep(400);
         Assert.assertTrue(isStageShowing(Windows.SETTINGS));
         Assert.assertFalse(isStageShowing(Windows.MOVIE));

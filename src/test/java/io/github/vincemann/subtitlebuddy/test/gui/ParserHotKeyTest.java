@@ -37,37 +37,37 @@ public class ParserHotKeyTest extends GuiTest {
     @Test
     public void testStartParserBySpace() throws InterruptedException {
         eventBus.post(new ToggleSpaceHotkeyEvent(true));
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtPlayer.getCurrentState());
         type(KeyCode.SPACE);
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtPlayer.getCurrentState());
     }
 
     @Test
     public void testStartStopParserBySpace() throws InterruptedException {
         eventBus.post(new ToggleSpaceHotkeyEvent(true));
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtPlayer.getCurrentState());
 
         type(KeyCode.SPACE);
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtPlayer.getCurrentState());
 
         type(KeyCode.SPACE);
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(RunningState.STATE_SUSPENDED, srtPlayer.getCurrentState());
 
 
         type(KeyCode.SPACE);
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtPlayer.getCurrentState());
     }
 
     @Test
     public void testNextClickCountsSettingsMode() throws TimeoutException, InterruptedException {
         eventBus.post(new ToggleNextClickHotkeyEvent(true));
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtPlayer.getCurrentState());
 
 
@@ -76,7 +76,7 @@ public class ParserHotKeyTest extends GuiTest {
         Assert.assertEquals(RunningState.STATE_RUNNING, srtPlayer.getCurrentState());
 
         safeFocusStage(Windows.SETTINGS);
-        refreshGui();
+        waitForGuiEvents();
         typeAltN();
         clickNextToSettingsStage();
         Assert.assertEquals(RunningState.STATE_SUSPENDED, srtPlayer.getCurrentState());
@@ -85,21 +85,21 @@ public class ParserHotKeyTest extends GuiTest {
     @Test
     public void testNextClickCountsMovieMode() throws TimeoutException, InterruptedException {
         eventBus.post(new ToggleNextClickHotkeyEvent(true));
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(RunningState.STATE_UNSTARTED, srtPlayer.getCurrentState());
         settingsPage.switchToMovieMode();
-        refreshGui();
+        waitForGuiEvents();
 
         typeAltN();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Point2D middleOfScreen = new Point2D(screenSize.getWidth()/2,screenSize.getHeight()/2);
         clickOn(middleOfScreen);
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(RunningState.STATE_RUNNING, srtPlayer.getCurrentState());
-        refreshGui();
+        waitForGuiEvents();
         typeAltN();
         clickOn(middleOfScreen);
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(RunningState.STATE_SUSPENDED, srtPlayer.getCurrentState());
     }
 
@@ -107,13 +107,13 @@ public class ParserHotKeyTest extends GuiTest {
     public void testNavigateBackToSettingsModeViaEscape() throws TimeoutException, InterruptedException {
         eventBus.post(new ToggleEndMovieModeHotkeyEvent(true));
         settingsPage.switchToMovieMode();
-        refreshGui();
+        waitForGuiEvents();
 
         focusStage(Windows.MOVIE);
-        refreshGui();
+        waitForGuiEvents();
 
         typeEscape();
-        refreshGui();
+        waitForGuiEvents();
 
         Assert.assertTrue(isStageShowing(Windows.SETTINGS));
         Assert.assertFalse(isStageShowing(Windows.MOVIE));

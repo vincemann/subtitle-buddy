@@ -10,7 +10,6 @@ import io.github.vincemann.subtitlebuddy.test.gui.pages.OptionsPage;
 import io.github.vincemann.subtitlebuddy.test.gui.pages.SettingsPage;
 import javafx.scene.paint.Color;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Test;
 
 import java.util.concurrent.TimeoutException;
@@ -55,11 +54,11 @@ public class OptionsTest extends GuiTest {
         setFontColor(Color.WHITE);
         focusStage(Windows.SETTINGS);
         OptionsPage optionsPage = settingsPage.openOptionsWindow();
-        refreshGui();
+        waitForGuiEvents();
         focusStage(Windows.OPTIONS);
         Color selectedColor = optionsPage.selectRandomColorThatIsNot(Color.WHITE);
         Assert.assertNotEquals(Color.WHITE, selectedColor);
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(selectedColor, fontOptions.getFontColor());
     }
 
@@ -67,7 +66,7 @@ public class OptionsTest extends GuiTest {
     @Test
     public void testShowOptions() throws TimeoutException {
         settingsPage.openOptionsWindow();
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertTrue(isStageShowing(Windows.OPTIONS));
         Assert.assertTrue(isStageShowing(Windows.SETTINGS));
         Assert.assertTrue(isStageShowing(Windows.OPTIONS));
@@ -82,11 +81,11 @@ public class OptionsTest extends GuiTest {
         settingsPage.switchToMovieMode();
 
 
-        refreshGui();
+        waitForGuiEvents();
         focusStage(Windows.OPTIONS);
         Color selectedColor = optionsPage.selectRandomColorThatIsNot(Color.WHITE);
         Assert.assertNotEquals(Color.WHITE, selectedColor);
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(selectedColor, fontOptions.getFontColor());
     }
 
@@ -98,7 +97,7 @@ public class OptionsTest extends GuiTest {
         FontBundle currFont = fontManager.getCurrentFont();
         FontBundle newFont = optionsPage.selectNewFont(currFont);
         Assert.assertNotEquals(newFont, currFont);
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(fontManager.getCurrentFont(), newFont);
     }
 
@@ -113,7 +112,7 @@ public class OptionsTest extends GuiTest {
         focusStage(Windows.OPTIONS);
         FontBundle newFont = optionsPage.selectNewFont(currFont);
         Assert.assertNotEquals(newFont, currFont);
-        refreshGui();
+        waitForGuiEvents();
         Assert.assertEquals(fontManager.getCurrentFont(), newFont);
     }
 }

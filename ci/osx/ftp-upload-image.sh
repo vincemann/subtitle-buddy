@@ -1,8 +1,6 @@
 #!/bin/bash
 # build homebrew mac tar ball and send via ftp to linux server for hosting
 
-./gradlew clean jlinkZip
-# sometimes it fails and I need to execute again without clean
 ./gradlew jlinkZip
 dir="build"
 file=$(ls "$dir"/*.zip 2> /dev/null | head -n 1)

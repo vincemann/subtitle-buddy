@@ -6,7 +6,7 @@ sudo dpkg --remove subtitle-buddy
 sudo rm -rf /opt/subtitle-buddy
 rm -f /usr/local/bin/subtitle-buddy
 
-./gradlew clean jpackage
+./gradlew jpackage
 
 sudo dpkg -i build/jpackage/*.deb
 
