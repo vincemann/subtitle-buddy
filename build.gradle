@@ -189,7 +189,7 @@ jlink {
             if (detectOS() == 'linux') {
                 jpackage {
                     targetPlatformName = "linux"
-                    icon = "${projectDir}/icon.icns"
+                    icon = "${projectDir}/icon.ico"
                     imageName = "subtitle-buddy"
                     installerName = "subtitle-buddy"
                     vendor = "vincemann"
@@ -212,7 +212,7 @@ jlink {
             if (detectOS() == 'win') {
                 jpackage {
                     targetPlatformName = "win"
-                    icon = "${projectDir}/icon.icns"
+                    icon = "${projectDir}/icon.ico"
                     imageName = "subtitle-buddy"
                     installerName = "subtitle-buddy"
                     vendor = "vincemann"
