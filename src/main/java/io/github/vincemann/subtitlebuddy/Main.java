@@ -37,6 +37,7 @@ import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngine;
 import io.github.vincemann.subtitlebuddy.font.DefaultFontsInstaller;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
 import io.github.vincemann.subtitlebuddy.font.FontsDirectory;
+import io.github.vincemann.subtitlebuddy.util.fx.IconUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -104,6 +105,7 @@ public class Main extends Application {
         displayFirstSubtitle();
     }
 
+
     private void displayFirstSubtitle(){
         injector.getInstance(EventBus.class).post(new RequestSubtitleUpdateEvent());
     }
@@ -165,20 +167,24 @@ public class Main extends Application {
         SettingsStageFactory settingsStageFactory = injector.getInstance(SettingsStageFactory.class);
         SettingsStageController settingsStageController = injector.getInstance(SettingsStageController.class);
         Stage settingsStage = settingsStageFactory.create(primaryStage);
+        IconUtil.attachApplicationIconTo(settingsStage);
         windowManager.registerWindow(new Window(Windows.SETTINGS, settingsStage, settingsStageController));
 
         OptionsStageFactory optionsStageFactory = injector.getInstance(OptionsStageFactory.class);
         Stage optionsStage = optionsStageFactory.create();
+        IconUtil.attachApplicationIconTo(optionsStage);
         OptionsStageController optionsStageController = injector.getInstance(OptionsStageController.class);
         windowManager.registerWindow(new Window(Windows.OPTIONS, optionsStage, optionsStageController));
 
         MovieStageFactory movieStageFactory = injector.getInstance(MovieStageFactory.class);
         Stage movieStage = movieStageFactory.create();
+        IconUtil.attachApplicationIconTo(movieStage);
         MovieStageController movieStageController = injector.getInstance(MovieStageController.class);
         windowManager.registerWindow(new Window(Windows.MOVIE, movieStage, movieStageController));
 
         return windowManager;
     }
+
 
     private void registerHook() {
         try {
