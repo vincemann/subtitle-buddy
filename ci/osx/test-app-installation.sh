@@ -1,9 +1,15 @@
 #!/bin/bash
+
+# create mac app, zip it up 
+# then emulate user behavior by unzipping and opening app
+
+app="subtitle-buddy.app"
+archive="subtitle-buddy-app.zip"
+
 ./gradlew clean jpackage
-./gradlew jpackage
 cd build/jpackage
-zip -r subtitle-buddy-app.zip subtite-buddy.app
+zip -r "$archive" "$app"
 mkdir temp
-unzip subtitle-buddy-app.zip -d temp
+unzip "$archive" -d temp
 cd temp
-open -a subtitle-buddy.app
+open -a "$app"
