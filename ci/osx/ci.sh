@@ -16,7 +16,7 @@
 
 version="1.1.0"
 name_prefix="subtitle-buddy-$version-mac"
-ssh_host="vince@192.168.178.69"
+ssh_host="subtitle-buddy@192.168.178.69"
 ci_scripts_dir="~/projekte/important/Subtitle-Buddy/ci/osx"
 
 # set arch to x64

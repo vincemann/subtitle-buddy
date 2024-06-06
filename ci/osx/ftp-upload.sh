@@ -15,7 +15,7 @@ DIR="$1"
 FILE_NAME="$2"
 TARGET_FILENAME="$3"
 DST_IP="192.168.178.69"
-FTP_USER="vince"
+FTP_USER="subtitle-buddy"
 # Prompt the user for FTP details
 read -sp "Enter FTP password: " FTP_PASS
 echo
@@ -35,6 +35,7 @@ fi
 # Use ftp to send the file
 ftp -inv $DST_IP <<EOF
 user $FTP_USER $FTP_PASS
+cd projects/server
 lcd "$DIR"
 binary
 put "$FILE_NAME" "$TARGET_FILENAME"
