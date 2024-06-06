@@ -15,10 +15,13 @@
 # *-aarch64.app
 
 version="1.1.0"
-name="subtitle-buddy-$version-mac"
+name_prefix="subtitle-buddy-$version-mac"
 ssh_host="vince@192.168.178.69"
 ci_scripts_dir="~/projekte/important/Subtitle-Buddy/ci/osx"
 
+# set arch to x64
+
+name="$name_prefix-x64"
 ./gradlew clean
 
 echo "running tests"
@@ -28,21 +31,23 @@ rm -rf ~/.subtitle-buddy
 echo "gradle run"
 ./gradlew run
 
-echo "manual installation x86"
+echo "manual installation x64"
 rm -rf ~/.subtitle-buddy
 ./ci/osx/test-manual-installation.sh "mac"
 
-echo "homebrew installation x86"
+echo "homebrew installation x64"
 rm -rf ~/.subtitle-buddy
-./ci/osx/ftp-upload-image.sh "${name}-x86-image.zip" "mac"
+./ci/osx/ftp-upload-image.sh "${name}-image.zip" "mac"
 ssh $ssh_host "${ci_scripts_dir}/update-homebrew-formular.sh mac"
 ./ci/osx/test-homebrew-installation.sh
 
 
-echo ".app installation x86"
+echo ".app installation x64"
 rm -rf ~/.subtitle-buddy
 ./ci/osx/test-app-installation.sh "mac"
-./ci/osx/ftp-upload-app.sh "${name}-x86-app.zip" "mac"
+./ci/osx/ftp-upload-app.sh "${name}-app.zip" "mac"
 
+# set arch to aarch64
+name="$name_prefix-aarch64"
 # continue with aarch64...
 
