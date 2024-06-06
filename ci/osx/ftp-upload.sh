@@ -1,16 +1,19 @@
 #!/bin/bash
-# upload file to linux hosting pc via ftp in binary mode
-# usage: ./ftp-upload.sh dir filename
-# dont specify path of file, but instead the dir and filename
-# need to interactively type pw
+# ./ftp-upload.sh dir filename targetFilename
 
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <dir> <filename>"
+
+# uploads file to linux hosting pc via ftp in binary mode
+# dont specify path of file, but instead the dir and filename
+# need to interactively type ftp pw
+
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <dir> <filename> <targetFilename>"
     exit 1
 fi
 
-DIR=$1
-FILE_NAME=$2
+DIR="$1"
+FILE_NAME="$2"
+TARGET_FILENAME="$3"
 DST_IP="192.168.178.69"
 FTP_USER="vince"
 # Prompt the user for FTP details
@@ -34,7 +37,7 @@ ftp -inv $DST_IP <<EOF
 user $FTP_USER $FTP_PASS
 lcd "$DIR"
 binary
-put "$FILE_NAME"
+put "$FILE_NAME" "$TARGET_FILENAME"
 bye
 EOF
 

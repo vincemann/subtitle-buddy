@@ -1,14 +1,16 @@
 #!/bin/bash
+# ./test-app-installation.sh [mac|mac-aarch64]
 
-# create mac .app and zip it up 
+# creates mac .app for specified arch and zips it up 
 # then emulate user behavior by unzipping and opening app
 
-app="subtitle-buddy.app"
-archive="subtitle-buddy-app.zip"
+arch=$1
+app="subtitle-buddy-$arch.app"
+archive="subtitle-buddy-$arch.app.zip"
 
-./gradlew jpackage
-cd build/jpackage
-zip -r "$archive" "$app"
+./ci/osx/build-app.sh $arch
+
+# emulate user behavior -> unzip and start
 mkdir temp
 unzip "$archive" -d temp
 cd temp

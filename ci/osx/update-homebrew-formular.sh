@@ -1,10 +1,10 @@
 #!/bin/bash
-# always execute from project root
-# this is executed on linux hosting machine
-# need to build image on macos before and send to this pc
+# ./update-homebrew-formula.sh [mac|mac-aarch64]
+
+
+# this should be executed on linux hosting machine
+# need to build image.zip on macos before and send to this linux pc
 # -> execute ./ftp-upload-image.sh on macos before this script to achieve this
-# ftp uploaded file is expected to be in ~/subtitle-buddy-releases on linux hosting machine
 
-cp ~/subtitle-buddy-releases/*mac*.zip build
-
-./ci/update-formular-hash.sh "mac"
+arch=$1
+./ci/update-formular-hash.sh $arch

@@ -1,54 +1,50 @@
 #!/bin/bash
-# run from project root
-# update sha256 hash of either linux or mac in homebrew github repo formula
-# push changes to repo
-# ./ci/update-formular-hash.sh <linux|mac>
+# ./ci/update-formular-hash.sh <linux|mac|mac-aarch64>
 
-# Check if the correct number of arguments is provided
+
+# updates sha256 hash of either linux or mac/mac-aarch64 in homebrew github repo formula file
+# expects updated image-$platform.zip file in ./server dir
+# push changes to repo
+
+
+# input validations
 if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <linux|mac>"
+    echo "Usage: $0 <linux|mac|mac-aarch64>"
     exit 1
 fi
-
 PLATFORM=$1
 FORMULA_FILE="./brew/homebrew-repo/Formula/subtitle-buddy.rb"
-
-# Ensure the formula file exists
 if [ ! -f "$FORMULA_FILE" ]; then
     echo "Error: Formula file $FORMULA_FILE not found!"
     exit 1
 fi
 
+
+# evaluate new hash
 NEW_SHA256=$(sha256sum build/*$PLATFORM*.zip | awk '{ print $1 }')
 echo "new hash: $NEW_SHA256"
 
-# Create a temporary file
-TEMP_FILE=$(mktemp)
 
-# Update the appropriate SHA256 checksum in the formula file and write to the temporary file
+# update the hash in formula file
+TEMP_FILE=$(mktemp)
 if [ "$PLATFORM" == "linux" ]; then
     sed "/^ *url \".*linux.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
 elif [ "$PLATFORM" == "mac" ]; then
     sed "/^ *url \".*mac.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
+elif [ "$PLATFORM" == "mac-aarch64" ]; then
+    sed "/^ *url \".*mac.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
 else
-    echo "Error: First argument must be 'linux' or 'mac'"
+    echo "Error: First argument must be 'linux' or 'mac' or 'mac-aarch64'"
     rm "$TEMP_FILE"
     exit 1
 fi
-
-# Move the temporary file to the original formula file
 mv "$TEMP_FILE" "$FORMULA_FILE"
-
-# move artifact to server dir so it can be downloaded
-cp build/*$PLATFORM*.zip server
-
 echo "Updated SHA256 checksum for $PLATFORM in $FORMULA_FILE"
 
+
+# update repo
 echo "pushing to github"
 cd ./brew/homebrew-repo
 git add -A
-git commit -m "update hash"
+git commit -m "update hash for $PLATFORM"
 git push
-
-cd ../..
-
