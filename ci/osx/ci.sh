@@ -10,9 +10,9 @@
 
 # artifacts:
 # *-image-x64.zip (manual installation & homebrew)
-# *-x64.app
+# *-x64.app.zip
 # *-image-aarch64.zip 
-# *-aarch64.app
+# *-aarch64.app.zip
 
 version="1.1.0"
 name_prefix="subtitle-buddy-$version-mac"
@@ -50,4 +50,4 @@ rm -rf ~/.subtitle-buddy
 # set arch to aarch64
 name="$name_prefix-aarch64"
 # continue with aarch64...
-
+./gradlew clean

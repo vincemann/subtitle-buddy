@@ -12,9 +12,6 @@ arch="$2"
 echo "artifact name: $artifact_name"
 echo "building for arch: $arch"
 
-# remove possible old image.zip for diff arch
-rm ./build/*.zip
-
 ./ci/osx/build-image.sh $arch
 
 # upload file to linux host via ftp
