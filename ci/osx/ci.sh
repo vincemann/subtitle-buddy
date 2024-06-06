@@ -1,7 +1,13 @@
 #!/bin/bash
 # execute all ci scripts for linux in a row
 # user just needs to interactively test the application when it opens and type in pws
-# also uploads all artifacts (.app and image.zip) via ftp to linux host
+# also uploads all artifacts via ftp to linux host and moves into server dir
+# remember to start file server in ./server in dev env: python3 -m http.server 8000
+# artifacts:
+# image-x86.zip (manual installation & homebrew)
+# x86.app
+# image-aarch64.zip 
+# aarch64.app
 name="subtitle-buddy-1.1.0-mac"
 
 server_dir="~/projekte/important/Subtitle-Buddy/server"

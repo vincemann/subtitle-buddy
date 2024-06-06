@@ -1,7 +1,10 @@
 #!/bin/bash
 #!/bin/bash
-# always execute from project root
-# reinstall subtitle buddy via homebrew
+# usage: ./test-homebrew-installation.sh
+# always execute from project root and on mac os
+# reinstalls subtitle buddy via homebrew
+# you need to update the formula file and publish the latest artifact before executing
+# execute ./update-homebrew-formular.sh before
 
 brew update --force
 

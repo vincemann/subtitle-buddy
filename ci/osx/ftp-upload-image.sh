@@ -1,5 +1,5 @@
 #!/bin/bash
-# build homebrew mac tar ball and send via ftp to linux server for hosting
+# build homebrew mac image.zip and send via ftp to linux server for hosting
 
 ./gradlew jlinkZip
 dir="build"

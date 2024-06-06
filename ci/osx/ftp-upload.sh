@@ -1,6 +1,9 @@
 #!/bin/bash
+# upload file to linux hosting pc via ftp in binary mode
+# usage: ./ftp-upload.sh dir filename
+# dont specify path of file, but instead the dir and filename
+# need to interactively type pw
 
-# Check if the correct number of arguments is provided
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <dir> <filename>"
     exit 1

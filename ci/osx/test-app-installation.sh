@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# create mac app, zip it up 
+# create mac .app and zip it up 
 # then emulate user behavior by unzipping and opening app
 
 app="subtitle-buddy.app"

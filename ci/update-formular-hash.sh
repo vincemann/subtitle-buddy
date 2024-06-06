@@ -1,6 +1,6 @@
 #!/bin/bash
 # run from project root
-# update sha256 hash of either linux or mac in homebrew github repo formular
+# update sha256 hash of either linux or mac in homebrew github repo formula
 # push changes to repo
 # ./ci/update-formular-hash.sh <linux|mac>
 

@@ -413,7 +413,7 @@ tasks.register('buildWindowsInstaller') {
     def os = detectOS()
     if (os == "win") {
         throw new GradleException("This task is meant for building windows installer on a linux host machine. " +
-                "For building on windows use 'gradlew.bat clean winJpackage -PtargetPlatform=win'")
+                "For building on windows use 'gradlew.bat clean jpackage'")
     }
     doFirst {
         mkdir releaseDir
@@ -513,7 +513,7 @@ run {
             println("adding osx javafx modules to module path")
             args += ['--module-path', "${projectDir}/lib/javafx/osx/x86/jmods"]
         }
-        else if (project.targetPlatform == 'mac-arm') {
+        else if (project.targetPlatform == 'mac-aarch64') {
             println("adding osx javafx modules to module path")
             args += ['--module-path', "${projectDir}/lib/javafx/osx/arm/jmods"]
         }

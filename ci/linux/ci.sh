@@ -1,9 +1,16 @@
 #!/bin/bash
+# ./ci [skip]
 # execute all ci scripts for linux in a row
 # user just needs to interactively test the application when it opens and type in pws
+# remember to start file server in ./server in dev env: python3 -m http.server 8000
 # also moves all artifacts to ./server for deployment
-name="subtitle-buddy-1.1.0-linux"
+# artifacts:
+# 1. image.zip (manual installation & homebrew)
+# 2. .jar
+# 3. .AppImage
+# 4. .deb
 
+name="subtitle-buddy-1.1.0-linux"
 ./gradlew clean
 
 
