@@ -30,11 +30,11 @@ echo "gradle run"
 
 echo "manual installation x86"
 rm -rf ~/.subtitle-buddy
-./ci/osx/test-manual-installation.sh
+./ci/osx/test-manual-installation.sh "mac"
 
 echo "homebrew installation x86"
 rm -rf ~/.subtitle-buddy
-./ci/osx/ftp-upload-image.sh "${name}-x86-image.zip mac"
+./ci/osx/ftp-upload-image.sh "${name}-x86-image.zip" "mac"
 ssh $ssh_host "${ci_scripts_dir}/update-homebrew-formular.sh mac"
 ./ci/osx/test-homebrew-installation.sh
 
