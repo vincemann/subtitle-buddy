@@ -9,8 +9,8 @@
 # remember to start ssh server on linux via sudo systemctl start ssh.service
 
 # artifacts:
-# *-image-x86.zip (manual installation & homebrew)
-# *-x86.app
+# *-image-x64.zip (manual installation & homebrew)
+# *-x64.app
 # *-image-aarch64.zip 
 # *-aarch64.app
 

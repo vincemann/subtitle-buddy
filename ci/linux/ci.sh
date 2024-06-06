@@ -4,7 +4,7 @@
 # user just needs to interactively test the application when it opens and type in pws
 # remember to start file server in ./server in dev env: python3 -m http.server 8000
 # also moves all artifacts to ./server for deployment
-# artifacts:
+# artifacts (x64 only):
 # 1. image.zip (manual installation & homebrew)
 # 2. .jar
 # 3. .AppImage
