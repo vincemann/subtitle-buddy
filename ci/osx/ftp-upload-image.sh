@@ -24,7 +24,6 @@ if [ -z "$file" ]; then
     echo "No .zip files found in $directory"
     exit 1
 else
-    # Extract the file name from the full path
     filename=$(basename "$file")
     echo "Found file: $filename"
     ./ci/osx/ftp-upload.sh $dir $filename $artifact_name

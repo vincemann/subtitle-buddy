@@ -11,10 +11,12 @@ rm -f /usr/local/bin/subtitle-buddy
 
 cd build
 
+rm -rf temp
 mkdir temp
 
 unzip *.zip -d temp
 
-ln -s $(pwd)/temp/appLauncher-$arch/bin/appLauncher /usr/local/bin/subtitle-buddy
+# jlink always names appLauncher mac no matter what arch within mac
+ln -s $(pwd)/temp/appLauncher-mac/bin/appLauncher /usr/local/bin/subtitle-buddy
 
 subtitle-buddy

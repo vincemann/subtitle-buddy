@@ -18,6 +18,7 @@ application {
 
 ext {
     // Use the provided targetPlatform property if available, otherwise use the detected OS
+    // Options are [linux | win | mac | mac-aarch64 ]
     targetPlatform = project.hasProperty('targetPlatform') ? project.targetPlatform : detectOS()
     println("target platform detected: " + targetPlatform)
     releaseDir = "${projectDir}/build/releases"
