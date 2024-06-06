@@ -26,13 +26,18 @@ ext {
 
 static def detectOS() {
     def os = org.gradle.internal.os.OperatingSystem.current()
+    println("Operating system detected: " + os)
     if (os.isWindows()) {
+        println("Detected Windows OS")
         return "win"
     } else if (os.isLinux()) {
+        println("Detected Linux OS")
         return "linux"
     } else if (os.isMacOsX()) {
         def arch = System.getProperty("os.arch")
+        println("Detected macOS with architecture: " + arch)
         if (arch.contains("aarch64") || arch.contains("arm64")) {
+            println("Detected ARM architecture")
             return "mac-aarch64"
         } else {
             return "mac"

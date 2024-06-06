@@ -1,10 +1,12 @@
 #!/bin/bash
 # execute all ci scripts for linux in a row
 # user just needs to interactively test the application when it opens and type in pws
+# also executes ci scripts on remote linux host (for example for updating homebrew formula file)
 # also uploads all artifacts via ftp to linux host -> files will end up in ftp root dir, which should be ./server
 
 # remember to start ftp server on linux via sudo systemctl start vsftpd.service
 # remember to start file server in ./server in dev env: python3 -m http.server 8000
+# remember to start ssh server on linux via sudo systemctl start ssh.service
 
 # artifacts:
 # *-image-x86.zip (manual installation & homebrew)
