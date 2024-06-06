@@ -52,3 +52,5 @@ rm -rf ~/.subtitle-buddy
 echo "deb installation"
 ./ci/linux/test-deb-installation.sh
 mv build/jpackage/*.deb server/${name}.deb
+
+echo "finished"
