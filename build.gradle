@@ -5,6 +5,7 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'org.beryx.jlink' version '3.0.1'
+    id "de.undercouch.download" version "4.1.1"
 }
 
 group = 'io.github.vincemann'
@@ -367,11 +368,22 @@ tasks.named('jpackage').configure {
     finalizedBy 'repackageDeb'
 }
 
+def appImageToolUrl = 'https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage'
+def appImageToolPath = "${projectDir}/releases/linux/appimagetool.AppImage"
+
+task downloadAppImageTool(type: de.undercouch.gradle.tasks.download.Download) {
+    src appImageToolUrl
+    dest appImageToolPath
+    onlyIfNewer true
+    doLast {
+        file(appImageToolPath).setExecutable(true)
+    }
+}
 
 // uses app image tool generating binary, which must be placed into: releases/linux/appimagetool.AppImage
 // execute with -PtargetPlatform=linux
 tasks.register('buildLinuxAppImage') {
-    dependsOn('jlink')
+    dependsOn('jlink', 'downloadAppImageTool')
     doFirst {
         mkdir releaseDir
     }
