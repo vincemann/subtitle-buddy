@@ -55,30 +55,32 @@ import java.util.List;
 @Singleton
 public class Main extends Application {
 
-    static {
-        if ("true".equals(System.getProperty("jlink"))) {
-            // fixing lib loading issues within jlink image
-            log.info("Setting Jlink-specific library locator for jNativeHook");
-            System.setProperty("jnativehook.lib.locator", JLinkJNativeLibraryLocator.class.getName());
-        } else {
-            // for fat jars the default locator is fine
-            log.info("Using default library locator for jNativeHook");
-        }
-    }
-
     public static final String CONFIG_FILE_NAME = "application.properties";
     public static final String STRINGS_FILE_NAME = "application.string.properties";
 
     private static Injector injector;
+
+    private static final String VERSION = "1.1.0";
 
     /**
      * Is used for testing purposes. I need to register hook on diff thread, so I need a way to wait for registration in my tests.
      */
     private boolean applicationReady = false;
 
+    public static void main(String[] args) {
+        if (args.length > 0 && "--version".equals(args[0])) {
+            System.out.println("Version: " + VERSION);
+            System.exit(0);
+        } else {
+            launch(args);
+        }
+    }
+
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         disableVerboseJNativeHookLogging();
+        initJlinkLibLocator();
 
         ConfigDirectory configDir = createConfigDir();
         PropertiesFile properties = createPropertiesFile(configDir);
@@ -104,8 +106,19 @@ public class Main extends Application {
         displayFirstSubtitle();
     }
 
+    private void initJlinkLibLocator(){
+        if ("true".equals(System.getProperty("jlink"))) {
+            // fixing lib loading issues within jlink image
+            log.info("Setting Jlink-specific library locator for jNativeHook");
+            System.setProperty("jnativehook.lib.locator", JLinkJNativeLibraryLocator.class.getName());
+        } else {
+            // for fat jars the default locator is fine
+            log.info("Using default library locator for jNativeHook");
+        }
+    }
 
-    private void displayFirstSubtitle(){
+
+    private void displayFirstSubtitle() {
         injector.getInstance(EventBus.class).post(new RequestSubtitleUpdateEvent());
     }
 

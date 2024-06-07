@@ -32,7 +32,7 @@ mv build/*.zip server/${name}-image.zip
 rm -rf ~/.subtitle-buddy
 echo "jar installation"
 ./ci/linux/test-jar-installation.sh
-mv build/libs/*linux*.jar server/${name}-jar
+mv build/libs/*linux*.jar server/${name}.jar
 
 
 rm -rf ~/.subtitle-buddy
@@ -44,7 +44,7 @@ echo "homebrew installation"
 rm -rf ~/.subtitle-buddy
 echo "app image installation"
 ./ci/linux/test-app-image-installation.sh
-mv build/releases/*.AppImage server/${name}-AppImage.zip
+mv build/releases/*.AppImage server/${name}.AppImage
 
 
 rm -rf ~/.subtitle-buddy
