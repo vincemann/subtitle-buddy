@@ -17,7 +17,6 @@
 version="1.1.0"
 name_prefix="subtitle-buddy-$version-mac"
 ssh_host="subtitle-buddy@192.168.178.69"
-ci_scripts_dir="~/projekte/important/Subtitle-Buddy/ci/osx"
 
 # set arch to x64
 
@@ -38,7 +37,7 @@ rm -rf ~/.subtitle-buddy
 echo "homebrew installation x64"
 rm -rf ~/.subtitle-buddy
 ./ci/osx/ftp-upload-image.sh "${name}-image.zip" "mac"
-ssh $ssh_host "${ci_scripts_dir}/update-homebrew-formula.sh mac"
+ssh $ssh_host "cd projects; ./ci/osx/update-homebrew-formula.sh mac"
 ./ci/osx/test-homebrew-installation.sh
 
 
