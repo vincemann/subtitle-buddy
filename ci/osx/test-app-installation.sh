@@ -6,7 +6,7 @@
 
 arch=$1
 app="subtitle-buddy.app"
-archive="subtitle-buddy-$arch.app.zip"
+archive="subtitle-buddy.app.zip"
 
 ./ci/osx/build-app.sh $arch
 
