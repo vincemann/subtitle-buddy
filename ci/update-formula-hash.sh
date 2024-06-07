@@ -1,9 +1,9 @@
 #!/bin/bash
-# ./ci/update-formular-hash.sh <linux|mac|mac-aarch64>
+# ./ci/update-formula-hash.sh <linux|mac|mac-aarch64>
 
 
 # updates sha256 hash of either linux or mac/mac-aarch64 in homebrew github repo formula file
-# expects updated image-$platform.zip file in ./server dir
+# expects updated *$platform*image*.zip file in ./server dir
 # push changes to repo
 
 
@@ -21,26 +21,25 @@ fi
 
 
 # evaluate new hash
-NEW_SHA256=$(sha256sum build/*$PLATFORM*.zip | awk '{ print $1 }')
+NEW_SHA256=$(sha256sum server/*$PLATFORM*image.zip | awk '{ print $1 }')
 echo "new hash: $NEW_SHA256"
 
 
-# update the hash in formula file
+# update hash in formla file
 TEMP_FILE=$(mktemp)
 if [ "$PLATFORM" == "linux" ]; then
     sed "/^ *url \".*linux.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
 elif [ "$PLATFORM" == "mac" ]; then
-    sed "/^ *url \".*mac.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
+    sed "/^ *url \".*mac-x64.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
 elif [ "$PLATFORM" == "mac-aarch64" ]; then
-    sed "/^ *url \".*mac.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
+    sed "/^ *url \".*mac-aarch64.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
 else
-    echo "Error: First argument must be 'linux' or 'mac' or 'mac-aarch64'"
+    echo "Error: First argument must be 'linux', 'mac', or 'mac-aarch64'"
     rm "$TEMP_FILE"
     exit 1
 fi
 mv "$TEMP_FILE" "$FORMULA_FILE"
 echo "Updated SHA256 checksum for $PLATFORM in $FORMULA_FILE"
-
 
 # update repo
 echo "pushing to github"

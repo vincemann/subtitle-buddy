@@ -38,7 +38,7 @@ rm -rf ~/.subtitle-buddy
 echo "homebrew installation x64"
 rm -rf ~/.subtitle-buddy
 ./ci/osx/ftp-upload-image.sh "${name}-image.zip" "mac"
-ssh $ssh_host "${ci_scripts_dir}/update-homebrew-formular.sh mac"
+ssh $ssh_host "${ci_scripts_dir}/update-homebrew-formula.sh mac"
 ./ci/osx/test-homebrew-installation.sh
 
 

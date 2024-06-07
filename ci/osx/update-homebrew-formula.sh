@@ -7,4 +7,4 @@
 # -> execute ./ftp-upload-image.sh on macos before this script to achieve this
 
 arch=$1
-./ci/update-formular-hash.sh $arch
+./ci/update-formula-hash.sh $arch

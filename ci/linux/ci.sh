@@ -32,15 +32,14 @@ mv build/*.zip server/${name}-image.zip
 rm -rf ~/.subtitle-buddy
 echo "jar installation"
 ./ci/linux/test-jar-installation.sh
-mv build/libs/*linux*.jar server/${name}-jar.zip
+mv build/libs/*linux*.jar server/${name}-jar
 
 
 rm -rf ~/.subtitle-buddy
 echo "homebrew installation"
-./ci/linux/update-homebrew-formular.sh
+# ${platform}-image.zip is already present in server dir as expected by next scripts
+./ci/linux/update-homebrew-formula.sh
 ./ci/linux/test-homebrew-installation.sh
-rm server/image-linux.zip # remove this bc the manual installation already deployed the proper zip to server
-
 
 rm -rf ~/.subtitle-buddy
 echo "app image installation"
