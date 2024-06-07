@@ -37,7 +37,6 @@ import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.options.ApachePropertiesFile;
 import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngine;
-import io.github.vincemann.subtitlebuddy.util.AppNameUtils;
 import io.github.vincemann.subtitlebuddy.util.fx.IconUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
