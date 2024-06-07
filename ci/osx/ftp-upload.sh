@@ -36,8 +36,10 @@ fi
 sftp -inv $DST_IP <<EOF
 user $FTP_USER $FTP_PASS
 cd projects/server
+pwd
+ls
 lcd "$DIR"
-binary
+lls
 put "$FILE_NAME" "$TARGET_FILENAME"
 bye
 EOF
