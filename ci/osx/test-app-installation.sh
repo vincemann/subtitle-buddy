@@ -11,6 +11,7 @@ archive="subtitle-buddy-$arch.app.zip"
 ./ci/osx/build-app.sh $arch
 
 # emulate user behavior -> unzip and start
+cd build/jpackage
 mkdir temp
 unzip "$archive" -d temp
 cd temp

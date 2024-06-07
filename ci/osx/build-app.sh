@@ -13,3 +13,4 @@ archive="subtitle-buddy-$arch.app.zip"
 ./gradlew jpackage -PtargetPlatform=$arch
 cd build/jpackage
 zip -r "$archive" "$app"
+cd ../..
