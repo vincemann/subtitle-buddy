@@ -16,9 +16,6 @@ FILE_NAME="$2"
 TARGET_FILENAME="$3"
 DST_IP="192.168.178.69"
 FTP_USER="subtitle-buddy"
-# Prompt the user for FTP details
-read -sp "Enter FTP password: " FTP_PASS
-echo
 
 FILE_PATH="$DIR/$FILE_NAME"
 
@@ -33,14 +30,13 @@ if [ ! -f $FILE_PATH ]; then
 fi
 
 # Use sftp to send the file
-sftp -inv $DST_IP <<EOF
-user $FTP_USER $FTP_PASS
+sftp $FTP_USER@$DST_IP <<EOF
 cd projects/server
 pwd
 ls
-lcd "$DIR"
+lcd $DIR
 lls
-put "$FILE_NAME" "$TARGET_FILENAME"
+put $FILE_NAME $TARGET_FILENAME
 bye
 EOF
 
