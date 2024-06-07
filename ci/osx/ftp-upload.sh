@@ -32,8 +32,8 @@ if [ ! -f $FILE_PATH ]; then
     exit 1
 fi
 
-# Use ftp to send the file
-ftp -inv $DST_IP <<EOF
+# Use sftp to send the file
+sftp -inv $DST_IP <<EOF
 user $FTP_USER $FTP_PASS
 cd projects/server
 lcd "$DIR"
