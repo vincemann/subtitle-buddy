@@ -69,7 +69,7 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         if (args.length > 0 && "--version".equals(args[0])) {
-            System.out.println("Version: " + VERSION);
+            System.out.println(VERSION);
             System.exit(0);
         } else {
             launch(args);
@@ -80,7 +80,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         disableVerboseJNativeHookLogging();
-        initJlinkLibLocator();
+        initJNativeHookLibLocator();
 
         ConfigDirectory configDir = createConfigDir();
         PropertiesFile properties = createPropertiesFile(configDir);
@@ -106,7 +106,7 @@ public class Main extends Application {
         displayFirstSubtitle();
     }
 
-    private void initJlinkLibLocator(){
+    private void initJNativeHookLibLocator(){
         if ("true".equals(System.getProperty("jlink"))) {
             // fixing lib loading issues within jlink image
             log.info("Setting Jlink-specific library locator for jNativeHook");
