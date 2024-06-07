@@ -71,6 +71,8 @@ test {
                 '--add-modules', javafx.modules.join(","),
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.application=org.testfx',
+                '--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.subtitlebuddy',
+                '-Xdock:name=Subtitle Buddy',
                 '--add-opens', 'javafx.graphics/com.sun.javafx.application=org.testfx'
         ]
         // win always fails to pick stuff up from within fat jar or cp/modulepath
@@ -78,11 +80,13 @@ test {
             println("adding win javafx modules to module path")
             args += ['--module-path', "${projectDir}/lib/javafx/win/jmods"]
         }
-        // doesnt seem to be needed - native libs are picked up from classpath/modulepath
-//        else if (project.targetPlatform == 'mac') {
+
+        else if (project.targetPlatform.startsWith('mac')) {
+            args += ['--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.merged.module']
+            // doesnt seem to be needed - native libs are picked up from classpath/modulepath
 //            println("adding osx javafx modules to module path")
 //            args += ['--module-path', "${projectDir}/lib/javafx/osx/jmods"]
-//        }
+        }
 
         // Assign the constructed argument list to jvmArgs
         jvmArgs = args
@@ -280,6 +284,8 @@ jlink {
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-reads', 'io.github.vincemann.merged.module=org.apache.commons.logging',
                 '--add-reads', 'org.apache.commons.configuration2=io.github.vincemann.merged.module',
+                '--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.merged.module',
+                '-Xdock:name=Subtitle Buddy'
 //                "--add-exports", "org.apache.commons.logging/org.apache.commons.logging=org.apache.commons.configuration2"
         ]
     }
@@ -517,6 +523,7 @@ run {
                 // modules are not part of sdk anymore - need to add them manually to module graph
                 "--add-modules", javafx.modules.join(","),
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
+                '-Xdock:name=Subtitle Buddy'
 //                "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2"
         ]
 
@@ -529,10 +536,12 @@ run {
         // even when specifying path to javafx jmods or javafx sdk/lib
         else if (project.targetPlatform == 'mac') {
             println("adding osx javafx modules to module path")
+            args += ['--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.subtitlebuddy']
             args += ['--module-path', "${projectDir}/lib/javafx/osx/x86/jmods"]
         }
         else if (project.targetPlatform == 'mac-aarch64') {
             println("adding osx javafx modules to module path")
+            args += ['--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.subtitlebuddy']
             args += ['--module-path', "${projectDir}/lib/javafx/osx/arm/jmods"]
         }
 

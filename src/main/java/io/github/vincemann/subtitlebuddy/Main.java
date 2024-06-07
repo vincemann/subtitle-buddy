@@ -37,6 +37,8 @@ import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.options.ApachePropertiesFile;
 import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngine;
+import io.github.vincemann.subtitlebuddy.util.AppNameUtils;
+import io.github.vincemann.subtitlebuddy.util.fx.IconUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -49,6 +51,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+
+import static io.github.vincemann.subtitlebuddy.util.OSUtils.isMacOS;
 
 @Log4j2
 @NoArgsConstructor
@@ -174,6 +178,10 @@ public class Main extends Application {
      * @return
      */
     private WindowManager createStages(Stage primaryStage) throws IOException {
+        if (isMacOS()) {
+            IconUtil.setMacOSDockIcon("icon.png");
+        }
+
         WindowManager windowManager = injector.getInstance(WindowManager.class);
 
         SettingsStageFactory settingsStageFactory = injector.getInstance(SettingsStageFactory.class);
