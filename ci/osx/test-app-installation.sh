@@ -5,7 +5,7 @@
 # then emulate user behavior by unzipping and opening app
 
 arch=$1
-app="subtitle-buddy-$arch.app"
+app="subtitle-buddy.app"
 archive="subtitle-buddy-$arch.app.zip"
 
 ./ci/osx/build-app.sh $arch
