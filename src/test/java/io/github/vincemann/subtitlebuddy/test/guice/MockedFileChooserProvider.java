@@ -1,4 +1,4 @@
-package io.github.vincemann.subtitlebuddy.test.guice.providers;
+package io.github.vincemann.subtitlebuddy.test.guice;
 
 import com.google.inject.Provider;
 import com.google.inject.Singleton;

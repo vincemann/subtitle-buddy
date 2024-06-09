@@ -5,7 +5,6 @@ import io.github.vincemann.subtitlebuddy.config.strings.MessageSource;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.FileChooser;
 import io.github.vincemann.subtitlebuddy.gui.dialog.AlertDialog;
 import io.github.vincemann.subtitlebuddy.gui.dialog.ContinueDialog;
-import io.github.vincemann.subtitlebuddy.test.guice.providers.MockedFileChooserProvider;
 import io.github.vincemann.subtitlebuddy.module.FileChooserModule;
 
 
