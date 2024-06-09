@@ -178,7 +178,7 @@ public class Main extends Application {
      */
     private WindowManager createStages(Stage primaryStage) throws IOException {
         if (isMacOS()) {
-            IconUtil.setMacOSDockIcon("icon.icns");
+            IconUtil.setMacOSDockIcon("icon.png");
         }
 
         WindowManager windowManager = injector.getInstance(WindowManager.class);

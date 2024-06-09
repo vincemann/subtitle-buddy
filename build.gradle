@@ -1,3 +1,5 @@
+import de.undercouch.gradle.tasks.download.Download
+
 plugins {
     id 'java'
     id 'application'
@@ -377,7 +379,7 @@ tasks.named('jpackage').configure {
 def appImageToolUrl = 'https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage'
 def appImageToolPath = "${projectDir}/releases/linux/appimagetool.AppImage"
 
-task downloadAppImageTool(type: de.undercouch.gradle.tasks.download.Download) {
+tasks.register('downloadAppImageTool', Download) {
     src appImageToolUrl
     dest appImageToolPath
     onlyIfNewer true
@@ -492,12 +494,13 @@ java {
 }
 
 // builds fat jar containing javafx moules and all other deps
-// in windows and macos jmods of javafx need to be shipped and declared in modulepath anyways
-// after building, jar can be launched like that (when jdk17 is installed):
+// in windows and macos jmods of javafx need to be shipped and declared in module path anyways
+// after building, jar can be launched like this (if jdk17 is installed):
 // linux:   java --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 // osx:     java --module-path lib/javafx/osx/x86/sdk/lib --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 // win:     java --module-path lib/javafx/win/jmods --add-modules javafx.controls,javafx.fxml -jar /path/to/myjar.jar
 // ( note that osx seems to need sdk jars and not jmods )
+// Download: https://gluonhq.com/products/javafx/
 shadowJar {
     archiveClassifier.set('')
     archiveFileName = "subtitle-buddy-${version}-${targetPlatform}.jar"
@@ -585,6 +588,8 @@ dependencies {
 
     // detect encoding
     implementation 'com.ibm.icu:icu4j:75.1'
+
+
     // testing
     testImplementation('org.testfx:testfx-core:4.0.18') {
         exclude module: 'hamcrest-all'
