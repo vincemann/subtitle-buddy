@@ -30,10 +30,12 @@ rm -rf ~/.subtitle-buddy
 echo "gradle run"
 ./gradlew run
 
+echo "################################"
 echo "manual installation x64"
 rm -rf ~/.subtitle-buddy
 ./ci/osx/test-manual-installation.sh "mac"
 
+echo "################################"
 echo "homebrew installation x64"
 rm -rf ~/.subtitle-buddy
 ./ci/osx/ftp-upload-image.sh "${name}-image.zip" "mac"
@@ -41,6 +43,7 @@ ssh $ssh_host "cd projects; sudo -u vince ./ci/osx/update-homebrew-formula.sh ma
 ./ci/osx/test-homebrew-installation.sh
 
 
+echo "################################"
 echo ".app installation x64"
 rm -rf ~/.subtitle-buddy
 ./ci/osx/test-app-installation.sh "mac"
@@ -48,5 +51,17 @@ rm -rf ~/.subtitle-buddy
 
 # set arch to aarch64
 name="$name_prefix-aarch64"
-# continue with aarch64...
+echo "################################"
+echo "continue with aarch64..."
 ./gradlew clean
+
+
+# build image.zip and upload to hosting linux machine
+./ci/osx/build-image.sh "mac-aarch64"
+# upload image.zip to linux host
+./ci/osx/ftp-upload-image.sh "${name}-image.zip" "mac-aarch64"
+
+
+# build .app.zip and upload to hosting linux machine
+./ci/osx/build-app.sh "mac-aarch64"
+./ci/osx/ftp-upload-app.sh "${name}.app.zip" "mac-aarch64"
