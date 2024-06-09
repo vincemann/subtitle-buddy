@@ -59,7 +59,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
         //todo toggle tests
         log.debug("DefaultSubtitleVisibilityHotKeyPressedEvent event received");
         boolean visible = srtOptions.isDefaultSubtitleVisible();
-        optionsManager.updateDefaultSubtitleVisible(!visible);
+        srtOptions.updateDefaultSubtitleVisible(!visible);
         srtPlayer.updateCurrentSubtitle();
         eventBus.post(new RequestSubtitleUpdateEvent());
     }
@@ -115,7 +115,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
     public synchronized void handleToggleSpaceHotKeyEvent(ToggleSpaceHotkeyEvent event) {
         //todo toggle tests
         log.debug("toggle space hotkey event arrived:" + event);
-        optionsManager.updateSpaceHotkeyEnabled(event.isEnabled());
+        srtDisplayerOptions.updateSpaceHotkeyEnabled(event.isEnabled());
     }
 
     @Override
@@ -123,7 +123,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
     public synchronized void handleToggleNextClickHotKeyEvent(ToggleNextClickHotkeyEvent event) {
         //todo toggle tests
         log.debug("toggle next click hotkey event arrived:" + event);
-        optionsManager.updateNextClickHotkeyEnabled(event.isEnabled());
+        srtDisplayerOptions.updateNextClickHotkeyEnabled(event.isEnabled());
     }
 
     @Override
@@ -131,7 +131,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
     public synchronized void handleToggleBackViaEscEvent(ToggleEndMovieModeHotkeyEvent event) {
         //todo toggle tests
         log.debug("toggle end movie mode hotkey event arrived:" + event);
-        optionsManager.updateEndMovieModeHotkeyEnabled(event.isEnabled());
+        srtDisplayerOptions.updateEndMovieModeHotkeyEnabled(event.isEnabled());
     }
 
     @Subscribe

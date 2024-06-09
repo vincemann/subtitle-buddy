@@ -29,4 +29,8 @@ public class SrtOptions {
         return options.isDefaultSubtitleVisible();
     }
 
+    public void updateDefaultSubtitleVisible(boolean visible) {
+        manager.updateDefaultSubtitleVisible(visible);
+    }
+
 }

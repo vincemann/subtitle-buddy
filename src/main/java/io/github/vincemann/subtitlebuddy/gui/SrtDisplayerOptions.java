@@ -59,4 +59,8 @@ public class SrtDisplayerOptions {
         manager.updateEndMovieModeHotkeyEnabled(value);
     }
 
+
+    public void updateMovieFontSize(int fontSize) {
+        manager.updateMovieFontSize(fontSize);
+    }
 }
