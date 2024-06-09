@@ -16,7 +16,7 @@ public class ConfigFileModule extends AbstractModule {
 
 
 
-    public ConfigFileModule(PropertiesFile properties, MessageSource stringConfiguration) {
+    public ConfigFileModule(MessageSource stringConfiguration, PropertiesFile properties) {
         this.properties = properties;
         this.stringConfiguration = stringConfiguration;
     }

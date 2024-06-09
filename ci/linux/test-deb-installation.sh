@@ -10,4 +10,4 @@ rm -f /usr/local/bin/subtitle-buddy
 
 sudo dpkg -i build/jpackage/*.deb
 
-subtitle-buddy
+subtitle-buddy $sb_jvm_args

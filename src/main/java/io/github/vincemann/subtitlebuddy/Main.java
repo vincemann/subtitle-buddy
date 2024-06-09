@@ -3,10 +3,8 @@ package io.github.vincemann.subtitlebuddy;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.google.inject.*;
 import com.google.inject.Module;
-import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.config.ConfigDirectory;
 import io.github.vincemann.subtitlebuddy.config.ConfigDirectoryImpl;
 import io.github.vincemann.subtitlebuddy.config.ConfigFileLoader;
@@ -37,6 +35,7 @@ import io.github.vincemann.subtitlebuddy.module.*;
 import io.github.vincemann.subtitlebuddy.options.ApachePropertiesFile;
 import io.github.vincemann.subtitlebuddy.options.PropertiesFile;
 import io.github.vincemann.subtitlebuddy.srt.engine.SrtParserEngine;
+import io.github.vincemann.subtitlebuddy.util.SetupTestUtil;
 import io.github.vincemann.subtitlebuddy.util.fx.IconUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -70,13 +69,23 @@ public class Main extends Application {
      */
     private boolean applicationReady = false;
 
+
+    private static Boolean setupTest = false;
+    private static String setupTestFile;
+
     public static void main(String[] args) {
-        if (args.length > 0 && "--version".equals(args[0])) {
-            System.out.println(VERSION);
-            System.exit(0);
-        } else {
-            launch(args);
+        if (args.length > 0) {
+            String arg1 = args[0];
+            if ("--version".equals(arg1)) {
+                System.out.println(VERSION);
+                System.exit(0);
+                return;
+            } else if ("--setup-test".equals(arg1)) {
+                setupTest = true;
+                setupTestFile = args[1];
+            }
         }
+        launch(args);
     }
 
 
@@ -107,9 +116,20 @@ public class Main extends Application {
         registerJNativeHook();
 
         displayFirstSubtitle();
+
+        // for ci testing purposes
+        if (setupTest)
+            waitUntilSetupThenExit(windowManager);
     }
 
-    private void initJNativeHookLibLocator(){
+    private void waitUntilSetupThenExit(WindowManager windowManager) {
+        // wait until jnativehook registered and settings window is open
+        SetupTestUtil.performSetupTest(() -> applicationReady
+                && windowManager.find(Windows.SETTINGS).getStage().isShowing());
+    }
+
+
+    private void initJNativeHookLibLocator() {
         if ("true".equals(System.getProperty("jlink"))) {
             // fixing lib loading issues within jlink image
             log.info("Setting Jlink-specific library locator for jNativeHook");
@@ -239,9 +259,9 @@ public class Main extends Application {
     }
 
     private List<Module> createDefaultModules(PropertiesFile properties, MessageSource strings) {
-        return Arrays.asList(
+        List<Module> modules = Arrays.asList(
                 new ClassPathFileModule(),
-                new ConfigFileModule(properties, strings),
+                new ConfigFileModule(strings, properties),
                 new OptionsModule(strings, properties),
                 new FileChooserModule(strings, properties),
                 new FontModule(strings, properties),
@@ -249,6 +269,20 @@ public class Main extends Application {
                 new GuiModule(strings, properties),
                 new UserInputHandlerModule()
         );
+        if (setupTest) {
+            injectSetupTestModule(properties, strings, modules);
+        }
+        return modules;
+    }
+
+    // replace javafx gui prompt file chooser with hard coded selected file from arg
+    private void injectSetupTestModule(PropertiesFile propertiesFile, MessageSource messageSource, List<Module> modules) {
+        modules.replaceAll(module -> {
+            if (module instanceof FileChooserModule) {
+                return new SetupTestFileChooserModule(messageSource, propertiesFile, setupTestFile);
+            }
+            return module;
+        });
     }
 
     private ConfigDirectory createConfigDir() throws IOException {

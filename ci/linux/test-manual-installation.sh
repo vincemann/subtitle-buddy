@@ -15,4 +15,4 @@ unzip *.zip -d temp
 
 ln -sf $(pwd)/temp/appLauncher-linux/bin/appLauncher /usr/local/bin/subtitle-buddy
 
-subtitle-buddy
+subtitle-buddy $sb_jvm_args

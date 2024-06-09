@@ -23,4 +23,4 @@ brew tap vincemann/homebrew-repo
 brew install subtitle-buddy --verbose
 
 # start
-subtitle-buddy
+subtitle-buddy $sb_jvm_args

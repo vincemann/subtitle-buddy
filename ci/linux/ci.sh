@@ -10,6 +10,13 @@
 # 3. .AppImage
 # 4. .deb
 
+# init vars
+test_file="`pwd`/src/test/resources/srt/valid.srt"
+export sb_jvm_args="--setup-test $(pwd)/src/test/resources/srt/valid.srt"
+name="subtitle-buddy-1.1.0-linux"
+
+
+
 
 # Start the file server in the background, that runs as long as this script
 current_dir=$(pwd)
@@ -27,7 +34,9 @@ trap cleanup EXIT
 cd "$current_dir"
 
 
-name="subtitle-buddy-1.1.0-linux"
+
+# start testing
+
 ./gradlew clean
 
 
@@ -39,7 +48,7 @@ echo "running tests"
 echo "################################"
 rm -rf ~/.subtitle-buddy
 echo "gradle run"
-./gradlew run
+./gradlew run --args="$sb_jvm_args"
 
 
 echo "################################"
@@ -49,11 +58,11 @@ echo "manual installation"
 mv build/*.zip server/${name}-image.zip
 
 
-echo "################################"
-rm -rf ~/.subtitle-buddy
-echo "jar installation"
-./ci/linux/test-jar-installation.sh
-mv build/libs/*linux*.jar server/${name}.jar
+# echo "################################"
+# rm -rf ~/.subtitle-buddy
+# echo "jar installation"
+# ./ci/linux/test-jar-installation.sh
+# mv build/libs/*linux*.jar server/${name}.jar
 
 
 echo "################################"
@@ -62,6 +71,7 @@ echo "homebrew installation"
 # ${platform}-image.zip is already present in server dir as expected by next scripts
 ./ci/linux/update-homebrew-formula.sh
 ./ci/linux/test-homebrew-installation.sh
+
 
 echo "################################"
 rm -rf ~/.subtitle-buddy

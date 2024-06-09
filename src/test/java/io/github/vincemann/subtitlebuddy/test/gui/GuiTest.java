@@ -228,7 +228,7 @@ public abstract class GuiTest extends ApplicationTest {
         // set all modules for integration test, mock those that need to be mocked
         Injector testInjector = Guice.createInjector(Arrays.asList(
                 new ClassPathFileModule(),
-                new ConfigFileModule(properties, strings),
+                new ConfigFileModule(strings,properties),
                 new OptionsModule(strings,properties),
                 new MockFileChooserModule(strings, properties),
                 new FontModule(strings,properties),
