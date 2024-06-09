@@ -4,9 +4,8 @@
 # also executes ci scripts on remote linux host (for example for updating homebrew formula file)
 # also uploads all artifacts via ftp to linux host -> files will end up in ftp root dir, which should be ./server
 
-# remember to start ftp server on linux via sudo systemctl start vsftpd.service
 # remember to start file server in ./server in dev env: python3 -m http.server 8000
-# remember to start ssh server on linux via sudo systemctl start ssh.service
+# remember to start ssh server on linux via sudo systemctl start ssh.service - start with sftp enabled and user: subtitle-buddy
 
 # artifacts:
 # *-image-x64.zip (manual installation & homebrew)

@@ -239,11 +239,10 @@ jlink {
                 addExtraModulePath("${projectDir}/lib/javafx/osx/x86/jmods")
             }
             // use jpackage to build dmg and app files, only works when also building on mac
-            if (detectOS() == 'mac') {
+            if (detectOS().startsWith('mac')) {
                 jpackage {
                     targetPlatformName = "mac"
                     imageName = "subtitle-buddy"
-                    installerName = "subtitle-buddy"
                     installerName = "subtitle-buddy"
                     icon = "${projectDir}/icons/icon.icns"
                     vendor = "vincemann"
@@ -256,7 +255,7 @@ jlink {
                 addExtraModulePath("${projectDir}/lib/javafx/osx/arm/jmods")
             }
             // use jpackage to build dmg and app files, only works when also building on mac
-            if (detectOS() == 'mac-aarch64') {
+            if (detectOS().startsWith('mac')) {
                 jpackage {
                     targetPlatformName = "mac"
                     imageName = "subtitle-buddy"
@@ -366,7 +365,6 @@ tasks.register('repackageDeb', Exec) {
 
 tasks.named('jpackageImage').configure {
     dependsOn 'copyWinStartScript', 'copyNativeLibs'
-    finalizedBy 'repackageMacApp'
     finalizedBy 'repackageMacApp'
 }
 
