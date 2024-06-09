@@ -44,7 +44,7 @@ ssh $ssh_host "cd projects; sudo -u vince ./ci/osx/update-homebrew-formula.sh ma
 echo ".app installation x64"
 rm -rf ~/.subtitle-buddy
 ./ci/osx/test-app-installation.sh "mac"
-./ci/osx/ftp-upload-app.sh "${name}-app.zip" "mac"
+./ci/osx/ftp-upload-app.sh "${name}.app.zip" "mac"
 
 # set arch to aarch64
 name="$name_prefix-aarch64"
