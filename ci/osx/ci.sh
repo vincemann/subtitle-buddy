@@ -71,6 +71,9 @@ echo "build .app and upload for aarch64..."
 ./ci/osx/build-app.sh "mac-aarch64"
 ./ci/osx/ftp-upload-app.sh "${name}.app.zip" "mac-aarch64"
 
+echo "################################"
+echo "cleaning up"
+./ci/cleanup.sh
 
 echo "################################"
 echo "finished"

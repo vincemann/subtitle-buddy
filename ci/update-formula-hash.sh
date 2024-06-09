@@ -25,20 +25,17 @@ NEW_SHA256=$(sha256sum server/*$PLATFORM*image.zip | awk '{ print $1 }')
 echo "new hash: $NEW_SHA256"
 
 
-# update hash in formla file
-TEMP_FILE=$(mktemp)
+# update hash in formula file
 if [ "$PLATFORM" == "linux" ]; then
-    sed "/^ *url \".*linux.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
+    perl -pi -e "s/^( *sha256 \").*(\".*linux.*)/\1$NEW_SHA256\2/" "$FORMULA_FILE"
 elif [ "$PLATFORM" == "mac" ]; then
-    sed "/^ *url \".*mac-x64.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
+    perl -pi -e "s/^( *sha256 \").*(\".*mac-x64.*)/\1$NEW_SHA256\2/" "$FORMULA_FILE"
 elif [ "$PLATFORM" == "mac-aarch64" ]; then
-    sed "/^ *url \".*mac-aarch64.*\"/{n;s/^\( *sha256 \)\"[^\"]*\"/\1\"$NEW_SHA256\"/;}" "$FORMULA_FILE" > "$TEMP_FILE"
+    perl -pi -e "s/^( *sha256 \").*(\".*mac-aarch64.*)/\1$NEW_SHA256\2/" "$FORMULA_FILE"
 else
     echo "Error: First argument must be 'linux', 'mac', or 'mac-aarch64'"
-    rm "$TEMP_FILE"
     exit 1
 fi
-mv "$TEMP_FILE" "$FORMULA_FILE"
 echo "Updated SHA256 checksum for $PLATFORM in $FORMULA_FILE"
 
 # update repo

@@ -59,5 +59,11 @@ echo "deb installation"
 ./ci/linux/test-deb-installation.sh
 mv build/jpackage/*.deb server/${name}.deb
 
+
+echo "################################"
+echo "cleaning up"
+./ci/cleanup.sh
+
+
 echo "################################"
 echo "finished"
