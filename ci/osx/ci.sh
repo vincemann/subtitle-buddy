@@ -22,9 +22,11 @@ ssh_host="subtitle-buddy@192.168.178.69"
 name="$name_prefix-x64"
 ./gradlew clean
 
+echo "################################"
 echo "running tests"
 ./gradlew test
 
+echo "################################"
 rm -rf ~/.subtitle-buddy
 echo "gradle run"
 ./gradlew run
@@ -55,12 +57,20 @@ echo "continue with aarch64..."
 ./gradlew clean
 
 
+echo "################################"
+echo "build image and upload for aarch64..."
 # build image.zip and upload to hosting linux machine
 ./ci/osx/build-image.sh "mac-aarch64"
 # upload image.zip to linux host
 ./ci/osx/ftp-upload-image.sh "${name}-image.zip" "mac-aarch64"
 
 
+echo "################################"
+echo "build .app and upload for aarch64..."
 # build .app.zip and upload to hosting linux machine
 ./ci/osx/build-app.sh "mac-aarch64"
 ./ci/osx/ftp-upload-app.sh "${name}.app.zip" "mac-aarch64"
+
+
+echo "################################"
+echo "finished"
