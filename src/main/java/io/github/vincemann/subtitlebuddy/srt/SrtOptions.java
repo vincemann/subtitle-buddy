@@ -25,4 +25,8 @@ public class SrtOptions {
         return options.getEncoding();
     }
 
+    public boolean isDefaultSubtitleVisible() {
+        return options.isDefaultSubtitleVisible();
+    }
+
 }

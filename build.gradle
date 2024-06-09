@@ -74,7 +74,6 @@ test {
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.application=org.testfx',
                 '--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.subtitlebuddy',
-                '-Xdock:name=Subtitle Buddy',
                 '--add-opens', 'javafx.graphics/com.sun.javafx.application=org.testfx'
         ]
         // win always fails to pick stuff up from within fat jar or cp/modulepath
@@ -286,8 +285,7 @@ jlink {
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-reads', 'io.github.vincemann.merged.module=org.apache.commons.logging',
                 '--add-reads', 'org.apache.commons.configuration2=io.github.vincemann.merged.module',
-                '--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.merged.module',
-                '-Xdock:name=Subtitle Buddy'
+                '--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.merged.module'
 //                "--add-exports", "org.apache.commons.logging/org.apache.commons.logging=org.apache.commons.configuration2"
         ]
     }
@@ -525,8 +523,7 @@ run {
         List<String> args = [
                 // modules are not part of sdk anymore - need to add them manually to module graph
                 "--add-modules", javafx.modules.join(","),
-                '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
-                '-Xdock:name=Subtitle Buddy'
+                '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED'
 //                "--add-exports", "org.apache.commons.logging/org.apache.commons.logging.impl=org.apache.commons.configuration2"
         ]
 
@@ -535,8 +532,6 @@ run {
             println("adding win javafx modules to module path")
             args += ['--module-path', "${projectDir}/lib/javafx/win/jmods"]
         }
-        // for whatever reason I cant get this to work on mac - always fails with FindException Module javafx.controls not found
-        // even when specifying path to javafx jmods or javafx sdk/lib
         else if (project.targetPlatform == 'mac') {
             println("adding osx javafx modules to module path")
             args += ['--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.subtitlebuddy']
@@ -599,6 +594,9 @@ dependencies {
     }
     testImplementation('org.loadui:testFx:3.1.2')
     testImplementation('org.hamcrest:hamcrest-core:1.3')
+
+    testImplementation 'org.mockito:mockito-core:5.12.0'
+
 
     testImplementation 'junit:junit:4.13.2'
 }

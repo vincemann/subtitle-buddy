@@ -141,5 +141,8 @@ public class OptionsManagerImpl implements OptionsManager {
         }
     }
 
-
+    @Override
+    public void updateDefaultSubtitleVisible(boolean value) {
+        options.setDefaultSubtitleVisible(value);
+    }
 }

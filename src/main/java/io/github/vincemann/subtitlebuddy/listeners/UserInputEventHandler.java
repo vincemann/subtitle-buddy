@@ -13,7 +13,9 @@ import io.github.vincemann.subtitlebuddy.gui.settings.SettingsSrtDisplayer;
 import io.github.vincemann.subtitlebuddy.listeners.key.HotKeyEventHandler;
 import io.github.vincemann.subtitlebuddy.listeners.mouse.MouseClickedEventHandler;
 import io.github.vincemann.subtitlebuddy.options.*;
+import io.github.vincemann.subtitlebuddy.srt.SrtOptions;
 import io.github.vincemann.subtitlebuddy.srt.parser.SrtPlayer;
+import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
 import io.github.vincemann.subtitlebuddy.srt.stopwatch.RunningState;
 import lombok.extern.log4j.Log4j2;
 
@@ -29,29 +31,43 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
     private SrtDisplayerProvider srtDisplayerProvider;
     private EventBus eventBus;
     private OptionsManager optionsManager;
-    private SrtDisplayerOptions options;
+    private SrtDisplayerOptions srtDisplayerOptions;
+
+    private SrtOptions srtOptions;
 
 
     @Inject
     public UserInputEventHandler(SrtPlayer srtPlayer,
-                                 SrtDisplayerOptions options,
+                                 SrtDisplayerOptions srtDisplayerOptions,
                                  SrtDisplayerProvider srtDisplayerProvider,
                                  EventBus eventBus,
-                                 OptionsManager optionsManager
+                                 OptionsManager optionsManager,
+                                 SrtOptions srtOptions
     ) {
         this.srtPlayer = srtPlayer;
-        this.options = options;
+        this.srtDisplayerOptions = srtDisplayerOptions;
         this.optionsManager = optionsManager;
+        this.srtOptions = srtOptions;
         this.nextClickCounts = false;
         this.srtDisplayerProvider = srtDisplayerProvider;
         this.eventBus = eventBus;
     }
 
+    @Override
+    @Subscribe
+    public synchronized void handleChangeDefaultSubtitleVisibilityEvent(DefaultSubtitleVisibilityHotKeyPressedEvent event) throws TimeStampOutOfBoundsException {
+        //todo toggle tests
+        log.debug("DefaultSubtitleVisibilityHotKeyPressedEvent event received");
+        boolean visible = srtOptions.isDefaultSubtitleVisible();
+        optionsManager.updateDefaultSubtitleVisible(!visible);
+        srtPlayer.updateCurrentSubtitle();
+        eventBus.post(new RequestSubtitleUpdateEvent());
+    }
 
     @Override
     @Subscribe
     public synchronized void handleNextClickHotKeyPressedEvent(NextClickHotkeyPressedEvent event) {
-        log.debug("next click hotkey event recognized");
+        log.debug("next click hotkey event received");
         handleNextClickHotKey();
     }
 
@@ -59,7 +75,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
     @Subscribe
     public synchronized void handleSpaceHotKeyPressedEvent(SpaceHotkeyPressedEvent event) {
         log.debug("start stop hotkey event received");
-        if (options.getSpaceHotkeyEnabled()) {
+        if (srtDisplayerOptions.getSpaceHotkeyEnabled()) {
             switchParserRunningState();
         } else {
             log.warn("space hotkey pressed but is disabled");
@@ -79,7 +95,7 @@ public class UserInputEventHandler implements HotKeyEventHandler, MouseClickedEv
 
 
     private void handleNextClickHotKey() {
-        if (options.getNextClickHotkeyEnabled()) {
+        if (srtDisplayerOptions.getNextClickHotkeyEnabled()) {
             if (nextClickCounts) {
                 log.trace("next click counts was active, disabling now");
                 nextClickCounts = false;

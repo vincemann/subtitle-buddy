@@ -26,6 +26,8 @@ public class Options {
 
     private boolean endMovieModeHotkeyEnabled;
 
+    private boolean defaultSubtitleVisible = true;
+
 
 
     Options() {
@@ -110,5 +112,13 @@ public class Options {
 
     void setEndMovieModeHotkeyEnabled(boolean enabled) {
         this.endMovieModeHotkeyEnabled = enabled;
+    }
+
+    public boolean isDefaultSubtitleVisible() {
+        return defaultSubtitleVisible;
+    }
+
+    void setDefaultSubtitleVisible(boolean defaultSubtitleVisible) {
+        this.defaultSubtitleVisible = defaultSubtitleVisible;
     }
 }

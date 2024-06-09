@@ -120,5 +120,6 @@ public class SrtParserEngineImpl extends SrtParserEngine implements Runnable {
         SrtDisplayer srtDisplayer = this.srtDisplayerProvider.get();
         SubtitleText currSubtitleText = srtPlayer.getCurrentSubtitleText();
         srtDisplayer.displaySubtitle(currSubtitleText);
+        lastSubtitleText = currSubtitleText;
     }
 }

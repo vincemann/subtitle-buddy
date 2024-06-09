@@ -58,4 +58,5 @@ public class SrtDisplayerOptions {
     public void updateEndMovieModeHotkeyEnabled(boolean value){
         manager.updateEndMovieModeHotkeyEnabled(value);
     }
+
 }

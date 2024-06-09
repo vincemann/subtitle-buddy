@@ -30,7 +30,7 @@ public class SrtPlayerImplPlayDurationTest {
         SubtitleFile subtitleFile = new SubtitleFileImpl(
                 new SrtFileParserImpl(new SubtitleTextParserImpl()).parseFile(
                         new File(SrtFiles.VALID)));
-        this.player = new SrtPlayerImpl(subtitleFile,new StopWatchImpl(),"###");
+        this.player = new SrtPlayerImpl(subtitleFile,new StopWatchImpl(),"###", options);
     }
 
     @Test

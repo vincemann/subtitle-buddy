@@ -3,12 +3,9 @@ package io.github.vincemann.subtitlebuddy.listeners.key;
 
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
-import io.github.vincemann.subtitlebuddy.events.EventBus;
+import io.github.vincemann.subtitlebuddy.events.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.events.EndMovieModeHotkeyPressedEvent;
-import io.github.vincemann.subtitlebuddy.events.NextClickHotkeyPressedEvent;
-import io.github.vincemann.subtitlebuddy.events.SpaceHotkeyPressedEvent;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
 import lombok.extern.log4j.Log4j2;
 
@@ -35,7 +32,7 @@ public class GlobalHotKeyListener implements NativeKeyListener, KeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
-        //todo let user change hotkeys
+        // space
         if (e.getKeyCode() == NativeKeyEvent.VC_SPACE) {
             log.debug("space hotkey pressed");
             eventBus.post(new SpaceHotkeyPressedEvent());
@@ -56,6 +53,12 @@ public class GlobalHotKeyListener implements NativeKeyListener, KeyListener {
         } else if (e.getKeyCode() == NativeKeyEvent.VC_ALT || e.getKeyCode() == NativeKeyEvent.VC_ALT) {
             log.debug("alt pressed");
             alt = true;
+        }
+        else if (e.getKeyCode() == NativeKeyEvent.VC_D){
+            if (alt){
+                log.debug("change default subtitle visibility hotkey pressed (alt + d)");
+                eventBus.post(new DefaultSubtitleVisibilityHotKeyPressedEvent());
+            }
         }
     }
 

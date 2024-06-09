@@ -1,6 +1,5 @@
 package io.github.vincemann.subtitlebuddy.srt.parser;
 
-import io.github.vincemann.subtitlebuddy.events.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.vincemann.subtitlebuddy.srt.SrtOptions;
@@ -27,22 +26,21 @@ public class SrtPlayerImpl implements SrtPlayer {
     @Getter
     private Optional<SubtitleParagraph> currentSubtitle = Optional.empty();
 
+    private SrtOptions options;
 
-    // this is only used for testing
-    public SrtPlayerImpl(SubtitleFile subtitleFile, StopWatch stopWatch, String defaultSubtitle){
+
+    @Inject
+    public SrtPlayerImpl(SubtitleFile subtitleFile, StopWatch stopWatch, SrtOptions options) {
         this.subtitleFile = subtitleFile;
         this.stopWatch = stopWatch;
         this.defaultSubtitleText = new SubtitleText(
                 Collections.singletonList(
-                        new Subtitle(SubtitleType.NORMAL, defaultSubtitle)
+                        new Subtitle(SubtitleType.NORMAL, options.getDefaultSubtitle())
                 )
 
         );
-        this.currentSubtitleText = this.defaultSubtitleText;
-    }
-    @Inject
-    public SrtPlayerImpl(SubtitleFile subtitleFile, StopWatch stopWatch, SrtOptions options) {
-       this(subtitleFile,stopWatch,options.getDefaultSubtitle());
+        this.options = options;
+        updateCurrentSubtitleText(getDefaultSubtitleText());
     }
 
     @Override
@@ -114,9 +112,11 @@ public class SrtPlayerImpl implements SrtPlayer {
         //log.trace("updating Parser to timestamp: " + timestamp);
         currentSubtitle = subtitleFile.getSubtitleAtTimeStamp(timestamp);
         if (currentSubtitle.isPresent()) {
-            this.currentSubtitleText = currentSubtitle.get().getText();
+            log.debug("subtitle is present");
+            updateCurrentSubtitleText(currentSubtitle.get().getText());
         } else {
-            this.currentSubtitleText = defaultSubtitleText;
+            log.debug("subtitle is not present");
+            updateCurrentSubtitleText(getDefaultSubtitleText());
         }
     }
 
@@ -129,7 +129,21 @@ public class SrtPlayerImpl implements SrtPlayer {
     public synchronized void reset() {
         log.debug("srtParser reseted");
         stopWatch.reset();
-        currentSubtitleText = defaultSubtitleText;
+        updateCurrentSubtitleText(getDefaultSubtitleText());
+    }
+
+    private void updateCurrentSubtitleText(SubtitleText text){
+        log.debug("changing current subtitle text to: " + text);
+        this.currentSubtitleText = text;
+    }
+
+    private SubtitleText getDefaultSubtitleText() {
+        if (options.isDefaultSubtitleVisible()) {
+            log.debug("default subtitle text visible");
+            return defaultSubtitleText;
+        } else {
+            return SubtitleText.empty();
+        }
     }
 
     @Override

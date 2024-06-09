@@ -20,4 +20,8 @@ public interface OptionsManager {
     void updateMovieFontSize(int size);
 
     void updateEndMovieModeHotkeyEnabled(boolean value);
+
+
+    void updateDefaultSubtitleVisible(boolean value);
+
 }
