@@ -6,8 +6,6 @@ import lombok.extern.log4j.Log4j2;
 
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.Enumeration;
 
 @Log4j2
 public class IconUtil {
@@ -29,12 +27,6 @@ public class IconUtil {
 
     public static void setMacOSDockIcon(String iconPath) {
         try {
-            // Print out all resources to debug
-            Enumeration<URL> resources = IconUtil.class.getClassLoader().getResources("");
-            while (resources.hasMoreElements()) {
-                log.info("Resource: " + resources.nextElement());
-            }
-
             InputStream inputStream = IconUtil.class.getClassLoader().getResourceAsStream(iconPath);
             if (inputStream == null) {
                 throw new IllegalArgumentException("Dock icon not found: " + iconPath);
