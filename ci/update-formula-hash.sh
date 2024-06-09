@@ -25,22 +25,42 @@ NEW_SHA256=$(sha256sum server/*$PLATFORM*image.zip | awk '{ print $1 }')
 echo "new hash: $NEW_SHA256"
 
 
+TEMP_FILE=$(mktemp) || { echo "Failed to create temporary file"; exit 1; }
 # update hash in formula file
-if [ "$PLATFORM" == "linux" ]; then
-    perl -pi -e "s/^( *sha256 \").*(\".*linux.*)/\1$NEW_SHA256\2/" "$FORMULA_FILE"
-elif [ "$PLATFORM" == "mac" ]; then
-    perl -pi -e "s/^( *sha256 \").*(\".*mac-x64.*)/\1$NEW_SHA256\2/" "$FORMULA_FILE"
-elif [ "$PLATFORM" == "mac-aarch64" ]; then
-    perl -pi -e "s/^( *sha256 \").*(\".*mac-aarch64.*)/\1$NEW_SHA256\2/" "$FORMULA_FILE"
+awk -v platform="$PLATFORM" -v newsha="$NEW_SHA256" '
+  {
+    print $0
+    if (platform == "linux" && /url .*linux.*image.zip/) {
+      if (getline > 0 && /sha256/) {
+        sub(/"[^"]+"/, "\"" newsha "\"")
+        print $0
+      }
+    } else if (platform == "mac" && /url .*mac-x64.*image.zip/) {
+      if (getline > 0 && /sha256/) {
+        sub(/"[^"]+"/, "\"" newsha "\"")
+        print $0
+      }
+    } else if (platform == "mac-aarch64" && /url .*mac-aarch64.*image.zip/) {
+      if (getline > 0 && /sha256/) {
+        sub(/"[^"]+"/, "\"" newsha "\"")
+        print $0
+      }
+    }
+  }
+' "$FORMULA_FILE" > "$TEMP_FILE"
+
+if [ $? -eq 0 ]; then
+  mv "$TEMP_FILE" "$FORMULA_FILE"
+  echo "Updated SHA256 checksum for $PLATFORM in $FORMULA_FILE"
 else
-    echo "Error: First argument must be 'linux', 'mac', or 'mac-aarch64'"
-    exit 1
+  rm "$TEMP_FILE"
+  echo "Failed to update SHA256 checksum for $PLATFORM"
+  exit 1
 fi
-echo "Updated SHA256 checksum for $PLATFORM in $FORMULA_FILE"
 
 # update repo
 echo "pushing to github"
 cd ./brew/homebrew-repo
-git add -A
-git commit -m "update hash for $PLATFORM"
-git push
+# git add -A
+# git commit -m "update hash for $PLATFORM"
+# git push
