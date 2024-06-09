@@ -75,7 +75,6 @@ test {
                 "-javaagent:${projectDir}/lib/byte-buddy-agent-1.14.15.jar",
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.application=org.testfx',
-                '--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.subtitlebuddy',
                 '--add-opens', 'javafx.graphics/com.sun.javafx.application=org.testfx'
         ]
         // win always fails to pick stuff up from within fat jar or cp/modulepath
@@ -83,9 +82,8 @@ test {
             println("adding win javafx modules to module path")
             args += ['--module-path', "${projectDir}/lib/javafx/win/jmods"]
         }
-
         else if (project.targetPlatform.startsWith('mac')) {
-            args += ['--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.merged.module']
+            args += ['--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.subtitlebuddy']
             // doesnt seem to be needed - native libs are picked up from classpath/modulepath
 //            println("adding osx javafx modules to module path")
 //            args += ['--module-path', "${projectDir}/lib/javafx/osx/jmods"]
@@ -287,7 +285,7 @@ jlink {
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-reads', 'io.github.vincemann.merged.module=org.apache.commons.logging',
                 '--add-reads', 'org.apache.commons.configuration2=io.github.vincemann.merged.module',
-                '--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.merged.module'
+                '--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.subtitlebuddy'
 //                "--add-exports", "org.apache.commons.logging/org.apache.commons.logging=org.apache.commons.configuration2"
         ]
     }
