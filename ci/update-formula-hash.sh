@@ -21,7 +21,7 @@ fi
 
 
 # evaluate new hash
-NEW_SHA256=$(sha256sum server/*$PLATFORM*image.zip | awk '{ print $1 }')
+NEW_SHA256=$(sha256sum server/*$PLATFORM-image.zip | awk '{ print $1 }')
 echo "new hash: $NEW_SHA256"
 
 

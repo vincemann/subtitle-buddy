@@ -10,6 +10,23 @@
 # 3. .AppImage
 # 4. .deb
 
+
+# Start the file server in the background, that runs as long as this script
+current_dir=$(pwd)
+cleanup() {
+  echo "Stopping the file server..."
+  kill $file_server_pid
+}
+
+(
+  cd ./server
+  python3 -m http.server 8000 &
+  file_server_pid=$!
+)
+trap cleanup EXIT
+cd "$current_dir"
+
+
 name="subtitle-buddy-1.1.0-linux"
 ./gradlew clean
 
@@ -63,6 +80,7 @@ mv build/jpackage/*.deb server/${name}.deb
 echo "################################"
 echo "cleaning up"
 ./ci/cleanup.sh
+kill $file_server_pid
 
 
 echo "################################"
