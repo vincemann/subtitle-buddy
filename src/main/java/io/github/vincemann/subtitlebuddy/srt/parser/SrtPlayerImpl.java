@@ -2,7 +2,6 @@ package io.github.vincemann.subtitlebuddy.srt.parser;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.vincemann.subtitlebuddy.srt.SrtOptions;
 import io.github.vincemann.subtitlebuddy.srt.*;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.SubtitleFile;
 import io.github.vincemann.subtitlebuddy.srt.srtfile.TimeStampOutOfBoundsException;
@@ -65,7 +64,7 @@ public class SrtPlayerImpl implements SrtPlayer {
     }
 
     @Override
-    public synchronized void forward(long delta) {
+    public synchronized void forward(long delta) throws TimeStampOutOfBoundsException {
         if (getCurrentState().equals(RunningState.STATE_RUNNING)) {
             stop();
         }
@@ -82,7 +81,6 @@ public class SrtPlayerImpl implements SrtPlayer {
             log.warn("Parser is already stopped");
             throw new IllegalStateException("Parser is already stopped");
         }
-
     }
 
     @Override
@@ -99,6 +97,7 @@ public class SrtPlayerImpl implements SrtPlayer {
             log.warn("Invalid Access. Time can only be set when srtParser is either unstarted or suspended");
             throw new IllegalStateException("Invalid Access. Time can only be set when srtParser is either unstarted or suspended");
         }
+        updateCurrentSubtitle();
     }
 
     @Override
@@ -112,10 +111,8 @@ public class SrtPlayerImpl implements SrtPlayer {
         //log.trace("updating Parser to timestamp: " + timestamp);
         currentSubtitle = subtitleFile.getSubtitleAtTimeStamp(timestamp);
         if (currentSubtitle.isPresent()) {
-            log.debug("subtitle is present");
             updateCurrentSubtitleText(currentSubtitle.get().getText());
         } else {
-            log.debug("subtitle is not present");
             updateCurrentSubtitleText(getDefaultSubtitleText());
         }
     }
@@ -132,14 +129,14 @@ public class SrtPlayerImpl implements SrtPlayer {
         updateCurrentSubtitleText(getDefaultSubtitleText());
     }
 
-    private void updateCurrentSubtitleText(SubtitleText text){
-        log.debug("changing current subtitle text to: " + text);
+    private void updateCurrentSubtitleText(SubtitleText text) {
+        if (log.isTraceEnabled())
+            log.trace("changing current subtitle text to: " + text);
         this.currentSubtitleText = text;
     }
 
     private SubtitleText getDefaultSubtitleText() {
         if (options.isDefaultSubtitleVisible()) {
-            log.debug("default subtitle text visible");
             return defaultSubtitleText;
         } else {
             return SubtitleText.empty();

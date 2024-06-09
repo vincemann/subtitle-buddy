@@ -11,9 +11,9 @@ import java.util.Optional;
 
 public interface SrtPlayer {
 
-    void start();
+    void start() throws TimeStampOutOfBoundsException;
 
-    void forward(long delta);
+    void forward(long delta) throws TimeStampOutOfBoundsException;
 
     void stop();
 
