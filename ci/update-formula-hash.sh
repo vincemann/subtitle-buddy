@@ -61,6 +61,6 @@ fi
 # update repo
 echo "pushing to github"
 cd ./brew/homebrew-repo
-# git add -A
-# git commit -m "update hash for $PLATFORM"
-# git push
+git add -A
+git commit -m "update hash for $PLATFORM"
+git push
