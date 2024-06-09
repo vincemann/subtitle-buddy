@@ -7,10 +7,9 @@
 # and ./build/jpackage/subtitle-buddy-$arch.app.zip
 
 arch=$1
-app="subtitle-buddy.app"
 archive="subtitle-buddy-$arch.app.zip"
 
 ./gradlew jpackage -PtargetPlatform=$arch
 cd build/jpackage
-zip -r "$archive" "$app"
+zip -r "$archive" "*.app"
 cd ../..
