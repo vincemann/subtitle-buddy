@@ -71,6 +71,8 @@ test {
         // Initialize the list with common JVM arguments
         List<String> args = [
                 '--add-modules', javafx.modules.join(","),
+                // need to add this here to make mockito work
+                "-javaagent:${projectDir}/lib/byte-buddy-agent-1.14.15.jar",
                 '--add-reads', 'org.apache.commons.configuration2=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.application=org.testfx',
                 '--add-exports', 'java.desktop/com.apple.eawt=io.github.vincemann.subtitlebuddy',
