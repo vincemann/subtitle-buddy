@@ -6,16 +6,9 @@ brew update
 brew uninstall subtitle-buddy
 brew cleanup
 
-# remove possible deb installation
-sudo rm -rf /opt/subtitle-buddy
 rm -f /usr/local/bin/subtitle-buddy
-
 rm -f ~/.cache/Homebrew/downloads/*subtitle-buddy*
-
-# remove all cached stuff
 rm -rf /home/linuxbrew/.linuxbrew/Cellar/subtitle-buddy
-
-# remove start symlink
 rm /home/linuxbrew/.linuxbrew/bin/subtitle-buddy
 
 brew tap vincemann/homebrew-repo

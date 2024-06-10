@@ -270,13 +270,13 @@ public class Main extends Application {
                 new UserInputHandlerModule()
         );
         if (setupTest) {
-            injectSetupTestModule(properties, strings, modules);
+            replaceFileChooserModule(properties, strings, modules);
         }
         return modules;
     }
 
-    // replace javafx gui prompt file chooser with hard coded selected file from arg
-    private void injectSetupTestModule(PropertiesFile propertiesFile, MessageSource messageSource, List<Module> modules) {
+    // replace javafx gui prompt file chooser with hard coded selected file from cli arg
+    private void replaceFileChooserModule(PropertiesFile propertiesFile, MessageSource messageSource, List<Module> modules) {
         modules.replaceAll(module -> {
             if (module instanceof FileChooserModule) {
                 return new SetupTestFileChooserModule(messageSource, propertiesFile, setupTestFile);

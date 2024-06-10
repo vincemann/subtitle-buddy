@@ -12,26 +12,33 @@
 
 # init vars
 test_file="`pwd`/src/test/resources/srt/valid.srt"
-export sb_jvm_args="--setup-test $(pwd)/src/test/resources/srt/valid.srt"
+export sb_jvm_args="--setup-test $test_file"
 name="subtitle-buddy-1.1.0-linux"
 
 
 
-
-# Start the file server in the background, that runs as long as this script
+# Capture the current directory
 current_dir=$(pwd)
+
+# Function to clean up the background file server
 cleanup() {
   echo "Stopping the file server..."
   kill $file_server_pid
 }
 
+# Set a trap to call cleanup on script exit
+trap cleanup EXIT
+
+# Start the file server in the background and capture its PID
 (
   cd ./server
   python3 -m http.server 8000 &
   file_server_pid=$!
+  echo $file_server_pid > /tmp/file_server_pid.txt
 )
-trap cleanup EXIT
-cd "$current_dir"
+file_server_pid=$(cat /tmp/file_server_pid.txt)
+
+cd $current_dir
 
 
 
@@ -90,7 +97,6 @@ mv build/jpackage/*.deb server/${name}.deb
 echo "################################"
 echo "cleaning up"
 ./ci/cleanup.sh
-kill $file_server_pid
 
 
 echo "################################"

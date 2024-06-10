@@ -47,7 +47,7 @@ public class SubtitleParagraph {
 		StringBuilder result = new StringBuilder();
 		result.append("id:").append(id).append("\n");
 		result.append(timestamps.toString()).append("\n");
-		result.append("amount subs: ").append(text.getSubtitles().size()).append("\n");
+//		result.append("amount subs: ").append(text.getSubtitles().size()).append("\n");
 		result.append("text:\n");
 		if (text.getSubtitles().size() < 6){
 			for(Subtitle subtitle : text.getSubtitles()){
