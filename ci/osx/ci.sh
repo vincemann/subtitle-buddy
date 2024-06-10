@@ -22,7 +22,7 @@ export sb_jvm_args="--setup-test $test_file"
 
 # set arch to x64
 
-name="$name_prefix-x64"
+name="$name_prefix"
 ./gradlew clean
 
 echo "################################"
@@ -32,7 +32,7 @@ echo "running tests"
 echo "################################"
 rm -rf ~/.subtitle-buddy
 echo "gradle run"
-./gradlew run
+./gradlew run --args="$sb_jvm_args"
 
 echo "################################"
 echo "manual installation x64"
