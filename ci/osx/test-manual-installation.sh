@@ -19,4 +19,4 @@ unzip *.zip -d temp
 # jlink always names appLauncher mac no matter what arch within mac
 ln -s $(pwd)/temp/appLauncher-mac/bin/appLauncher /usr/local/bin/subtitle-buddy
 
-subtitle-buddy
+subtitle-buddy $sb_jvm_args

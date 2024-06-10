@@ -21,4 +21,4 @@ brew tap vincemann/homebrew-repo
 brew reinstall subtitle-buddy --verbose
 
 # start
-subtitle-buddy
+subtitle-buddy $sb_jvm_args

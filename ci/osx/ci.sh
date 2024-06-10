@@ -16,6 +16,9 @@
 version="1.1.0"
 name_prefix="subtitle-buddy-$version-mac"
 ssh_host="subtitle-buddy@192.168.178.69"
+test_file="`pwd`/src/test/resources/srt/valid.srt"
+export sb_jvm_args="--setup-test $test_file"
+
 
 # set arch to x64
 

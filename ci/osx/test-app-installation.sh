@@ -15,4 +15,4 @@ cd build/jpackage
 mkdir temp
 unzip "$archive" -d temp
 cd temp
-open -W -a "$app"
+open -W -a "$app" --args $sb_jvm_args
