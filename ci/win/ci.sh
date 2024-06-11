@@ -15,15 +15,18 @@
 # './testing/win/gradlew.bat clean jpackage' and so on
 # this is a wrapper script that sets the jdk to the shipped jdk17 and sets up javafx
 
-
+version="1.1.0"
 name="subtitle-buddy"
 target=/home/vince/shared/win10
 builddir="$(pwd)"
+target_name="${name}-${version}-win-installer.exe"
 
 
 if [[ -z $1 ]];then
 	./gradlew clean buildWindowsInstaller -PtargetPlatform=win
 fi
+
+cp ./build/releases/*.exe ./server/${target_name}
 
 echo "replacing files"
 sudo rm -rf ${target}/*.exe
