@@ -11,15 +11,14 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 /**
- * Finds files on the classpath.
- * Files inside the running jar are only accessible as a Stream, so they are copied to a temp file.
+ * Finds files on the classpath and extracts into temp file.
  */
 @Singleton
 @Log4j2
 public class ClassPathFileExtractorImpl implements ClassPathFileExtractor {
 
     public CopiedClassPathFile findOnClassPath(String relPath) throws IOException {
-        log.debug("Relative path of classpath resource to load: " + relPath);
+        log.debug("loading classpath resource: " + relPath);
         // not working with paths or urls here, because this causes issues with windows, resulting in wrong path syntax ect
         InputStream resourceStream = getClass().getClassLoader().getResourceAsStream(relPath);
         return copyToTempFile(resourceStream, FileUtils.getFileNameOfPath(relPath));
@@ -37,7 +36,6 @@ public class ClassPathFileExtractorImpl implements ClassPathFileExtractor {
 
         // Extract file name from the URL or resource path
         return new CopiedClassPathFile(tempFile.toFile(), fileName);
-
     }
 
 

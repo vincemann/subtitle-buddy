@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class FirstWordRightTest {
+public class FirstWordCorrectTest {
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
@@ -23,7 +23,7 @@ public class FirstWordRightTest {
         });
     }
 
-    public FirstWordRightTest(String inputSequence, String outputFirstWord) {
+    public FirstWordCorrectTest(String inputSequence, String outputFirstWord) {
         this.inputSequence = inputSequence;
         this.outputFirstWord = outputFirstWord;
     }

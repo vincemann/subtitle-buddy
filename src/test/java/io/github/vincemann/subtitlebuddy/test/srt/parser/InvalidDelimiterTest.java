@@ -1,6 +1,6 @@
 package io.github.vincemann.subtitlebuddy.test.srt.parser;
 
-import io.github.vincemann.subtitlebuddy.srt.SubtitleText;
+import io.github.vincemann.subtitlebuddy.srt.SrtDelimiter;
 import io.github.vincemann.subtitlebuddy.srt.parser.InvalidDelimiterException;
 import io.github.vincemann.subtitlebuddy.srt.parser.SubtitleTextParserImpl;
 import org.junit.Test;
@@ -11,29 +11,28 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class WrongSubtitleTest {
-
-    private static final String TEST_TEXT =  "Hallo Frauke Co von radius";
-
-    public WrongSubtitleTest(String input) {
-        this.input = input;
-    }
+public class InvalidDelimiterTest {
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                { "<i>"+TEST_TEXT+"<></i><n>"},
-                { TEST_TEXT+"<"},
+                { "<nn>", null }, { "<>", null}, { ">i<", null }, { "", null },
+                {" ", null}, { "<<n>>", null }, { "<i/>", null }, {"</>", null},
+                {"</n>",null}, {null,null}
         });
     }
 
     private String input;
 
+    private SrtDelimiter expected;
 
-
+    public InvalidDelimiterTest(String input, SrtDelimiter expected) {
+        this.input = input;
+        this.expected = expected;
+    }
 
     @Test(expected = InvalidDelimiterException.class)
-    public void testCreateSubtitleSegments() throws InvalidDelimiterException {
-        SubtitleText result = new SubtitleTextParserImpl().parse(input);
+    public void testWrongDelimter() throws InvalidDelimiterException{
+        new SubtitleTextParserImpl().findDelimiterType(input);
     }
 }

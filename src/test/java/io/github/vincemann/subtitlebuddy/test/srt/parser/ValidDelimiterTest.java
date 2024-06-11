@@ -6,7 +6,7 @@ import io.github.vincemann.subtitlebuddy.srt.parser.SubtitleTextParserImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class RightDelimiterTest {
+public class ValidDelimiterTest {
 
     @Test
     public void testFindItalicStartDelimiterType() throws InvalidDelimiterException {

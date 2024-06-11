@@ -14,13 +14,13 @@ import java.util.Collection;
 import java.util.List;
 
 @RunWith(Parameterized.class)
-public class RightSubtitleTest {
+public class ValidSubtitleTest {
 
     private static final String TEST_TEXT = "Hallo Frauke Co von radius";
     private static final String TEST_TEXT2 = "Was geht docccc";
     private static final String TEST_TEXT3 = "I bims 1 dritter Text";
 
-    public RightSubtitleTest(String input, List<Subtitle> expected) {
+    public ValidSubtitleTest(String input, List<Subtitle> expected) {
         this.input = input;
         this.expected = expected;
     }

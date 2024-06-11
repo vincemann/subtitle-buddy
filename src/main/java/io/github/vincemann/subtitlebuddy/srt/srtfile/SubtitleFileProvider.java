@@ -4,9 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
-import io.github.vincemann.subtitlebuddy.srt.FileEncodingConverter;
-import io.github.vincemann.subtitlebuddy.srt.FileEncodingConverterImpl;
+import io.github.vincemann.subtitlebuddy.config.strings.MessageKeys;
 import io.github.vincemann.subtitlebuddy.srt.parser.CorruptedSrtFileException;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.FileChooser;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.UserQuitException;
@@ -19,8 +17,6 @@ import lombok.extern.log4j.Log4j2;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.List;
 
 
@@ -42,7 +38,7 @@ public class SubtitleFileProvider implements Provider<SubtitleFile> {
     private SubtitleFile chosenFile;
 
     @Inject
-    public SubtitleFileProvider(FileChooser fileChooser, SrtFileParser srtFileParser, ContinueDialog continueDialog, AlertDialog alertDialog, @Named(UIStringsKeys.CORRUPTED_FILE_MESSAGE) String corruptedFileMessage, @Named(UIStringsKeys.FILE_NOT_FOUND_MESSAGE) String fileNotFoundMessage, @Named(UIStringsKeys.INVALID_FILE_FORMAT_MESSAGE) String invalidFileFormatMessage, @Named(UIStringsKeys.EMPTY_FILE_MESSAGE) String emptyFileMessage) {
+    public SubtitleFileProvider(FileChooser fileChooser, SrtFileParser srtFileParser, ContinueDialog continueDialog, AlertDialog alertDialog, @Named(MessageKeys.CORRUPTED_FILE_MESSAGE) String corruptedFileMessage, @Named(MessageKeys.FILE_NOT_FOUND_MESSAGE) String fileNotFoundMessage, @Named(MessageKeys.INVALID_FILE_FORMAT_MESSAGE) String invalidFileFormatMessage, @Named(MessageKeys.EMPTY_FILE_MESSAGE) String emptyFileMessage) {
         this.fileChooser = fileChooser;
         this.srtFileParser = srtFileParser;
         this.continueDialog = continueDialog;

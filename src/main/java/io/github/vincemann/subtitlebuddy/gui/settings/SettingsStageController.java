@@ -5,7 +5,7 @@ import io.github.vincemann.subtitlebuddy.events.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
+import io.github.vincemann.subtitlebuddy.config.strings.MessageKeys;
 import io.github.vincemann.subtitlebuddy.events.RequestSubtitleUpdateEvent;
 import io.github.vincemann.subtitlebuddy.events.SwitchSrtDisplayerEvent;
 import io.github.vincemann.subtitlebuddy.font.FontManager;
@@ -99,12 +99,12 @@ public class SettingsStageController implements SettingsSrtDisplayer {
                                    WindowManager windowManager,
                                    SrtDisplayerOptions options,
                                    EventBus eventBus,
-                                   @Named(UIStringsKeys.START_BUTTON_TEXT) String startButtonText,
-                                   @Named(UIStringsKeys.STOP_BUTTON_TEXT) String stopButtonText,
-                                   @Named(UIStringsKeys.MOVIE_MODE_BUTTON_TEXT) String movieModeButtonText,
-                                   @Named(UIStringsKeys.OPTIONS_BUTTON_TEXT) String optionsButtonText,
-                                   @Named(UIStringsKeys.WRONG_TIMESTAMP_FORMAT_TEXT) String wrongTimeStampFormatText,
-                                   @Named(UIStringsKeys.TIMESTAMP_JUMP_HINT_TEXT) String timestampJumpHintTextString
+                                   @Named(MessageKeys.START_BUTTON_TEXT) String startButtonText,
+                                   @Named(MessageKeys.STOP_BUTTON_TEXT) String stopButtonText,
+                                   @Named(MessageKeys.MOVIE_MODE_BUTTON_TEXT) String movieModeButtonText,
+                                   @Named(MessageKeys.OPTIONS_BUTTON_TEXT) String optionsButtonText,
+                                   @Named(MessageKeys.WRONG_TIMESTAMP_FORMAT_TEXT) String wrongTimeStampFormatText,
+                                   @Named(MessageKeys.TIMESTAMP_JUMP_HINT_TEXT) String timestampJumpHintTextString
     ) {
         this.srtPlayer = srtPlayer;
         this.options = options;

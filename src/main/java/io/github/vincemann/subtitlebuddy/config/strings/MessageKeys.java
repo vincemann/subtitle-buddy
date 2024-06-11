@@ -1,8 +1,8 @@
 package io.github.vincemann.subtitlebuddy.config.strings;
 
-public class UIStringsKeys {
+public abstract class MessageKeys {
 
-    private UIStringsKeys(){}
+    private MessageKeys(){}
 
     public static final String SETTINGS_STAGE_TITLE = "settingsStageTitle";
     public static final String MOVIE_STAGE_TITLE = "movieStageTitle";

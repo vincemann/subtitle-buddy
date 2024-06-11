@@ -57,19 +57,18 @@ import static io.github.vincemann.subtitlebuddy.util.OSUtils.isMacOS;
 @Singleton
 public class Main extends Application {
 
+    private static final String VERSION = "1.1.0";
     public static final String CONFIG_FILE_NAME = "application.properties";
     public static final String STRINGS_FILE_NAME = "application.string.properties";
 
+
     private static Injector injector;
 
-    private static final String VERSION = "1.1.0";
 
     /**
      * Is used for testing purposes. I need to register hook on diff thread, so I need a way to wait for registration in my tests.
      */
     private boolean applicationReady = false;
-
-
     private static Boolean setupTest = false;
     private static String setupTestFile;
 
@@ -276,6 +275,7 @@ public class Main extends Application {
     }
 
     // replace javafx gui prompt file chooser with hard coded selected file from cli arg
+    // used for setup testing
     private void replaceFileChooserModule(PropertiesFile propertiesFile, MessageSource messageSource, List<Module> modules) {
         modules.replaceAll(module -> {
             if (module instanceof FileChooserModule) {

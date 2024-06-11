@@ -1,5 +1,7 @@
 package io.github.vincemann.subtitlebuddy.test;
 
-public class SrtFiles {
+public abstract class SrtFiles {
+
+    private SrtFiles(){}
     public static final String VALID = "src/test/resources/srt/valid.srt";
 }

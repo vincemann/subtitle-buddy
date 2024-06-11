@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 public class SetupTestUtil {
 
     /**
-     * Wait until application is set up + 2 seconds.
+     * Wait until application is set up
      * Then exit with 0 code.
      * @param readyCondition
      */

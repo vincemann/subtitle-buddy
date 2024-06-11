@@ -88,7 +88,7 @@ public class WindowManagerImpl implements WindowManager {
 
     @Override
     public void closeAll() {
-        // avoid comod exception
+        // avoid current mod exception
         List<Window> copiedWindows = new ArrayList<>(opened);
         copiedWindows.forEach(this::close);
         assert opened.size() == 0;

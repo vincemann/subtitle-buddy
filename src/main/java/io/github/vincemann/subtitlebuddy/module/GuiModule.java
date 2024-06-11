@@ -3,7 +3,7 @@ package io.github.vincemann.subtitlebuddy.module;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import io.github.vincemann.subtitlebuddy.config.strings.MessageSource;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
+import io.github.vincemann.subtitlebuddy.config.strings.MessageKeys;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayer;
 import io.github.vincemann.subtitlebuddy.gui.SrtDisplayerOptions;
 import io.github.vincemann.subtitlebuddy.gui.WindowManager;
@@ -33,30 +33,30 @@ public class GuiModule extends PropertyFilesModule {
 
     @Override
     protected void configurePropertyBindings() {
-        bindConstant().annotatedWith(Names.named(UIStringsKeys.SELECT_FILE_DESC))
-                .to(getStringsFile().getString(UIStringsKeys.SELECT_FILE_DESC));
-        bindConstant().annotatedWith(Names.named(UIStringsKeys.SELECT_FILE_WINDOW_TITLE))
-                .to(getStringsFile().getString(UIStringsKeys.SELECT_FILE_WINDOW_TITLE));
-        bindConstant().annotatedWith(Names.named(UIStringsKeys.SETTINGS_STAGE_TITLE))
-                .to(getStringsFile().getString(UIStringsKeys.SETTINGS_STAGE_TITLE));
-        bindConstant().annotatedWith(Names.named(UIStringsKeys.MOVIE_STAGE_TITLE))
-                .to(getStringsFile().getString(UIStringsKeys.MOVIE_STAGE_TITLE));
-        bindConstant().annotatedWith(Names.named(UIStringsKeys.OPTIONS_WINDOW_TITLE))
-                .to(getStringsFile().getString(UIStringsKeys.OPTIONS_WINDOW_TITLE));
-        bindConstant().annotatedWith(Names.named(UIStringsKeys.ASK_FOR_ROOT_PASSWORD_MESSAGE))
-                .to(getStringsFile().getString(UIStringsKeys.ASK_FOR_ROOT_PASSWORD_MESSAGE));
-        bindConstant().annotatedWith(Names.named(UIStringsKeys.STOP_BUTTON_TEXT))
-                .to(getStringsFile().getString(UIStringsKeys.STOP_BUTTON_TEXT));
-        bindConstant().annotatedWith(Names.named(UIStringsKeys.START_BUTTON_TEXT))
-                .to(getStringsFile().getString(UIStringsKeys.START_BUTTON_TEXT));
-        bindConstant().annotatedWith(Names.named(UIStringsKeys.MOVIE_MODE_BUTTON_TEXT))
-                .to(getStringsFile().getString(UIStringsKeys.MOVIE_MODE_BUTTON_TEXT));
-        bindConstant().annotatedWith(Names.named(UIStringsKeys.OPTIONS_BUTTON_TEXT))
-                .to(getStringsFile().getString(UIStringsKeys.OPTIONS_BUTTON_TEXT));
-        bindConstant().annotatedWith(Names.named(UIStringsKeys.WRONG_TIMESTAMP_FORMAT_TEXT))
-                .to(getStringsFile().getString(UIStringsKeys.WRONG_TIMESTAMP_FORMAT_TEXT));
-        bindConstant().annotatedWith(Names.named(UIStringsKeys.TIMESTAMP_JUMP_HINT_TEXT))
-                .to(getStringsFile().getString(UIStringsKeys.TIMESTAMP_JUMP_HINT_TEXT));
+        bindConstant().annotatedWith(Names.named(MessageKeys.SELECT_FILE_DESC))
+                .to(getStringsFile().getString(MessageKeys.SELECT_FILE_DESC));
+        bindConstant().annotatedWith(Names.named(MessageKeys.SELECT_FILE_WINDOW_TITLE))
+                .to(getStringsFile().getString(MessageKeys.SELECT_FILE_WINDOW_TITLE));
+        bindConstant().annotatedWith(Names.named(MessageKeys.SETTINGS_STAGE_TITLE))
+                .to(getStringsFile().getString(MessageKeys.SETTINGS_STAGE_TITLE));
+        bindConstant().annotatedWith(Names.named(MessageKeys.MOVIE_STAGE_TITLE))
+                .to(getStringsFile().getString(MessageKeys.MOVIE_STAGE_TITLE));
+        bindConstant().annotatedWith(Names.named(MessageKeys.OPTIONS_WINDOW_TITLE))
+                .to(getStringsFile().getString(MessageKeys.OPTIONS_WINDOW_TITLE));
+        bindConstant().annotatedWith(Names.named(MessageKeys.ASK_FOR_ROOT_PASSWORD_MESSAGE))
+                .to(getStringsFile().getString(MessageKeys.ASK_FOR_ROOT_PASSWORD_MESSAGE));
+        bindConstant().annotatedWith(Names.named(MessageKeys.STOP_BUTTON_TEXT))
+                .to(getStringsFile().getString(MessageKeys.STOP_BUTTON_TEXT));
+        bindConstant().annotatedWith(Names.named(MessageKeys.START_BUTTON_TEXT))
+                .to(getStringsFile().getString(MessageKeys.START_BUTTON_TEXT));
+        bindConstant().annotatedWith(Names.named(MessageKeys.MOVIE_MODE_BUTTON_TEXT))
+                .to(getStringsFile().getString(MessageKeys.MOVIE_MODE_BUTTON_TEXT));
+        bindConstant().annotatedWith(Names.named(MessageKeys.OPTIONS_BUTTON_TEXT))
+                .to(getStringsFile().getString(MessageKeys.OPTIONS_BUTTON_TEXT));
+        bindConstant().annotatedWith(Names.named(MessageKeys.WRONG_TIMESTAMP_FORMAT_TEXT))
+                .to(getStringsFile().getString(MessageKeys.WRONG_TIMESTAMP_FORMAT_TEXT));
+        bindConstant().annotatedWith(Names.named(MessageKeys.TIMESTAMP_JUMP_HINT_TEXT))
+                .to(getStringsFile().getString(MessageKeys.TIMESTAMP_JUMP_HINT_TEXT));
 
         List<String> settingsWindowSizeList = (List<String>)(Object) getProperties().getList(PropertyFileKeys.SETTINGS_WINDOW_SIZE);
         bind(Vector2D.class).annotatedWith(Names.named(PropertyFileKeys.SETTINGS_WINDOW_SIZE))

@@ -3,7 +3,7 @@ package io.github.vincemann.subtitlebuddy.gui.filechooser;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import io.github.vincemann.subtitlebuddy.config.strings.UIStringsKeys;
+import io.github.vincemann.subtitlebuddy.config.strings.MessageKeys;
 import io.github.vincemann.subtitlebuddy.gui.filechooser.lathpath.LastPathRegistry;
 import io.github.vincemann.subtitlebuddy.options.PropertyNotFoundException;
 import io.github.vincemann.subtitlebuddy.util.FileUtils;
@@ -27,8 +27,8 @@ public class JavaFxFileChooser implements FileChooser {
     private LastPathRegistry lastPathRegistry;
 
     @Inject
-    public JavaFxFileChooser(@Named(UIStringsKeys.SELECT_FILE_DESC) String description,
-                             @Named(UIStringsKeys.SELECT_FILE_WINDOW_TITLE) String dialogTitle,
+    public JavaFxFileChooser(@Named(MessageKeys.SELECT_FILE_DESC) String description,
+                             @Named(MessageKeys.SELECT_FILE_WINDOW_TITLE) String dialogTitle,
                              LastPathRegistry lastPathRegistry) {
         this.description = description;
         this.dialogTitle = dialogTitle;

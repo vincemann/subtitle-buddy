@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class LastWordRightTest {
+public class LastWordCorrectTest {
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
@@ -23,7 +23,7 @@ public class LastWordRightTest {
         });
     }
 
-    public LastWordRightTest(String inputSequence, String outputFirstWord) {
+    public LastWordCorrectTest(String inputSequence, String outputFirstWord) {
         this.inputSequence = inputSequence;
         this.outputFirstWord = outputFirstWord;
     }

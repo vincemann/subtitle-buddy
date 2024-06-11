@@ -16,9 +16,6 @@ public class SrtFileParserImplTest {
 
     private SrtFileParser srtFileParser;
 
-    private File validSrtFile;
-
-    private File idInPayload;
 
     // fully corrupted
     private File emptyFile;
@@ -31,13 +28,16 @@ public class SrtFileParserImplTest {
     // special meta information
     private File endIdSrtFile;
 
+
     // kinda corrupted files, that should still work
     private File emptyLinesAtEndFile;
     private File emptyLinesInBetweenFile;
     private File lenientTimestampFile;
 
-    // example files
 
+    // valid files
+    private File validSrtFile;
+    private File idInPayload;
     private File matrix;
     private File avengers;
     private File shutterIsland;
@@ -45,7 +45,6 @@ public class SrtFileParserImplTest {
     private File titanicPart2;
     private File titanicPart3;
     private File avatar;
-
     private File badnaam;
     private File fanny;
     private File godzilla;

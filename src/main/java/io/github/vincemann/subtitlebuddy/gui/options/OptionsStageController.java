@@ -157,6 +157,7 @@ public class OptionsStageController implements OptionsDisplayer{
         backViaEscCheckBox.selectedProperty().removeListener(backViaEscapeChangeListener);
     }
 
+    // update color chooser to display selected color from options as selected
     private void updateColorChooser(){
         Color currentColor = fontOptions.getFontColor();
         colorChooser.setValue(currentColor);
