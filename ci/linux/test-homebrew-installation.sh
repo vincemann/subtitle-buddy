@@ -17,3 +17,5 @@ brew install subtitle-buddy --verbose
 
 # start
 subtitle-buddy $sb_jvm_args
+
+brew remove subtitle-buddy

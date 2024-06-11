@@ -3,7 +3,6 @@
 
 # remove possible installation
 sudo dpkg --remove subtitle-buddy
-sudo rm -rf /opt/subtitle-buddy
 rm -f /usr/local/bin/subtitle-buddy
 
 ./gradlew jpackage
@@ -11,3 +10,5 @@ rm -f /usr/local/bin/subtitle-buddy
 sudo dpkg -i build/jpackage/*.deb
 
 subtitle-buddy $sb_jvm_args
+
+sudo dpkg --remove subtitle-buddy
