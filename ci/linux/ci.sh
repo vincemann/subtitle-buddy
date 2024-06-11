@@ -16,16 +16,13 @@
 name="subtitle-buddy-1.1.0-linux"
 
 
+
 # what kind of test?
 if [[ "$1" == "setup-test" ]];then
   test_file="`pwd`/src/test/resources/srt/valid.srt"
   export sb_jvm_args="--setup-test $test_file"
-elif [[ "$1" == "version" ]]
+elif [[ "$1" == "version" ]];then
   export sb_jvm_args="--version"
-elif [ -z "$1" ]; then
-    echo "No arguments provided. Running blackbox test behavior"
-else
-    echo "Invalid argument. Usage: ./ci [setup-test | version]"
 fi
 
 
@@ -47,8 +44,6 @@ trap cleanup EXIT
 file_server_pid=$(cat /tmp/file_server_pid.txt)
 cd $current_dir
 
-
-export SB_HOST=subtitle-buddy@192.168.178.69
 
 
 # start testing
