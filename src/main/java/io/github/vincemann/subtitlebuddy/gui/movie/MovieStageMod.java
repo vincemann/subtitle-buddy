@@ -18,7 +18,7 @@ public class MovieStageMod {
 
     private AnchorPane anchorPane;
 
-    // the mind width and height the stage must have to support displaying the texts
+    // the mind width and height the stage must have to support displaying the current subtitles
     private double textMinWidth;
     private double textMinHeight;
 
@@ -28,7 +28,7 @@ public class MovieStageMod {
 
     public MovieStageMod(Stage stage, VBox vbox, AnchorPane anchorPane) {
         if (stage == null)
-            throw new IllegalStateException("stage cannot be null");
+            throw new IllegalArgumentException("stage cannot be null");
         this.stage = stage;
         this.vbox = vbox;
         this.anchorPane = anchorPane;
@@ -69,7 +69,7 @@ public class MovieStageMod {
     }
 
 
-    // set stages min width and height the user manually set, if he set anything
+    // set stages min width and height to values that the user manually set (if he set anything)
     public void initUserDefinedBounds(){
         if (USER_MIN_HEIGHT != null)
             stage.setMinHeight(USER_MIN_HEIGHT);
@@ -106,9 +106,6 @@ public class MovieStageMod {
         anchorPane.setLayoutY(0);
     }
 
-
-    // on i3 the subtitle box wont be movable, bc the vbox will always be centered in the stage
-    // and the stage will always be the whole screen
     private void centerVBoxInPane() {
         // Log dimensions
 //        log.trace("AnchorPane height: " + anchorPane.getHeight());
@@ -132,28 +129,16 @@ public class MovieStageMod {
     }
 
     private void bindInnerComponentsToStageSize(){
-        if (stage == null)
-            throw new IllegalStateException("stage not set");
         stage.widthProperty().addListener((obs, oldVal, newVal) -> {
-            double anchorWidth = newVal.doubleValue();
-            double vboxWidth = anchorWidth;
-//            double textFlowWidth = vboxWidth;
-//            log.debug("setting anchor width to: " + anchorWidth);
-//            log.debug("setting vbox width to: " + vboxWidth);
-            anchorPane.setPrefWidth(anchorWidth);
-            vbox.setPrefWidth(vboxWidth);
-//            textFlow.setPrefWidth(textFlowWidth);
+            double newStageWidth = newVal.doubleValue();
+            anchorPane.setPrefWidth(newStageWidth);
+            vbox.setPrefWidth(newStageWidth);
         });
 
         stage.heightProperty().addListener((obs, oldVal, newVal) -> {
-            double anchorHeight = newVal.doubleValue();
-            double vboxHeight = anchorHeight;
-//            double textFlowHeight = vboxHeight;
-//            log.debug("setting anchor height to: " + anchorHeight);
-//            log.debug("setting vbox height to: " + vboxHeight);
-            anchorPane.setPrefHeight(anchorHeight);
-            vbox.setPrefHeight(vboxHeight);
-//            textFlow.setPrefHeight(textFlowHeight);
+            double newStageHeight = newVal.doubleValue();
+            anchorPane.setPrefHeight(newStageHeight);
+            vbox.setPrefHeight(newStageHeight);
         });
     }
 }

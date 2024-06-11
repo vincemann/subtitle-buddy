@@ -43,10 +43,9 @@ import static io.github.vincemann.subtitlebuddy.util.fx.ImageUtils.loadImageView
 @NoArgsConstructor
 @Singleton
 public class SettingsStageController implements SettingsSrtDisplayer {
-    private static final int SETTINGS_CLICK_WARNING_SIZE = 40;
-    //millis
-    private static final int TIME_STAMP_WARNING_DURATION = 1000;
 
+    private static final int SETTINGS_CLICK_WARNING_SIZE = 40;
+    private static final int TIME_STAMP_WARNING_DURATION = 1000; //millis
     private static final int FORWARD_DELTA = 500;
 
     @FXML
@@ -73,20 +72,10 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     private Button fastBackwardButton;
     @FXML
     private HBox imageHBox;
-
     private ImageView clickWarning;
+    private Stage stage;
 
 
-    private SrtPlayer srtPlayer;
-
-
-    private FontManager fontManager;
-
-    private WindowManager windowManager;
-
-    private SrtDisplayerOptions options;
-
-    private EventBus eventBus;
 
     private String startButtonText;
     private String stopButtonText;
@@ -95,10 +84,14 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     private String wrongTimeStampFormatText;
     private String timestampJumpHintTextString;
 
-    private Stage stage;
 
-    private List<EventHandlerRegistration<?>> eventHandlerRegistrations = new ArrayList<>();
 
+    private SrtPlayer srtPlayer;
+    private FontManager fontManager;
+    private WindowManager windowManager;
+    private SrtDisplayerOptions options;
+    private EventBus eventBus;
+    private final List<EventHandlerRegistration<?>> eventHandlerRegistrations = new ArrayList<>();
 
     @Inject
     public SettingsStageController(SrtPlayer srtPlayer,
@@ -140,8 +133,9 @@ public class SettingsStageController implements SettingsSrtDisplayer {
         imageHBox.getChildren().add(clickWarning);
 
         // Anchor the ImageView to the top and right of the AnchorPane
-        AnchorPane.setTopAnchor(clickWarning, 10.0);
-        AnchorPane.setRightAnchor(clickWarning, 10.0);
+        double padding = 10.0;
+        AnchorPane.setTopAnchor(clickWarning, padding);
+        AnchorPane.setRightAnchor(clickWarning, padding);
     }
 
     public void setStage(Stage stage) {
@@ -266,7 +260,7 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     }
 
     private void openOptionsWindow() {
-        //position options window right next settingsWindow, otherwise optionsWindow may be behind settingsWindow, bc they are both alwaysOnTop
+        // position options window right next settingsWindow, otherwise optionsWindow may be behind settingsWindow, bc they are both alwaysOnTop
         Window settingsWindow = windowManager.find(Windows.SETTINGS);
         Vector2D nextToSettingsWindow = new Vector2D(settingsWindow.getStage().getX() + settingsWindow.getStage().getWidth(), settingsWindow.getStage().getY());
         windowManager.openAtPos(Windows.OPTIONS, nextToSettingsWindow);

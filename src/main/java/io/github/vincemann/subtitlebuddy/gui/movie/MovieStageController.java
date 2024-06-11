@@ -50,7 +50,6 @@ public class MovieStageController implements MovieSrtDisplayer {
     private static final int MIN_FONT_SIZE = 20;
     private static final int MAX_FONT_SIZE = 90;
     private static final int MOVIE_CLICK_WARNING_SIZE = 60;
-
     private static final String BLUE_HALF_TRANSPARENT_BACK_GROUND_STYLE = "-fx-background-color: rgba(0, 100, 100, 0.51); -fx-background-radius: 10;";
     private static final String TRANSPARENT_BACKGROUND_STYLE = "-fx-background-color: transparent;";
     public static final String OUTLINED_TEXT_STYLE = /*"color: #ff0;"+*/
@@ -66,30 +65,21 @@ public class MovieStageController implements MovieSrtDisplayer {
     private TextFlow movieTextFlow;
     @FXML
     private AnchorPane movieAnchorPane;
-
-
     private ImageView clickWarning;
+    private Stage stage;
+    private MovieStageMod movieStageMod;
+
+
 
 
     private EventBus eventBus;
-
     private FontManager fontManager;
-
     private SrtDisplayerOptions options;
-
-
-    @Getter
-    private SubtitleText lastSubtitleText;
-
     private DragResizeMod dragResizeMod;
-
     private List<EventHandlerRegistration<?>> eventHandlerRegistrations = new ArrayList<>();
-
     private FontOptions fontOptions;
 
-    private Stage stage;
 
-    private MovieStageMod movieStageMod;
 
     private double currentFontSize;
 
@@ -103,10 +93,8 @@ public class MovieStageController implements MovieSrtDisplayer {
         this.eventBus = eventBus;
         this.options = options;
         this.fontOptions = fontOptions;
-        this.lastSubtitleText = SubtitleText.empty();
         this.currentFontSize = options.getMovieFontSize();
     }
-
 
     @Override
     public void displayNextClickCounts() {
@@ -118,12 +106,9 @@ public class MovieStageController implements MovieSrtDisplayer {
         this.clickWarning.setVisible(false);
     }
 
-
-
     @Override
     public void displaySubtitle(SubtitleText subtitleText) {
         log.debug("display new subtitle in movie mode: " + subtitleText);
-        lastSubtitleText = subtitleText;
 
         Platform.runLater(() -> {
             Color fontColor = fontOptions.getFontColor();
@@ -174,8 +159,7 @@ public class MovieStageController implements MovieSrtDisplayer {
         double totalHeight = 0;
 
         for (javafx.scene.Node node : textFlow.getChildren()) {
-            if (node instanceof Text) {
-                Text text = (Text) node;
+            if (node instanceof Text text) {
                 text.applyCss();
                 double textHeight = text.getBoundsInLocal().getHeight();
                 totalHeight += textHeight * Math.ceil(text.getBoundsInLocal().getWidth() / maxWidth);
@@ -190,7 +174,6 @@ public class MovieStageController implements MovieSrtDisplayer {
         return new Vector2D(stageWidth, stageHeight);
     }
 
-
     @FXML
     public void initialize() {
         movieAnchorPane.setBackground(Background.EMPTY);
@@ -198,9 +181,9 @@ public class MovieStageController implements MovieSrtDisplayer {
 
 
         movieTextFlow.setPickOnBounds(true);
-        // needs a fixed width so the subtitles are not displayed awkwardly word under word
+        // needs a fixed width so the subtitles are not displayed awkwardly word below word
         // user can still adjust the box manually by dragging the edges
-        movieTextFlow.setPrefWidth(ScreenUtils.getScreenBounds().getX()/2.5);
+        movieTextFlow.setPrefWidth(ScreenUtils.getScreenBounds().getX()/2.5); // ca 1/3 of width of screen
 
         registerEventHandlers();
         initClickWarning();
@@ -217,8 +200,6 @@ public class MovieStageController implements MovieSrtDisplayer {
         AnchorPane.setRightAnchor(clickWarning, 10.0);
     }
 
-
-
     public void setStage(Stage stage) {
         this.stage = stage;
         // should always be absolute pos
@@ -234,7 +215,7 @@ public class MovieStageController implements MovieSrtDisplayer {
     private void initStage(){
         Vector2D stageSize = evalMinStageSize(movieTextFlow);
         Vector2D subtitlePos = options.getSubtitlePosition(); // top left of subtitle vbox
-        // stage is as big as subtitle box, so its ok to work with stage size for calculating center
+        // stage is as big as subtitle box, so it's ok to work with stage size for calculating center
         Vector2D centerOfSubs = new Vector2D(subtitlePos.getX()+stageSize.getX()/2,subtitlePos.getY()+stageSize.getY()/2);
         boolean onScreen = VectorUtils.isVecWithinBounds(centerOfSubs, getScreenBounds());
         movieStageMod.updatePos(onScreen ? subtitlePos : VectorUtils.getCenterPos(ScreenUtils.getScreenBounds(),stageSize));
