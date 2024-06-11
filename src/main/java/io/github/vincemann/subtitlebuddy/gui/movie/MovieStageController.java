@@ -207,15 +207,16 @@ public class MovieStageController implements MovieSrtDisplayer {
     }
 
     private void initClickWarning(){
-        clickWarning = loadImageView(movieAnchorPane,
-                "images/finger.png",
+        clickWarning = loadImageView("images/finger.png",
                 new Vector2D(MOVIE_CLICK_WARNING_SIZE, MOVIE_CLICK_WARNING_SIZE));
         clickWarning.setVisible(false);
+        movieAnchorPane.getChildren().add(clickWarning);
 
         // Anchor the ImageView to the top and right of the AnchorPane
         AnchorPane.setTopAnchor(clickWarning, 10.0);
         AnchorPane.setRightAnchor(clickWarning, 10.0);
     }
+
 
 
     public void setStage(Stage stage) {

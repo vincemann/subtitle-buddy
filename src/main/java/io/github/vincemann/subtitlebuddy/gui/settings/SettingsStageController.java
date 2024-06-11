@@ -23,6 +23,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -129,10 +130,18 @@ public class SettingsStageController implements SettingsSrtDisplayer {
     public void initialize() {
         registerEventHandlers();
         loadStrings();
-        clickWarning = loadImageView(imageHBox,
-                "images/finger.png",
+        initClickWarning();
+    }
+
+    private void initClickWarning(){
+        clickWarning = loadImageView("images/finger.png",
                 new Vector2D(SETTINGS_CLICK_WARNING_SIZE, SETTINGS_CLICK_WARNING_SIZE));
         clickWarning.setVisible(false);
+        imageHBox.getChildren().add(clickWarning);
+
+        // Anchor the ImageView to the top and right of the AnchorPane
+        AnchorPane.setTopAnchor(clickWarning, 10.0);
+        AnchorPane.setRightAnchor(clickWarning, 10.0);
     }
 
     public void setStage(Stage stage) {

@@ -11,7 +11,7 @@ import java.io.InputStream;
 
 public class ImageUtils {
 
-    public static ImageView loadImageView(Pane parent, String resourcePath, Vector2D size) {
+    public static ImageView loadImageView(String resourcePath, Vector2D size) {
         ImageView imageView = null;
         try (InputStream is = ImageUtils.class.getClassLoader().getResourceAsStream(resourcePath)) {
             if (is == null) {
@@ -23,7 +23,6 @@ public class ImageUtils {
             imageView.setFitWidth(size.getY());
             imageView.setCache(true);
             imageView.setPreserveRatio(true);
-            parent.getChildren().add(imageView);
         } catch (IOException e) {
             // Handle IO exceptions or other issues here
             e.printStackTrace();
