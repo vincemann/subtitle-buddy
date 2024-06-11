@@ -90,9 +90,8 @@ echo "build .app and upload for aarch64..."
 ./ci/osx/ftp-upload-app.sh "$SSH_HOST" "${name}.app.zip" "mac-aarch64"
 
 echo "################################"
-echo "update aarch64 sha hash in formula file"
+echo "setup aarch64 for homebrew"
 ssh "$SSH_HOST" "cd projects; sudo -u vince ./ci/osx/update-homebrew-formula.sh mac-aarch64"
-
 
 echo "################################"
 echo "cleaning up"
