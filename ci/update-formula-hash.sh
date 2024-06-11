@@ -35,12 +35,12 @@ awk -v platform="$PLATFORM" -v newsha="$NEW_SHA256" '
         sub(/"[^"]+"/, "\"" newsha "\"")
         print $0
       }
-    } else if (platform == "mac" && /url .*mac-x64.*image.zip/) {
+    } else if (platform == "mac" && /url .*mac-image.zip/) {
       if (getline > 0 && /sha256/) {
         sub(/"[^"]+"/, "\"" newsha "\"")
         print $0
       }
-    } else if (platform == "mac-aarch64" && /url .*mac-aarch64.*image.zip/) {
+    } else if (platform == "mac-aarch64" && /url .*mac-aarch64-image.zip/) {
       if (getline > 0 && /sha256/) {
         sub(/"[^"]+"/, "\"" newsha "\"")
         print $0

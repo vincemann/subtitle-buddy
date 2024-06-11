@@ -7,8 +7,8 @@
 # dont specify path of file, but instead the dir and filename
 # need to interactively type ftp pw
 
-if [ "$#" -ne 3 ]; then
-    echo "Usage: $0 <dir> <filename> <targetFilename>"
+if [ "$#" -ne 4 ]; then
+    echo "Usage: $0 <sshhost> <dir> <filename> <targetFilename>"
     exit 1
 fi
 

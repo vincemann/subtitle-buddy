@@ -1,5 +1,5 @@
 #!/bin/bash
-# ./ftp-upload-app.sh sshost artifactName [mac|mac-aarch64] 
+# ./ftp-upload-app.sh sshhost artifactName mac|mac-aarch64
 # sshhost example: 'user@192.168.178.42'
 
 
