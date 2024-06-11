@@ -4,11 +4,11 @@
 # creates mac .app for specified arch and zips it up 
 # then emulate user behavior by unzipping and opening app
 
-arch=$1
+arch="$1"
 app="subtitle-buddy.app"
 archive="subtitle-buddy-$arch.app.zip"
 
-./ci/osx/build-app.sh $arch
+./ci/osx/build-app.sh "$arch"
 
 # emulate user behavior -> unzip and start
 cd build/jpackage

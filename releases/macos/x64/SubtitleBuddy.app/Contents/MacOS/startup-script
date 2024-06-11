@@ -2,4 +2,4 @@
 # Get the directory of the current script (resolve symlinks)
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-"$DIR/image/bin/appLauncher"
+"$DIR/image/bin/appLauncher" $@
