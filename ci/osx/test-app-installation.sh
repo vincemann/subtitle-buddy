@@ -17,4 +17,8 @@ unzip "$archive" -d temp
 cd ../..
 
 # need to use abs path here to not execute gloablly installed app
-open -W -a $(pwd)/build/jpackage/temp/"$app" --args $sb_jvm_args
+if [[ -z $sb_jvm_args ]]; then
+  open -W -a $(pwd)/build/jpackage/temp/"$app"
+else
+  open -W -a $(pwd)/build/jpackage/temp/"$app" --args $sb_jvm_args
+fi

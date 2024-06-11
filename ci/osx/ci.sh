@@ -1,5 +1,5 @@
 #!/bin/bash
-# ./ci [setup-test | version]
+# ./ci [setup-test | version] [skip-tests]
 # arg1 can be 'setup-test', 'version', or omitted.
 
 # execute all ci scripts for linux in a row
@@ -31,19 +31,41 @@ elif [[ "$1" == "version" ]];then
   export sb_jvm_args="--version"
 fi
 
+skip_tests=false
+
+for arg in "$@"; do
+    if [[ "$arg" == "skip-tests" ]]; then
+        skip_tests=true
+        break
+    fi
+done
+
 
 # set arch to x64
 name="$name_prefix"
 ./gradlew clean
 
-echo "################################"
-echo "running tests"
-./gradlew test
+
+if $skip_tests; then
+    echo "skipping tests"
+else
+    echo "################################"
+    echo "running tests"
+    ./gradlew test
+fi
+
+
+
+
 
 echo "################################"
 rm -rf ~/.subtitle-buddy
 echo "gradle run"
-./gradlew run --args="$sb_jvm_args"
+if [[ -z $sb_jvm_args ]]; then
+  ./gradlew run
+else
+  ./gradlew run --args="$sb_jvm_args"
+fi
 
 echo "################################"
 echo "manual installation x64"

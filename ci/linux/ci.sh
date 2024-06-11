@@ -24,6 +24,14 @@ if [[ "$1" == "setup-test" ]];then
 elif [[ "$1" == "version" ]];then
   export sb_jvm_args="--version"
 fi
+skip_tests=false
+for arg in "$@"; do
+    if [[ "$arg" == "skip-tests" ]]; then
+        skip_tests=true
+        break
+    fi
+done
+
 
 
 # start file server in ./server
@@ -46,19 +54,28 @@ cd $current_dir
 
 
 
-# start testing
 ./gradlew clean
 
 
-echo "################################"
-echo "running tests"
-./gradlew test
+# tests
+if $skip_tests; then
+    echo "skipping tests"
+else
+    echo "################################"
+    echo "running tests"
+    ./gradlew test
+fi
 
 
+# gradle run
 echo "################################"
 rm -rf ~/.subtitle-buddy
 echo "gradle run"
-./gradlew run --args="$sb_jvm_args"
+if [[ -z $sb_jvm_args ]]; then
+  ./gradlew run
+else
+  ./gradlew run --args="$sb_jvm_args"
+fi
 
 
 echo "################################"
