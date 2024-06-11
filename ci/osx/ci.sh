@@ -1,27 +1,39 @@
 #!/bin/bash
+# ./ci [setup-test | version]
+# arg1 can be 'setup-test', 'version', or omitted.
+
 # execute all ci scripts for linux in a row
-# user just needs to interactively test the application when it opens and type in pws
 # also executes ci scripts on remote linux host (for example for updating homebrew formula file)
 # also uploads all artifacts via ftp to linux host -> files will end up in ftp root dir, which should be ./server
 
-# remember to start file server in ./server in dev env: python3 -m http.server 8000
+# remember to start file server on linux in ./server in dev env: python3 -m http.server 8000
 # remember to start ssh server on linux via sudo systemctl start ssh.service - start with sftp enabled and user: subtitle-buddy
 
 # artifacts:
-# *-image-x64.zip (manual installation & homebrew)
-# *-x64.app.zip
-# *-image-aarch64.zip 
-# *-aarch64.app.zip
+# name-image-x64.zip (manual installation & homebrew)
+# name-x64.app.zip
+# name-image-aarch64.zip 
+# name-aarch64.app.zip
 
 version="1.1.0"
 name_prefix="subtitle-buddy-$version-mac"
 ssh_host="subtitle-buddy@192.168.178.69"
-test_file="`pwd`/src/test/resources/srt/valid.srt"
-export sb_jvm_args="--setup-test $test_file"
+
+
+# what kind of test?
+if [[ "$1" == "setup-test" ]];then
+  test_file="`pwd`/src/test/resources/srt/valid.srt"
+  export sb_jvm_args="--setup-test $test_file"
+elif [[ "$1" == "version" ]]
+  export sb_jvm_args="--version"
+elif [ -z "$1" ]; then
+    echo "No arguments provided. Running blackbox test behavior"
+else
+    echo "Invalid argument. Usage: ./ci [setup-test | version]"
+fi
 
 
 # set arch to x64
-
 name="$name_prefix"
 ./gradlew clean
 

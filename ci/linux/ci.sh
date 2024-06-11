@@ -1,34 +1,42 @@
 #!/bin/bash
-# ./ci [skip]
+# ./ci [setup-test | version]
+# arg1 can be 'setup-test', 'version', or omitted.
+
 # execute all ci scripts for linux in a row
 # user just needs to interactively test the application when it opens and type in pws
 # remember to start file server in ./server in dev env: python3 -m http.server 8000
 # also moves all artifacts to ./server for deployment
-# artifacts (x64 only):
-# 1. image.zip (manual installation & homebrew)
-# 2. .jar
-# 3. .AppImage
-# 4. .deb
 
-# init vars
-test_file="`pwd`/src/test/resources/srt/valid.srt"
-export sb_jvm_args="--setup-test $test_file"
+# artifacts (x64 only):
+# 1. name-image.zip (manual installation & homebrew)
+# 2. name.jar
+# 3. name.AppImage
+# 4. name.deb
+
 name="subtitle-buddy-1.1.0-linux"
 
 
+# what kind of test?
+if [[ "$1" == "setup-test" ]];then
+  test_file="`pwd`/src/test/resources/srt/valid.srt"
+  export sb_jvm_args="--setup-test $test_file"
+elif [[ "$1" == "version" ]]
+  export sb_jvm_args="--version"
+elif [ -z "$1" ]; then
+    echo "No arguments provided. Running blackbox test behavior"
+else
+    echo "Invalid argument. Usage: ./ci [setup-test | version]"
+fi
 
-# Capture the current directory
+
+# start file server in ./server
 current_dir=$(pwd)
-
-# Function to clean up the background file server
 cleanup() {
   echo "Stopping the file server..."
   kill $file_server_pid
 }
-
 # Set a trap to call cleanup on script exit
 trap cleanup EXIT
-
 # Start the file server in the background and capture its PID
 (
   cd ./server
@@ -37,13 +45,13 @@ trap cleanup EXIT
   echo $file_server_pid > /tmp/file_server_pid.txt
 )
 file_server_pid=$(cat /tmp/file_server_pid.txt)
-
 cd $current_dir
 
 
 
-# start testing
 
+
+# start testing
 ./gradlew clean
 
 
