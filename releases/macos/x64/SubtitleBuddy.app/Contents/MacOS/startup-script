@@ -1,4 +1,8 @@
 #!/bin/bash
+# this file is merged into a binary but this binary is replaced by repackageMacApp task with a symlink
+# to the image appLauncher
+# so changes in this file will be ignored
+
 # Get the directory of the current script (resolve symlinks)
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 

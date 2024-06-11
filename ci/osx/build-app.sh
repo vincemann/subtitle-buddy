@@ -12,5 +12,6 @@ archive="subtitle-buddy-$arch.app.zip"
 
 ./gradlew jpackage -PtargetPlatform=$arch
 cd build/jpackage
-zip -r "$archive" "$app"
+# use ditto instead of zip in order to preserve symlink in zip archive
+ditto -c -k --sequesterRsrc --keepParent "$app" "$archive"
 cd ../..

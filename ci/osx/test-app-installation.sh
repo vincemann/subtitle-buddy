@@ -14,5 +14,7 @@ archive="subtitle-buddy-$arch.app.zip"
 cd build/jpackage
 mkdir temp
 unzip "$archive" -d temp
-cd temp
-open -W -a "$app" --args $sb_jvm_args
+cd ../..
+
+# need to use abs path here to not execute gloablly installed app
+open -W -a $(pwd)/build/jpackage/temp/"$app" --args $sb_jvm_args
