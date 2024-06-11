@@ -1,5 +1,6 @@
 #!/bin/bash
-# ./ftp-upload.sh dir filename targetFilename
+# ./ftp-upload.sh sshhost dir filename targetFilename
+# sshhost example: 'user@192.168.178.42'
 
 
 # uploads file to linux hosting pc via ftp in binary mode
@@ -11,11 +12,10 @@ if [ "$#" -ne 3 ]; then
     exit 1
 fi
 
-DIR="$1"
-FILE_NAME="$2"
-TARGET_FILENAME="$3"
-DST_IP="192.168.178.69"
-FTP_USER="subtitle-buddy"
+SSH_HOST="$1"
+DIR="$2"
+FILE_NAME="$3"
+TARGET_FILENAME="$4"
 
 FILE_PATH="$DIR/$FILE_NAME"
 
@@ -24,13 +24,13 @@ echo "filename: $FILE_NAME"
 echo "filepath: $FILE_PATH"
 
 # Check if the file exists
-if [ ! -f $FILE_PATH ]; then
+if [ ! -f "$FILE_PATH" ]; then
     echo "Error: File not found!"
     exit 1
 fi
 
 # Use sftp to send the file
-sftp $FTP_USER@$DST_IP <<EOF
+sftp "$SSH_HOST" <<EOF
 cd projects/server
 pwd
 ls

@@ -48,7 +48,7 @@ file_server_pid=$(cat /tmp/file_server_pid.txt)
 cd $current_dir
 
 
-
+export SB_HOST=subtitle-buddy@192.168.178.69
 
 
 # start testing
