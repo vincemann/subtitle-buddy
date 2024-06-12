@@ -11,7 +11,7 @@ plugins {
 }
 
 group = 'io.github.vincemann'
-version = '1.1.0'
+version = '2.0.0'
 
 
 application {
@@ -296,7 +296,7 @@ jlink {
 tasks.register('repackageDeb', Exec) {
     onlyIf { project.targetPlatform == 'linux' }
     mustRunAfter 'jpackage'
-    def originalDeb = "${jpackage.getJpackageData().installerOutputDir}/subtitle-buddy_1.1.0-1_amd64.deb" // there is no var to retrieve the installer name from
+    def originalDeb = "${jpackage.getJpackageData().installerOutputDir}/subtitle-buddy_${project.version}-1_amd64.deb" // there is no var to retrieve the installer name from
     println("original deb: ${originalDeb}")
     def tempDir = "${projectDir}/build/deb-temp"
 

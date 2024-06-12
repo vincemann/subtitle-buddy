@@ -18,7 +18,7 @@
 # name-image-aarch64.zip 
 # name-aarch64.app.zip
 
-version="1.1.0"
+version="2.0.0"
 name_prefix="subtitle-buddy-$version-mac"
 SSH_HOST=subtitle-buddy@192.168.178.69
 
@@ -53,7 +53,6 @@ else
     echo "running tests"
     ./gradlew test
 fi
-
 
 
 

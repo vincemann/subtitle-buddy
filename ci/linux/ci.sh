@@ -13,7 +13,8 @@
 # 3. name.AppImage
 # 4. name.deb
 
-name="subtitle-buddy-1.1.0-linux"
+version="2.0.0"
+name="subtitle-buddy-${version}-linux"
 
 
 

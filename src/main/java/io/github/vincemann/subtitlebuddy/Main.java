@@ -57,7 +57,7 @@ import static io.github.vincemann.subtitlebuddy.util.OSUtils.isMacOS;
 @Singleton
 public class Main extends Application {
 
-    private static final String VERSION = "1.1.0";
+    private static final String VERSION = "2.0.0";
     public static final String CONFIG_FILE_NAME = "application.properties";
     public static final String STRINGS_FILE_NAME = "application.string.properties";
 
