@@ -85,7 +85,7 @@ If you want a different encoding, you can set it in application.properties file 
 You could replace the encoding line to 'encoding = ISO-8859-1' for example.  
   
 ## building from sources  
-Clone the repo and build the installers like this:
+Clone the repo and build the artifacts like this:
 
 **linux:**
 (You need to run these on linux)  
