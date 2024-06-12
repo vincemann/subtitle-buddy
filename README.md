@@ -79,10 +79,10 @@ See its "Software and Hardware Requirements" for additional details.
 The installers are build for x86_64 if no architecture is in the filename.  
   
 ## encoding issues  
-if you experience encoding isses ( some characters are not displayed properly),   
+If you experience encoding isses ( some characters are not displayed properly),   
 you should transform your srt file to utf-8 [here](https://subtitletools.com/convert-text-files-to-utf8-online).  
-if you want a different encoding, you can set it in application.properties file -  
-you could replace the encoding line to 'encoding = ISO-8859-1' for example.  
+If you want a different encoding, you can set it in application.properties file -  
+You could replace the encoding line to 'encoding = ISO-8859-1' for example.  
   
 ## building from sources  
 Clone the repo and build the installers like this:
