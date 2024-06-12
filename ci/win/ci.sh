@@ -15,7 +15,7 @@
 # './testing/win/gradlew.bat clean jpackage' and so on
 # this is a wrapper script that sets the jdk to the shipped jdk17 and sets up javafx
 
-version="1.1.0"
+version="2.0.0"
 name="subtitle-buddy"
 target=/home/vince/shared/win10
 builddir="$(pwd)"
