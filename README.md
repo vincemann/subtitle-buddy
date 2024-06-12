@@ -30,6 +30,11 @@ brew install subtitle-buddy
 ```
 start with ```subtitle-buddy```  
 
+**for mac users:**  
+You probably need to go to "Settings" -> "Security & Privacy" -> "Accessibility", click on the lock and add ```sh```  
+to the allowed programs. (```/bin/sh```)  
+This is needed bc there is a wrapper shell script (sh) that is executed in order to run the program.  
+
 ### manual (advanced)  
 Download image.zip file for your os [here](https://github.com/vincemann/Subtitle-Buddy/releases).    
 Unzip it and hook up the start script, for linux/mac you may want to create a symlink like:  
