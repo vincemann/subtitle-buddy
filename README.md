@@ -63,6 +63,7 @@ You can configure even more by modifying the application.properties file in the 
 ```%appdata%\subtitle-buddy``` on windows.  
 If you break anything, just remove this folder, it will be regenerated.  
 For example you can permanently hide the default subtitle by setting ```defaultSubtitle = ""```.  
+You can change the font size by dragging on the edge of the blue subtitle box in movie mode.  
   
 ## adding your own fonts  
 The program will generate a folder named "fonts" in the config directory,
