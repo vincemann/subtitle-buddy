@@ -86,20 +86,23 @@ If you want a different encoding, you can set it in application.properties file 
 You could replace the encoding line to 'encoding = ISO-8859-1' for example.  
   
 ## building from sources  
-Clone the repo and build the artifacts like this:
-
-**linux:**
-(You need to run these on linux)  
+Clone the repo and build the artifacts like shown here:  
+(files will be built into ./build/releases and ./build/jpackage)  
+**image (see manual installation)**  
+linux/mac: ```./gradlew jlinkZip```   
+windows: ```gradlew.bat jlinkZip```   
+  
+**linux**  
 deb: ```./gradlew jpackage```  
 AppImage: ```./gradlew buildLinuxAppImage```    
-image.zip:  ```./gradlew jlinkZip```    
-**mac**      
-(You need to run these on mac)    
-app: ```./gradlew jpackage```    
-image.zip: ```./gradlew jpackage```  
-**windows**   
-(You can only build this from linux unfortunately)  
-```./gradlew clean buildWindowsInstaller -PtargetPlatform=win```  
   
+**mac**      
+app: ```./gradlew jpackage```    
+  
+**windows**   
+(can only be built on linux)    
+installer: ```./gradlew clean buildWindowsInstaller -PtargetPlatform=win```   
+ 
+    
 
 
