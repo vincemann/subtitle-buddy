@@ -1,6 +1,6 @@
 [Setup]
 AppName=Subtitle Buddy
-AppVersion=1.1.0
+AppVersion=2.0.0
 DefaultDirName={pf}\SubtitleBuddy
 DefaultGroupName=com.github.vincemann
 OutputDir=output
