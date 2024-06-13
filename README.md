@@ -37,11 +37,11 @@ This is needed bc there is a wrapper shell script (sh) that is executed in order
 
 ### 3. manual (advanced)  
 Download image.zip file for your os [here](https://github.com/vincemann/Subtitle-Buddy/releases).    
-Unzip it and hook up the start script, for linux/mac you may want to create a symlink like:  
-```ln -sf /path/to/start-script /usr/local/bin/subtitle-buddy```    
-On Windows you may want to create a Desktop shortcut to the start script.  
+Unzip it and hook up the start script:   
+For linux/mac you may want to create a symlink like:  ```ln -sf /path/to/start-script /usr/local/bin/subtitle-buddy```    
+For Windows you may want to create a Desktop shortcut to the start script.  
 After unzipping the start script is at ```./appLauncher-$platform/bin/appLauncher```.    
-
+  
 ## synchronisation  
 There are two convient ways to synchronize the loaded subtitles (.srt) with the movie.   
 1. The gif shows the **"next-click-counts"**- feature in action:   
