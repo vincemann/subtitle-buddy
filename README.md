@@ -18,8 +18,7 @@ Snychronizing the subtitles with the movie is as easy as shown here:
   
 ## installation  
 ### download installer (win / linux / mac )  
-Download your favorite installer from [here](https://github.com/vincemann/Subtitle-Buddy/releases) and double click it.  
-Mac users can download the .app.zip, unzip it and double click.  
+Download your favorite installer or app bundle from [here](https://github.com/vincemann/Subtitle-Buddy/releases) and double click it.  
 
 ### homebrew (linux / mac)   
 Install homebrew like shown [here](https://brew.sh/).  
