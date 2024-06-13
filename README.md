@@ -17,10 +17,11 @@ Snychronizing the subtitles with the movie is as easy as shown here:
 - add own fonts  
   
 ## installation  
-### download installer (win / linux / mac )  
+There are 3 ways for installation:  
+### 1. download installer (win / linux / mac )  
 Download your favorite installer or app bundle from [here](https://github.com/vincemann/Subtitle-Buddy/releases) and double click it.  
 
-### homebrew (linux / mac)   
+### 2. homebrew (linux / mac)   
 Install homebrew like shown [here](https://brew.sh/).  
 Open terminal and type:
 ```
@@ -34,7 +35,7 @@ You probably need to go to "Settings" -> "Security & Privacy" -> "Accessibility"
 to the allowed programs. (```/bin/sh```)  
 This is needed bc there is a wrapper shell script (sh) that is executed in order to run the program.  
 
-### manual (advanced)  
+### 3. manual (advanced)  
 Download image.zip file for your os [here](https://github.com/vincemann/Subtitle-Buddy/releases).    
 Unzip it and hook up the start script, for linux/mac you may want to create a symlink like:  
 ```ln -sf /path/to/start-script /usr/local/bin/subtitle-buddy```    
@@ -87,7 +88,7 @@ The installers are build for x86_64 if no architecture is in the filename.
 If you experience encoding isses ( some characters are not displayed properly),   
 you should transform your srt file to utf-8 [here](https://subtitletools.com/convert-text-files-to-utf8-online).  
 If you want a different encoding, you can set it in application.properties file -  
-You could replace the encoding line to 'encoding = ISO-8859-1' for example.  
+You could replace the encoding line to ```encoding = ISO-8859-1``` for example.  
   
 ## building from sources  
 Clone the repo and build the artifacts like shown here:  
