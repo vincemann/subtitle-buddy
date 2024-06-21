@@ -107,7 +107,7 @@ app: ```./gradlew jpackage```
   
 **windows**   
 (can only be built on linux)    
-installer: ```./gradlew clean buildWindowsInstaller -PtargetPlatform=win```   
+installer: ```./gradlew buildWindowsInstaller -PtargetPlatform=win```   
  
     
 
