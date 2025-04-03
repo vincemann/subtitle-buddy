@@ -33,7 +33,7 @@ start with ```subtitle-buddy```
 **for mac users:**  
 You probably need to go to "Settings" -> "Security & Privacy" -> "Accessibility", click on the lock and add ```sh```  
 to the allowed programs. (```/bin/sh```)  
-This is needed bc there is a wrapper shell script (sh) that is executed in order to run the program.  
+This is needed bc there is a wrapper shell script (sh) that is executed in order to run the program and jnativehook needs special access in order to capture hotkeys when the app is not in focus.  
 
 ### 3. manual (advanced)  
 Download image.zip file for your os [here](https://github.com/vincemann/Subtitle-Buddy/releases).    
