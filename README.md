@@ -1,4 +1,4 @@
-# Subtitle Buddy  
+<# Subtitle Buddy  
 This is an opensource, crossplatform Subtitle Player, written in pure Java, as an alternative to [Penguin Subtitleplayer](https://github.com/carsonip/Penguin-Subtitle-Player).  
 This program focuses on simple synchronization.  
 It is used to add subtitles to movies, beeing streamed online, that offer no subtitles (or not the language you want).  
@@ -44,7 +44,7 @@ For Windows you may want to create a Desktop shortcut to the start script.
 After unzipping the start script is at ```./appLauncher-<linux|mac|win>/bin/appLauncher```.    
   
 ## synchronisation  
-There are two convient ways to synchronize the loaded subtitles (.srt) with the movie.   
+There are two convenient ways to synchronize the loaded subtitles (.srt) with the movie.   
 1. The gif shows the **"next-click-counts"**- feature in action:   
 Press **alt+n**, then a finger icon will appear.   
 This means, that the next click (left mouse click) will start/stop the loaded sutitles. 
