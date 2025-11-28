@@ -1,4 +1,4 @@
-<# Subtitle Buddy  
+# Subtitle Buddy  
 This is an opensource, crossplatform Subtitle Player, written in pure Java, as an alternative to [Penguin Subtitleplayer](https://github.com/carsonip/Penguin-Subtitle-Player).  
 This program focuses on simple synchronization.  
 It is used to add subtitles to movies, beeing streamed online, that offer no subtitles (or not the language you want).  
